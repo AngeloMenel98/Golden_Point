@@ -6,12 +6,15 @@ import {
     ManyToMany,
     OneToMany,
 } from 'typeorm';
-import { PersonalData } from './index';
-import { Tour } from './Tour';
-import { Team } from './Team';
-import { TourCoin } from './TourCoin';
-import { Notification } from './Notification';
-import { Reward } from './Reward';
+import {
+    PersonalData,
+    Tour,
+    Team,
+    TourCoin,
+    Notification,
+    Reward,
+} from './index';
+import { hashValue } from '../helpers/bCrypt.helper';
 
 export enum UserRole {
     SUPERADMIN = 'superadmin',
@@ -36,18 +39,18 @@ export class User {
     @Column()
     isSingle: boolean;
 
-    @OneToOne(() => PersonalData, (personalData) => personalData.user)
-    personalData: PersonalData;
-
-    @OneToOne(() => TourCoin, (tourCoin) => tourCoin.user)
-    tourCoin: TourCoin;
-
     @Column({
         type: 'enum',
         enum: UserRole,
         default: UserRole.USER,
     })
     role: UserRole;
+
+    @OneToOne(() => PersonalData, (personalData) => personalData.user)
+    personalData: PersonalData;
+
+    @OneToOne(() => TourCoin, (tourCoin) => tourCoin.user)
+    tourCoin: TourCoin;
 
     @ManyToMany(() => Tour, (tour) => tour.users)
     tours: Tour[];
@@ -60,4 +63,8 @@ export class User {
 
     @ManyToMany(() => Reward, (reward) => reward.users)
     rewards: Reward[];
+
+    async hashPassword(password: string): Promise<string> {
+        return (this.password = hashValue(password));
+    }
 }
