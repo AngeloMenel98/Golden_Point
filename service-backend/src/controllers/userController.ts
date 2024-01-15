@@ -29,8 +29,7 @@ export class UserController {
     }
     async findByUsername(req: Request, res: Response) {
         try {
-            const { username } = req.body;
-
+            const { username } = req.params;
             const user = await this.userService.findByUsername(username);
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
@@ -40,6 +39,35 @@ export class UserController {
             console.error(
                 'Error al buscar el usuario por nombre de usuario:',
                 error
+            );
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+    async update(req: Request, res: Response) {
+        try {
+            const { username, password, email, isSingle, userId } = req.body;
+
+            const newUser = new User();
+            newUser.username = username;
+            newUser.email = email;
+            newUser.hashPassword(password);
+            newUser.isSingle = isSingle;
+
+            const user = await this.userService.findById(userId);
+
+            if (user) {
+                const updatedUser = await this.userService.updateUser(
+                    newUser,
+                    user
+                );
+                return res.status(201).json(updatedUser);
+            } else {
+                return res.status(404).json({ message: 'User not found' });
+            }
+        } catch (err) {
+            console.error(
+                'Error al actualizar el usuario por nombre de usuario:',
+                err
             );
             return res.status(500).json({ error: 'Internal Server Error' });
         }
