@@ -32,4 +32,31 @@ router.post(
     }
 );
 
+router.post(
+    '/tour/join',
+    [
+        check('tourCode')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('tourCode')),
+        check('userId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
+    ],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            const tour = await tourController.joinUser(req, res);
+            res.status(201).json(tour);
+        } catch (err) {
+            console.error('Error adding user to tour:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+);
+
 export default router;

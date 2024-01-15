@@ -1,1 +1,1 @@
--   Is it ok to create an userController inside the tourController?
+-   How to search a userId in a Tour instance?
