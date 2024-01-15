@@ -1,0 +1,1 @@
+-   Is it ok to create an userController inside the tourController?
