@@ -5,7 +5,7 @@
 -   [x] Update User
 -   [ ] Delete User
 -   [x] Look for isSingle attribute
--   [ ] Get id from userResponse in userRouters
+-   [ ] Get id from userResponse in userRouter
 
 #### Tour
 
@@ -26,7 +26,7 @@
 
 -   [ ] Create Personal Data associated to an User
 
-#### Personal Data
+#### Team
 
 -   [x] Create Team with SUPERADMIN or ADMIN Role
 -   [x] Add users to a team
