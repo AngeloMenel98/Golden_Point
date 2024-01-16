@@ -13,13 +13,13 @@ export class PersonalData {
     id: number;
 
     @Column({ length: 20 })
-    first_name: string;
+    firstName: string;
 
     @Column({ length: 20 })
-    last_name: string;
+    lastName: string;
 
     @Column('integer')
-    phone_number: number;
+    phoneNumber: number;
 
     @Column({ length: 50 })
     location: string;

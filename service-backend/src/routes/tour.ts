@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import validationMsg from '../constants/validationMessages';
-import tourController from '../controllers/tourController';
+import { tourController } from '../controllers';
 
 const router = Router();
 

@@ -1,1 +1,27 @@
--   How to search a userId in a Tour instance?
+#### User
+
+-   [x] Create User
+-   [x] Find by Username
+-   [x] Update User
+-   [ ] Delete User
+-   [ ] Look for isSingle attribute
+-   [ ] Get id from userResponse in userRouters
+
+#### Tour
+
+-   [x] Create Tour associated to an User
+-   [ ] Delete Tour
+-   [x] Add User to Tour
+-   [ ] Get a Tour info
+-   [ ] Update Tour info
+
+#### Tournament
+
+-   [x] Create Tournament associated to a Tour
+-   [ ] Delete Tournament
+-   [ ] Update Tournament info
+-   [ ] Get a Tournament info
+
+#### Personal Data
+
+-   [ ] Create Personal Data associated to an User

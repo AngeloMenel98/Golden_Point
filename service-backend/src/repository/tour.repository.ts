@@ -1,4 +1,4 @@
 import { AppDataSource } from '../data-source';
-import { Tour, User } from '../entity';
+import { Tour } from '../entity';
 
 export const TourRepository = AppDataSource.getRepository(Tour).extend({});

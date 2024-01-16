@@ -56,4 +56,20 @@ export class TourService {
             console.error('Error al agregar usuario al Tour', e);
         }
     }
+
+    async findById(tourId: number): Promise<Tour | undefined> {
+        try {
+            const existingTour = await TourRepository.findOneBy({
+                id: tourId,
+            });
+            if (existingTour) {
+                return existingTour;
+            } else {
+                console.error('No se encontró un tour con ID', existingTour.id);
+            }
+        } catch (err) {
+            console.error('Error al actualizar  usuario');
+            return undefined;
+        }
+    }
 }
