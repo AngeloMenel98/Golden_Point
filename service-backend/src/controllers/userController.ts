@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { User } from '../entity';
-import { UserService } from '../services/userService';
+import { UserService } from '../services';
 
 export class UserController {
     private userService: UserService;
@@ -20,7 +20,6 @@ export class UserController {
             newUser.isSingle = isSingle;
 
             const savedUser = await this.userService.register(newUser);
-
             return res.status(201).json(savedUser);
         } catch (error) {
             console.error('Error al guardar el usuario:', error);
