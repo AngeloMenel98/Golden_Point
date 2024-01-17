@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { PersonalData } from '../entity';
 import { PerDataService } from '../services';
+import { validate } from 'class-validator';
 
 export class PerDataController {
     private perDataService: PerDataService;
@@ -18,12 +19,22 @@ export class PerDataController {
             newPerData.location = location;
             newPerData.phoneNumber = phoneNumber;
 
-            const savedPerData = await this.perDataService.create(
-                newPerData,
-                userId
-            );
-            return res.status(201).json(savedPerData);
-        } catch (e) {}
+            const errors = await validate(newPerData);
+            if (errors.length > 0) {
+                console.log('Validation failed. Errors:', errors);
+                return res.status(400).json(errors);
+            } else {
+                const savedPerData = await this.perDataService.create(
+                    newPerData,
+                    userId
+                );
+
+                return res.status(201).json(savedPerData);
+            }
+        } catch (e) {
+            console.error('Error al guardar personal data:', e);
+            return res.status(500).json({ error: 'Internal Server Error' });
+        }
     }
 }
 

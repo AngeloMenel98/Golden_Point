@@ -1,4 +1,4 @@
-import { TeamRepository } from '../repository/team.repository';
+import { TeamRepository } from '../repository';
 import { Team } from '../entity';
 import { UserService } from './userService';
 import { UserRole } from '../entity/User';

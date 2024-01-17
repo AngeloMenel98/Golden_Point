@@ -15,6 +15,7 @@ import {
     Reward,
 } from './index';
 import { hashValue } from '../helpers/bCrypt.helper';
+import { IsBoolean, IsEmail, IsEnum, isBoolean } from 'class-validator';
 
 export enum UserRole {
     SUPERADMIN = 'superadmin',
@@ -31,19 +32,21 @@ export class User {
     username: string;
 
     @Column()
+    @IsEmail()
     email: string;
 
     @Column()
     password: string;
 
     @Column()
+    @IsBoolean()
     isSingle: boolean;
 
     @Column({
         type: 'enum',
         enum: UserRole,
-        default: UserRole.USER,
     })
+    @IsEnum(UserRole)
     role: UserRole;
 
     @OneToOne(() => PersonalData, (personalData) => personalData.user)

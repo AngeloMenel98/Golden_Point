@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { User } from '../entity';
 import { UserService } from '../services';
+import { validate } from 'class-validator';
 
 export class UserController {
     private userService: UserService;
@@ -11,16 +12,26 @@ export class UserController {
 
     async save(req: Request, res: Response) {
         try {
-            const { username, password, email, isSingle } = req.body;
+            const { username, password, email, isSingle, userRole } = req.body;
 
             const newUser = new User();
             newUser.username = username;
             newUser.email = email;
             newUser.hashPassword(password);
             newUser.isSingle = isSingle;
+            newUser.role = userRole;
 
-            const savedUser = await this.userService.register(newUser);
-            return res.status(201).json(savedUser);
+            const errors = await validate(newUser);
+
+            if (errors.length > 0) {
+                console.log('Validation failed. Errors:', errors);
+                return res.status(400).json(errors);
+            } else {
+                const savedUser = await this.userService.register(newUser);
+                res.locals.user = savedUser;
+
+                return res.status(201).json(savedUser);
+            }
         } catch (error) {
             console.error('Error al guardar el usuario:', error);
             return res.status(500).json({ error: 'Internal Server Error' });

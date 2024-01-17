@@ -5,7 +5,7 @@
 -   [x] Update User
 -   [ ] Delete User
 -   [x] Look for isSingle attribute
--   [ ] Get id from userResponse in userRouter
+-   [x] Get id from userResponse in userRouter
 
 #### Tour
 
@@ -24,7 +24,12 @@
 
 #### Personal Data
 
--   [ ] Create Personal Data associated to an User
+-   [x] Create Personal Data associated to an User
+-   [ ] Update Personal Data Info
+
+#### Tour Coin
+
+-   [ ] Create Tour Coin assciated to an User.
 
 #### Team
 
@@ -39,3 +44,8 @@
 -   [ ] Get a club info
 -   [ ] Update club info
 -   [ ] Delete club
+
+#### Court
+
+-   [ ] Create court associated to a club at the same time that the club is created.
+-   [ ] Delete court when a club is deleted.

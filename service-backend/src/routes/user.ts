@@ -1,7 +1,11 @@
 import { Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import validationMsg from '../constants/validationMessages';
-import { userController } from '../controllers';
+import {
+    perDataController,
+    userController,
+    tourCoinController,
+} from '../controllers';
 
 const router = Router();
 
@@ -29,22 +33,10 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('isSingle')),
-        /*check('firstName')
+        check('userRole')
             .not()
             .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('firstName')),
-        check('lastName')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('lastName')),
-        check('phoneNumber')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('phoneNumber')),
-        check('location')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('location')),*/
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('userRole')),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -52,11 +44,15 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
+
             const userResponse = await userController.save(req, res);
-            /*if (user) {
+            const user = res.locals.user;
+
+            if (user) {
                 await perDataController.save(req, res, user.id);
-            }*/
-            res.status(201).json(userResponse);
+                await tourCoinController.save(req, res, user.id);
+            }
+            res.status(201).json(user);
         } catch (error) {
             console.error('Error registering user:', error);
             res.status(500).json({ error: 'Internal Server Error' });

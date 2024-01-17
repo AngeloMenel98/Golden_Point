@@ -5,6 +5,7 @@ import {
     OneToOne,
     JoinColumn,
 } from 'typeorm';
+import { IsMobilePhone } from 'class-validator';
 import { User } from './User';
 
 @Entity()
@@ -18,8 +19,9 @@ export class PersonalData {
     @Column({ length: 20 })
     lastName: string;
 
-    @Column('integer')
-    phoneNumber: number;
+    @Column()
+    @IsMobilePhone('es-AR')
+    phoneNumber: string;
 
     @Column({ length: 50 })
     location: string;
