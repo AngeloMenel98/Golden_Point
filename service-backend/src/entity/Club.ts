@@ -15,7 +15,7 @@ export class Club {
     id: number;
 
     @Column({ length: 30 })
-    club_name: string;
+    clubName: string;
 
     @Column({ length: 30 })
     location: string;

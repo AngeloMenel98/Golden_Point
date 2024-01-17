@@ -32,3 +32,10 @@
 -   [x] Add users to a team
 -   [x] Get a team info
 -   [ ] Update team info
+
+#### Club
+
+-   [x] Create club associated with tour and done by a SUPERADMIN
+-   [ ] Get a club info
+-   [ ] Update club info
+-   [ ] Delete club

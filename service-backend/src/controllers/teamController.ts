@@ -1,8 +1,6 @@
 import { Request, Response } from 'express';
 import { Team } from '../entity';
 import { TeamService } from '../services';
-import { ParamsDictionary } from 'express-serve-static-core';
-import { getDiffieHellman } from 'crypto';
 
 export class TeamController {
     private teamService: TeamService;
