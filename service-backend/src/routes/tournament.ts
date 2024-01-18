@@ -27,8 +27,15 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const tour = await tournController.create(req, res);
-            res.status(201).json(tour);
+
+            const { tourId, title, master } = req.body;
+            const { resp, status } = await tournController.create(
+                tourId,
+                title,
+                master
+            );
+
+            return res.status(status).json(resp);
         } catch (err) {
             console.error('Error registering tournament:', err);
             res.status(500).json({ error: 'Internal Server Error' });

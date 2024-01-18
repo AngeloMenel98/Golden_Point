@@ -11,7 +11,7 @@ export class ClubService {
     async create(
         newClub: Club,
         userRole: string,
-        tourId: number
+        tourId: string
     ): Promise<Club | undefined> {
         try {
             const existingTour = await this.tourService.findById(tourId);

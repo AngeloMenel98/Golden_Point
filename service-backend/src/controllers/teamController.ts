@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { Team } from '../entity';
 import { TeamService } from '../services';
 
@@ -9,41 +8,58 @@ export class TeamController {
         this.teamService = new TeamService();
     }
 
-    async save(req: Request, res: Response) {
+    async create(teamName: string, userId: string) {
         try {
-            const { teamName, userId } = req.body;
-
             const newTeam = new Team();
             newTeam.teamName = teamName;
 
-            const savedTeam = await this.teamService.create(newTeam, userId);
+            const resp = await this.teamService.create(newTeam, userId);
 
-            return res.status(201).json(savedTeam);
-        } catch (error) {
-            console.error('Error al guardar el usuario al team:', error);
-            return res.status(500).json({ error: 'Internal Server Error' });
+            return { resp, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                resp: { error: 'Error creating new Team' },
+                status: 500,
+            };
         }
     }
 
-    async addUsers(req: Request, res: Response) {
+    async addUsers(teamId: string, usersId: string[]) {
         try {
-            const { usersId, teamId } = req.body;
+            const resp = await this.teamService.addUsers(teamId, usersId);
 
-            const savedTeam = await this.teamService.addUsers(teamId, usersId);
-            return res.status(201).json(savedTeam);
-        } catch (err) {
-            console.error('Error al agregar usuarios al Team', err);
-            return res.status(500).json({ error: 'Internal server error' });
+            const response = {
+                id: resp.id,
+                teamName: resp.teamName,
+                usersId: resp.users.map((u) => u.id),
+            };
+
+            return { response, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error adding Users' },
+                status: 500,
+            };
         }
     }
 
-    async getTeam(req: Request, res: Response, teamId: number) {
+    async getTeam(teamId: string) {
         try {
-            const team = await this.teamService.getTeam(teamId);
-            return res.status(201).json(team);
-        } catch (err) {
-            console.error('Error al buscar un Team', err);
-            return res.status(500).json({ error: 'Internal server error' });
+            const resp = await this.teamService.getTeamWithUsers(teamId);
+            const response = {
+                teamId: resp.team.id,
+                teamName: resp.team.teamName,
+                users: resp.users.map((u) => u.id),
+            };
+            return { response, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error finding a Team' },
+                status: 500,
+            };
         }
     }
 }

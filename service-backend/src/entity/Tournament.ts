@@ -13,8 +13,8 @@ import { Match } from './Match';
 
 @Entity()
 export class Tournament {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     title: string;

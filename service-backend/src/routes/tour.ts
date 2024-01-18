@@ -23,11 +23,17 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const tour = await tourController.create(req, res);
-            res.status(201).json(tour);
+
+            const { title, userId } = req.body;
+            const { response, status } = await tourController.create(
+                title,
+                userId
+            );
+
+            return res.status(status).json(response);
         } catch (err) {
             console.error('Error registering user:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
+            return res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 );
@@ -50,8 +56,14 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const tour = await tourController.joinUser(req, res);
-            res.status(201).json(tour);
+
+            const { userId, tourCode } = req.body;
+            const { response, status } = await tourController.joinUser(
+                userId,
+                tourCode
+            );
+
+            res.status(status).json(response);
         } catch (err) {
             console.error('Error adding user to tour:', err);
             res.status(500).json({ error: 'Internal Server Error' });

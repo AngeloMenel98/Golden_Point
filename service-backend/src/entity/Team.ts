@@ -10,8 +10,8 @@ import { Match } from './Match';
 
 @Entity()
 export class Team {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column({ length: 30 })
     teamName: string;

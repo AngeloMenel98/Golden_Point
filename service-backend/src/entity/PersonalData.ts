@@ -10,8 +10,8 @@ import { User } from './User';
 
 @Entity()
 export class PersonalData {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column({ length: 20 })
     firstName: string;

@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { Tour } from '../entity';
 import { TourService } from '../services';
 import { generateCode } from '../helpers/generateTourCode.helper';
@@ -9,34 +8,48 @@ export class TourController {
     constructor() {
         this.tourService = new TourService();
     }
-    async create(req: Request, res: Response) {
+    async create(title: string, userId: string) {
         try {
-            const { title, userId } = req.body;
-
             const newTour = new Tour();
             newTour.title = title;
             newTour.tourCode = generateCode(6);
 
-            const savedTour = await this.tourService.create(newTour, userId);
-            return res.status(201).json(savedTour);
-        } catch (err) {
-            console.error('Error al crear nuevo Tour', err);
-            return res.status(500).json({ error: 'Internal server error' });
+            const resp = await this.tourService.create(newTour, userId);
+            const response = {
+                id: resp.id,
+                title: resp.title,
+                tourCode: resp.tourCode,
+                usersId: resp.users.map((u) => u.id),
+            };
+
+            return { response, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error creating new Tour' },
+                status: 500,
+            };
         }
     }
 
-    async joinUser(req: Request, res: Response) {
+    async joinUser(userId: string, tourCode: string) {
         try {
-            const { userId, tourCode } = req.body;
-
-            const savedTour = await this.tourService.joinUserToTour(
+            const resp = await this.tourService.joinUserToTour(
                 userId,
                 tourCode
             );
-            return res.status(201).json(savedTour);
-        } catch (err) {
-            console.error('Error al agregar usuario al Tour', err);
-            return res.status(500).json({ error: 'Internal server error' });
+            const response = {
+                id: resp.id,
+                title: resp.title,
+                tourCode: resp.tourCode,
+                usersId: resp.users.map((u) => u.id),
+            };
+            return { response, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error adding user to Tour', status: 500 },
+            };
         }
     }
 }

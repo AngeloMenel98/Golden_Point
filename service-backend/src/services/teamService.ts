@@ -1,5 +1,5 @@
 import { TeamRepository } from '../repository';
-import { Team } from '../entity';
+import { Team, User } from '../entity';
 import { UserService } from './userService';
 import { UserRole } from '../entity/User';
 
@@ -10,7 +10,7 @@ export class TeamService {
         this.userService = new UserService();
     }
 
-    async create(newTeam: Team, userId: number): Promise<Team | undefined> {
+    async create(newTeam: Team, userId: string): Promise<Team | undefined> {
         try {
             const user = await this.userService.findById(userId);
             if (
@@ -26,36 +26,37 @@ export class TeamService {
         }
     }
 
-    async addUsers(
-        teamId: number,
-        usersId: number[]
-    ): Promise<Team | undefined> {
+    async addUsers(teamId: string, usersId: string[]): Promise<Team> {
         try {
             const existingTeam = await TeamRepository.findOneBy({
                 id: teamId,
             });
+
             const userPromises = usersId.map((userId) =>
                 this.userService.findById(userId)
             );
+
             const users = await Promise.all(userPromises);
+
             if (existingTeam && users.length > 0) {
                 existingTeam.users = users;
                 return TeamRepository.save(existingTeam);
             }
         } catch (e) {
-            console.error('Error al agregar usuario al Tour', e);
+            console.error('Error adding users to Tour in Service', e);
         }
     }
 
-    async getTeam(teamId: number): Promise<Team | undefined> {
+    async getTeamWithUsers(
+        teamId: string
+    ): Promise<{ team: Team; users: User[] }> {
         try {
-            const existingTeam = await TeamRepository.findOneBy({ id: teamId });
-            if (existingTeam) {
-                return existingTeam;
-            }
-            console.log("Team doesn't exist");
+            const userByTeam = await TeamRepository.getUsersByTeamId(teamId);
+            const team = await TeamRepository.findOneBy({ id: teamId });
+
+            return { team, users: userByTeam };
         } catch (e) {
-            console.error('Error al agregar usuario al Tour', e);
+            console.error('Team ID is incorrect.', e);
         }
     }
 }

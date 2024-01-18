@@ -1,9 +1,26 @@
 import { UserRepository } from '../repository/user.repository';
-import { User } from '../entity';
+import { PersonalData, TourCoin, User } from '../entity';
+import { PerDataService } from './perDataService';
+import { TourCoinService } from './tourCoinService';
 
 export class UserService {
-    async register(user: User): Promise<User> {
-        return await UserRepository.save(user);
+    private perDataService: PerDataService;
+    private tourCoinService: TourCoinService;
+
+    constructor() {
+        this.perDataService = new PerDataService();
+        this.tourCoinService = new TourCoinService();
+    }
+    async create(
+        user: User,
+        perData: PersonalData,
+        tourCoin: TourCoin
+    ): Promise<User> {
+        const savedUser = await UserRepository.save(user);
+        this.perDataService.create(perData, savedUser);
+        this.tourCoinService.create(tourCoin, savedUser);
+
+        return savedUser;
     }
     async updateUser(
         user: User,
@@ -21,7 +38,7 @@ export class UserService {
     async findByUsername(username: string): Promise<User | undefined> {
         return await UserRepository.findByUsername(username);
     }
-    async findById(userId: number): Promise<User | undefined> {
+    async findById(userId: string): Promise<User | undefined> {
         try {
             const existingUser = await UserRepository.findOneBy({
                 id: userId,
@@ -30,11 +47,11 @@ export class UserService {
             if (existingUser) {
                 return existingUser;
             } else {
-                console.error('No se encontró un usuario con ID ${user.id}');
+                console.error('Error finding user by ID', userId);
                 return undefined;
             }
         } catch (err) {
-            console.error('Error al actualizar  usuario con ID ${user.id}');
+            console.error('Error finding user by ID', userId);
             return undefined;
         }
     }

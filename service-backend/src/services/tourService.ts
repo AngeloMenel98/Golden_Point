@@ -10,19 +10,8 @@ export class TourService {
         this.userService = new UserService();
     }
 
-    async create(newTour: Tour, userId: number): Promise<Tour | undefined> {
+    async create(newTour: Tour, userId: string): Promise<Tour | undefined> {
         try {
-            const existingTour = await TourRepository.findBy({
-                tourCode: newTour.tourCode,
-            });
-            if (existingTour.length > 0) {
-                console.log(
-                    'The Tour already exist with code: ',
-                    newTour.tourCode
-                );
-                return undefined;
-            }
-
             const user = await this.userService.findById(userId);
 
             if (user && user.role == UserRole.SUPERADMIN) {
@@ -36,7 +25,7 @@ export class TourService {
     }
 
     async joinUserToTour(
-        userId: number,
+        userId: string,
         tourCode: string
     ): Promise<Tour | undefined> {
         try {
@@ -46,7 +35,7 @@ export class TourService {
 
             const user = await this.userService.findById(userId);
             if (existingTour && user) {
-                const usersInTour = await UserRepository.getUsersByTourId(
+                const usersInTour = await TourRepository.getUsersByTourId(
                     existingTour.id
                 );
                 existingTour.users = [...usersInTour, user];
@@ -57,7 +46,7 @@ export class TourService {
         }
     }
 
-    async findById(tourId: number): Promise<Tour | undefined> {
+    async findById(tourId: string): Promise<Tour | undefined> {
         try {
             const existingTour = await TourRepository.findOneBy({
                 id: tourId,

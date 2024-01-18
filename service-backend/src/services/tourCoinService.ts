@@ -1,21 +1,14 @@
 import { TourCoinRepository } from '../repository';
 import { TourCoin } from '../entity';
 import { UserService } from './userService';
-import { UserRole } from '../entity/User';
+import { User, UserRole } from '../entity/User';
 
 export class TourCoinService {
-    private userService: UserService;
-
-    constructor() {
-        this.userService = new UserService();
-    }
-
     async create(
         newTourCoin: TourCoin,
-        userId: number
+        user: User
     ): Promise<TourCoin | undefined> {
         try {
-            const user = await this.userService.findById(userId);
             if (user) {
                 newTourCoin.user = user;
                 return await TourCoinRepository.save(newTourCoin);

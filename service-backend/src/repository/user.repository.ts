@@ -5,7 +5,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     async findByUsername(username: string): Promise<User> {
         return await this.findOne({ where: { username } });
     },
-    async getUsersByTourId(tourId: number): Promise<User[]> {
+    async getUsersByTourId(tourId: string): Promise<User[]> {
         try {
             return await this.createQueryBuilder('u')
                 .innerJoin('tour_users_user', 'tuu', 'u.id = tuu."userId"')
@@ -14,6 +14,19 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
                 .getMany();
         } catch (error) {
             console.error('Error al obtener usuarios del Tour', error);
+            throw error;
+        }
+    },
+    async getUsersByTeamId(teamId: string): Promise<User[]> {
+        try {
+            return await this.createQueryBuilder('u')
+                .innerJoin('team_users_user', 'tuu', 'u.id = tuu."userId"')
+                .innerJoin('team', 't', 't.id = tuu."teamId"')
+                .select('u')
+                .where('t.id = :teamId', { teamId })
+                .getMany();
+        } catch (error) {
+            console.error('Error searching for users in Team', error);
             throw error;
         }
     },

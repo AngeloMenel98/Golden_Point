@@ -1,20 +1,13 @@
 import { PerDataRepository } from '../repository/perData.repository';
-import { PersonalData } from '../entity';
+import { PersonalData, User } from '../entity';
 import { UserService } from '.';
 
 export class PerDataService {
-    private userService: UserService;
-
-    constructor() {
-        this.userService = new UserService();
-    }
-
     async create(
         perData: PersonalData,
-        userId: number
+        user: User
     ): Promise<PersonalData | undefined> {
         try {
-            const user = await this.userService.findById(userId);
             if (user) {
                 perData.user = user;
                 return await PerDataRepository.save(perData);

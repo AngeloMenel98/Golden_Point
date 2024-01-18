@@ -3,8 +3,8 @@ import { Club } from './Club';
 
 @Entity()
 export class CalendarClub {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column('time without time zone')
     hsAvailableFrom: string;

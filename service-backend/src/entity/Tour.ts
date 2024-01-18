@@ -12,8 +12,8 @@ import { Club } from './Club';
 
 @Entity()
 export class Tour {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     title: string;

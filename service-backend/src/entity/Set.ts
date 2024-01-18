@@ -3,8 +3,8 @@ import { Match } from './Match';
 
 @Entity()
 export class Set {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column('integer')
     gamesTeam1: number;

@@ -23,29 +23,19 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const team = await teamController.save(req, res);
-            res.status(201).json(team);
+
+            const { teamName, userId } = req.body;
+            const { resp, status } = await teamController.create(
+                teamName,
+                userId
+            );
+            res.status(status).json(resp);
         } catch (err) {
             console.error('Error creating team:', err);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 );
-
-router.get('/team/:id', async (req: Request, res: Response) => {
-    try {
-        const errors = validationResult(req);
-        const teamId = Number(req.params.id);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const team = await teamController.getTeam(req, res, teamId);
-        res.status(201).json(team);
-    } catch (err) {
-        console.error('Error creating team:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
 
 router.post(
     '/team/join',
@@ -65,13 +55,34 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const team = await teamController.addUsers(req, res);
-            res.status(201).json(team);
+
+            const { usersId, teamId } = req.body;
+            const { response, status } = await teamController.addUsers(
+                teamId,
+                usersId
+            );
+            res.status(status).json(response);
         } catch (err) {
             console.error('Error adding users to team:', err);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 );
+
+router.get('/team/:id', async (req: Request, res: Response) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const teamId = req.params.id;
+        const { response, status } = await teamController.getTeam(teamId);
+        res.status(status).json(response);
+    } catch (err) {
+        console.error('Error creating team:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 export default router;

@@ -3,8 +3,8 @@ import { Tournament } from './Tournament';
 
 @Entity()
 export class Category {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     gender: string;

@@ -9,8 +9,8 @@ import { User } from './User';
 
 @Entity()
 export class TourCoin {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column('integer')
     coins: number;

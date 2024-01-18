@@ -10,8 +10,8 @@ import { Club } from './Club';
 
 @Entity()
 export class Court {
-    @PrimaryGeneratedColumn()
-    id: number;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column()
     title: string;

@@ -11,7 +11,7 @@ export class TournamentService {
 
     async create(
         tournament: Tournament,
-        tourId: number
+        tourId: string
     ): Promise<Tournament | undefined> {
         try {
             const existingTour = await this.tourService.findById(tourId);
