@@ -24,6 +24,14 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('userRole')),
+        check('availableFrom')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('availableFrom')),
+        check('availableTo')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('availableTo')),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -32,12 +40,21 @@ router.post(
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { clubName, tourId, location, userRole } = req.body;
+            const {
+                clubName,
+                tourId,
+                location,
+                userRole,
+                availableFrom,
+                availableTo,
+            } = req.body;
             const { resp, status } = await clubController.create(
                 clubName,
                 tourId,
                 location,
-                userRole
+                userRole,
+                availableFrom,
+                availableTo
             );
             res.status(status).json(resp);
         } catch (err) {

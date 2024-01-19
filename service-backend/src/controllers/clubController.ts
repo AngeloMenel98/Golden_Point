@@ -1,5 +1,5 @@
 import { ClubService } from '../services';
-import { Club } from '../entity';
+import { CalendarClub, Club } from '../entity';
 import { UserRole } from '../entity/User';
 
 export class ClubController {
@@ -13,15 +13,22 @@ export class ClubController {
         clubName: string,
         tourId: string,
         location: string,
-        userRole: UserRole
+        userRole: UserRole,
+        availableFrom: string,
+        availableTo: string
     ) {
         try {
             const newClub = new Club();
             newClub.clubName = clubName;
             newClub.location = location;
 
+            const newCalClub = new CalendarClub();
+            newCalClub.availableTo = availableTo;
+            newCalClub.availableFrom = availableFrom;
+
             const resp = await this.clubService.create(
                 newClub,
+                newCalClub,
                 userRole,
                 tourId
             );
