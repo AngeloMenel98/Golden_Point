@@ -24,4 +24,20 @@ export class TournamentService {
             console.error('Error al crear el Tour', e);
         }
     }
+
+    async findById(tournamentId: string) {
+        try {
+            const existingTourn = await TournamentRepository.findOneBy({
+                id: tournamentId,
+            });
+
+            if (existingTourn) {
+                return existingTourn;
+            } else {
+                console.error('Error finding user by ID', tournamentId);
+            }
+        } catch (err) {
+            console.error('Error finding user by ID', tournamentId);
+        }
+    }
 }

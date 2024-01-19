@@ -1,4 +1,4 @@
-import { UserRepository } from '../repository/user.repository';
+import { UserRepository } from '../repository';
 import { PersonalData, TourCoin, User } from '../entity';
 import { PerDataService } from './perDataService';
 import { TourCoinService } from './tourCoinService';

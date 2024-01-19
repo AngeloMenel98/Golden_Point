@@ -31,10 +31,17 @@ router.post(
             if (!errors.isEmpty()) {
                 return res.status(400).json({ errors: errors.array() });
             }
-            const club = await clubController.save(req, res);
-            res.status(201).json(club);
+
+            const { clubName, tourId, location, userRole } = req.body;
+            const { resp, status } = await clubController.create(
+                clubName,
+                tourId,
+                location,
+                userRole
+            );
+            res.status(status).json(resp);
         } catch (err) {
-            console.error('Error creating team:', err);
+            console.error('Error creating club:', err);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }

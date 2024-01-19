@@ -22,7 +22,7 @@ export class ClubService {
             }
             console.log('Club not created');
         } catch (e) {
-            console.error('Error al crear Club', e);
+            console.error('Error creating club', e);
         }
     }
 }

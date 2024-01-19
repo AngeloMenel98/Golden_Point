@@ -5,6 +5,7 @@ import { TournamentRepository } from './tournament.repository';
 import { ClubRepository } from './club.repository';
 import { TourCoinRepository } from './tourCoin.repository';
 import { TeamRepository } from './team.repository';
+import { MatchRepository } from './match.repository';
 
 export {
     PerDataRepository,
@@ -14,4 +15,5 @@ export {
     ClubRepository,
     TourCoinRepository,
     TeamRepository,
+    MatchRepository,
 };

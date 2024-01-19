@@ -1,6 +1,5 @@
-import { PerDataRepository } from '../repository/perData.repository';
+import { PerDataRepository } from '../repository';
 import { PersonalData, User } from '../entity';
-import { UserService } from '.';
 
 export class PerDataService {
     async create(

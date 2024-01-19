@@ -49,21 +49,20 @@ export class UserController {
                     perErrors
                 );
                 return { response: { error: 'Validation error' }, status: 400 };
-            } else {
-                const resp = await this.userService.create(
-                    newUser,
-                    newPerData,
-                    newTourCoin
-                );
-                const response = {
-                    id: resp.id,
-                    username: resp.username,
-                    email: resp.email,
-                    isSingle: resp.isSingle,
-                };
-
-                return { response, status: 201 };
             }
+            const resp = await this.userService.create(
+                newUser,
+                newPerData,
+                newTourCoin
+            );
+            const response = {
+                id: resp.id,
+                username: resp.username,
+                email: resp.email,
+                isSingle: resp.isSingle,
+            };
+
+            return { response, status: 201 };
         } catch (e) {
             console.error(e);
             return {

@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import { ClubService } from '../services';
 import { Club } from '../entity';
+import { UserRole } from '../entity/User';
 
 export class ClubController {
     private clubService: ClubService;
@@ -9,24 +9,30 @@ export class ClubController {
         this.clubService = new ClubService();
     }
 
-    async save(req: Request, res: Response) {
+    async create(
+        clubName: string,
+        tourId: string,
+        location: string,
+        userRole: UserRole
+    ) {
         try {
-            const { clubName, tourId, location, userRole } = req.body;
-
             const newClub = new Club();
             newClub.clubName = clubName;
             newClub.location = location;
 
-            const savedClub = await this.clubService.create(
+            const resp = await this.clubService.create(
                 newClub,
                 userRole,
                 tourId
             );
 
-            return res.status(201).json(savedClub);
-        } catch (error) {
-            console.error('Error al crear club:', error);
-            return res.status(500).json({ error: 'Internal Server Error' });
+            return { resp, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error creating Club' },
+                status: 500,
+            };
         }
     }
 }

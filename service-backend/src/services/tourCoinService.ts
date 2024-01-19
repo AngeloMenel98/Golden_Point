@@ -1,7 +1,6 @@
 import { TourCoinRepository } from '../repository';
 import { TourCoin } from '../entity';
-import { UserService } from './userService';
-import { User, UserRole } from '../entity/User';
+import { User } from '../entity/User';
 
 export class TourCoinService {
     async create(

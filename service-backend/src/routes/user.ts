@@ -1,11 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { check, validationResult } from 'express-validator';
 import validationMsg from '../constants/validationMessages';
-import {
-    perDataController,
-    userController,
-    tourCoinController,
-} from '../controllers';
+import { userController } from '../controllers';
 
 const router = Router();
 

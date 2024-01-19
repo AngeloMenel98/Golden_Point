@@ -59,4 +59,22 @@ export class TeamService {
             console.error('Team ID is incorrect.', e);
         }
     }
+
+    async findById(teamId: string): Promise<Team> {
+        try {
+            const existingTeam = await TeamRepository.findOneBy({
+                id: teamId,
+            });
+
+            if (existingTeam) {
+                return existingTeam;
+            } else {
+                console.error('Error finding user by ID', teamId);
+                return undefined;
+            }
+        } catch (err) {
+            console.error('Error finding user by ID', teamId);
+            return undefined;
+        }
+    }
 }
