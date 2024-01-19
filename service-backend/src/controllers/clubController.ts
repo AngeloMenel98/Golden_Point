@@ -1,5 +1,5 @@
 import { ClubService } from '../services';
-import { CalendarClub, Club } from '../entity';
+import { CalendarClub, Club, Court } from '../entity';
 import { UserRole } from '../entity/User';
 
 export class ClubController {
@@ -15,7 +15,8 @@ export class ClubController {
         location: string,
         userRole: UserRole,
         availableFrom: string,
-        availableTo: string
+        availableTo: string,
+        courtsNumber: number
     ) {
         try {
             const newClub = new Club();
@@ -26,18 +27,22 @@ export class ClubController {
             newCalClub.availableTo = availableTo;
             newCalClub.availableFrom = availableFrom;
 
+            const newCourts: Court[] = [];
+
             const resp = await this.clubService.create(
                 newClub,
                 newCalClub,
+                newCourts,
                 userRole,
-                tourId
+                tourId,
+                courtsNumber
             );
 
             return { resp, status: 201 };
         } catch (e) {
             console.error(e);
             return {
-                response: { error: 'Error creating Club' },
+                resp: { error: 'Error creating Club' },
                 status: 500,
             };
         }

@@ -14,7 +14,7 @@ export class Court {
     id: string;
 
     @Column()
-    courtNumber: string;
+    courtNumber: number;
 
     @OneToMany(() => Match, (match) => match.court)
     matches: Match[];

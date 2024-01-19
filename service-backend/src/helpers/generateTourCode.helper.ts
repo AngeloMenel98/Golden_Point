@@ -9,6 +9,9 @@ const generateCode = (length: number) => {
             Math.floor(Math.random() * characterLength)
         );
     }
+    const timestamp = new Date().getTime();
+
+    result += timestamp.toString();
 
     return result;
 };

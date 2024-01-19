@@ -47,6 +47,7 @@ router.post(
                 userRole,
                 availableFrom,
                 availableTo,
+                courtsNumber,
             } = req.body;
             const { resp, status } = await clubController.create(
                 clubName,
@@ -54,7 +55,8 @@ router.post(
                 location,
                 userRole,
                 availableFrom,
-                availableTo
+                availableTo,
+                courtsNumber
             );
             res.status(status).json(resp);
         } catch (err) {

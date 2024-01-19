@@ -1,16 +1,7 @@
-#### User
-
--   [x] Create User
--   [x] Find by Username
--   [x] Update User
--   [x] Delete User
--   [x] Look for isSingle attribute
--   [x] Get id from userResponse in userRouter
-
 #### Tour
 
 -   [x] Create Tour associated to an User
--   [ ] Delete Tour
+-   [x] Delete Tour
 -   [x] Add User to Tour
 -   [ ] Get a Tour info
 -   [ ] Update Tour info
@@ -26,10 +17,6 @@
 
 -   [x] Create Personal Data associated to an User
 -   [ ] Update Personal Data Info
-
-#### Tour Coin
-
--   [x] Create Tour Coin assciated to an User.
 
 #### Team
 
@@ -47,5 +34,19 @@
 
 #### Court
 
--   [ ] Create court associated to a club at the same time that the club is created.
+-   [x] Create court associated to a club at the same time that the club is created.
 -   [ ] Delete court when a club is deleted.
+
+#### Reward
+
+-   [ ] Create a Reward
+-   [ ] Delete a Reward
+-   [ ] Update a Reward
+-   [ ] Get Rewards
+
+#### Notification
+
+-   [ ] Create a Notification
+-   [ ] Delete a Notification
+-   [ ] Update a Notification
+-   [ ] Get Notification

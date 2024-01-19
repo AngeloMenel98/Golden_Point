@@ -8,6 +8,7 @@ import { TourCoinService } from './tourCoinService';
 import { MatchService } from './matchService';
 import { SetService } from './setService';
 import { CalendarClubService } from './calendarClubService';
+import { CourtService } from './courtService';
 
 export {
     PerDataService,
@@ -20,4 +21,5 @@ export {
     MatchService,
     SetService,
     CalendarClubService,
+    CourtService,
 };
