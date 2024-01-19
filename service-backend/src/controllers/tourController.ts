@@ -19,6 +19,7 @@ export class TourController {
                 id: resp.id,
                 title: resp.title,
                 tourCode: resp.tourCode,
+                isDeleted: resp.isDeleted,
                 usersId: resp.users.map((u) => u.id),
             };
 
@@ -27,6 +28,30 @@ export class TourController {
             console.error(e);
             return {
                 response: { error: 'Error creating new Tour' },
+                status: 500,
+            };
+        }
+    }
+
+    async delete(tourId: string) {
+        try {
+            const tour = await this.tourService.findById(tourId);
+
+            if (tour) {
+                const resp = await this.tourService.delete(tour);
+                const response = {
+                    id: resp.id,
+                    title: resp.title,
+                    tourCode: resp.tourCode,
+                    isDeleted: resp.isDeleted,
+                };
+
+                return { response, status: 201 };
+            }
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error deleting new Tour' },
                 status: 500,
             };
         }

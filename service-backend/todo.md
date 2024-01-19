@@ -3,7 +3,7 @@
 -   [x] Create User
 -   [x] Find by Username
 -   [x] Update User
--   [ ] Delete User
+-   [x] Delete User
 -   [x] Look for isSingle attribute
 -   [x] Get id from userResponse in userRouter
 
@@ -29,7 +29,7 @@
 
 #### Tour Coin
 
--   [ ] Create Tour Coin assciated to an User.
+-   [x] Create Tour Coin assciated to an User.
 
 #### Team
 

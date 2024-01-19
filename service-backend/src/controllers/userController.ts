@@ -60,6 +60,7 @@ export class UserController {
                 username: resp.username,
                 email: resp.email,
                 isSingle: resp.isSingle,
+                isDeleted: resp.isDeleted,
             };
 
             return { response, status: 201 };
@@ -97,15 +98,13 @@ export class UserController {
                 const user = await this.userService.findById(userId);
 
                 if (user) {
-                    const resp = await this.userService.updateUser(
-                        newUser,
-                        user
-                    );
+                    const resp = await this.userService.update(newUser, user);
                     const response = {
                         id: resp.id,
                         username: resp.username,
                         email: resp.email,
                         isSingle: resp.isSingle,
+                        isDeleted: resp.isDeleted,
                     };
                     return { response, status: 201 };
                 } else {
@@ -124,6 +123,24 @@ export class UserController {
         }
     }
 
+    async delete(userId: string) {
+        try {
+            const user = await this.userService.findById(userId);
+
+            if (user) {
+                const resp = await this.userService.delete(user);
+                const response = {
+                    id: resp.id,
+                    username: resp.username,
+                    email: resp.email,
+                    isSingle: resp.isSingle,
+                    isDeleted: resp.isDeleted,
+                };
+                return { response, status: 201 };
+            }
+        } catch (e) {}
+    }
+
     async findByUsername(username: string) {
         try {
             const resp = await this.userService.findByUsername(username);
@@ -140,6 +157,7 @@ export class UserController {
                 username: resp.username,
                 email: resp.email,
                 isSingle: resp.isSingle,
+                isDeleted: resp.isDeleted,
             };
             return { response, status: 201 };
         } catch (e) {

@@ -22,10 +22,7 @@ export class UserService {
 
         return savedUser;
     }
-    async updateUser(
-        user: User,
-        existingUser: User
-    ): Promise<User | undefined> {
+    async update(user: User, existingUser: User): Promise<User> {
         try {
             const updatedUser = UserRepository.merge(existingUser, user);
 
@@ -35,6 +32,12 @@ export class UserService {
             return undefined;
         }
     }
+
+    async delete(user: User): Promise<User> {
+        user.isDeleted = true;
+        return UserRepository.save(user);
+    }
+
     async findByUsername(username: string): Promise<User | undefined> {
         return await UserRepository.findByUsername(username);
     }

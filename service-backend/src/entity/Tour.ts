@@ -21,6 +21,9 @@ export class Tour {
     @Column()
     tourCode: string;
 
+    @Column({ default: false })
+    isDeleted: boolean;
+
     @ManyToMany(() => User, (user) => user.tours)
     @JoinTable()
     users: User[];

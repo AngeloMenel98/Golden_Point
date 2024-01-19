@@ -42,6 +42,9 @@ export class User {
     @IsBoolean()
     isSingle: boolean;
 
+    @Column({ default: false })
+    isDeleted: boolean;
+
     @Column({
         type: 'enum',
         enum: UserRole,

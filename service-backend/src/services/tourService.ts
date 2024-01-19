@@ -1,4 +1,4 @@
-import { TourRepository, UserRepository } from '../repository';
+import { TourRepository } from '../repository';
 import { Tour } from '../entity';
 import { UserService } from './userService';
 import { UserRole } from '../entity/User';
@@ -10,7 +10,7 @@ export class TourService {
         this.userService = new UserService();
     }
 
-    async create(newTour: Tour, userId: string): Promise<Tour | undefined> {
+    async create(newTour: Tour, userId: string): Promise<Tour> {
         try {
             const user = await this.userService.findById(userId);
 
@@ -22,6 +22,11 @@ export class TourService {
         } catch (err) {
             console.error('Error al crear el Tour', err);
         }
+    }
+
+    async delete(tour: Tour): Promise<Tour> {
+        tour.isDeleted = true;
+        return TourRepository.save(tour);
     }
 
     async joinUserToTour(

@@ -71,4 +71,30 @@ router.post(
     }
 );
 
+router.post(
+    '/tour/delete',
+    [
+        check('tourId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('tourId')),
+    ],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { tourId } = req.body;
+            const { response, status } = await tourController.delete(tourId);
+
+            res.status(status).json(response);
+        } catch (err) {
+            console.error('Error adding user to tour:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+);
+
 export default router;
