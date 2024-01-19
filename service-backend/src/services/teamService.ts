@@ -68,13 +68,11 @@ export class TeamService {
 
             if (existingTeam) {
                 return existingTeam;
-            } else {
-                console.error('Error finding user by ID', teamId);
-                return undefined;
             }
-        } catch (err) {
             console.error('Error finding user by ID', teamId);
             return undefined;
+        } catch (err) {
+            console.error('Error finding user by ID', teamId);
         }
     }
 }

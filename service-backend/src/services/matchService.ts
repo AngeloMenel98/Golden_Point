@@ -36,4 +36,18 @@ export class MatchService {
             throw new Error('Error creating Match with Teams');
         }
     }
+    async findById(matchId: string): Promise<Match> {
+        try {
+            const existingMatch = await MatchRepository.findOneBy({
+                id: matchId,
+            });
+
+            if (existingMatch) {
+                return existingMatch;
+            }
+            console.error('Error finding Match by ID', matchId);
+        } catch (err) {
+            console.error('Error finding Match by ID', matchId);
+        }
+    }
 }

@@ -5,6 +5,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     async findByUsername(username: string): Promise<User> {
         return await this.findOne({ where: { username } });
     },
+
     async getUsersByTourId(tourId: string): Promise<User[]> {
         try {
             return await this.createQueryBuilder('u')
@@ -17,6 +18,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
             throw error;
         }
     },
+
     async getUsersByTeamId(teamId: string): Promise<User[]> {
         try {
             return await this.createQueryBuilder('u')

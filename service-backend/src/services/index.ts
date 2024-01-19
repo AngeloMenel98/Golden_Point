@@ -6,6 +6,7 @@ import { TeamService } from './teamService';
 import { ClubService } from './clubService';
 import { TourCoinService } from './tourCoinService';
 import { MatchService } from './matchService';
+import { SetService } from './setService';
 
 export {
     PerDataService,
@@ -16,4 +17,5 @@ export {
     ClubService,
     TourCoinService,
     MatchService,
+    SetService,
 };
