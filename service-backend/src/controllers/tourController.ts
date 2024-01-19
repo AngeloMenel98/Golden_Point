@@ -77,6 +77,19 @@ export class TourController {
             };
         }
     }
+
+    async getAll() {
+        const response = await this.tourService.getAll();
+
+        if (!response) {
+            return {
+                response: { error: 'Tours not Found' },
+                status: 404,
+            };
+        }
+
+        return { response, status: 201 };
+    }
 }
 
 export default new TourController();

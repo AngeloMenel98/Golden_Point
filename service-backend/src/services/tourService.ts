@@ -51,7 +51,7 @@ export class TourService {
         }
     }
 
-    async findById(tourId: string): Promise<Tour | undefined> {
+    async findById(tourId: string): Promise<Tour> {
         try {
             const existingTour = await TourRepository.findOneBy({
                 id: tourId,
@@ -64,6 +64,18 @@ export class TourService {
         } catch (err) {
             console.error('Error al actualizar  usuario');
             return undefined;
+        }
+    }
+
+    async getAll(): Promise<Tour[]> {
+        try {
+            const existingTours = await TourRepository.getAll();
+            if (existingTours) {
+                return existingTours;
+            }
+            console.error('Error finding any Tour');
+        } catch (err) {
+            console.error('Error finding any Tour');
         }
     }
 }

@@ -38,10 +38,10 @@ export class UserService {
         return UserRepository.save(user);
     }
 
-    async findByUsername(username: string): Promise<User | undefined> {
+    async findByUsername(username: string): Promise<User> {
         return await UserRepository.findByUsername(username);
     }
-    async findById(userId: string): Promise<User | undefined> {
+    async findById(userId: string): Promise<User> {
         try {
             const existingUser = await UserRepository.findOneBy({
                 id: userId,

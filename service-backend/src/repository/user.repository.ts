@@ -8,7 +8,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
 
     async getUsersByTourId(tourId: string): Promise<User[]> {
         try {
-            return await this.createQueryBuilder('u')
+            return this.createQueryBuilder('u')
                 .innerJoin('tour_users_user', 'tuu', 'u.id = tuu."userId"')
                 .innerJoin('tour', 't', 't.id = tuu."tourId"')
                 .where('t.id = :tourId', { tourId })

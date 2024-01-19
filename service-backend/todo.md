@@ -3,7 +3,7 @@
 -   [x] Create Tour associated to an User
 -   [x] Delete Tour
 -   [x] Add User to Tour
--   [ ] Get a Tour info
+-   [x] Get a Tour info
 -   [ ] Update Tour info
 
 #### Tournament
