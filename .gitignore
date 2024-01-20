@@ -1,0 +1,10 @@
+service-backend/.idea/
+service-backend/.vscode/
+service-backend/node_modules/
+service-backend/.env
+service-backend/.dockerignore
+service-backend/.prettierrc.json
+service-backend/build/
+service-backend/tmp/
+service-backend/temp/
+service-backend/todo.md
