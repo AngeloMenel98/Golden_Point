@@ -21,4 +21,19 @@ export class CourtService {
             console.error('Error creating Courts:', err);
         }
     }
+
+    async findById(courtId: any): Promise<Court> {
+        try {
+            const existingCourt = await CourtRepository.findOneBy({
+                id: courtId,
+            });
+
+            if (existingCourt) {
+                return existingCourt;
+            }
+        } catch (err) {
+            console.error('Error finding user by ID', courtId);
+            return undefined;
+        }
+    }
 }

@@ -3,7 +3,7 @@
 -   [x] Create Tour associated to an User
 -   [x] Delete Tour
 -   [x] Add User to Tour
--   [x] Get a Tour info
+-   [x] Get all Tours Info
 -   [ ] Update Tour info
 
 #### Tournament
@@ -28,7 +28,7 @@
 #### Club
 
 -   [x] Create club associated with tour and done by a SUPERADMIN
--   [ ] Get a club info
+-   [x] Get all Clubs Info
 -   [ ] Update club info
 -   [ ] Delete club
 

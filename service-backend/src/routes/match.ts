@@ -28,6 +28,10 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('tournamentId')),
+        check('courtId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('courtId')),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -42,13 +46,15 @@ router.post(
                 matchDate,
                 teamIds,
                 tournamentId,
+                courtId,
             } = req.body;
             const { resp, status } = await matchController.create(
                 amountTourPoints,
                 amountTourCoins,
                 matchDate,
                 teamIds,
-                tournamentId
+                tournamentId,
+                courtId
             );
             res.status(status).json(resp);
         } catch (err) {

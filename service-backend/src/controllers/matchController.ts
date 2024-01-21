@@ -14,7 +14,8 @@ export class MatchController {
         amountTourCoins: number,
         matchDate: string,
         teamIds: string[],
-        tournamentId: string
+        tournamentId: string,
+        courtId: string
     ) {
         try {
             const newMatch = new Match();
@@ -31,7 +32,8 @@ export class MatchController {
             const resp = await this.matchService.create(
                 newMatch,
                 teamIds,
-                tournamentId
+                tournamentId,
+                courtId
             );
             return { resp, status: 201 };
         } catch (e) {

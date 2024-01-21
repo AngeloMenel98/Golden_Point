@@ -10,10 +10,12 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
     async getAll(): Promise<any> {
         try {
             return await this.createQueryBuilder('t')
-                .select('t.title', 'tourTitle')
-                .addSelect('t.tourCode', 'tourCode')
-                .addSelect('COUNT(DISTINCT tuu.userId)', 'userCount')
-                .addSelect('COUNT(DISTINCT tt.id)', 'tournamentCount')
+                .select([
+                    't.title AS tourTitle',
+                    't.tourCode AS tourCode',
+                    'COUNT(DISTINCT tuu.userId) AS userCount',
+                    'COUNT(DISTINCT tt.id) AS tournamentCount',
+                ])
                 .innerJoin('tour_users_user', 'tuu', 'tuu.tourId = t.id')
                 .leftJoin('user', 'u', 'tuu.userId = u.id')
                 .leftJoin('tournament', 'tt', 'tt.tourId = t.id')

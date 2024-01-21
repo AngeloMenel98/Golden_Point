@@ -13,6 +13,7 @@ export class ClubService {
         this.calendarClubService = new CalendarClubService();
         this.courtService = new CourtService();
     }
+
     async create(
         newClub: Club,
         newCalClub: CalendarClub,
@@ -36,6 +37,15 @@ export class ClubService {
             }
         } catch (e) {
             console.error('Error creating club in Service', e);
+        }
+    }
+
+    async getAll(): Promise<Club> {
+        try {
+            const existingTours = await ClubRepository.getAll();
+            return existingTours;
+        } catch (e) {
+            console.error(e);
         }
     }
 }

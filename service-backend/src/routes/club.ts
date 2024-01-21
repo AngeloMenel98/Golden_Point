@@ -66,4 +66,20 @@ router.post(
     }
 );
 
+router.get('/club/clubs', async (req: Request, res: Response) => {
+    try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { response, status } = await clubController.getAll();
+
+        res.status(status).json(response);
+    } catch (error) {
+        console.error('Error getting Tours:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
 export default router;

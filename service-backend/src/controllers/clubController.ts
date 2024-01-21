@@ -47,6 +47,19 @@ export class ClubController {
             };
         }
     }
+
+    async getAll() {
+        const response = await this.clubService.getAll();
+
+        if (!response) {
+            return {
+                response: 'Clubs not Found',
+                status: 404,
+            };
+        }
+
+        return { response, status: 201 };
+    }
 }
 
 export default new ClubController();
