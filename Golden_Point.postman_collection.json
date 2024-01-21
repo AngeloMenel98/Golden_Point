@@ -1,0 +1,620 @@
+{
+	"info": {
+		"_postman_id": "ec46fbb1-25c8-4721-a893-6cdd952eb741",
+		"name": "Padel_App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27774313"
+	},
+	"item": [
+		{
+			"name": "USERS",
+			"item": [
+				{
+					"name": "CREATE USER",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 545f45df6d156fs16d",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"ricardito\",\n  \"email\": \"ricardito@hot.com\",\n  \"password\": \"codingForFood\",\n  \"isSingle\": true,\n  \"userRole\": \"superadmin\",\n  \"firstName\": \"Ricardo\",\n  \"lastName\": \"Molla\",\n  \"phoneNumber\": \"+5491116578982\",\n  \"location\": \"Carlin 678\",\n  \"coins\": \"0\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/register",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET USER BY USERNAME",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/pablito",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"pablito"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UPDATE USER",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"6c579037-1d5c-4fe0-b277-9c2438c54a08\",\n    \"username\": \"ange\",\n    \"email\": \"an3@hot.com\",\n    \"password\": \"testtest\",\n    \"isSingle\": false,\n    \"userRole\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/update",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE USER",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"5d88af56-2deb-46d2-814b-27716ef10f27\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/delete",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TOURS",
+			"item": [
+				{
+					"name": "CREATE TOUR",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Carlos Paz Tour\",\n    \"userId\": \"c92dd882-8532-45f2-b85b-5a4be8d71c26\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/tour/create",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tour",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD USER TO TOUR",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"9cecce0e-2142-489b-b041-eb87d16789a2\",\n    \"tourCode\": \"hWs4sC1705846480524\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/tour/join",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tour",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE TOUR",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tourId\": \"94a26513-7da7-4b0a-bc72-e7a7d638ec88\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/tour/delete",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tour",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET TOURS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8080/api/tour/tours",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tour",
+								"tours"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TOURNAMENTS",
+			"item": [
+				{
+					"name": "CREATE TOURNAMENT",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \n    \"tourId\": \"a35b2c72-0493-4e4d-954a-3981147ea473\",\n    \"title\": \"March\",\n    \"master\": \"1500\",\n    \"categoryData\": [\n        {\"categoryName\": \"Octava\", \"gender\": \"Masculino\"},\n        {\"categoryName\": \"Cuarta\", \"gender\": \"Masculino\"}\n    ]\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/tournament/create",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"tournament",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TEAMS",
+			"item": [
+				{
+					"name": "CREATE TEAM",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"userId\":\"f898a108-0dd0-4223-96cb-75bac2da020f\",\n\t\"teamName\":\"Molla-Picasso\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/team/create",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"team",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ADD USERS TO TEAM",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"usersId\":[\n\t\t\"9cecce0e-2142-489b-b041-eb87d16789a2\",\n\t\t\"45e62020-97bc-4afb-8c4e-5634a24d1d0b\"\n\t],\n\t\"teamId\":\"85c18127-7f0e-42f6-9de7-e8c63b5094bd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/team/join",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"team",
+								"join"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET TEAM",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8080/api/team/cea1a45e-d3fc-4033-8cd5-3dbaf0788eee",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"team",
+								"cea1a45e-d3fc-4033-8cd5-3dbaf0788eee"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CLUBS",
+			"item": [
+				{
+					"name": "CREATE CLUB",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clubName\": \"Padel Paz\",\n    \"location\": \"Av. Padel\",\n    \"tourId\": \"e1b1221b-08b1-4bf2-a5f6-908e49ad5de8\",\n    \"userRole\": \"superadmin\",\n    \"availableFrom\": \"2024-01-19T10:30:00.000Z\",\n    \"availableTo\": \"2024-01-20T20:30:00.000Z\",\n    \"courtsNumber\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/club/create",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"club",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET CLUBS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "127.0.0.1:8080/api/club/clubs",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"club",
+								"clubs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MATCH",
+			"item": [
+				{
+					"name": "CREATE MATCH",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"amountTourPoints\": \"12.5\",\n    \"amountTourCoins\": \"100\",\n    \"matchDate\": \"2024-01-21T15:30:00.000Z\",\n    \"teamIds\": [\n        \"7673455c-e2aa-40be-b023-7f28909bfb1b\",\"85c18127-7f0e-42f6-9de7-e8c63b5094bd\"\n    ],\n    \"tournamentId\": \"9866c354-b9a3-431f-a7ca-b4831162089b\",\n    \"courtId\": \"c07fe5f6-c5fe-4236-8aa5-ac7ac8b5cd14\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/match/create",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"match",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SET",
+			"item": [
+				{
+					"name": "CREATE SET",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"gamesTeam1\": \"7\",\n    \"gamesTeam2\": \"6\",\n    \"matchId\": \"6718ebe7-17a3-40e9-954d-5f94228f54dd\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8080/api/set/create",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"set",
+								"create"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
