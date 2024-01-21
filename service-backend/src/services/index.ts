@@ -9,6 +9,7 @@ import { MatchService } from './matchService';
 import { SetService } from './setService';
 import { CalendarClubService } from './calendarClubService';
 import { CourtService } from './courtService';
+import { CategoryService } from './categoryService';
 
 export {
     PerDataService,
@@ -22,4 +23,5 @@ export {
     SetService,
     CalendarClubService,
     CourtService,
+    CategoryService,
 };

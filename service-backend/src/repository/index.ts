@@ -9,6 +9,7 @@ import { MatchRepository } from './match.repository';
 import { SetRepository } from './set.repository';
 import { CalendarClubRepository } from './calendarClub.repository';
 import { CourtRepository } from './court.repository';
+import { CategoryRepository } from './category.repository';
 
 export {
     PerDataRepository,
@@ -22,4 +23,5 @@ export {
     SetRepository,
     CalendarClubRepository,
     CourtRepository,
+    CategoryRepository,
 };

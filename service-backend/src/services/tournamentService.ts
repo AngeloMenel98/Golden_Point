@@ -1,27 +1,49 @@
-import { TourService } from '.';
-import { Tournament } from '../entity';
+import { CategoryService, TourService } from '.';
+import { Category, Tournament } from '../entity';
 import { TournamentRepository } from '../repository';
 
 export class TournamentService {
     private tourService: TourService;
+    private categoryService: CategoryService;
 
     constructor() {
         this.tourService = new TourService();
+        this.categoryService = new CategoryService();
     }
 
     async create(
-        tournament: Tournament,
-        tourId: string
-    ): Promise<Tournament | undefined> {
+        newTournament: Tournament,
+        newCategories: Category[],
+        tourId: string,
+        categoryData: { categoryName: string; gender: string }[]
+    ): Promise<Tournament> {
         try {
             const existingTour = await this.tourService.findById(tourId);
             if (existingTour.success) {
-                tournament.tour = existingTour.tour;
-                return await TournamentRepository.save(tournament);
+                newTournament.tour = existingTour.tour;
+
+                const existingCats = await this.categoryService.findCategories(
+                    categoryData
+                );
+                console.log('ExistingCats:', existingCats);
+                console.log('CategoryData:', categoryData);
+                const savedCategories = await this.categoryService.create(
+                    newCategories,
+                    categoryData
+                );
+
+                const combinedCategories = [
+                    ...existingCats,
+                    ...savedCategories,
+                ];
+
+                console.log('CombinedCat:', combinedCategories);
+                newTournament.categories = combinedCategories;
+
+                return TournamentRepository.save(newTournament);
             }
-            console.error('Tournament not created');
         } catch (e) {
-            console.error('Error al crear el Tour', e);
+            console.error('Error creating Tournament', e);
         }
     }
 

@@ -7,6 +7,7 @@ import clubController from './clubController';
 import tourCoinController from './tourCoinController';
 import matchController from './matchController';
 import setController from './setController';
+import categoryController from './categoryController';
 
 export {
     perDataController,
@@ -18,4 +19,5 @@ export {
     tourCoinController,
     matchController,
     setController,
+    categoryController,
 };

@@ -20,6 +20,10 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('master')),
+        check('categoryData')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('categoryData')),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -28,13 +32,13 @@ router.post(
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { tourId, title, master } = req.body;
+            const { tourId, title, master, categoryData } = req.body;
             const { resp, status } = await tournController.create(
                 tourId,
                 title,
-                master
+                master,
+                categoryData
             );
-
             return res.status(status).json(resp);
         } catch (err) {
             console.error('Error registering tournament:', err);

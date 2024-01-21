@@ -1,4 +1,4 @@
-import { Tournament } from '../entity';
+import { Category, Tournament } from '../entity';
 import { TournamentService } from '../services';
 
 export class TournamentController {
@@ -8,13 +8,25 @@ export class TournamentController {
         this.tournService = new TournamentService();
     }
 
-    async create(tourId: string, title: string, master: number) {
+    async create(
+        tourId: string,
+        title: string,
+        master: number,
+        categoryData: { categoryName: string; gender: string }[]
+    ) {
         try {
             const newTourn = new Tournament();
             newTourn.title = title;
             newTourn.master = master;
 
-            const resp = await this.tournService.create(newTourn, tourId);
+            const newCategories: Category[] = [];
+
+            const resp = await this.tournService.create(
+                newTourn,
+                newCategories,
+                tourId,
+                categoryData
+            );
             return { resp, status: 201 };
         } catch (e) {
             console.error(e);
