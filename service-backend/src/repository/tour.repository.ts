@@ -16,7 +16,8 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
                 .addSelect('COUNT(DISTINCT tt.id)', 'tournamentCount')
                 .innerJoin('tour_users_user', 'tuu', 'tuu.tourId = t.id')
                 .leftJoin('user', 'u', 'tuu.userId = u.id')
-                .innerJoin('tournament', 'tt', 'tt.tourId = t.id')
+                .leftJoin('tournament', 'tt', 'tt.tourId = t.id')
+                .where('t."isDeleted" = false')
                 .groupBy('t.id, t.title, t.tourCode')
                 .getRawMany();
         } catch (error) {

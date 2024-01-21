@@ -15,15 +15,18 @@ export class TourController {
             newTour.tourCode = generateCode(6);
 
             const resp = await this.tourService.create(newTour, userId);
-            const response = {
-                id: resp.id,
-                title: resp.title,
-                tourCode: resp.tourCode,
-                isDeleted: resp.isDeleted,
-                usersId: resp.users.map((u) => u.id),
-            };
 
-            return { response, status: 201 };
+            if (resp.success) {
+                const response = {
+                    id: resp.tour.id,
+                    title: resp.tour.title,
+                    tourCode: resp.tour.tourCode,
+                    isDeleted: resp.tour.isDeleted,
+                    usersId: resp.tour.users.map((u) => u.id),
+                };
+
+                return { response, status: 201 };
+            }
         } catch (e) {
             console.error(e);
             return {
@@ -35,18 +38,20 @@ export class TourController {
 
     async delete(tourId: string) {
         try {
-            const tour = await this.tourService.findById(tourId);
+            const existingTour = await this.tourService.findById(tourId);
 
-            if (tour) {
-                const resp = await this.tourService.delete(tour);
-                const response = {
-                    id: resp.id,
-                    title: resp.title,
-                    tourCode: resp.tourCode,
-                    isDeleted: resp.isDeleted,
-                };
+            if (existingTour.success) {
+                const resp = await this.tourService.delete(existingTour.tour);
+                if (resp.success) {
+                    const response = {
+                        id: resp.tour.id,
+                        title: resp.tour.title,
+                        tourCode: resp.tour.tourCode,
+                        isDeleted: resp.tour.isDeleted,
+                    };
 
-                return { response, status: 201 };
+                    return { response, status: 201 };
+                }
             }
         } catch (e) {
             console.error(e);
@@ -63,13 +68,15 @@ export class TourController {
                 userId,
                 tourCode
             );
-            const response = {
-                id: resp.id,
-                title: resp.title,
-                tourCode: resp.tourCode,
-                usersId: resp.users.map((u) => u.id),
-            };
-            return { response, status: 201 };
+            if (resp.success) {
+                const response = {
+                    id: resp.tour.id,
+                    title: resp.tour.title,
+                    tourCode: resp.tour.tourCode,
+                    usersId: resp.tour.users.map((u) => u.id),
+                };
+                return { response, status: 201 };
+            }
         } catch (e) {
             console.error(e);
             return {
@@ -83,7 +90,7 @@ export class TourController {
 
         if (!response) {
             return {
-                response: { error: 'Tours not Found' },
+                response: response.message,
                 status: 404,
             };
         }

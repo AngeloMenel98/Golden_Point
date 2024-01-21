@@ -1,6 +1,6 @@
 import { TourRepository } from '../repository';
 import { Tour } from '../entity';
-import { UserService } from './userService';
+import { UserService } from '.';
 import { UserRole } from '../entity/User';
 
 export class TourService {
@@ -10,29 +10,52 @@ export class TourService {
         this.userService = new UserService();
     }
 
-    async create(newTour: Tour, userId: string): Promise<Tour> {
+    async create(
+        newTour: Tour,
+        userId: string
+    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
         try {
             const user = await this.userService.findById(userId);
 
             if (user && user.role == UserRole.SUPERADMIN) {
                 newTour.users = [user];
-                return await TourRepository.save(newTour);
+                const savedTour = await TourRepository.save(newTour);
+                return { success: true, tour: savedTour };
             }
-            console.log('No se creo tour porque el usuario no es SUPERADMIN');
-        } catch (err) {
-            console.error('Error al crear el Tour', err);
+            return {
+                success: false,
+                message:
+                    'The Tour was not created beacuse the user is not SUPERADMIN or the ID does not exist',
+            };
+        } catch (e) {
+            console.error(e);
+            return {
+                success: false,
+                message: 'Error creating a Tour',
+            };
         }
     }
 
-    async delete(tour: Tour): Promise<Tour> {
-        tour.isDeleted = true;
-        return TourRepository.save(tour);
+    async delete(
+        tour: Tour
+    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
+        try {
+            tour.isDeleted = true;
+            const savedTour = await TourRepository.save(tour);
+            return { success: true, tour: savedTour };
+        } catch (e) {
+            console.error(e);
+            return {
+                success: false,
+                message: 'Error eliminating the Tour',
+            };
+        }
     }
 
     async joinUserToTour(
         userId: string,
         tourCode: string
-    ): Promise<Tour | undefined> {
+    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
         try {
             const existingTour = await TourRepository.findOneBy({
                 tourCode: tourCode,
@@ -44,38 +67,56 @@ export class TourService {
                     existingTour.id
                 );
                 existingTour.users = [...usersInTour, user];
-                return TourRepository.save(existingTour);
+                const savedTour = await TourRepository.save(existingTour);
+                return { success: true, tour: savedTour };
             }
+            return { success: false, message: 'Error adding user to Tour' };
         } catch (e) {
-            console.error('Error al agregar usuario al Tour', e);
+            console.error(e);
+            return {
+                success: false,
+                message: 'Error adding User to Tour',
+            };
         }
     }
 
-    async findById(tourId: string): Promise<Tour> {
+    async findById(
+        tourId: string
+    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
         try {
             const existingTour = await TourRepository.findOneBy({
                 id: tourId,
             });
             if (existingTour) {
-                return existingTour;
-            } else {
-                console.error('No se encontró un tour con ID', existingTour.id);
+                return { success: true, tour: existingTour };
             }
-        } catch (err) {
-            console.error('Error al actualizar  usuario');
-            return undefined;
+            return {
+                success: false,
+                message: 'Tour was not found by ID: ' + tourId,
+            };
+        } catch (e) {
+            console.error(e);
+            return {
+                success: false,
+                message: 'Error founding Tour',
+            };
         }
     }
 
-    async getAll(): Promise<Tour[]> {
+    async getAll(): Promise<{
+        success: boolean;
+        tours?: Tour[];
+        message?: string;
+    }> {
         try {
             const existingTours = await TourRepository.getAll();
-            if (existingTours) {
-                return existingTours;
-            }
-            console.error('Error finding any Tour');
-        } catch (err) {
-            console.error('Error finding any Tour');
+            return { success: true, tours: existingTours };
+        } catch (e) {
+            console.error(e);
+            return {
+                success: false,
+                message: 'Error getting all Tours',
+            };
         }
     }
 }

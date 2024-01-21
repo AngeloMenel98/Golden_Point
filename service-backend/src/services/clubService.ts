@@ -24,8 +24,8 @@ export class ClubService {
         try {
             const existingTour = await this.tourService.findById(tourId);
 
-            if (existingTour && userRole == UserRole.SUPERADMIN) {
-                newClub.tour = existingTour;
+            if (existingTour.success && userRole == UserRole.SUPERADMIN) {
+                newClub.tour = existingTour.tour;
                 newClub.calendarClub = newCalClub;
 
                 this.calendarClubService.create(newCalClub);

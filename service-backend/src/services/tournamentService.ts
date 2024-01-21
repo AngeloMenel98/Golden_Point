@@ -15,8 +15,8 @@ export class TournamentService {
     ): Promise<Tournament | undefined> {
         try {
             const existingTour = await this.tourService.findById(tourId);
-            if (existingTour) {
-                tournament.tour = existingTour;
+            if (existingTour.success) {
+                tournament.tour = existingTour.tour;
                 return await TournamentRepository.save(tournament);
             }
             console.error('Tournament not created');
