@@ -1,0 +1,10 @@
+.idea/
+.vscode/
+node_modules/
+.env
+.dockerignore
+.prettierrc.json
+build/
+tmp/
+temp/
+todo.md
