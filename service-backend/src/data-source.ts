@@ -16,13 +16,14 @@ import {
     Notification,
     Reward,
 } from './entity/index';
+
 export const AppDataSource = new DataSource({
     type: 'postgres',
     host: 'localhost',
     port: 5432,
     username: 'root',
     password: 'root',
-    database: 'padel_app',
+    database: 'golden_point',
     synchronize: true,
     logging: false,
     entities: [
