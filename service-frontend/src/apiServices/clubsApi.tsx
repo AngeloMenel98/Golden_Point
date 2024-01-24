@@ -1,9 +1,9 @@
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:8080/api/club";
 
-const apiService = {
+const clubsApi = {
   getClubs: async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/club/clubs`, {
+      const response = await fetch(`${BASE_URL}/clubs`, {
         method: "GET",
       });
 
@@ -13,10 +13,10 @@ const apiService = {
 
       const data = await response.json();
       return data;
-    } catch (error) {
-      throw new Error(`Error en la solicitud: chau`);
+    } catch (e) {
+      console.error("Error en la solicitud:", e);
     }
   },
 };
 
-export default apiService;
+export default clubsApi;
