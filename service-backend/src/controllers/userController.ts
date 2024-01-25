@@ -2,6 +2,7 @@ import { PersonalData, TourCoin, User } from '../entity';
 import { UserService } from '../services';
 import { validate } from 'class-validator';
 import { UserRole } from '../entity/User';
+import * as jwt from 'jsonwebtoken';
 
 export class UserController {
     private userService: UserService;
@@ -28,11 +29,19 @@ export class UserController {
                 isSingle: resp.isSingle,
                 isDeleted: resp.isDeleted,
             };
-            return { response, status: 201 };
+
+            const secretKey = process.env.JWT_SECRET;
+            console.log(secretKey);
+
+            const token = jwt.sign(response, secretKey, {
+                expiresIn: '1h',
+            });
+
+            return { response: { token }, status: 201 };
         } catch (e) {
             console.error(e);
             return {
-                response: { error: 'Error finding User by Username' },
+                response: { error: 'Error loggin in' },
                 status: 500,
             };
         }

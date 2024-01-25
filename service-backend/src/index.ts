@@ -1,7 +1,10 @@
 import express = require('express');
 import cors = require('cors');
+import * as dotenv from 'dotenv';
 import configureRoutes from './routes/index';
 import { AppDataSource } from './data-source';
+
+dotenv.config();
 
 AppDataSource.initialize()
     .then(async () => {})
@@ -9,7 +12,7 @@ AppDataSource.initialize()
 
 const app = express();
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
