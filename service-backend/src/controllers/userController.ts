@@ -9,6 +9,34 @@ export class UserController {
     constructor() {
         this.userService = new UserService();
     }
+    async logIn(username: string, password: string) {
+        try {
+            const resp = await this.userService.logIn(username, password);
+
+            if (!resp) {
+                return {
+                    response: { error: 'User not Found' },
+                    status: 404,
+                };
+            }
+
+            const response = {
+                id: resp.id,
+                username: resp.username,
+                email: resp.email,
+                userRole: resp.role,
+                isSingle: resp.isSingle,
+                isDeleted: resp.isDeleted,
+            };
+            return { response, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error finding User by Username' },
+                status: 500,
+            };
+        }
+    }
 
     async create(
         username: string,

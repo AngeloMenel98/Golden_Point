@@ -14,7 +14,7 @@ import {
     Notification,
     Reward,
 } from './index';
-import { hashValue } from '../helpers/bCrypt.helper';
+import { compareHash, hashValue } from '../helpers/bCrypt.helper';
 import { IsBoolean, IsEmail, IsEnum, isBoolean } from 'class-validator';
 
 export enum UserRole {
@@ -72,5 +72,9 @@ export class User {
 
     async hashPassword(password: string): Promise<string> {
         return (this.password = hashValue(password));
+    }
+
+    compareHashPass(password: string) {
+        return compareHash(password, this.password);
     }
 }

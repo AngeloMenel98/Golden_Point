@@ -8,6 +8,40 @@ const router = Router();
 const PASSWORD_LENGTH = 6;
 
 router.post(
+    '/login',
+    [
+        check('username')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('username')),
+        check('password')
+            .not()
+            .isEmpty()
+            .isLength({ min: PASSWORD_LENGTH })
+            .withMessage(
+                validationMsg.PASSWORD_LENGTH_RESTRICTION(PASSWORD_LENGTH)
+            ),
+    ],
+    async (req: Request, res: Response) => {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+            const { username, password } = req.body;
+            const { response, status } = await userController.logIn(
+                username,
+                password
+            );
+            return res.status(status).json(response);
+        } catch (error) {
+            console.error('Error loggin in:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+);
+
+router.post(
     '/register',
     [
         check('username')

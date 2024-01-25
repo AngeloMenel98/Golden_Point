@@ -51,21 +51,21 @@ const toursApi = {
       console.error("Petition Error:", e);
     }
   },
-  getTours: async () => {    try {
-    const response = await fetch(`${BASE_URL}/tours`, {
-      method: "GET",
-    });
+  getTours: async () => {
+    try {
+      const response = await fetch(`${BASE_URL}/tours`, {
+        method: "GET",
+      });
 
-    if (!response.ok) {
-      throw new Error("Error en la solicitud al servidor");
+      if (!response.ok) {
+        throw new Error("Error en la solicitud al servidor");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      console.error("Error en la solicitud:", e);
     }
-
-    const data = await response.json();
-    return data;
-  } catch (e) {
-    console.error("Error en la solicitud:", e);
-  }
-},},
+  },
 };
-
 export default toursApi;
