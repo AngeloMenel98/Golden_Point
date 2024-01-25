@@ -17,7 +17,8 @@ export class UserService {
             const existingUser = await UserRepository.findOneBy({
                 username: username,
             });
-            if (await existingUser.compareHashPass(password)) {
+
+            if (existingUser.compareHashPass(password)) {
                 return existingUser;
             }
         } catch (e) {

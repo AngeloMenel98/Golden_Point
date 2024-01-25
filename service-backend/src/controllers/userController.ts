@@ -31,8 +31,6 @@ export class UserController {
             };
 
             const secretKey = process.env.JWT_SECRET;
-            console.log(secretKey);
-
             const token = jwt.sign(response, secretKey, {
                 expiresIn: '1h',
             });
