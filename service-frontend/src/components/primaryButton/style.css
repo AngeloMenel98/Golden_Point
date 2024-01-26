@@ -1,0 +1,39 @@
+.button {
+    all: unset;
+    align-items: center;
+    border-radius: 5px;
+    box-sizing: border-box;
+    display: inline-flex;
+    gap: 27px;
+    overflow: hidden;
+    padding: 5px 18px;
+    position: relative;
+  }
+  
+  .button .icon-login {
+    height: 30px !important;
+    position: relative !important;
+    width: 30px !important;
+  }
+  
+  .button .text-wrapper {
+    color: var(--white);
+    font-family: var(--h3-font-family);
+    font-size: var(--h3-font-size);
+    font-style: var(--h3-font-style);
+    font-weight: var(--h3-font-weight);
+    letter-spacing: var(--h3-letter-spacing);
+    line-height: var(--h3-line-height);
+    position: relative;
+    text-align: center;
+    white-space: nowrap;
+    width: fit-content;
+  }
+  
+  .button.primary {
+    background-color: var(--mainblue);
+  }
+  
+  .button.hover {
+    background-color: #6789cb;
+  }

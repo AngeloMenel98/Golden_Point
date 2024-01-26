@@ -1,0 +1,12 @@
+export const grayBackground = '#F0F0F0';
+export const black = '#000000';
+export const white = '#FFFFFF';
+export const mainBlue = '#566FA0';
+export const secondaryBlue = '#618CB3';
+export const gray = '#F8F8F8';
+export const darkGray = '#767676';
+export const lightGray = '#DBDBDB';
+export const green = '#61B3A8';
+export const yellow = '#EF9E44';
+export const red = '#E67675';
+export const greenBackground = '#56A096';
