@@ -4,19 +4,24 @@ import {
   Route,
   Routes as Paths,
 } from "react-router-dom";
-import App from "../App";
+import Login from "../pages/Login";
+import Home from "../pages/Home";
+import { usersApi } from "../apiServices";
 
 const Routes: React.FC = () => {
+  const handleLogin = async (username: string, password: string) => {
+    try {
+      const data = await usersApi.logIn(username, password);
+      localStorage.setItem("token", data.token);
+    } catch (error) {
+      console.error("Error en el inicio de sesión:", error);
+    }
+  };
   return (
     <Router>
       <Paths>
-        <Route path="/" element={<App />} />
-
-        {/*<Route path="/about" component={About} />
-
-        <Route path="/contact" component={Contact} />
-
-  <Route component={NotFound} />*/}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login onLogin={handleLogin} />} />
       </Paths>
     </Router>
   );

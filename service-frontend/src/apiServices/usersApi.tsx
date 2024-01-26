@@ -14,6 +14,30 @@ interface UserData {
 }
 
 const usersApi = {
+  logIn: async (userName: string, password: string) => {
+    try {
+      const userData = {
+        username: userName,
+        password: password,
+      };
+
+      const response = await fetch(`${BASE_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Server Error");
+      }
+
+      return response.json();
+    } catch (e) {
+      console.error("Error en la solicitud:", e);
+    }
+  },
   createUser: async (userData: UserData) => {
     try {
       const response = await fetch(`${BASE_URL}/register`, {
