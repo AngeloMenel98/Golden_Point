@@ -6,7 +6,7 @@
       "dom.iterable",
       "esnext"
     ],
-    "types": ["styled-components/macro"],
+    "types": ["styled-components/macro","react-hook-form","react-redux"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

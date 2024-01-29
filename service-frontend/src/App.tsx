@@ -10,16 +10,7 @@ const App: React.FC = () => {
                 <Navbar />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route
-                        path="/login"
-                        element={
-                            <Login
-                                onLogin={(userName, password) => {
-                                    /* Implementa la lógica de inicio de sesión aquí */
-                                }}
-                            />
-                        }
-                    />
+                    <Route path="/login" element={<Login />} />
                 </Routes>
             </div>
         </Router>

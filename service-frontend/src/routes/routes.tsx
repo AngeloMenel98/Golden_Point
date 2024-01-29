@@ -21,10 +21,7 @@ const Routes: React.FC = () => {
         <Router>
             <Paths>
                 <Route path="/" element={<Home />} />
-                <Route
-                    path="/login"
-                    element={<Login onLogin={handleLogin} />}
-                />
+                <Route path="/login" element={<Login />} />
             </Paths>
         </Router>
     );
