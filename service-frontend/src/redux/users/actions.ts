@@ -14,5 +14,4 @@ export const userLoggedIn = (jwt: string): UserLoggedInAction => ({
 
 export const userLoggedOut = (): UserLoggedOutAction => ({
     type: USER_LOGGED_OUT,
-    payload: {},
 });

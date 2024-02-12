@@ -12,5 +12,4 @@ export interface UserLoggedInAction {
 
 export interface UserLoggedOutAction {
     type: typeof USER_LOGGED_OUT;
-    payload: {};
 }

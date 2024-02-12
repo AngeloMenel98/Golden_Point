@@ -1,5 +1,5 @@
 import React, { HTMLProps } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { red, black } from '../../utils/colors';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { PulseLoader } from 'react-spinners';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import { mainBlue } from '../../utils/colors';
 import PrimaryButton from './PrimaryButton';

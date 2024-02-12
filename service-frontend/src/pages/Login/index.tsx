@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 
 import AsyncPrimaryButton from '../../components/AsyncPrimaryButton';
 import FormInput from '../../components/FormInput';
@@ -10,6 +10,7 @@ import { userLoggedIn } from '../../redux/users/actions';
 
 import wallPaperGP from './GP_WallPaper.svg';
 import { h3 } from '../../utils/fontSizes';
+import Input from '../../components/FormInput/Input';
 
 const MainContainer = styled.div`
     width: 100%;
@@ -109,22 +110,20 @@ export default () => {
             </BannerSection>
             <LoginSection>
                 <LoginFormContainer>
-                    {/*<Form
+                    <Form
                         onSubmit={(event) => {
                             clearErrors();
                             handleSubmit(onSubmit)(event);
                         }}
                         autoComplete="off"
                     >
-                        <FormInput
+                        {/*<FormInput
                             label="Usuario"
                             type="text"
                             autoFocus
                             name="user"
                             hasError={!!errors.user}
-                            ref={register({
-                                required: 'Por favor ingrese la contraseña',
-                            })}
+                            ref={register('Por favor ingrese la contraseña')}
                             placeholder="Escriba aquí"
                         />
                         <FormInput
@@ -136,11 +135,24 @@ export default () => {
                                 required: 'Por favor ingrese la contraseña',
                             })}
                             placeholder="Escriba aquí"
+                        />*/}
+                        <Input
+                            type="text"
+                            autoFocus
+                            name="user"
+                            hasError={!!errors.user}
+                            placeholder="Escriba aquí"
+                        />
+                        <Input
+                            type="password"
+                            autoFocus
+                            name="pass"
+                            placeholder="Escriba aquí"
                         />
                         <AsyncPrimaryButton isLoading={isLoading}>
                             Iniciar sesión
                         </AsyncPrimaryButton>
-                    </Form></LoginSection>*/}
+                    </Form>
                 </LoginFormContainer>
             </LoginSection>
         </MainContainer>
