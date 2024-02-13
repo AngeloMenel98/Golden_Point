@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import styled from 'styled-components';
+import { useState } from "react";
+import { setUserToken } from "../../features/users/userSlice";
+import { useLoginUserMutation } from "../../features/users/userApiSlice";
 
-import AsyncPrimaryButton from '../../components/AsyncPrimaryButton';
-import FormInput from '../../components/FormInput';
-import { usersApi } from '../../apiServices';
-import { userLoggedIn } from '../../redux/users/actions';
-
-import wallPaperGP from './GP_WallPaper.svg';
-import { h3 } from '../../utils/fontSizes';
-import Input from '../../components/FormInput/Input';
-
-const MainContainer = styled.div`
+import wallPaperGP from "./GP_WallPaper.svg";
+import { useDispatch } from "react-redux";
+/*const MainContainer = styled.div`
     width: 100%;
     height: 100vh;
     display: flex;
@@ -59,102 +51,48 @@ const Form = styled.form`
     text-align: left;
     display: flex;
     flex-direction: column;
-`;
+`;*/
 
 export default () => {
-    const dispatch = useDispatch();
-    const [isLoading, setIsLoading] = useState(false);
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        setError,
-        clearErrors,
-    } = useForm();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const dispatch = useDispatch();
 
-    const onSubmit = async (data: any) => {
-        try {
-            setIsLoading(true);
-            const jwt = await usersApi.logIn(data.username, data.password);
-            if (!jwt) {
-                throw new Error();
-            }
+  const [loginUser] = useLoginUserMutation();
 
-            dispatch(userLoggedIn(jwt.replace('Bearer ', '')));
-        } catch (e) {
-            setIsLoading(false);
-            /*if (e.status === 401) {
-                setError('user', {
-                    type: 'validate',
-                });
-                setError('pass', {
-                    type: 'validate',
-                });
-                setError('submit', {
-                    type: 'validate',
-                    message: 'El usuario o contraseña es incorrecto/a',
-                });
-            } else {
-                setError('submit', {
-                    type: 'validate',
-                    message: 'Algo ha ido mal, intente mas tarde',
-                });
-            }*/
-        }
-    };
+  const handleLogin = async () => {
+    try {
+      const result = await loginUser({ username, password });
+      if ("data" in result && result.data) {
+        dispatch(setUserToken(result.data.token));
+      }
+    } catch (error) {
+      setError("Error en el inicio de sesión. Verifique sus credenciales.");
+    }
+  };
 
-    return (
-        <MainContainer>
-            <BannerSection>
-                <p>Sistema enfocado a Circuitos de Torneos Amateur de padel.</p>
-            </BannerSection>
-            <LoginSection>
-                <LoginFormContainer>
-                    <Form
-                        onSubmit={(event) => {
-                            clearErrors();
-                            handleSubmit(onSubmit)(event);
-                        }}
-                        autoComplete="off"
-                    >
-                        {/*<FormInput
-                            label="Usuario"
-                            type="text"
-                            autoFocus
-                            name="user"
-                            hasError={!!errors.user}
-                            ref={register('Por favor ingrese la contraseña')}
-                            placeholder="Escriba aquí"
-                        />
-                        <FormInput
-                            label="Contraseña"
-                            type="password"
-                            autoFocus
-                            name="pass"
-                            ref={register({
-                                required: 'Por favor ingrese la contraseña',
-                            })}
-                            placeholder="Escriba aquí"
-                        />*/}
-                        <Input
-                            type="text"
-                            autoFocus
-                            name="user"
-                            hasError={!!errors.user}
-                            placeholder="Escriba aquí"
-                        />
-                        <Input
-                            type="password"
-                            autoFocus
-                            name="pass"
-                            placeholder="Escriba aquí"
-                        />
-                        <AsyncPrimaryButton isLoading={isLoading}>
-                            Iniciar sesión
-                        </AsyncPrimaryButton>
-                    </Form>
-                </LoginFormContainer>
-            </LoginSection>
-        </MainContainer>
-    );
+  return (
+    <div>
+      <h2>Iniciar sesión</h2>
+      {error && <p>{error}</p>}
+      <div>
+        <input
+          type="text"
+          placeholder="Nombre de usuario"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+        />
+      </div>
+      <div>
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+        />
+      </div>
+      <button onClick={handleLogin}>Iniciar sesión</button>
+    </div>
+  );
 };

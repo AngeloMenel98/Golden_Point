@@ -1,35 +1,17 @@
-import React from 'react';
-import { BrowserRouter as Router, Link, Route, Routes } from 'react-router-dom';
-import Login from './pages/Login';
-import Home from './pages/Home';
+import "./App.css";
+import { Counter } from "./features/counter/Counter";
+import { Quotes } from "./features/quotes/Quotes";
+import logo from "./logo.svg";
+import Login from "./pages/Login";
 
-const App: React.FC = () => {
-    return (
-        <Router>
-            <div>
-                <Navbar />
-                <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/login" element={<Login />} />
-                </Routes>
-            </div>
-        </Router>
-    );
-};
-
-const Navbar: React.FC = () => {
-    return (
-        <nav>
-            <ul>
-                <li>
-                    <Link to="/">Home</Link>
-                </li>
-                <li>
-                    <Link to="/login">Login</Link>
-                </li>
-            </ul>
-        </nav>
-    );
+const App = () => {
+  return (
+    <div className="container">
+      <header className="App-header">
+        <Login />
+      </header>
+    </div>
+  );
 };
 
 export default App;
