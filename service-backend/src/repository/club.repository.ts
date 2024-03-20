@@ -6,6 +6,7 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
         try {
             return this.createQueryBuilder('c')
                 .select([
+                    'c.id AS id',
                     'c."clubName"',
                     'COUNT(co."courtNumber") AS courtCount',
                     'cc."availableFrom"',

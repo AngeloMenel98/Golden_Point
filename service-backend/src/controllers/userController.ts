@@ -2,12 +2,47 @@ import { PersonalData, TourCoin, User } from '../entity';
 import { UserService } from '../services';
 import { validate } from 'class-validator';
 import { UserRole } from '../entity/User';
+import * as jwt from 'jsonwebtoken';
 
 export class UserController {
     private userService: UserService;
 
     constructor() {
         this.userService = new UserService();
+    }
+    async logIn(username: string, password: string) {
+        try {
+            const resp = await this.userService.logIn(username, password);
+
+            if (!resp) {
+                return {
+                    response: { error: 'User not Found' },
+                    status: 404,
+                };
+            }
+
+            const response = {
+                id: resp.id,
+                username: resp.username,
+                email: resp.email,
+                userRole: resp.role,
+                isSingle: resp.isSingle,
+                isDeleted: resp.isDeleted,
+            };
+
+            const secretKey = process.env.JWT_SECRET;
+            const token = jwt.sign(response, secretKey, {
+                expiresIn: '1h',
+            });
+
+            return { response: { token }, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error loggin in' },
+                status: 500,
+            };
+        }
     }
 
     async create(

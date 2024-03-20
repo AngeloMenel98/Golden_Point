@@ -11,6 +11,21 @@ export class UserService {
         this.perDataService = new PerDataService();
         this.tourCoinService = new TourCoinService();
     }
+
+    async logIn(username: string, password: string): Promise<User> {
+        try {
+            const existingUser = await UserRepository.findOneBy({
+                username: username,
+            });
+
+            if (existingUser.compareHashPass(password)) {
+                return existingUser;
+            }
+        } catch (e) {
+            console.error('Error finding user by username', username);
+        }
+    }
+
     async create(
         user: User,
         perData: PersonalData,
@@ -22,6 +37,7 @@ export class UserService {
 
         return savedUser;
     }
+
     async update(user: User, existingUser: User): Promise<User> {
         try {
             const updatedUser = UserRepository.merge(existingUser, user);
@@ -29,7 +45,6 @@ export class UserService {
             return await UserRepository.save(updatedUser);
         } catch (error) {
             console.error('Error al actualizar  usuario con ID ${user.id}');
-            return undefined;
         }
     }
 
@@ -51,11 +66,9 @@ export class UserService {
                 return existingUser;
             } else {
                 console.error('Error finding user by ID', userId);
-                return undefined;
             }
         } catch (err) {
             console.error('Error finding user by ID', userId);
-            return undefined;
         }
     }
 }
