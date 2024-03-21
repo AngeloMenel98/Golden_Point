@@ -49,21 +49,18 @@ export class UserController {
         username: string,
         email: string,
         password: string,
-        isSingle: boolean,
-        userRole: UserRole,
         firstName: string,
         lastName: string,
         location: string,
-        phoneNumber: string,
-        coins: number
+        phoneNumber: string
     ) {
         try {
             const newUser = new User();
             newUser.username = username;
             newUser.email = email;
             newUser.hashPassword(password);
-            newUser.isSingle = isSingle;
-            newUser.role = userRole;
+            newUser.isSingle = true;
+            newUser.role = UserRole.USER;
 
             const newPerData = new PersonalData();
             newPerData.firstName = firstName;
@@ -72,7 +69,7 @@ export class UserController {
             newPerData.phoneNumber = phoneNumber;
 
             const newTourCoin = new TourCoin();
-            newTourCoin.coins = coins;
+            newTourCoin.coins = 0;
 
             const userErrors = await validate(newUser);
             const perErrors = await validate(newPerData);
@@ -113,8 +110,7 @@ export class UserController {
         username: string,
         password: string,
         email: string,
-        isSingle: boolean,
-        userRole: UserRole
+        isSingle: boolean
     ) {
         try {
             const newUser = new User();
@@ -122,7 +118,7 @@ export class UserController {
             newUser.email = email;
             newUser.hashPassword(password);
             newUser.isSingle = isSingle;
-            newUser.role = userRole;
+            newUser.role = UserRole.USER;
 
             const userErrors = await validate(newUser);
 

@@ -18,7 +18,6 @@ import { compareHash, hashValue } from '../helpers/bCrypt.helper';
 import { IsBoolean, IsEmail, IsEnum, isBoolean } from 'class-validator';
 
 export enum UserRole {
-    SUPERADMIN = 'superadmin',
     ADMIN = 'admin',
     USER = 'user',
 }

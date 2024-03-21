@@ -61,14 +61,6 @@ router.post(
             .withMessage(
                 validationMsg.PASSWORD_LENGTH_RESTRICTION(PASSWORD_LENGTH)
             ),
-        check('isSingle')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('isSingle')),
-        check('userRole')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('userRole')),
         check('firstName')
             .not()
             .isEmpty()
@@ -85,10 +77,6 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('location')),
-        check('coins')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('coins')),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -100,26 +88,20 @@ router.post(
                 username,
                 email,
                 password,
-                isSingle,
-                userRole,
                 firstName,
                 lastName,
                 location,
                 phoneNumber,
-                coins,
             } = req.body;
 
             const { response, status } = await userController.create(
                 username,
                 email,
                 password,
-                isSingle,
-                userRole,
                 firstName,
                 lastName,
                 location,
-                phoneNumber,
-                coins
+                phoneNumber
             );
             return res.status(status).json(response);
         } catch (error) {
@@ -155,10 +137,6 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('isSingle')),
-        check('userRole')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('userROle')),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -167,15 +145,13 @@ router.post(
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { userId, username, password, email, isSingle, userRole } =
-                req.body;
+            const { userId, username, password, email, isSingle } = req.body;
             const { response, status } = await userController.update(
                 userId,
                 username,
                 password,
                 email,
-                isSingle,
-                userRole
+                isSingle
             );
 
             res.status(status).json(response);

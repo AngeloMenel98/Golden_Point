@@ -13,11 +13,7 @@ export class TeamService {
     async create(newTeam: Team, userId: string): Promise<Team | undefined> {
         try {
             const user = await this.userService.findById(userId);
-            if (
-                user &&
-                (user.role == UserRole.SUPERADMIN ||
-                    user.role == UserRole.ADMIN)
-            ) {
+            if (user && user.role == UserRole.ADMIN) {
                 return await TeamRepository.save(newTeam);
             }
             console.log("Team couldn't be created");
