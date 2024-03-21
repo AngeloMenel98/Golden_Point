@@ -61,6 +61,7 @@ export class UserService {
     async findByUsername(username: string): Promise<User> {
         return await UserRepository.findByUsername(username);
     }
+
     async findById(userId: string): Promise<User> {
         try {
             const existingUser = await UserRepository.findOneBy({
@@ -69,6 +70,22 @@ export class UserService {
 
             if (existingUser) {
                 return existingUser;
+            } else {
+                console.error('Error finding user by ID', userId);
+            }
+        } catch (err) {
+            console.error('Error finding user by ID', userId);
+        }
+    }
+
+    async findByIdWithPersonalData(
+        userId: string
+    ): Promise<{ user: User; personalData: PersonalData }> {
+        try {
+            const userData = await UserRepository.findUserWithPerData(userId);
+
+            if (userData) {
+                return userData;
             } else {
                 console.error('Error finding user by ID', userId);
             }

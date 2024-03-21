@@ -10,36 +10,37 @@ export class TeamService {
         this.userService = new UserService();
     }
 
-    async create(newTeam: Team, userId: string): Promise<Team | undefined> {
+    async create(newTeam: Team, usersId: string[], adminUserId: string) {
         try {
-            const user = await this.userService.findById(userId);
-            if (user && user.role == UserRole.ADMIN) {
+            const adminUser = await this.userService.findById(adminUserId);
+
+            //FIXME: Find a way to get users info to link newTeam.users
+            const userProm = usersId.map((userId) =>
+                this.userService.findByIdWithPersonalData(userId)
+            );
+            const usersWithData = await Promise.all(userProm);
+
+            if (usersWithData.length > 0 && adminUser.role == UserRole.ADMIN) {
+                const userPromises = usersId.map((userId) =>
+                    this.userService.findById(userId)
+                );
+
+                const users = await Promise.all(userPromises);
+
+                let teamName = '';
+                const lastNames = usersWithData.map(
+                    (user) => user.personalData.lastName
+                );
+                teamName = lastNames.join('-');
+
+                newTeam.teamName = teamName;
+                newTeam.users = users;
+
                 return await TeamRepository.save(newTeam);
             }
             console.log("Team couldn't be created");
         } catch (err) {
             console.error('Error al crear Team', err);
-        }
-    }
-
-    async addUsers(teamId: string, usersId: string[]): Promise<Team> {
-        try {
-            const existingTeam = await TeamRepository.findOneBy({
-                id: teamId,
-            });
-
-            const userPromises = usersId.map((userId) =>
-                this.userService.findById(userId)
-            );
-
-            const users = await Promise.all(userPromises);
-
-            if (existingTeam && users.length > 0) {
-                existingTeam.users = users;
-                return TeamRepository.save(existingTeam);
-            }
-        } catch (e) {
-            console.error('Error adding users to Tour in Service', e);
         }
     }
 
