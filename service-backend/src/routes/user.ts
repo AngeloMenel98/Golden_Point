@@ -118,25 +118,6 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
-        check('username')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('username')),
-        check('email')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('email')),
-        check('password')
-            .not()
-            .isEmpty()
-            .isLength({ min: PASSWORD_LENGTH })
-            .withMessage(
-                validationMsg.PASSWORD_LENGTH_RESTRICTION(PASSWORD_LENGTH)
-            ),
-        check('isSingle')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('isSingle')),
     ],
     async (req: Request, res: Response) => {
         try {
@@ -145,13 +126,23 @@ router.post(
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { userId, username, password, email, isSingle } = req.body;
+            const {
+                userId,
+                password,
+                isSingle,
+                firstName,
+                lastName,
+                phoneNumber,
+                location,
+            } = req.body;
             const { response, status } = await userController.update(
                 userId,
-                username,
                 password,
-                email,
-                isSingle
+                isSingle,
+                firstName,
+                lastName,
+                phoneNumber,
+                location
             );
 
             res.status(status).json(response);

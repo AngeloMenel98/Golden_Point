@@ -38,9 +38,14 @@ export class UserService {
         return savedUser;
     }
 
-    async update(user: User, existingUser: User): Promise<User> {
+    async update(
+        user: User,
+        existingUser: User,
+        perData: PersonalData
+    ): Promise<User> {
         try {
             const updatedUser = UserRepository.merge(existingUser, user);
+            this.perDataService.update(perData, updatedUser.id);
 
             return await UserRepository.save(updatedUser);
         } catch (error) {

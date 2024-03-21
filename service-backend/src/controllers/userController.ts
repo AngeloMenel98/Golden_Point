@@ -107,43 +107,64 @@ export class UserController {
 
     async update(
         userId: string,
-        username: string,
         password: string,
-        email: string,
-        isSingle: boolean
+        isSingle: boolean,
+        firstName: string,
+        lastName: string,
+        phoneNumber: string,
+        location: string
     ) {
         try {
-            const newUser = new User();
-            newUser.username = username;
-            newUser.email = email;
-            newUser.hashPassword(password);
-            newUser.isSingle = isSingle;
-            newUser.role = UserRole.USER;
+            const user = await this.userService.findById(userId);
 
-            const userErrors = await validate(newUser);
+            if (user) {
+                const updatedUser = new User();
+                updatedUser.username = user.username;
+                updatedUser.email = user.email;
+                updatedUser.hashPassword(password);
+                updatedUser.isSingle = isSingle;
+                updatedUser.role = UserRole.USER;
 
-            if (userErrors.length > 0) {
-                console.log('Validation failed. Errors:', userErrors);
-                return { response: { error: 'Validation error' }, status: 400 };
-            } else {
-                const user = await this.userService.findById(userId);
+                const updatedPerData = new PersonalData();
+                updatedPerData.firstName = firstName;
+                updatedPerData.lastName = lastName;
+                updatedPerData.phoneNumber = phoneNumber;
+                updatedPerData.location = location;
+                updatedPerData.user = user;
 
-                if (user) {
-                    const resp = await this.userService.update(newUser, user);
-                    const response = {
-                        id: resp.id,
-                        username: resp.username,
-                        email: resp.email,
-                        isSingle: resp.isSingle,
-                        isDeleted: resp.isDeleted,
-                    };
-                    return { response, status: 201 };
-                } else {
+                const userErrors = await validate(updatedUser);
+                const perDataErrors = await validate(updatedPerData);
+
+                if (userErrors.length > 0 || perDataErrors.length > 0) {
+                    console.log(
+                        'Validation failed. Errors:',
+                        userErrors,
+                        perDataErrors
+                    );
                     return {
-                        response: { error: 'User not Found' },
-                        status: 404,
+                        response: { error: 'Validation error' },
+                        status: 400,
                     };
                 }
+
+                const respUser = await this.userService.update(
+                    updatedUser,
+                    user,
+                    updatedPerData
+                );
+                const response = {
+                    id: respUser.id,
+                    username: respUser.username,
+                    email: respUser.email,
+                    isSingle: respUser.isSingle,
+                    isDeleted: respUser.isDeleted,
+                };
+                return { response, status: 201 };
+            } else {
+                return {
+                    response: { error: 'User not Found' },
+                    status: 404,
+                };
             }
         } catch (e) {
             console.error(e);
