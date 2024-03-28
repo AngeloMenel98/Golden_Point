@@ -15,7 +15,7 @@ import {
     Reward,
 } from './index';
 import { compareHash, hashValue } from '../helpers/bCrypt.helper';
-import { IsBoolean, IsEmail, IsEnum, isBoolean } from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum } from 'class-validator';
 
 export enum UserRole {
     ADMIN = 'admin',

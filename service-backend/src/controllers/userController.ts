@@ -25,15 +25,11 @@ export class UserController {
                 id: resp.id,
                 username: resp.username,
                 email: resp.email,
-                userRole: resp.role,
                 isSingle: resp.isSingle,
-                isDeleted: resp.isDeleted,
             };
 
-            const secretKey = process.env.JWT_SECRET;
-            const token = jwt.sign(response, secretKey, {
-                expiresIn: '1h',
-            });
+            const secretKey = process.env.JWT_SECRET_KEY;
+            const token = jwt.sign(response, secretKey);
 
             return { response: { token }, status: 201 };
         } catch (e) {
