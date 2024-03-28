@@ -8,42 +8,10 @@ const router = Router();
 router.post(
     '/team/create',
     [
-        check('teamName')
+        check('adminUserId')
             .not()
             .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('teamName')),
-        check('userId')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
-    ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { teamName, userId } = req.body;
-            const { resp, status } = await teamController.create(
-                teamName,
-                userId
-            );
-            res.status(status).json(resp);
-        } catch (err) {
-            console.error('Error creating team:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
-);
-
-router.post(
-    '/team/join',
-    [
-        check('teamId')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('teamId')),
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('adminUserId')),
         check('usersId')
             .not()
             .isEmpty()
@@ -56,14 +24,14 @@ router.post(
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { usersId, teamId } = req.body;
-            const { response, status } = await teamController.addUsers(
-                teamId,
+            const { adminUserId, usersId } = req.body;
+            const { response, status } = await teamController.create(
+                adminUserId,
                 usersId
             );
             res.status(status).json(response);
         } catch (err) {
-            console.error('Error adding users to team:', err);
+            console.error('Error creating team:', err);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
