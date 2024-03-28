@@ -1,35 +1,38 @@
 import { PerDataRepository } from '../repository';
 import { PersonalData, User } from '../entity';
+import { createError } from '../helpers/errors';
 
 export class PerDataService {
-    async create(perData: PersonalData, user: User): Promise<PersonalData> {
+    async create(perData: PersonalData, user: User) {
         try {
-            if (user) {
-                perData.user = user;
-                return await PerDataRepository.save(perData);
-            }
-            console.log("Personal Data couldn't be created");
+            perData.user = user;
+            return { perData: await PerDataRepository.save(perData) };
         } catch (e) {
-            console.error('Error al crear Personal Data', e);
+            return {
+                error: createError(500, 'Error creating Personal Data'),
+            };
         }
     }
 
-    async update(perData: PersonalData, userId: string): Promise<PersonalData> {
+    async update(perData: PersonalData, userId: string) {
         try {
             const existingPerData = await PerDataRepository.findByUserId(
                 userId
             );
 
             if (existingPerData) {
-                const updatedPerData = PerDataRepository.merge(
+                let updatedPerData = PerDataRepository.merge(
                     existingPerData,
                     perData
                 );
-                console.log(updatedPerData);
-                return await PerDataRepository.save(updatedPerData);
+                return {
+                    perData: await PerDataRepository.save(updatedPerData),
+                };
             }
         } catch (e) {
-            console.error('Error al actualizar PersonalData', e);
+            return {
+                error: createError(500, 'Error creating Personal Data'),
+            };
         }
     }
 }

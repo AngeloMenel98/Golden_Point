@@ -14,18 +14,18 @@ export class UserController {
         try {
             const resp = await this.userService.logIn(username, password);
 
-            if (!resp) {
+            if (resp.error) {
                 return {
-                    response: { error: 'User not Found' },
-                    status: 404,
+                    response: { error: resp.error.message },
+                    status: resp.error.status,
                 };
             }
 
             const response = {
-                id: resp.id,
-                username: resp.username,
-                email: resp.email,
-                isSingle: resp.isSingle,
+                id: resp.user.id,
+                username: resp.user.username,
+                email: resp.user.email,
+                isSingle: resp.user.isSingle,
             };
 
             const secretKey = process.env.JWT_SECRET_KEY;
@@ -83,12 +83,18 @@ export class UserController {
                 newPerData,
                 newTourCoin
             );
+
+            if (resp.error) {
+                return {
+                    response: { error: resp.error.message },
+                    status: resp.error.status,
+                };
+            }
             const response = {
-                id: resp.id,
-                username: resp.username,
-                email: resp.email,
-                isSingle: resp.isSingle,
-                isDeleted: resp.isDeleted,
+                id: resp.user.id,
+                username: resp.user.username,
+                email: resp.user.email,
+                isSingle: resp.user.isSingle,
             };
 
             return { response, status: 201 };
@@ -111,12 +117,19 @@ export class UserController {
         location: string
     ) {
         try {
-            const user = await this.userService.findById(userId);
+            const resp = await this.userService.findById(userId);
 
-            if (user) {
+            if (resp.error) {
+                return {
+                    response: { error: resp.error.message },
+                    status: resp.error.status,
+                };
+            }
+
+            if (resp.user) {
                 const updatedUser = new User();
-                updatedUser.username = user.username;
-                updatedUser.email = user.email;
+                updatedUser.username = resp.user.username;
+                updatedUser.email = resp.user.email;
                 updatedUser.hashPassword(password);
                 updatedUser.isSingle = isSingle;
                 updatedUser.role = UserRole.USER;
@@ -126,7 +139,7 @@ export class UserController {
                 updatedPerData.lastName = lastName;
                 updatedPerData.phoneNumber = phoneNumber;
                 updatedPerData.location = location;
-                updatedPerData.user = user;
+                updatedPerData.user = resp.user;
 
                 const userErrors = await validate(updatedUser);
                 const perDataErrors = await validate(updatedPerData);
@@ -143,25 +156,31 @@ export class UserController {
                     };
                 }
 
-                const respUser = await this.userService.update(
+                const resUser = await this.userService.update(
                     updatedUser,
-                    user,
+                    resp.user,
                     updatedPerData
                 );
+
+                if (resUser.error) {
+                    return {
+                        response: { error: resp.error.message },
+                        status: resp.error.status,
+                    };
+                }
+
                 const response = {
-                    id: respUser.id,
-                    username: respUser.username,
-                    email: respUser.email,
-                    isSingle: respUser.isSingle,
-                    isDeleted: respUser.isDeleted,
+                    id: resUser.user.id,
+                    username: resUser.user.username,
+                    email: resUser.user.email,
+                    isSingle: resUser.user.isSingle,
                 };
                 return { response, status: 201 };
-            } else {
-                return {
-                    response: { error: 'User not Found' },
-                    status: 404,
-                };
             }
+            return {
+                response: { error: 'User not Found' },
+                status: 404,
+            };
         } catch (e) {
             console.error(e);
             return {
@@ -173,39 +192,44 @@ export class UserController {
 
     async delete(userId: string) {
         try {
-            const user = await this.userService.findById(userId);
+            let resp = await this.userService.findById(userId);
 
-            if (user) {
-                const resp = await this.userService.delete(user);
-                const response = {
-                    id: resp.id,
-                    username: resp.username,
-                    email: resp.email,
-                    isSingle: resp.isSingle,
-                    isDeleted: resp.isDeleted,
-                };
-                return { response, status: 201 };
+            if (resp.error) {
             }
-        } catch (e) {}
+
+            resp = await this.userService.delete(resp.user);
+            const response = {
+                id: resp.user.id,
+                username: resp.user.username,
+                email: resp.user.email,
+                isSingle: resp.user.isSingle,
+            };
+            return { response, status: 201 };
+        } catch (e) {
+            console.error(e);
+            return {
+                response: { error: 'Error deleting User' },
+                status: 500,
+            };
+        }
     }
 
     async findByUsername(username: string) {
         try {
             const resp = await this.userService.findByUsername(username);
 
-            if (!resp) {
+            if (resp.error) {
                 return {
-                    response: { error: 'User not Found' },
-                    status: 404,
+                    response: { error: resp.error.message },
+                    status: resp.error.status,
                 };
             }
 
             const response = {
-                id: resp.id,
-                username: resp.username,
-                email: resp.email,
-                isSingle: resp.isSingle,
-                isDeleted: resp.isDeleted,
+                id: resp.user.id,
+                username: resp.user.username,
+                email: resp.user.email,
+                isSingle: resp.user.isSingle,
             };
             return { response, status: 201 };
         } catch (e) {

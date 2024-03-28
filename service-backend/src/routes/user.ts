@@ -17,10 +17,7 @@ router.post(
         check('password')
             .not()
             .isEmpty()
-            .isLength({ min: PASSWORD_LENGTH })
-            .withMessage(
-                validationMsg.PASSWORD_LENGTH_RESTRICTION(PASSWORD_LENGTH)
-            ),
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('password')),
     ],
     async (req: Request, res: Response) => {
         try {
