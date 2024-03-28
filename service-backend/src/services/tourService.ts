@@ -17,7 +17,7 @@ export class TourService {
         try {
             const user = await this.userService.findById(userId);
 
-            if (user && user.role == UserRole.SUPERADMIN) {
+            if (user && user.role == UserRole.ADMIN) {
                 newTour.users = [user];
                 const savedTour = await TourRepository.save(newTour);
                 return { success: true, tour: savedTour };

@@ -8,14 +8,23 @@ export class TeamController {
         this.teamService = new TeamService();
     }
 
-    async create(teamName: string, userId: string) {
+    async create(adminUserId: string, usersId: string[]) {
         try {
             const newTeam = new Team();
-            newTeam.teamName = teamName;
 
-            const resp = await this.teamService.create(newTeam, userId);
+            const resp = await this.teamService.create(
+                newTeam,
+                usersId,
+                adminUserId
+            );
 
-            return { resp, status: 201 };
+            const response = {
+                teamId: resp.id,
+                teamName: resp.teamName,
+                users: resp.users.map((u) => u.id),
+            };
+
+            return { response, status: 201 };
         } catch (e) {
             console.error(e);
             return {
@@ -25,29 +34,10 @@ export class TeamController {
         }
     }
 
-    async addUsers(teamId: string, usersId: string[]) {
-        try {
-            const resp = await this.teamService.addUsers(teamId, usersId);
-
-            const response = {
-                id: resp.id,
-                teamName: resp.teamName,
-                usersId: resp.users.map((u) => u.id),
-            };
-
-            return { response, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error adding Users' },
-                status: 500,
-            };
-        }
-    }
-
     async getTeam(teamId: string) {
         try {
             const resp = await this.teamService.getTeamWithUsers(teamId);
+
             const response = {
                 teamId: resp.team.id,
                 teamName: resp.team.teamName,

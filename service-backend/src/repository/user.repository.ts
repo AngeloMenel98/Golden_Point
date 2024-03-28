@@ -1,9 +1,28 @@
 import { AppDataSource } from '../data-source';
-import { User } from '../entity';
+import { PersonalData, User } from '../entity';
 
 export const UserRepository = AppDataSource.getRepository(User).extend({
     async findByUsername(username: string): Promise<User> {
         return await this.findOne({ where: { username } });
+    },
+
+    async findUserWithPerData(
+        userId: string
+    ): Promise<{ user: User; personalData: PersonalData }> {
+        try {
+            return this.createQueryBuilder('u')
+                .select('u')
+                .addSelect('pd')
+                .innerJoin('u.personalData', 'pd')
+                .where('u.id = :userId', { userId })
+                .getOne();
+        } catch (error) {
+            console.error(
+                'Error al obtener usuario con datos personales',
+                error
+            );
+            throw error;
+        }
     },
 
     async getUsersByTourId(tourId: string): Promise<User[]> {
