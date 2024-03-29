@@ -2,6 +2,7 @@ import { UserRepository } from '../repository';
 import { PersonalData, TourCoin, User } from '../entity';
 import { PerDataService } from './perDataService';
 import { TourCoinService } from './tourCoinService';
+import { createError } from '../helpers/errors';
 
 export class UserService {
     private perDataService: PerDataService;
@@ -12,69 +13,89 @@ export class UserService {
         this.tourCoinService = new TourCoinService();
     }
 
-    async logIn(username: string, password: string): Promise<User> {
+    async logIn(username: string, password: string) {
         try {
             const existingUser = await UserRepository.findOneBy({
                 username: username,
             });
 
-            if (existingUser.compareHashPass(password)) {
-                return existingUser;
+            if (!existingUser) {
+                return { error: createError(404, 'Username does not exist') };
             }
+
+            if (!existingUser.compareHashPass(password)) {
+                return { error: createError(404, 'Password is incorrect') };
+            }
+
+            return { user: existingUser };
         } catch (e) {
-            console.error('Error finding user by username', username);
+            return {
+                error: createError(500, 'Error finding user by username'),
+            };
         }
     }
 
-    async create(
-        user: User,
-        perData: PersonalData,
-        tourCoin: TourCoin
-    ): Promise<User> {
-        const savedUser = await UserRepository.save(user);
-        this.perDataService.create(perData, savedUser);
-        this.tourCoinService.create(tourCoin, savedUser);
+    async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
+        try {
+            const savedUser = await UserRepository.save(user);
+            if (savedUser) {
+                this.perDataService.create(perData, savedUser);
+                this.tourCoinService.create(tourCoin, savedUser);
 
-        return savedUser;
+                return { user: savedUser };
+            }
+        } catch (e) {
+            return {
+                error: createError(500, 'Error creating User'),
+            };
+        }
     }
 
-    async update(
-        user: User,
-        existingUser: User,
-        perData: PersonalData
-    ): Promise<User> {
+    async update(user: User, existingUser: User, perData: PersonalData) {
         try {
             const updatedUser = UserRepository.merge(existingUser, user);
             this.perDataService.update(perData, updatedUser.id);
-
-            return await UserRepository.save(updatedUser);
-        } catch (error) {
-            console.error('Error al actualizar  usuario con ID ${user.id}');
+            return { user: await UserRepository.save(updatedUser) };
+        } catch (e) {
+            console.error(e);
+            return { error: createError(500, 'Error updating User') };
         }
     }
 
-    async delete(user: User): Promise<User> {
+    async delete(user: User) {
         user.isDeleted = true;
-        return UserRepository.save(user);
+        return { user: await UserRepository.save(user) };
     }
 
-    async findByUsername(username: string): Promise<User> {
-        return await UserRepository.findByUsername(username);
+    async findByUsername(username: string) {
+        try {
+            const user = await UserRepository.findByUsername(username);
+            if (!user) {
+                return {
+                    error: createError(404, 'User does not exist by username'),
+                };
+            }
+
+            return { user: user };
+        } catch (e) {
+            console.error(e);
+            return { error: createError(500, 'Error in findByUsername') };
+        }
     }
 
-    async findById(userId: string): Promise<User> {
+    async findById(userId: string) {
         try {
             const existingUser = await UserRepository.findOneBy({
                 id: userId,
             });
 
-            if (existingUser) {
-                return existingUser;
-            } else {
-                console.error('Error finding user by ID', userId);
+            if (!existingUser) {
+                return { error: createError(404, 'User by ID not Found') };
             }
-        } catch (err) {
-            console.error('Error finding user by ID', userId);
+            return { user: existingUser };
+        } catch (e) {
+            console.error(e);
+            return { error: createError(500, 'Error in findById') };
         }
     }
 
