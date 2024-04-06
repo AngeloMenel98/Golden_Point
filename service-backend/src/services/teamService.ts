@@ -20,7 +20,10 @@ export class TeamService {
             );
             const usersWithData = await Promise.all(userProm);
 
-            if (usersWithData.length > 0 && adminUser.role == UserRole.ADMIN) {
+            if (
+                usersWithData.length > 0 &&
+                adminUser.user.role == UserRole.ADMIN
+            ) {
                 const userPromises = usersId.map((userId) =>
                     this.userService.findById(userId)
                 );
@@ -34,7 +37,7 @@ export class TeamService {
                 teamName = lastNames.join('-');
 
                 newTeam.teamName = teamName;
-                newTeam.users = users;
+                //newTeam.users = users;
 
                 return await TeamRepository.save(newTeam);
             }

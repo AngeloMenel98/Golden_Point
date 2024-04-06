@@ -2,7 +2,11 @@ import { UserRepository } from '../repository';
 import { PersonalData, TourCoin, User } from '../entity';
 import { PerDataService } from './perDataService';
 import { TourCoinService } from './tourCoinService';
-import { createError } from '../helpers/errors';
+import { createError } from '../errors/errors';
+
+import { validate } from 'class-validator';
+import { AppDataSource } from '../data-source';
+import { UserServiceValidationError } from '../errors/errorsClass';
 
 export class UserService {
     private perDataService: PerDataService;
@@ -36,19 +40,18 @@ export class UserService {
     }
 
     async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
-        try {
-            const savedUser = await UserRepository.save(user);
-            if (savedUser) {
-                this.perDataService.create(perData, savedUser);
-                this.tourCoinService.create(tourCoin, savedUser);
+        const userErrors = await validate(user);
+        const perErrors = await validate(perData);
 
-                return { user: savedUser };
-            }
-        } catch (e) {
-            return {
-                error: createError(500, 'Error creating User'),
-            };
+        if (userErrors.length > 0 || perErrors.length > 0) {
+            // TODO: can be done better (identify if user or personal data error, better message, etc)
+            throw new UserServiceValidationError(
+                'Validation error',
+                perErrors.concat(perErrors)
+            );
         }
+
+        return UserRepository.create(user, perData, tourCoin);
     }
 
     async update(user: User, existingUser: User, perData: PersonalData) {

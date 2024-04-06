@@ -1,7 +1,7 @@
 import { TourCoinRepository } from '../repository';
 import { TourCoin } from '../entity';
 import { User } from '../entity/User';
-import { createError } from '../helpers/errors';
+import { createError } from '../errors/errors';
 
 export class TourCoinService {
     async create(newTourCoin: TourCoin, user: User) {

@@ -1,8 +1,12 @@
+import { Request, Response } from 'express';
+import { validate } from 'class-validator';
+import * as jwt from 'jsonwebtoken';
+import { validationResult } from 'express-validator';
+
 import { PersonalData, TourCoin, User } from '../entity';
 import { UserService } from '../services';
-import { validate } from 'class-validator';
 import { UserRole } from '../entity/User';
-import * as jwt from 'jsonwebtoken';
+import { isUserServiceValidationError } from '../errors/errors';
 
 export class UserController {
     private userService: UserService;
@@ -10,6 +14,7 @@ export class UserController {
     constructor() {
         this.userService = new UserService();
     }
+
     async logIn(username: string, password: string) {
         try {
             const resp = await this.userService.logIn(username, password);
@@ -41,16 +46,24 @@ export class UserController {
         }
     }
 
-    async create(
-        username: string,
-        email: string,
-        password: string,
-        firstName: string,
-        lastName: string,
-        location: string,
-        phoneNumber: string
-    ) {
+    async create(req: Request, res: Response) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                res.status(400).json({ errors: errors.array() });
+                return;
+            }
+
+            const {
+                username,
+                email,
+                password,
+                firstName,
+                lastName,
+                location,
+                phoneNumber,
+            } = req.body;
+
             const newUser = new User();
             newUser.username = username;
             newUser.email = email;
@@ -67,43 +80,29 @@ export class UserController {
             const newTourCoin = new TourCoin();
             newTourCoin.coins = 0;
 
-            const userErrors = await validate(newUser);
-            const perErrors = await validate(newPerData);
-
-            if (userErrors.length > 0 || perErrors.length > 0) {
-                console.log(
-                    'Validation failed. Errors:',
-                    userErrors,
-                    perErrors
-                );
-                return { response: { error: 'Validation error' }, status: 400 };
-            }
-            const resp = await this.userService.create(
+            const user = await this.userService.create(
                 newUser,
                 newPerData,
                 newTourCoin
             );
 
-            if (resp.error) {
-                return {
-                    response: { error: resp.error.message },
-                    status: resp.error.status,
-                };
-            }
             const response = {
-                id: resp.user.id,
-                username: resp.user.username,
-                email: resp.user.email,
-                isSingle: resp.user.isSingle,
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                isSingle: user.isSingle,
             };
 
-            return { response, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error creating new User' },
-                status: 500,
-            };
+            res.status(201).json(response);
+        } catch (e: unknown) {
+            console.error('Error creating user:', e);
+
+            if (isUserServiceValidationError(e)) {
+                res.status(400).json({ error: 'Validation error' });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 

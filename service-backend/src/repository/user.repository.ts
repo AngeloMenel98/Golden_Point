@@ -1,9 +1,24 @@
 import { AppDataSource } from '../data-source';
-import { PersonalData, User } from '../entity';
+import { PersonalData, TourCoin, User } from '../entity';
 
 export const UserRepository = AppDataSource.getRepository(User).extend({
+    async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
+        return this.manager.transaction(async (transactionalEntityManager) => {
+            const savedUser = await transactionalEntityManager
+                .getRepository(User)
+                .save(user);
+            await transactionalEntityManager
+                .getRepository(PersonalData)
+                .save({ ...perData, user: savedUser });
+            await transactionalEntityManager
+                .getRepository(TourCoin)
+                .save({ ...tourCoin, user: savedUser });
+            return savedUser;
+        });
+    },
+
     async findByUsername(username: string): Promise<User> {
-        return await this.findOne({ where: { username } });
+        return this.findOne({ where: { username } });
     },
 
     async findUserWithPerData(

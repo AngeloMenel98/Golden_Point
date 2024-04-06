@@ -75,37 +75,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('location')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-            const {
-                username,
-                email,
-                password,
-                firstName,
-                lastName,
-                location,
-                phoneNumber,
-            } = req.body;
-
-            const { response, status } = await userController.create(
-                username,
-                email,
-                password,
-                firstName,
-                lastName,
-                location,
-                phoneNumber
-            );
-            return res.status(status).json(response);
-        } catch (error) {
-            console.error('Error creating user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    userController.create.bind(userController)
 );
 
 router.post(
