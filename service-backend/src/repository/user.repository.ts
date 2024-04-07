@@ -17,6 +17,31 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
         });
     },
 
+    async update(
+        existingUser: User,
+        existingPerData: PersonalData,
+        user: User,
+        perData: PersonalData
+    ) {
+        return this.manager.transaction(async (transactionalEntityManager) => {
+            await transactionalEntityManager
+                .getRepository(User)
+                .merge(existingUser, user);
+            const savedUser = await transactionalEntityManager
+                .getRepository(User)
+                .save(existingUser);
+
+            await transactionalEntityManager
+                .getRepository(PersonalData)
+                .merge(existingPerData, perData);
+            await transactionalEntityManager
+                .getRepository(PersonalData)
+                .save(existingPerData);
+
+            return savedUser;
+        });
+    },
+
     async findByUsername(username: string): Promise<User> {
         return this.findOne({ where: { username } });
     },

@@ -20,10 +20,7 @@ export class TeamService {
             );
             const usersWithData = await Promise.all(userProm);
 
-            if (
-                usersWithData.length > 0 &&
-                adminUser.user.role == UserRole.ADMIN
-            ) {
+            if (usersWithData.length > 0 && adminUser.role == UserRole.ADMIN) {
                 const userPromises = usersId.map((userId) =>
                     this.userService.findById(userId)
                 );

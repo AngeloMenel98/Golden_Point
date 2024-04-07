@@ -8,3 +8,21 @@ export class UserServiceValidationError extends Error {
         this.validationErrors = validationErrors;
     }
 }
+
+export class CustomError extends Error {
+    status: number;
+
+    constructor(status: number, message: string) {
+        super(message);
+        this.status = status;
+    }
+}
+
+export class UserServiceLogInError extends Error {
+    user: string;
+
+    constructor(messsage: string, user: string) {
+        super(messsage);
+        this.user = user;
+    }
+}

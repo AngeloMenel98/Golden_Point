@@ -1,42 +1,39 @@
-import { UserRepository } from '../repository';
+import { PerDataRepository, UserRepository } from '../repository';
 import { PersonalData, TourCoin, User } from '../entity';
 import { PerDataService } from './perDataService';
 import { TourCoinService } from './tourCoinService';
 import { createError } from '../errors/errors';
 
 import { validate } from 'class-validator';
-import { AppDataSource } from '../data-source';
-import { UserServiceValidationError } from '../errors/errorsClass';
+import {
+    CustomError,
+    UserServiceLogInError,
+    UserServiceValidationError,
+} from '../errors/errorsClass';
 
 export class UserService {
-    private perDataService: PerDataService;
-    private tourCoinService: TourCoinService;
-
-    constructor() {
-        this.perDataService = new PerDataService();
-        this.tourCoinService = new TourCoinService();
-    }
+    constructor() {}
 
     async logIn(username: string, password: string) {
-        try {
-            const existingUser = await UserRepository.findOneBy({
-                username: username,
-            });
+        const existingUser = await UserRepository.findOneBy({
+            username: username,
+        });
 
-            if (!existingUser) {
-                return { error: createError(404, 'Username does not exist') };
-            }
-
-            if (!existingUser.compareHashPass(password)) {
-                return { error: createError(404, 'Password is incorrect') };
-            }
-
-            return { user: existingUser };
-        } catch (e) {
-            return {
-                error: createError(500, 'Error finding user by username'),
-            };
+        if (!existingUser) {
+            throw new UserServiceLogInError(
+                'User does not exist',
+                existingUser.id
+            );
         }
+
+        if (!existingUser.compareHashPass(password)) {
+            throw new UserServiceLogInError(
+                'Password is incorrect',
+                existingUser.id
+            );
+        }
+
+        return existingUser;
     }
 
     async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
@@ -55,51 +52,56 @@ export class UserService {
     }
 
     async update(user: User, existingUser: User, perData: PersonalData) {
-        try {
-            const updatedUser = UserRepository.merge(existingUser, user);
-            this.perDataService.update(perData, updatedUser.id);
-            return { user: await UserRepository.save(updatedUser) };
-        } catch (e) {
-            console.error(e);
-            return { error: createError(500, 'Error updating User') };
+        const userErrors = await validate(user);
+        const perErrors = await validate(perData);
+
+        if (userErrors.length > 0 || perErrors.length > 0) {
+            // TODO: can be done better (identify if user or personal data error, better message, etc)
+            throw new UserServiceValidationError(
+                'Validation error',
+                perErrors.concat(perErrors)
+            );
         }
+
+        const existingPerData = await PerDataRepository.findByUserId(
+            existingUser.id
+        );
+
+        return UserRepository.update(
+            existingUser,
+            existingPerData,
+            user,
+            perData
+        );
     }
 
     async delete(user: User) {
         user.isDeleted = true;
-        return { user: await UserRepository.save(user) };
+        return UserRepository.save(user);
     }
 
     async findByUsername(username: string) {
-        try {
-            const user = await UserRepository.findByUsername(username);
-            if (!user) {
-                return {
-                    error: createError(404, 'User does not exist by username'),
-                };
-            }
+        const user = await UserRepository.findByUsername(username);
 
-            return { user: user };
-        } catch (e) {
-            console.error(e);
-            return { error: createError(500, 'Error in findByUsername') };
+        if (!user) {
+            throw new UserServiceLogInError('User Id does not exist', user.id);
         }
+
+        return user;
     }
 
     async findById(userId: string) {
-        try {
-            const existingUser = await UserRepository.findOneBy({
-                id: userId,
-            });
+        const existingUser = await UserRepository.findOneBy({
+            id: userId,
+        });
 
-            if (!existingUser) {
-                return { error: createError(404, 'User by ID not Found') };
-            }
-            return { user: existingUser };
-        } catch (e) {
-            console.error(e);
-            return { error: createError(500, 'Error in findById') };
+        if (!existingUser) {
+            throw new UserServiceLogInError(
+                'User Id does not exist',
+                existingUser.id
+            );
         }
+        return existingUser;
     }
 
     async findByIdWithPersonalData(

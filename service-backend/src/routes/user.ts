@@ -19,25 +19,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('password')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { username, password } = req.body;
-
-            const { response, status } = await userController.logIn(
-                username,
-                password
-            );
-            return res.status(status).json(response);
-        } catch (error) {
-            console.error('Error loggin in:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    userController.logIn.bind(userController)
 );
 
 router.post(
@@ -86,38 +68,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const {
-                userId,
-                password,
-                isSingle,
-                firstName,
-                lastName,
-                phoneNumber,
-                location,
-            } = req.body;
-            const { response, status } = await userController.update(
-                userId,
-                password,
-                isSingle,
-                firstName,
-                lastName,
-                phoneNumber,
-                location
-            );
-
-            res.status(status).json(response);
-        } catch (error) {
-            console.error('Error updating user:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    userController.update.bind(userController)
 );
 
 router.post(
@@ -128,41 +79,9 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { userId } = req.body;
-            const { response, status } = await userController.delete(userId);
-
-            res.status(status).json(response);
-        } catch (error) {
-            console.error('Error deleting User:', error);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    userController.delete.bind(userController)
 );
 
-router.get('/:username', async (req: Request, res: Response) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
-        const { username } = req.params;
-        const { response, status } = await userController.findByUsername(
-            username
-        );
-
-        res.status(status).json(response);
-    } catch (error) {
-        console.error('Error registering user:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+router.get('/:username', userController.findByUsername.bind(userController));
 
 export default router;
