@@ -1,20 +1,22 @@
 import {
-    CustomError,
-    UserServiceLogInError,
-    UserServiceValidationError,
+    ServiceCodeError,
+    TourServiceError,
+    UserServiceError,
+    ServiceValidationError,
 } from './errorsClass';
 
-//Delete createError
-export const createError = (status: number, message: string): CustomError => {
-    return new CustomError(status, message);
-};
-
+//-------------------- User Errors ----------------------------------------
 export const isUserServiceValidationError = (
     error: unknown
-): error is UserServiceValidationError =>
+): error is ServiceValidationError =>
     typeof error === 'object' && error !== null && 'validationErrors' in error;
 
-export const isUserServiceLogInError = (
-    error: unknown
-): error is UserServiceLogInError =>
-    typeof error === 'object' && error !== null && 'user' in error;
+export const isUserServiceError = (error: unknown): error is UserServiceError =>
+    typeof error === 'object' && error !== null && 'userId' in error;
+
+//-------------------- Tour Errors ----------------------------------------
+export const isTourServiceError = (error: unknown): error is TourServiceError =>
+    typeof error === 'object' && error !== null && 'userId' in error;
+
+export const isServiceCodeError = (error: unknown): error is ServiceCodeError =>
+    typeof error === 'object' && error !== null && 'code' in error;

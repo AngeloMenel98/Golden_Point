@@ -1,6 +1,11 @@
 import { MatchRepository } from '../repository';
 import { Match, Team } from '../entity';
 import { TeamService, TournamentService, CourtService } from '.';
+import { validate } from 'class-validator';
+import {
+    ServiceCodeError,
+    ServiceValidationError,
+} from '../errors/errorsClass';
 
 export class MatchService {
     private teamService: TeamService;
@@ -18,41 +23,37 @@ export class MatchService {
         teamIds: string[],
         tournamentId: string,
         courtId: string
-    ): Promise<Match> {
-        try {
-            const teams: Team[] = await Promise.all(
-                teamIds.map((teamId) => this.teamService.findById(teamId))
-            );
-            const tournament = await this.tournamentService.findById(
-                tournamentId
-            );
-            const court = await this.courtService.findById(courtId);
+    ) {
+        const matchErrors = await validate(newMatch);
 
-            if (teams.length == 2 && tournament && court) {
-                newMatch.teams = teams;
-                newMatch.tournament = tournament;
-                newMatch.court = court;
-
-                return MatchRepository.save(newMatch);
-            }
-            throw new Error('Invalid number of teams for a match');
-        } catch (e) {
-            console.error(e);
-            throw new Error('Error creating Match with Teams');
+        if (matchErrors.length > 0) {
+            throw new ServiceValidationError(
+                'Validation error',
+                matchErrors.concat(matchErrors)
+            );
         }
+
+        const teams: Team[] = await Promise.all(
+            teamIds.map((teamId) => this.teamService.findById(teamId))
+        );
+        const tournament = await this.tournamentService.findById(tournamentId);
+        const court = await this.courtService.findById(courtId);
+
+        if (teams.length != 2) {
+            throw new ServiceCodeError('Amount of teams incorrect', 'MatchS-3');
+        }
+
+        return MatchRepository.save({ ...newMatch, teams, tournament, court });
     }
-    async findById(matchId: string): Promise<Match> {
-        try {
-            const existingMatch = await MatchRepository.findOneBy({
-                id: matchId,
-            });
+    async findById(matchId: string) {
+        const existingMatch = await MatchRepository.findOneBy({
+            id: matchId,
+        });
 
-            if (existingMatch) {
-                return existingMatch;
-            }
-            console.error('Error finding Match by ID', matchId);
-        } catch (err) {
-            console.error('Error finding Match by ID', matchId);
+        if (!existingMatch) {
+            throw new ServiceCodeError('Match ID does not exist', 'MatchS-1');
         }
+
+        return existingMatch;
     }
 }

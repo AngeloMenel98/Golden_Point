@@ -1,6 +1,6 @@
 import { ValidationError } from 'class-validator';
 
-export class UserServiceValidationError extends Error {
+export class ServiceValidationError extends Error {
     validationErrors: ValidationError[];
 
     constructor(message: string, validationErrors: ValidationError[]) {
@@ -18,11 +18,29 @@ export class CustomError extends Error {
     }
 }
 
-export class UserServiceLogInError extends Error {
-    user: string;
+export class UserServiceError extends Error {
+    userId: string;
 
-    constructor(messsage: string, user: string) {
+    constructor(messsage: string, userId: string) {
         super(messsage);
-        this.user = user;
+        this.userId = userId;
+    }
+}
+
+export class TourServiceError extends Error {
+    userId: string;
+
+    constructor(messsage: string, userId: string) {
+        super(messsage);
+        this.userId = userId;
+    }
+}
+
+export class ServiceCodeError extends Error {
+    code: string;
+
+    constructor(messsage: string, code: string) {
+        super(messsage);
+        this.code = code;
     }
 }

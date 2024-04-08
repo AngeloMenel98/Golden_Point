@@ -1,14 +1,10 @@
 import { PerDataRepository, UserRepository } from '../repository';
 import { PersonalData, TourCoin, User } from '../entity';
-import { PerDataService } from './perDataService';
-import { TourCoinService } from './tourCoinService';
-import { createError } from '../errors/errors';
 
 import { validate } from 'class-validator';
 import {
-    CustomError,
-    UserServiceLogInError,
-    UserServiceValidationError,
+    UserServiceError,
+    ServiceValidationError,
 } from '../errors/errorsClass';
 
 export class UserService {
@@ -20,14 +16,11 @@ export class UserService {
         });
 
         if (!existingUser) {
-            throw new UserServiceLogInError(
-                'User does not exist',
-                existingUser.id
-            );
+            throw new UserServiceError('User does not exist', existingUser.id);
         }
 
         if (!existingUser.compareHashPass(password)) {
-            throw new UserServiceLogInError(
+            throw new UserServiceError(
                 'Password is incorrect',
                 existingUser.id
             );
@@ -42,7 +35,7 @@ export class UserService {
 
         if (userErrors.length > 0 || perErrors.length > 0) {
             // TODO: can be done better (identify if user or personal data error, better message, etc)
-            throw new UserServiceValidationError(
+            throw new ServiceValidationError(
                 'Validation error',
                 perErrors.concat(perErrors)
             );
@@ -57,7 +50,7 @@ export class UserService {
 
         if (userErrors.length > 0 || perErrors.length > 0) {
             // TODO: can be done better (identify if user or personal data error, better message, etc)
-            throw new UserServiceValidationError(
+            throw new ServiceValidationError(
                 'Validation error',
                 perErrors.concat(perErrors)
             );
@@ -84,7 +77,7 @@ export class UserService {
         const user = await UserRepository.findByUsername(username);
 
         if (!user) {
-            throw new UserServiceLogInError('User Id does not exist', user.id);
+            throw new UserServiceError('User Id does not exist', user.id);
         }
 
         return user;
@@ -96,26 +89,30 @@ export class UserService {
         });
 
         if (!existingUser) {
-            throw new UserServiceLogInError(
-                'User Id does not exist',
+            throw new UserServiceError(
+                'User ID does not exist',
                 existingUser.id
             );
         }
         return existingUser;
     }
 
-    async findByIdWithPersonalData(
-        userId: string
-    ): Promise<{ user: User; personalData: PersonalData }> {
-        try {
-            const userData = await UserRepository.findUserWithPerData(userId);
+    async findByIdWithPersonalData(userId: string) {
+        const userData = await UserRepository.findUserWithPerData(userId);
 
-            if (userData) {
-                return userData;
-            } else {
-                console.error('Error finding user by ID', userId);
-            }
-        } catch (err) {
+        const user = {
+            id: userData.id,
+            username: userData.username,
+            email: userData.email,
+            password: userData.password,
+            isSingle: userData.isSingle,
+            isDeleted: userData.isDeleted,
+            role: userData.role,
+        };
+
+        if (userData) {
+            return { user: user, perData: userData.personalData };
+        } else {
             console.error('Error finding user by ID', userId);
         }
     }

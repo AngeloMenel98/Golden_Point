@@ -3,11 +3,22 @@ import { Tour, User } from '../entity';
 import { UserRepository } from './user.repository';
 
 export const TourRepository = AppDataSource.getRepository(Tour).extend({
-    async getUsersByTourId(tourId: string): Promise<User[]> {
-        return await UserRepository.getUsersByTourId(tourId);
+    async joinUser(user: User, tour: Tour) {
+        return this.manager.transaction(async (transactionalEntityManager) => {
+            const usersInTour = await UserRepository.getUsersByTourId(tour.id);
+
+            const savedTour = await transactionalEntityManager
+                .getRepository(Tour)
+                .save({
+                    ...tour,
+                    users: [...usersInTour, user],
+                });
+
+            return savedTour;
+        });
     },
 
-    async getAll(): Promise<any> {
+    async getAll() {
         try {
             return await this.createQueryBuilder('t')
                 .select([

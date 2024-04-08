@@ -1,26 +1,31 @@
 import { SetRepository } from '../repository';
 import { Set } from '../entity';
-import { MatchService } from './matchService';
+import { MatchService, UserService } from '.';
+import { UserRole } from '../entity/User';
+import { ServiceCodeError } from '../errors/errorsClass';
 
 export class SetService {
     private matchService: MatchService;
+    private userService: UserService;
 
     constructor() {
         this.matchService = new MatchService();
+        this.userService = new UserService();
     }
-    async create(newSet: Set, matchId: string): Promise<Set> {
-        try {
-            const match = await this.matchService.findById(matchId);
-            const sets = await SetRepository.getSetsByMatchId(matchId);
+    async create(userId: string, newSet: Set, matchId: string): Promise<Set> {
+        const user = await this.userService.findById(userId);
 
-            if (match && sets.length < 3) {
-                newSet.match = match;
-                return SetRepository.save(newSet);
-            }
-
-            throw new Error('Match already has 3 sets');
-        } catch (err) {
-            console.error('Error creating Set', err);
+        if (user.role != UserRole.ADMIN) {
+            throw new ServiceCodeError('User is not ADMIN', 'SetS-2');
         }
+
+        const match = await this.matchService.findById(matchId);
+        const sets = await SetRepository.getSetsByMatchId(matchId);
+
+        if (sets.length >= 3) {
+            throw new ServiceCodeError('Match already has 3 sets', 'SetS-3');
+        }
+
+        return SetRepository.save({ ...newSet, match });
     }
 }

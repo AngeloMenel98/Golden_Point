@@ -1,6 +1,27 @@
 import { AppDataSource } from '../data-source';
-import { Tournament } from '../entity';
+import { Category, Tour, Tournament } from '../entity';
 
 export const TournamentRepository = AppDataSource.getRepository(
     Tournament
-).extend({});
+).extend({
+    async create(
+        newTourn: Tournament,
+        existTour: Tour,
+        categories: Category[]
+    ) {
+        return this.manager.transaction(async (transactionalEntityManager) => {
+            await transactionalEntityManager
+                .getRepository(Category)
+                .save(categories);
+
+            //FIXME: Find a way to put categories inside the spread operator
+            newTourn.categories = categories;
+
+            const savedTournament = await transactionalEntityManager
+                .getRepository(Tournament)
+                .save({ ...newTourn, tour: existTour });
+
+            return savedTournament;
+        });
+    },
+});

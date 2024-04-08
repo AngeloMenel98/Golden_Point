@@ -8,6 +8,10 @@ const router = Router();
 router.post(
     '/set/create',
     [
+        check('adminUserId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('adminUserId')),
         check('gamesTeam1')
             .not()
             .isEmpty()
@@ -21,25 +25,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('matchId')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { gamesTeam1, gamesTeam2, matchId } = req.body;
-            const { resp, status } = await setController.create(
-                gamesTeam1,
-                gamesTeam2,
-                matchId
-            );
-            res.status(status).json(resp);
-        } catch (err) {
-            console.error('Error creating club:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    setController.create.bind(setController)
 );
 
 export default router;

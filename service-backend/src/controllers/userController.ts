@@ -7,7 +7,7 @@ import { PersonalData, TourCoin, User } from '../entity';
 import { UserService } from '../services';
 import { UserRole } from '../entity/User';
 import {
-    isUserServiceLogInError,
+    isUserServiceError,
     isUserServiceValidationError,
 } from '../errors/errors';
 
@@ -47,7 +47,7 @@ export class UserController {
         } catch (e) {
             console.error('Error Loggin In', e);
 
-            if (isUserServiceLogInError(e)) {
+            if (isUserServiceError(e)) {
                 res.status(400).json({ error: 'Error Loggin In' });
                 return;
             }
@@ -219,11 +219,14 @@ export class UserController {
             };
             res.status(201).json(response);
         } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error finding User by username' },
-                status: 500,
-            };
+            console.error('Error finding username:', e);
+
+            if (isUserServiceError(e)) {
+                res.status(400).json({ error: 'Validation error' });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 }
