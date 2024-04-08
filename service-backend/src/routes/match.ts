@@ -1,5 +1,5 @@
-import { Request, Response, Router } from 'express';
-import { check, validationResult } from 'express-validator';
+import { Router } from 'express';
+import { check } from 'express-validator';
 import validationMsg from '../constants/validationMessages';
 import { matchController } from '../controllers';
 
@@ -33,35 +33,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('courtId')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const {
-                amountTourPoints,
-                amountTourCoins,
-                matchDate,
-                teamIds,
-                tournamentId,
-                courtId,
-            } = req.body;
-            const { resp, status } = await matchController.create(
-                amountTourPoints,
-                amountTourCoins,
-                matchDate,
-                teamIds,
-                tournamentId,
-                courtId
-            );
-            res.status(status).json(resp);
-        } catch (err) {
-            console.error('Error creating club:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    matchController.create.bind(matchController)
 );
 
 export default router;

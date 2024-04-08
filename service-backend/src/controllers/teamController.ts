@@ -1,5 +1,8 @@
+import { validationResult } from 'express-validator';
 import { Team } from '../entity';
 import { TeamService } from '../services';
+import { Request, Response } from 'express';
+import { isServiceCodeError } from '../errors/errors';
 
 export class TeamController {
     private teamService: TeamService;
@@ -8,48 +11,66 @@ export class TeamController {
         this.teamService = new TeamService();
     }
 
-    async create(adminUserId: string, usersId: string[]) {
+    async create(req: Request, res: Response) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { adminUserId, usersId } = req.body;
             const newTeam = new Team();
 
-            const resp = await this.teamService.create(
+            const teams = await this.teamService.create(
                 newTeam,
                 usersId,
                 adminUserId
             );
 
             const response = {
-                teamId: resp.id,
-                teamName: resp.teamName,
-                users: resp.users.map((u) => u.id),
+                teamId: teams.id,
+                teamName: teams.teamName,
+                users: teams.users.map((u) => u.id),
             };
 
-            return { response, status: 201 };
+            res.status(201).json(response);
         } catch (e) {
-            console.error(e);
-            return {
-                resp: { error: 'Error creating new Team' },
-                status: 500,
-            };
+            console.error('Error creating teams:', e);
+
+            if (isServiceCodeError(e)) {
+                res.status(400).json({ error: e.code });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 
-    async getTeam(teamId: string) {
+    async getTeam(req: Request, res: Response) {
         try {
-            const resp = await this.teamService.getTeamWithUsers(teamId);
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const teamId = req.params.id;
+            const team = await this.teamService.getTeamWithUsers(teamId);
 
             const response = {
-                teamId: resp.team.id,
-                teamName: resp.team.teamName,
-                users: resp.users.map((u) => u.id),
+                teamId: team.team.id,
+                teamName: team.team.teamName,
+                users: team.users.map((u) => u.id),
             };
-            return { response, status: 201 };
+            res.status(201).json(response);
         } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error finding a Team' },
-                status: 500,
-            };
+            console.error('Error getting team:', e);
+
+            if (isServiceCodeError(e)) {
+                res.status(400).json({ error: e.code });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 }

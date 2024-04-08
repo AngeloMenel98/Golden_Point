@@ -1,5 +1,5 @@
-import { Request, Response, Router } from 'express';
-import { check, validationResult } from 'express-validator';
+import { Router } from 'express';
+import { check } from 'express-validator';
 import validationMsg from '../constants/validationMessages';
 import { tournController } from '../controllers';
 
@@ -25,26 +25,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('categoryData')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { tourId, title, master, categoryData } = req.body;
-            const { resp, status } = await tournController.create(
-                tourId,
-                title,
-                master,
-                categoryData
-            );
-            return res.status(status).json(resp);
-        } catch (err) {
-            console.error('Error registering tournament:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    tournController.create.bind(tournController)
 );
 
 export default router;

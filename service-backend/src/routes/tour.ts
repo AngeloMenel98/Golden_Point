@@ -1,5 +1,5 @@
-import { Request, Response, Router } from 'express';
-import { check, validationResult } from 'express-validator';
+import { Router } from 'express';
+import { check } from 'express-validator';
 import validationMsg from '../constants/validationMessages';
 import { tourController } from '../controllers';
 
@@ -17,25 +17,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { title, userId } = req.body;
-            const { response, status } = await tourController.create(
-                title,
-                userId
-            );
-
-            return res.status(status).json(response);
-        } catch (err) {
-            console.error('Error registering user:', err);
-            return res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    tourController.create.bind(tourController)
 );
 
 router.post(
@@ -50,25 +32,7 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { userId, tourCode } = req.body;
-            const { response, status } = await tourController.joinUser(
-                userId,
-                tourCode
-            );
-
-            res.status(status).json(response);
-        } catch (err) {
-            console.error('Error adding user to tour:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    tourController.joinUser.bind(tourController)
 );
 
 router.post(
@@ -79,38 +43,9 @@ router.post(
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('tourId')),
     ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { tourId } = req.body;
-            const { response, status } = await tourController.delete(tourId);
-
-            res.status(status).json(response);
-        } catch (err) {
-            console.error('Error adding user to tour:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+    tourController.delete.bind(tourController)
 );
 
-router.get('/tour/tours', async (req: Request, res: Response) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-
-        const { response, status } = await tourController.getAll();
-
-        res.status(status).json(response);
-    } catch (error) {
-        console.error('Error getting Tours:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+router.get('/tour/tours', tourController.getAll.bind(tourController));
 
 export default router;

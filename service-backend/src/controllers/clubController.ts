@@ -1,6 +1,8 @@
 import { ClubService } from '../services';
-import { CalendarClub, Club, Court } from '../entity';
-import { UserRole } from '../entity/User';
+import { CalendarClub, Club } from '../entity';
+import { validationResult } from 'express-validator';
+import { Request, Response } from 'express';
+import { isServiceCodeError } from '../errors/errors';
 
 export class ClubController {
     private clubService: ClubService;
@@ -9,16 +11,23 @@ export class ClubController {
         this.clubService = new ClubService();
     }
 
-    async create(
-        clubName: string,
-        tourId: string,
-        location: string,
-        userRole: UserRole,
-        availableFrom: string,
-        availableTo: string,
-        courtsNumber: number
-    ) {
+    async create(req: Request, res: Response) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const {
+                clubName,
+                tourId,
+                location,
+                userRole,
+                availableFrom,
+                availableTo,
+                courtsNumber,
+            } = req.body;
+
             const newClub = new Club();
             newClub.clubName = clubName;
             newClub.location = location;
@@ -27,38 +36,53 @@ export class ClubController {
             newCalClub.availableTo = availableTo;
             newCalClub.availableFrom = availableFrom;
 
-            const newCourts: Court[] = [];
-
-            const resp = await this.clubService.create(
+            const club = await this.clubService.create(
                 newClub,
                 newCalClub,
-                newCourts,
                 userRole,
                 tourId,
                 courtsNumber
             );
 
-            return { resp, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                resp: { error: 'Error creating Club' },
-                status: 500,
+            const response = {
+                id: club.id,
+                address: club.location,
+                calendarClub: club.calendarClub.id,
+                tour: club.tour.id,
             };
+
+            res.status(201).json(response);
+        } catch (e) {
+            console.error('Error creating clubs:', e);
+
+            if (isServiceCodeError(e)) {
+                res.status(400).json({ error: e.code });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 
-    async getAll() {
-        const response = await this.clubService.getAll();
+    async getAll(req: Request, res: Response) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
-        if (!response) {
-            return {
-                response: 'Clubs not Found',
-                status: 404,
-            };
+            const response = await this.clubService.getAll();
+            res.status(201).json(response);
+        } catch (e) {
+            console.error('Error getting clubs:', e);
+
+            if (isServiceCodeError(e)) {
+                res.status(400).json({ error: e.code });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
-
-        return { response, status: 201 };
     }
 }
 
