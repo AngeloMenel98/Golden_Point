@@ -8,3 +8,5 @@ service-backend/build/
 service-backend/tmp/
 service-backend/temp/
 service-backend/todo.md
+
+secrets

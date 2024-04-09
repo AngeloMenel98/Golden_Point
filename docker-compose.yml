@@ -2,31 +2,54 @@ version: "3.7"
 
 services:
   db:
-    image: angemenel98/postgresql:0.0.1
-    build:
-      context: ./service-postgres
+    image: postgres:15.2-alpine3.17
+    container_name: db_app
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     ports:
-      - "5432:5432"
+      - "54321:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
       timeout: 5s
       retries: 5
     volumes:
-      - type: bind
-        source: ./service-postgres/init.sh
-        target: /docker-entrypoint-initdb.d/init.sh
-      - type: volume
-        source: sql-data
-        target: /var/lib/postgresql/data
-        volume:
-          nocopy: false
+      - sql-data:/var/lib/postgresql/data
+    networks:
+      - common-net
+    #secrets:
+    #  - db_username
+    #  - db_password
+
+  backend:
+    build:
+      context: ./service-backend
+      dockerfile: ./Dockerfile/Dockerfile
+    container_name: backend_app
+    ports:
+      - "80:8080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      PORT: 8080
+      DB_NAME: golden_point
+    networks:
+      - common-net
+    #secrets:
+    #  - db_username
+    #  - db_password
+
 volumes:
   sql-data:
 
-secrets:
-  db_secrets:
-    file: ./secrets/db_credentials.json
+networks:
+  common-net: {}
+#secrets:
+#  db_username:
+#    file: ./secrets/db_username.txt
+#  db_password:
+#    file: ./secrets/db_password.txt
