@@ -13,6 +13,7 @@ AppDataSource.initialize()
 const app = express();
 
 const PORT = process.env.PORT;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

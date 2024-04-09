@@ -1,6 +1,13 @@
 import { Tour } from '../entity';
 import { TourService } from '../services';
 import { generateCode } from '../helpers/generateTourCode.helper';
+import { Request, Response, response } from 'express';
+import { validationResult } from 'express-validator';
+import {
+    isServiceCodeError,
+    isTourServiceError,
+    isUserServiceError,
+} from '../errors/errors';
 
 export class TourController {
     private tourService: TourService;
@@ -8,94 +15,137 @@ export class TourController {
     constructor() {
         this.tourService = new TourService();
     }
-    async create(title: string, userId: string) {
+    async create(req: Request, res: Response) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { title, userId } = req.body;
+
             const newTour = new Tour();
             newTour.title = title;
             newTour.tourCode = generateCode(6);
 
-            const resp = await this.tourService.create(newTour, userId);
+            const tour = await this.tourService.create(newTour, userId);
 
-            if (resp.success) {
-                const response = {
-                    id: resp.tour.id,
-                    title: resp.tour.title,
-                    tourCode: resp.tour.tourCode,
-                    isDeleted: resp.tour.isDeleted,
-                    usersId: resp.tour.users.map((u) => u.id),
-                };
-
-                return { response, status: 201 };
-            }
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error creating new Tour' },
-                status: 500,
+            const response = {
+                id: tour.id,
+                title: tour.title,
+                tourCode: tour.tourCode,
+                isDeleted: tour.isDeleted,
+                usersId: tour.users.map((u) => u.id),
             };
+
+            res.status(201).json(response);
+        } catch (e) {
+            console.error('Error creating tour:', e);
+
+            if (isTourServiceError(e)) {
+                res.status(400).json({ error: e.message });
+                return;
+            }
+
+            if (isUserServiceError(e)) {
+                res.status(400).json({ error: 'User ID does not exist' });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 
-    async delete(tourId: string) {
+    async delete(req: Request, res: Response) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { tourId } = req.body;
             const existingTour = await this.tourService.findById(tourId);
 
-            if (existingTour.success) {
-                const resp = await this.tourService.delete(existingTour.tour);
-                if (resp.success) {
-                    const response = {
-                        id: resp.tour.id,
-                        title: resp.tour.title,
-                        tourCode: resp.tour.tourCode,
-                        isDeleted: resp.tour.isDeleted,
-                    };
+            const tour = await this.tourService.delete(existingTour);
 
-                    return { response, status: 201 };
-                }
-            }
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error deleting new Tour' },
-                status: 500,
+            const response = {
+                id: tour.id,
+                title: tour.title,
+                tourCode: tour.tourCode,
+                isDeleted: tour.isDeleted,
             };
+
+            res.status(201).json(response);
+        } catch (e) {
+            console.error('Error creating tour:', e);
+
+            if (isTourServiceError(e)) {
+                res.status(400).json({ error: e.message });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 
-    async joinUser(userId: string, tourCode: string) {
+    async joinUser(req: Request, res: Response) {
         try {
-            const resp = await this.tourService.joinUserToTour(
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
+
+            const { userId, tourCode } = req.body;
+
+            const tour = await this.tourService.joinUserToTour(
                 userId,
                 tourCode
             );
-            if (resp.success) {
-                const response = {
-                    id: resp.tour.id,
-                    title: resp.tour.title,
-                    tourCode: resp.tour.tourCode,
-                    usersId: resp.tour.users.map((u) => u.id),
-                };
-                return { response, status: 201 };
-            }
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error adding user to Tour', status: 500 },
+
+            const response = {
+                id: tour.id,
+                title: tour.title,
+                tourCode: tour.tourCode,
+                usersId: tour.users.map((u) => u.id),
             };
+            res.status(201).json(response);
+        } catch (e) {
+            console.error('Error creating tour:', e);
+
+            if (isTourServiceError(e)) {
+                res.status(400).json({ error: e.message });
+                return;
+            }
+
+            if (isUserServiceError(e)) {
+                res.status(400).json({ error: 'User ID does not exist' });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 
-    async getAll() {
-        const response = await this.tourService.getAll();
+    async getAll(req: Request, res: Response) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array() });
+            }
 
-        if (!response) {
-            return {
-                response: response.message,
-                status: 404,
-            };
+            const tours = await this.tourService.getAll();
+
+            res.status(201).json(tours);
+        } catch (e) {
+            console.error('Error creating tour:', e);
+
+            if (isServiceCodeError(e)) {
+                res.status(400).json({ error: e.code });
+                return;
+            }
+
+            res.status(500).json({ error: 'Internal Server Error' });
         }
-
-        return { response, status: 201 };
     }
 }
 

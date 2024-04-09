@@ -1,39 +1,17 @@
 import { CourtRepository } from '../repository';
 import { Club, Court } from '../entity';
+import { ServiceCodeError } from '../errors/errorsClass';
 
 export class CourtService {
-    async create(
-        newCourts: Court[],
-        club: Club,
-        courtsNumber: number
-    ): Promise<Court[]> {
-        try {
-            for (let i = 0; i < courtsNumber; i = i + 1) {
-                const newCourt = new Court();
-                newCourt.courtNumber = i + 1;
-                newCourt.club = club;
+    async findById(courtId: string) {
+        const existingCourt = await CourtRepository.findOneBy({
+            id: courtId,
+        });
 
-                newCourts.push(newCourt);
-            }
-
-            return CourtRepository.save(newCourts);
-        } catch (err) {
-            console.error('Error creating Courts:', err);
+        if (!existingCourt) {
+            throw new ServiceCodeError('Court ID does not exist', 'CourtS-1');
         }
-    }
 
-    async findById(courtId: any): Promise<Court> {
-        try {
-            const existingCourt = await CourtRepository.findOneBy({
-                id: courtId,
-            });
-
-            if (existingCourt) {
-                return existingCourt;
-            }
-        } catch (err) {
-            console.error('Error finding user by ID', courtId);
-            return undefined;
-        }
+        return existingCourt;
     }
 }

@@ -1,51 +1,51 @@
 import { ClubRepository } from '../repository';
 import { CalendarClub, Club, Court } from '../entity';
 import { UserRole } from '../entity/User';
-import { TourService, CalendarClubService, CourtService } from '.';
+import { TourService } from '.';
+import { ServiceCodeError } from '../errors/errorsClass';
 
 export class ClubService {
     private tourService: TourService;
-    private calendarClubService: CalendarClubService;
-    private courtService: CourtService;
 
     constructor() {
         this.tourService = new TourService();
-        this.calendarClubService = new CalendarClubService();
-        this.courtService = new CourtService();
     }
 
     async create(
         newClub: Club,
         newCalClub: CalendarClub,
-        newCourts: Court[],
         userRole: string,
         tourId: string,
         courtsNumber: number
-    ): Promise<Club> {
-        try {
-            const existingTour = await this.tourService.findById(tourId);
+    ) {
+        const existingTour = await this.tourService.findById(tourId);
 
-            if (existingTour.success && userRole == UserRole.ADMIN) {
-                newClub.tour = existingTour.tour;
-                newClub.calendarClub = newCalClub;
-
-                this.calendarClubService.create(newCalClub);
-                const savedClub = await ClubRepository.save(newClub);
-                this.courtService.create(newCourts, newClub, courtsNumber);
-
-                return savedClub;
-            }
-        } catch (e) {
-            console.error('Error creating club in Service', e);
+        if (userRole != UserRole.ADMIN) {
+            throw new ServiceCodeError('User is not ADMIN', 'ClubS-2');
         }
+        const newCourts: Court[] = [];
+        for (let i = 0; i < courtsNumber; i = i + 1) {
+            const newCourt = new Court();
+            newCourt.courtNumber = i + 1;
+
+            newCourts.push(newCourt);
+        }
+
+        return ClubRepository.create(
+            newClub,
+            existingTour,
+            newCalClub,
+            newCourts
+        );
     }
 
-    async getAll(): Promise<Club> {
-        try {
-            const existingTours = await ClubRepository.getAll();
-            return existingTours;
-        } catch (e) {
-            console.error(e);
+    async getAll() {
+        const existingClubs = await ClubRepository.getAll();
+
+        if (!existingClubs) {
+            throw new ServiceCodeError('There is any Club created', 'ClubS-1');
         }
+
+        return existingClubs;
     }
 }

@@ -1,5 +1,6 @@
 import { CategoryService, TourService } from '.';
 import { Category, Tournament } from '../entity';
+import { ServiceCodeError } from '../errors/errorsClass';
 import { TournamentRepository } from '../repository';
 
 export class TournamentService {
@@ -13,53 +14,38 @@ export class TournamentService {
 
     async create(
         newTournament: Tournament,
-        newCategories: Category[],
         tourId: string,
-        categoryData: { categoryName: string; gender: string }[]
-    ): Promise<Tournament> {
-        try {
-            const existingTour = await this.tourService.findById(tourId);
-            if (existingTour.success) {
-                newTournament.tour = existingTour.tour;
+        categoryData: Category[]
+    ) {
+        const existingTour = await this.tourService.findById(tourId);
 
-                const existingCats = await this.categoryService.findCategories(
-                    categoryData
-                );
-                console.log('ExistingCats:', existingCats);
-                console.log('CategoryData:', categoryData);
-                const savedCategories = await this.categoryService.create(
-                    newCategories,
-                    categoryData
-                );
+        const existingCats = await this.categoryService.findCategories(
+            categoryData
+        );
 
-                const combinedCategories = [
-                    ...existingCats,
-                    ...savedCategories,
-                ];
+        const newCategories = await this.categoryService.create(categoryData);
 
-                console.log('CombinedCat:', combinedCategories);
-                newTournament.categories = combinedCategories;
+        const combinedCategories = [...existingCats, ...newCategories];
 
-                return TournamentRepository.save(newTournament);
-            }
-        } catch (e) {
-            console.error('Error creating Tournament', e);
-        }
+        return TournamentRepository.create(
+            newTournament,
+            existingTour,
+            combinedCategories
+        );
     }
 
     async findById(tournamentId: string) {
-        try {
-            const existingTourn = await TournamentRepository.findOneBy({
-                id: tournamentId,
-            });
+        const existingTourn = await TournamentRepository.findOneBy({
+            id: tournamentId,
+        });
 
-            if (existingTourn) {
-                return existingTourn;
-            } else {
-                console.error('Error finding user by ID', tournamentId);
-            }
-        } catch (err) {
-            console.error('Error finding user by ID', tournamentId);
+        if (!existingTourn) {
+            throw new ServiceCodeError(
+                'Tournament ID does not exist',
+                'TournS-1'
+            );
         }
+
+        return existingTourn;
     }
 }
