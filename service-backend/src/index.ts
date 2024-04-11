@@ -3,7 +3,6 @@ import cors = require('cors');
 import * as dotenv from 'dotenv';
 import configureRoutes from './routes/index';
 import { AppDataSource } from './data-source';
-
 dotenv.config();
 
 AppDataSource.initialize()
