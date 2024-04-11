@@ -1,9 +1,13 @@
 import express = require('express');
 import cors = require('cors');
+import path = require('path');
 import * as dotenv from 'dotenv';
 import configureRoutes from './routes/index';
 import { AppDataSource } from './data-source';
-dotenv.config();
+
+const envFilePath = path.join(__dirname, '..', '.env.prod');
+
+dotenv.config({ path: envFilePath });
 
 AppDataSource.initialize()
     .then(async () => {})
