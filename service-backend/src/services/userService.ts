@@ -5,6 +5,7 @@ import { validate } from 'class-validator';
 import {
     UserServiceError,
     ServiceValidationError,
+    ServiceCodeError,
 } from '../errors/errorsClass';
 
 export class UserService {
@@ -16,7 +17,7 @@ export class UserService {
         });
 
         if (!existingUser) {
-            throw new UserServiceError('User does not exist', existingUser.id);
+            throw new UserServiceError('User does not exist', username);
         }
 
         if (!existingUser.compareHashPass(password)) {
@@ -60,6 +61,13 @@ export class UserService {
             existingUser.id
         );
 
+        if (!existingPerData) {
+            throw new ServiceCodeError(
+                'Personal Data does not exist',
+                'UserS-2'
+            );
+        }
+
         return UserRepository.update(
             existingUser,
             existingPerData,
@@ -77,7 +85,7 @@ export class UserService {
         const user = await UserRepository.findByUsername(username);
 
         if (!user) {
-            throw new UserServiceError('User Id does not exist', user.id);
+            throw new UserServiceError('Username does not exist', username);
         }
 
         return user;
@@ -89,16 +97,17 @@ export class UserService {
         });
 
         if (!existingUser) {
-            throw new UserServiceError(
-                'User ID does not exist',
-                existingUser.id
-            );
+            throw new UserServiceError('User ID does not exist', userId);
         }
         return existingUser;
     }
 
     async findByIdWithPersonalData(userId: string) {
         const userData = await UserRepository.findUserWithPerData(userId);
+
+        if (!userData) {
+            throw new UserServiceError('User ID does not exist', userId);
+        }
 
         const user = {
             id: userData.id,
@@ -110,10 +119,6 @@ export class UserService {
             role: userData.role,
         };
 
-        if (userData) {
-            return { user: user, perData: userData.personalData };
-        } else {
-            console.error('Error finding user by ID', userId);
-        }
+        return { user: user, perData: userData.personalData };
     }
 }

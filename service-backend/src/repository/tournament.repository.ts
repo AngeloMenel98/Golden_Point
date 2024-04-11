@@ -14,12 +14,9 @@ export const TournamentRepository = AppDataSource.getRepository(
                 .getRepository(Category)
                 .save(categories);
 
-            //FIXME: Find a way to put categories inside the spread operator
-            newTourn.categories = categories;
-
             const savedTournament = await transactionalEntityManager
                 .getRepository(Tournament)
-                .save({ ...newTourn, tour: existTour });
+                .save({ ...newTourn, tour: existTour, categories });
 
             return savedTournament;
         });

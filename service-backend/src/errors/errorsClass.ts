@@ -19,20 +19,11 @@ export class CustomError extends Error {
 }
 
 export class UserServiceError extends Error {
-    userId: string;
+    user: string;
 
-    constructor(messsage: string, userId: string) {
+    constructor(messsage: string, user: string) {
         super(messsage);
-        this.userId = userId;
-    }
-}
-
-export class TourServiceError extends Error {
-    userId: string;
-
-    constructor(messsage: string, userId: string) {
-        super(messsage);
-        this.userId = userId;
+        this.user = user;
     }
 }
 

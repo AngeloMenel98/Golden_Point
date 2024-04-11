@@ -20,7 +20,7 @@ export class TeamService {
             )
         );
 
-        if (usersWithData.length > 0 && adminUser.role == UserRole.ADMIN) {
+        if (adminUser.role == UserRole.ADMIN) {
             let teamName = '';
             const lastNames = usersWithData.map(
                 (user) => user.perData.lastName

@@ -2,7 +2,7 @@ import { validationResult } from 'express-validator';
 import { Tournament } from '../entity';
 import { TournamentService } from '../services';
 import { Request, Response } from 'express';
-import { isServiceCodeError } from '../errors/errors';
+import { isServiceCodeError, isUserServiceError } from '../errors/errors';
 
 export class TournamentController {
     private tournService: TournamentService;
@@ -18,7 +18,7 @@ export class TournamentController {
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { tourId, title, master, categoryData } = req.body;
+            const { tourId, userId, title, master, categoryData } = req.body;
 
             const newTourn = new Tournament();
             newTourn.title = title;
@@ -27,6 +27,7 @@ export class TournamentController {
             const tournament = await this.tournService.create(
                 newTourn,
                 tourId,
+                userId,
                 categoryData
             );
             const response = {
@@ -42,6 +43,10 @@ export class TournamentController {
             if (isServiceCodeError(e)) {
                 res.status(400).json({ error: e.code });
                 return;
+            }
+
+            if (isUserServiceError(e)) {
+                res.status(400).json({ error: e.message });
             }
 
             res.status(500).json({ error: 'Internal Server Error' });

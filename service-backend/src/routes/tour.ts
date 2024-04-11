@@ -42,6 +42,10 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('tourId')),
+        check('userId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
     ],
     tourController.delete.bind(tourController)
 );
