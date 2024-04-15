@@ -9,15 +9,6 @@ export class ServiceValidationError extends Error {
     }
 }
 
-export class CustomError extends Error {
-    status: number;
-
-    constructor(status: number, message: string) {
-        super(message);
-        this.status = status;
-    }
-}
-
 export class UserServiceError extends Error {
     user: string;
 

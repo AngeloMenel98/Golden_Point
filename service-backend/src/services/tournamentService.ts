@@ -42,6 +42,11 @@ export class TournamentService {
         );
     }
 
+    async delete(tournament: Tournament) {
+        tournament.isDeleted = true;
+        return TournamentRepository.save(tournament);
+    }
+
     async findById(tournamentId: string) {
         const existingTourn = await TournamentRepository.findOneBy({
             id: tournamentId,

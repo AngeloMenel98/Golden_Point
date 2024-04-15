@@ -19,13 +19,14 @@ export class TeamController {
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { adminUserId, usersId } = req.body;
+            const { adminUserId, usersId, tournamentId } = req.body;
             const newTeam = new Team();
 
             const teams = await this.teamService.create(
                 newTeam,
                 usersId,
-                adminUserId
+                adminUserId,
+                tournamentId
             );
 
             const response = {
