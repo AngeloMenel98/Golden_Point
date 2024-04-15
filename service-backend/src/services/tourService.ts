@@ -2,7 +2,7 @@ import { TourRepository } from '../repository';
 import { Tour } from '../entity';
 import { UserService } from '.';
 import { UserRole } from '../entity/User';
-import { ServiceCodeError, TourServiceError } from '../errors/errorsClass';
+import { ServiceCodeError } from '../errors/errorsClass';
 
 export class TourService {
     private userService: UserService;
@@ -15,7 +15,7 @@ export class TourService {
         const user = await this.userService.findById(userId);
 
         if (user.role != UserRole.ADMIN) {
-            throw new TourServiceError('User is not ADMIN', user.id);
+            throw new ServiceCodeError('User is not ADMIN', 'TourS-3');
         }
         return TourRepository.save({ ...newTour, users: [user] });
     }
@@ -31,7 +31,7 @@ export class TourService {
         });
 
         if (!existingTour) {
-            throw new TourServiceError('TourCode does not exist', tourCode);
+            throw new ServiceCodeError('TourCode does not exist', 'TourS-4');
         }
 
         const user = await this.userService.findById(userId);
@@ -44,7 +44,7 @@ export class TourService {
             id: tourId,
         });
         if (!existingTour) {
-            throw new ServiceCodeError('Tour ID does not exist', 'TourID-1');
+            throw new ServiceCodeError('Tour ID does not exist', 'TourS-1');
         }
         return existingTour;
     }
@@ -53,7 +53,7 @@ export class TourService {
         const tours: unknown[] = await TourRepository.getAll();
 
         if (tours.length == 0) {
-            throw new ServiceCodeError('There is any Tour created', 'TourS-1');
+            throw new ServiceCodeError('There is any Tour created', 'TourS-2');
         }
         return tours;
     }
