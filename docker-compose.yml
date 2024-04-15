@@ -37,6 +37,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       PORT: 8080
       DB_NAME: ${DB_NAME}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     networks:
       - common-net
     #secrets:

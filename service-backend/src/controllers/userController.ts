@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { validate } from 'class-validator';
 import * as jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 
@@ -11,7 +10,6 @@ import {
     isUserServiceError,
     isUserServiceValidationError,
 } from '../errors/errors';
-import { error } from 'console';
 
 export class UserController {
     private userService: UserService;
