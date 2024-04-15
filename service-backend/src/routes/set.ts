@@ -8,10 +8,10 @@ const router = Router();
 router.post(
     '/set/create',
     [
-        check('adminUserId')
+        check('userId')
             .not()
             .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('adminUserId')),
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
         check('gamesTeam1')
             .not()
             .isEmpty()

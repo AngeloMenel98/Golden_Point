@@ -22,6 +22,9 @@ export class Tournament {
     @Column('integer')
     master: number;
 
+    @Column()
+    isDeleted: boolean;
+
     @ManyToOne(() => Tour, (tour) => tour.tournaments)
     tour: Tour;
 

@@ -40,7 +40,7 @@ export class MatchService {
         const court = await this.courtService.findById(courtId);
 
         if (teams.length != 2) {
-            throw new ServiceCodeError('Amount of teams incorrect', 'MatchS-3');
+            throw new ServiceCodeError('Amount of teams incorrect', 'MatchS-4');
         }
 
         return MatchRepository.save({ ...newMatch, teams, tournament, court });
