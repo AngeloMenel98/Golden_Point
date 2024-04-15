@@ -18,17 +18,13 @@ export class MatchController {
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { adminUserId, gamesTeam1, gamesTeam2, matchId } = req.body;
+            const { userId, gamesTeam1, gamesTeam2, matchId } = req.body;
 
             const newSet = new Set();
             newSet.gamesTeam1 = gamesTeam1;
             newSet.gamesTeam2 = gamesTeam2;
 
-            const set = await this.setService.create(
-                adminUserId,
-                newSet,
-                matchId
-            );
+            const set = await this.setService.create(userId, newSet, matchId);
 
             const response = {
                 id: set.id,

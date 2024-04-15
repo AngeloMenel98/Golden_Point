@@ -1,18 +1,26 @@
 import { TeamRepository, UserRepository } from '../repository';
 import { Team } from '../entity';
-import { UserService } from './userService';
+import { UserService, TournamentService } from './index';
 import { UserRole } from '../entity/User';
 import { ServiceCodeError } from '../errors/errorsClass';
 
 export class TeamService {
     private userService: UserService;
+    private tournService: TournamentService;
 
     constructor() {
         this.userService = new UserService();
+        this.tournService = new TournamentService();
     }
 
-    async create(newTeam: Team, usersId: string[], adminUserId: string) {
+    async create(
+        newTeam: Team,
+        usersId: string[],
+        adminUserId: string,
+        tournamentId: string
+    ) {
         const adminUser = await this.userService.findById(adminUserId);
+        await this.tournService.findById(tournamentId);
 
         const usersWithData = await Promise.all(
             usersId.map((userId) =>
@@ -20,7 +28,7 @@ export class TeamService {
             )
         );
 
-        if (usersWithData.length > 0 && adminUser.role == UserRole.ADMIN) {
+        if (adminUser.role == UserRole.ADMIN) {
             let teamName = '';
             const lastNames = usersWithData.map(
                 (user) => user.perData.lastName

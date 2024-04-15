@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { validate } from 'class-validator';
 import * as jwt from 'jsonwebtoken';
 import { validationResult } from 'express-validator';
 
@@ -7,6 +6,7 @@ import { PersonalData, TourCoin, User } from '../entity';
 import { UserService } from '../services';
 import { UserRole } from '../entity/User';
 import {
+    isServiceCodeError,
     isUserServiceError,
     isUserServiceValidationError,
 } from '../errors/errors';
@@ -48,7 +48,7 @@ export class UserController {
             console.error('Error Loggin In', e);
 
             if (isUserServiceError(e)) {
-                res.status(400).json({ error: 'Error Loggin In' });
+                res.status(400).json({ error: e.message });
                 return;
             }
 
@@ -170,6 +170,10 @@ export class UserController {
                 return;
             }
 
+            if (isServiceCodeError(e)) {
+                res.status(400).json({ error: e.code });
+            }
+
             res.status(500).json({ error: 'Internal Server Error' });
         }
     }
@@ -222,7 +226,7 @@ export class UserController {
             console.error('Error finding username:', e);
 
             if (isUserServiceError(e)) {
-                res.status(400).json({ error: 'Validation error' });
+                res.status(400).json({ error: e.message });
                 return;
             }
 

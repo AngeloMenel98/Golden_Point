@@ -16,14 +16,14 @@ export class SetService {
         const user = await this.userService.findById(userId);
 
         if (user.role != UserRole.ADMIN) {
-            throw new ServiceCodeError('User is not ADMIN', 'SetS-2');
+            throw new ServiceCodeError('User is not ADMIN', 'SetS-3');
         }
 
         const match = await this.matchService.findById(matchId);
         const sets = await SetRepository.getSetsByMatchId(matchId);
 
         if (sets.length >= 3) {
-            throw new ServiceCodeError('Match already has 3 sets', 'SetS-3');
+            throw new ServiceCodeError('Match already has 3 sets', 'SetS-4');
         }
 
         return SetRepository.save({ ...newSet, match });

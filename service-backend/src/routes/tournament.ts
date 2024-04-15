@@ -16,6 +16,10 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('tourId')),
+        check('userId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
         check('master')
             .not()
             .isEmpty()
@@ -26,6 +30,21 @@ router.post(
             .withMessage(validationMsg.VALUE_IS_REQUIRED('categoryData')),
     ],
     tournController.create.bind(tournController)
+);
+
+router.post(
+    '/tournament/delete',
+    [
+        check('tournamentId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('tournamentId')),
+        check('userId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('userId')),
+    ],
+    tournController.delete.bind(tournController)
 );
 
 export default router;

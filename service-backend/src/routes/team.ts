@@ -16,6 +16,10 @@ router.post(
             .not()
             .isEmpty()
             .withMessage(validationMsg.VALUE_IS_REQUIRED('usersId')),
+        check('tournamentId')
+            .not()
+            .isEmpty()
+            .withMessage(validationMsg.VALUE_IS_REQUIRED('tournamentId')),
     ],
     teamController.create.bind(teamController)
 );

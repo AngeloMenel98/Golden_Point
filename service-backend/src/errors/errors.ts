@@ -1,6 +1,5 @@
 import {
     ServiceCodeError,
-    TourServiceError,
     UserServiceError,
     ServiceValidationError,
 } from './errorsClass';
@@ -12,11 +11,9 @@ export const isUserServiceValidationError = (
     typeof error === 'object' && error !== null && 'validationErrors' in error;
 
 export const isUserServiceError = (error: unknown): error is UserServiceError =>
-    typeof error === 'object' && error !== null && 'userId' in error;
+    typeof error === 'object' && error !== null && 'user' in error;
 
-//-------------------- Tour Errors ----------------------------------------
-export const isTourServiceError = (error: unknown): error is TourServiceError =>
-    typeof error === 'object' && error !== null && 'userId' in error;
+//---------------------- Service Code Errors ----------------------------------
 
 export const isServiceCodeError = (error: unknown): error is ServiceCodeError =>
     typeof error === 'object' && error !== null && 'code' in error;

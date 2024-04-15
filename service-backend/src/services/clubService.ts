@@ -21,7 +21,7 @@ export class ClubService {
         const existingTour = await this.tourService.findById(tourId);
 
         if (userRole != UserRole.ADMIN) {
-            throw new ServiceCodeError('User is not ADMIN', 'ClubS-2');
+            throw new ServiceCodeError('User is not ADMIN', 'ClubS-3');
         }
         const newCourts: Court[] = [];
         for (let i = 0; i < courtsNumber; i = i + 1) {
@@ -40,10 +40,10 @@ export class ClubService {
     }
 
     async getAll() {
-        const existingClubs = await ClubRepository.getAll();
+        const existingClubs: unknown[] = await ClubRepository.getAll();
 
-        if (!existingClubs) {
-            throw new ServiceCodeError('There is any Club created', 'ClubS-1');
+        if (existingClubs.length == 0) {
+            throw new ServiceCodeError('There is any Club created', 'ClubS-2');
         }
 
         return existingClubs;

@@ -2,7 +2,8 @@ import { validationResult } from 'express-validator';
 import { Team } from '../entity';
 import { TeamService } from '../services';
 import { Request, Response } from 'express';
-import { isServiceCodeError } from '../errors/errors';
+import { isServiceCodeError, isUserServiceError } from '../errors/errors';
+import { error } from 'console';
 
 export class TeamController {
     private teamService: TeamService;
@@ -18,13 +19,14 @@ export class TeamController {
                 return res.status(400).json({ errors: errors.array() });
             }
 
-            const { adminUserId, usersId } = req.body;
+            const { adminUserId, usersId, tournamentId } = req.body;
             const newTeam = new Team();
 
             const teams = await this.teamService.create(
                 newTeam,
                 usersId,
-                adminUserId
+                adminUserId,
+                tournamentId
             );
 
             const response = {
@@ -40,6 +42,10 @@ export class TeamController {
             if (isServiceCodeError(e)) {
                 res.status(400).json({ error: e.code });
                 return;
+            }
+
+            if (isUserServiceError(e)) {
+                res.status(400).json({ error: e.message });
             }
 
             res.status(500).json({ error: 'Internal Server Error' });
