@@ -7,7 +7,7 @@
 
 
 .l-items{
-    width: 530px;
+    width: 450px;
     height: auto;
     order: 2;
 }
@@ -17,6 +17,7 @@
 }
 
 
+/*Logo*/
 .l-headerLogo{
     display: flex;
     flex-wrap: wrap;
@@ -29,6 +30,9 @@
     height: 150px;
 }
 
+
+
+/*Titulo: Log in to your account*/
 .l-title{
     margin-top: 32px;
     margin-bottom: 50px;
@@ -39,7 +43,9 @@
     font-style: normal;
 }
 
-.l-span-1{
+
+/*Subtitulo: Don’t have an account? Sign Up*/
+.l-span-su{
     margin-bottom: 32px;
     margin-left: 62px;
     font-size: 24px;
@@ -49,15 +55,17 @@
     font-style: normal;
 }
 
+
+/*Input: Username*/
 .l-input-1{
     margin-top: 85px;
-    margin-bottom: 50px;
+    margin-bottom: 35px;
     margin-left: 62px;
     display: flex;
     flex-direction: column;
 }
 
-.l-input-1 span{
+.l-span{
     font-size: 20px;
     margin-bottom: 15px;
     font-family: "Squada One", sans-serif;
@@ -67,20 +75,73 @@
 }
 
 .l-input-1 input{
-    width: 50%;
+    width: 75%;
     outline: none;
-    padding: 0 0 0 30px;
+    padding: 1px 2px 1px 12px;
     line-height: 35px;
     border-radius: 4px;
     border: 1px solid #424242;
     background: transparent;
     transition: box-shadow 0.1s ease;
+    font-size: 14px;
+    height: 40px;
 }
 
-input:focus {
+.l-input-1 input:focus {
     box-shadow: 0 0 0 2px #3441B9;
+}
+
+
+
+/*Input: Password*/
+.l-input-2{
+    margin-bottom: 50px;
+    margin-left: 62px;
+    display: flex;
+    flex-direction: column;
+}
+
+.l-span{
+    font-size: 20px;
+    margin-bottom: 15px;
+    font-family: "Squada One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #3D4F58;
+}
+
+.l-input-2 input{
+    width: 75%;
+    outline: none;
+    padding: 1px 2px 1px 12px;
+    line-height: 35px;
+    border-radius: 4px;
+    border: 1px solid #424242;
+    background: transparent;
+    transition: box-shadow 0.1s ease;
+    font-size: 14px;
+    height: 40px;
+}
+
+.l-input-2 input:focus {
+    box-shadow: 0 0 0 2px #3441B9;
+}
+
+.l-span-fp{
+    margin-top: 15px;
+    font-family: "Inter", sans-serif;
+    cursor: pointer;
+    margin-left: 139px;
+    color: #566FA0;
+}
+
+
+.l-button{
+    margin-left: 62px;
 }
 
 
 .l-image{
 }
+
+
