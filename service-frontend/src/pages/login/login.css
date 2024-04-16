@@ -7,13 +7,13 @@
 
 
 .l-items{
-    width: 450px;
+    width: 515px;
     height: auto;
     order: 2;
 }
 
 .content{
-    margin: 50px 0px 50px 42px
+    margin: 50px 0px 50px 40px
 }
 
 
@@ -35,7 +35,7 @@
 /*Titulo: Log in to your account*/
 .l-title{
     margin-top: 32px;
-    margin-bottom: 50px;
+    margin-bottom: 35px;
     margin-left: 62px;
     font-size: 40px;
     font-family: "Squada One", sans-serif;
@@ -44,9 +44,9 @@
 }
 
 
+
 /*Subtitulo: Don’t have an account? Sign Up*/
-.l-span-su{
-    margin-bottom: 32px;
+.l-span-da{
     margin-left: 62px;
     font-size: 24px;
     display: block;
@@ -54,11 +54,19 @@
     font-weight: 400;
     font-style: normal;
 }
+.l-span-su{
+    color: #3441B9;
+    cursor: pointer;
+    font-family: "Squada One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
 
 
 /*Input: Username*/
 .l-input-1{
-    margin-top: 85px;
+    margin-top: 60px;
     margin-bottom: 35px;
     margin-left: 62px;
     display: flex;
@@ -75,7 +83,7 @@
 }
 
 .l-input-1 input{
-    width: 75%;
+    width: 64%;
     outline: none;
     padding: 1px 2px 1px 12px;
     line-height: 35px;
@@ -85,6 +93,7 @@
     transition: box-shadow 0.1s ease;
     font-size: 14px;
     height: 40px;
+    font-family: "Inter", sans-serif;
 }
 
 .l-input-1 input:focus {
@@ -95,7 +104,7 @@
 
 /*Input: Password*/
 .l-input-2{
-    margin-bottom: 50px;
+    margin-bottom: 40px;
     margin-left: 62px;
     display: flex;
     flex-direction: column;
@@ -111,7 +120,7 @@
 }
 
 .l-input-2 input{
-    width: 75%;
+    width: 64%;
     outline: none;
     padding: 1px 2px 1px 12px;
     line-height: 35px;
@@ -121,6 +130,7 @@
     transition: box-shadow 0.1s ease;
     font-size: 14px;
     height: 40px;
+    font-family: "Inter", sans-serif;
 }
 
 .l-input-2 input:focus {
@@ -129,6 +139,7 @@
 
 .l-span-fp{
     margin-top: 15px;
+    font-size: 16px;
     font-family: "Inter", sans-serif;
     cursor: pointer;
     margin-left: 139px;
@@ -136,12 +147,48 @@
 }
 
 
-.l-button{
+
+/*Boton login*/
+.l-button {
     margin-left: 62px;
+    width: 125px;
+    height: 40px;
+    background-color: #566FA0;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: space-between;
+    transition-duration: 0.4s;
+
+    text-decoration: none;
+    font-size: 20px;
+    color: #ffffff;
+    font-family: "Squada One", sans-serif;
+    padding: 0px 25px 0px 25px
+}
+
+.l-button:hover {
+    background-color: #1f3b71;
 }
 
 
-.l-image{
+
+/*Wallpaper*/
+.l-wallpaper{
+    width: calc(-515px + 100vw);
+    height: 100%;
+    order: 2;
+    position: absolute;
+    left: 515px;
+    background-image: url(../../images/padelwallpaper1.jpg); 
+    background-size: cover;
+    background-position: center;
 }
+
+
+
 
 
