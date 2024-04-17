@@ -32,7 +32,7 @@
 
 
 
-/*Titulo: Log in to your account*/
+/*Titulo: Ingrese a su cuenta*/
 .l-title{
     margin-top: 32px;
     margin-bottom: 35px;
@@ -45,7 +45,7 @@
 
 
 
-/*Subtitulo: Don’t have an account? Sign Up*/
+/*Subtitulo: ¿No tienes una cuenta? Registrarse*/
 .l-span-da{
     margin-left: 62px;
     font-size: 24px;
@@ -139,10 +139,10 @@
 
 .l-span-fp{
     margin-top: 15px;
-    font-size: 16px;
+    font-size: 14px;
     font-family: "Inter", sans-serif;
     cursor: pointer;
-    margin-left: 139px;
+    margin-left: 85px;
     color: #566FA0;
 }
 
@@ -151,7 +151,7 @@
 /*Boton login*/
 .l-button {
     margin-left: 62px;
-    width: 125px;
+    width: 140px;
     height: 40px;
     background-color: #566FA0;
     border-radius: 5px;

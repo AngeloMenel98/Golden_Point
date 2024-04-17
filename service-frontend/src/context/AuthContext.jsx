@@ -1,4 +1,3 @@
-/*
 import React, { useEffect } from 'react';
 import { createContext, useReducer } from "react";
 
@@ -54,4 +53,3 @@ export const AuthContextProvider = ({children}) =>{
         </AuthContext.Provider>
     );
 };
-*/
