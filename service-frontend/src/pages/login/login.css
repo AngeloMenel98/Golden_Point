@@ -189,6 +189,14 @@
 }
 
 
+.eContainer{
+    margin-left: 62px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+  }
 
-
-
+.eContainer span{
+    font-size: 16px;
+    font-family: "Inter", sans-serif;
+    color: #EC9069;
+}

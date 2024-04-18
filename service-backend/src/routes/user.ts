@@ -13,34 +13,14 @@ const PASSWORD_LENGTH = 6;
 
 
 /**
- * Definimos la ruta de login. 
-* Definimos una ruta POST con el path '/login' que manejará las solicitudes de inicio de sesión de usuarios.
+ * Ruta de login
  
- * [...]: especifica un array de middlewares que se ejecutarán antes de manejar la solicitud. En este caso, se 
-   utilizan los middlewares proporcionados por express-validator para validar los campos de entrada (username 
-   y password: 
-   - Validacion para username: aseguramos de que el campo no esté vacío y, si lo está, se proporciona un mensaje 
-     de error personalizado.
-   - Validacion para password: aseguramos de que el campo no esté vacío y, si lo está, se proporciona un mensaje 
-     de error personalizado.
- 
+ * Definimos una ruta POST con el path '/login' que manejará las solicitudes de inicio de sesión de usuarios. 
+
  * userController.logIn.bind(userController): especificamos el controlador y el método que se ejecutarán cuando 
    se reciba una solicitud en esta ruta. En este caso, llama al método logIn del controlador UserController.
 */
-router.post(
-    '/login',
-    [
-        check('username')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('username')),
-        check('password')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('password')),
-    ],
-    userController.logIn.bind(userController)
-);
+router.post('/login', userController.logIn.bind(userController));
 
 
 

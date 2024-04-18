@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext"
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faRightToBracket } from "@fortawesome/free-solid-svg-icons";
@@ -9,28 +8,33 @@ import "./login.css";
 
 const Login = ()=>{
 
-    const [credentials, setCredentials] = useState({
-        username: undefined,
-        password: undefined
+    const [credentials, setCredentials] = useState({ 
+        username: "", 
+        password: "" 
     });
 
-    const {loading, error, dispatch} = useContext(AuthContext);
+    const [error, setError] = useState(null);
 
     const navigate = useNavigate();
 
-    const handleChange = (e)=>{
-        setCredentials((prev) => ({...prev, [e.target.id]: e.target.value}));
-    }
+    const handleChange = (e) => {
+        setCredentials({ ...credentials, [e.target.id]: e.target.value });
+    };
 
-    const handleClick = async (e) =>{
+    const handleClick = async (e) => {
         e.preventDefault();
-        dispatch({type:"LOGIN_START"});
-        try{
-            const res = await axios.post("/auth/login", credentials);
-            dispatch({type:"LOGIN_SUCCESS", payload: res.data});
-            navigate(-1);
-        }catch(err){
-            dispatch({type:"LOGIN_FAILURE", payload: err.response.data});
+        try {
+            const res = await axios.post("http://127.0.0.1:8080/api/login", credentials);
+            console.log("Login successful", res.data);
+            navigate('/');
+        } catch (error) {
+            if (error.response && error.response.data) {
+                const errorMessage = error.response.data.error;
+                setError(errorMessage);
+                console.error("Login failed", errorMessage);
+            } else {
+                setError(null);
+            }
         }
     };
 
@@ -46,14 +50,17 @@ const Login = ()=>{
                         <span class="l-span-da">¿No tienes una cuenta? <span class="l-span-su">Registrarse</span></span>
                         <div className="l-input-1">
                             <span className="l-span">Nombre de usuario</span>
-                            <input type="text" id="username" required="required"/>
+                            <input type="text" id="username" value={credentials.username} onChange={handleChange}/>
                         </div>
                         <div className="l-input-2">
                             <span className="l-span">Contraseña</span>
-                            <input type="password" id="password" required="required"/>
+                            <input type="password" id="password" value={credentials.password} onChange={handleChange}/>
                             <span className="l-span-fp">¿Has olvidado tu contraseña?</span>
                         </div>
-                        <button className="l-button">Ingresar <FontAwesomeIcon icon={faRightToBracket} className="l-icon" /></button>
+                        <button className="l-button" onClick={handleClick}>Ingresar <FontAwesomeIcon icon={faRightToBracket} className="l-icon" /></button>
+                        <div className="eContainer">
+                            {error && <span>{error}</span>}
+                        </div>
                     </form>
                 </div>
                 <div className="l-wallpaper">
