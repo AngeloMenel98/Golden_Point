@@ -1,8 +1,21 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, ManyToMany, OneToMany } from 'typeorm';
-import { PersonalData, Tour, Team, TourCoin, Notification, Reward } from './index';
-import { compareHash, hashValue } from '../helpers/bCrypt.helper';
-import { IsBoolean, IsEmail, IsEnum } from 'class-validator';
-
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  ManyToMany,
+  OneToMany,
+} from "typeorm";
+import {
+  PersonalData,
+  Tour,
+  Team,
+  TourCoin,
+  Notification,
+  Reward,
+} from "./index";
+import { compareHash, hashValue } from "../helpers/bCrypt.helper";
+import { IsBoolean, IsEmail, IsEnum } from "class-validator";
 
 /**
  * Definimos un enum llamado UserRole, que enumera los roles posibles para un usuario: 
@@ -11,11 +24,9 @@ import { IsBoolean, IsEmail, IsEnum } from 'class-validator';
  * Estos roles se utilizarán para controlar los permisos y privilegios dentro del sistema. 
 */
 export enum UserRole {
-    ADMIN = 'admin',
-    USER = 'user',
+  ADMIN = "admin",
+  USER = "user",
 }
-
-
 
 /**
  * Definimos la entidad User.
@@ -41,60 +52,56 @@ export enum UserRole {
  */
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column({ length: 20 })
-    username: string;
+  @Column({ length: 20 })
+  username: string;
 
-    @Column()
-    @IsEmail()
-    email: string;
+  @Column()
+  @IsEmail()
+  email: string;
 
-    @Column()
-    password: string;
+  @Column()
+  password: string;
 
-    @Column()
-    @IsBoolean()
-    isSingle: boolean;
+  @Column()
+  @IsBoolean()
+  isSingle: boolean;
 
-    @Column({ default: false })
-    isDeleted: boolean;
+  @Column({ default: false })
+  isDeleted: boolean;
 
-    @Column({
-        type: 'enum',
-        enum: UserRole,
-    })
-    @IsEnum(UserRole)
-    role: UserRole;
+  @Column({
+    type: "enum",
+    enum: UserRole,
+  })
+  @IsEnum(UserRole)
+  role: UserRole;
 
+  @OneToOne(() => PersonalData, (personalData) => personalData.user)
+  personalData: PersonalData;
 
+  @OneToOne(() => TourCoin, (tourCoin) => tourCoin.user)
+  tourCoin: TourCoin;
 
-    @OneToOne(() => PersonalData, (personalData) => personalData.user)
-    personalData: PersonalData;
+  @ManyToMany(() => Tour, (tour) => tour.users)
+  tours: Tour[];
 
-    @OneToOne(() => TourCoin, (tourCoin) => tourCoin.user)
-    tourCoin: TourCoin;
+  @ManyToMany(() => Team, (team) => team.users)
+  teams: Team[];
 
-    @ManyToMany(() => Tour, (tour) => tour.users)
-    tours: Tour[];
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
 
-    @ManyToMany(() => Team, (team) => team.users)
-    teams: Team[];
+  @ManyToMany(() => Reward, (reward) => reward.users)
+  rewards: Reward[];
 
-    @OneToMany(() => Notification, (notification) => notification.user)
-    notifications: Notification[];
+  async hashPassword(password: string): Promise<string> {
+    return (this.password = hashValue(password));
+  }
 
-    @ManyToMany(() => Reward, (reward) => reward.users)
-    rewards: Reward[];
-
-
-
-    async hashPassword(password: string): Promise<string> {
-        return (this.password = hashValue(password));
-    }
-
-    compareHashPass(password: string) {
-        return compareHash(password, this.password);
-    }
+  compareHashPass(password: string) {
+    return compareHash(password, this.password);
+  }
 }
