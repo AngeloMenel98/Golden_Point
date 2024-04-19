@@ -1,34 +1,77 @@
 import { PerDataRepository, UserRepository } from '../repository';
 import { PersonalData, TourCoin, User } from '../entity';
-
+ 
 import { validate } from 'class-validator';
-import {
-    UserServiceError,
-    ServiceValidationError,
-    ServiceCodeError,
-} from '../errors/errorsClass';
+import { UserServiceError, ServiceValidationError, ServiceCodeError } from '../errors/errorsClass';
 
+
+
+
+/**
+ * Definimos el servicio UserService.
+ * Metodos:
+        - logIn
+ */
 export class UserService {
-    constructor() {}
+    
+    /*Constructor: no realiza ninguna operacion al inicializar el servicio.*/
+    constructor() {} 
 
+
+
+    /**
+     * Metodo logIn: se utiliza para el inicio de sesión de un usuario. 
+     * Recibe como parametros:    
+        - username: nombre de usuario
+        - password: contraseña del usuario
+
+     * UserRepository.findOneBy: llama al DAO UserRepository para buscar en la base de datos un usuario 
+        con el nombre de usuario proporcionado.
+
+     * existingUser.compareHashPass(password): compara la contraseña proporcionada con la contraseña 
+        almacenada en la base de datos para el usuario encontrado.
+
+     * Validaciones:
+        - Si no se ingresa username como parametro, se lanza un error de tipo UserServiceError indicando 
+          que el campo nombre de usuario es requerido.
+        - Si no se ingresa password como parametro, se lanza un error de tipo UserServiceError indicando 
+          que el campo contraseña es requerido.
+        - Si no se encuentra ningún usuario con el nombre de usuario ingresado, se lanza un error de tipo 
+          UserServiceError indicando que el nombre de usuario ingresado no existe.
+        - Si las contraseñas no coinciden, se lanza un error de tipo UserServiceError indicando que la 
+          contraseña ingresada es incorrecta.
+        - Si el usuario existe, y la contraseña es correcta, el metodo devuelve el usuario encontrado.     
+    */
     async logIn(username: string, password: string) {
+        
+        if (!username) {
+            throw new UserServiceError('El campo nombre de usuario es obligatorio', username);
+        };
+
+        if (!password) {
+            throw new UserServiceError('El campo contraseña es obligatorio', password);
+        };
+    
         const existingUser = await UserRepository.findOneBy({
             username: username,
         });
 
         if (!existingUser) {
-            throw new UserServiceError('User does not exist', username);
+            throw new UserServiceError('El nombre de usuario ingresado no existe', username);
         }
 
         if (!existingUser.compareHashPass(password)) {
-            throw new UserServiceError(
-                'Password is incorrect',
-                existingUser.id
-            );
+            throw new UserServiceError('La contraseña ingresada es incorrecta', existingUser.id);
         }
 
         return existingUser;
     }
+
+
+
+
+
+
 
     async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
         const userErrors = await validate(user);

@@ -3,24 +3,28 @@ import validationMsg from '../constants/validationMessages';
 import { userController } from '../controllers';
 import { Router } from 'express';
 
+
+/**
+ * Creacion de Router: creaamos una instancia de Router de Express.
+ */
 const router = Router();
 
 const PASSWORD_LENGTH = 6;
 
-router.post(
-    '/login',
-    [
-        check('username')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('username')),
-        check('password')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('password')),
-    ],
-    userController.logIn.bind(userController)
-);
+
+/**
+ * Ruta de login
+ 
+ * Definimos una ruta POST con el path '/login' que manejará las solicitudes de inicio de sesión de usuarios. 
+
+ * userController.logIn.bind(userController): especificamos el controlador y el método que se ejecutarán cuando 
+   se reciba una solicitud en esta ruta. En este caso, llama al método logIn del controlador UserController.
+*/
+router.post('/login', userController.logIn.bind(userController));
+
+
+
+
 
 router.post(
     '/register',
