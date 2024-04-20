@@ -4,8 +4,6 @@ import { generateCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
-import { UserRole } from "../entity/User";
-import { ServiceCodeError } from "../errors/errorsClass";
 
 export class TourController {
   private tourService: TourService;
@@ -15,6 +13,7 @@ export class TourController {
     this.tourService = new TourService();
     this.userService = new UserService();
   }
+
   async create(req: Request, res: Response) {
     try {
       const errors = validationResult(req);
@@ -44,19 +43,17 @@ export class TourController {
 
       res.status(201).json(response);
     } catch (e) {
-      console.error("Error creating tour:", e);
+      console.error(e);
 
       if (isServiceCodeError(e)) {
-        res.status(400).json({ error: e.code });
-        return;
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        res.status(400).json({ error: e.message });
-        return;
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 
@@ -75,11 +72,7 @@ export class TourController {
       const existingTour = await this.tourService.findById(tourId);
       const existingUser = await this.userService.findById(userId);
 
-      if (existingUser.role != UserRole.ADMIN) {
-        throw new ServiceCodeError("User is not ADMIN", "TourS-3");
-      }
-
-      const tour = await this.tourService.delete(existingTour);
+      const tour = await this.tourService.delete(existingTour, existingUser);
 
       const response = {
         id: tour.id,
@@ -90,18 +83,17 @@ export class TourController {
 
       res.status(201).json(response);
     } catch (e) {
-      console.error("Error creating tour:", e);
+      console.error(e);
 
       if (isServiceCodeError(e)) {
-        res.status(400).json({ error: e.code });
-        return;
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        res.status(400).json({ error: e.message });
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 
@@ -128,19 +120,17 @@ export class TourController {
       };
       res.status(201).json(response);
     } catch (e) {
-      console.error("Error creating tour:", e);
+      console.error(e);
 
       if (isServiceCodeError(e)) {
-        res.status(400).json({ error: e.code });
-        return;
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        res.status(400).json({ error: e.message });
-        return;
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 
@@ -159,14 +149,13 @@ export class TourController {
 
       res.status(201).json(tours);
     } catch (e) {
-      console.error("Error creating tour:", e);
+      console.error(e);
 
       if (isServiceCodeError(e)) {
-        res.status(400).json({ error: e.code });
-        return;
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 }

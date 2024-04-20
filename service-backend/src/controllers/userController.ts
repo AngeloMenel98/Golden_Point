@@ -5,11 +5,7 @@ import { validationResult } from "express-validator";
 import { PersonalData, TourCoin, User } from "../entity";
 import { UserService } from "../services";
 import { UserRole } from "../entity/User";
-import {
-  isServiceCodeError,
-  isUserServiceError,
-  isUserServiceValidationError,
-} from "../errors/errors";
+import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 
 /**
  * Definimos el controlador UserController.
@@ -49,11 +45,11 @@ export class UserController {
     */
   async logIn(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            message: error.msg,
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
           })),
         });
       }
@@ -67,6 +63,7 @@ export class UserController {
         username: user.username,
         email: user.email,
         isSingle: user.isSingle,
+        role: user.role,
       };
 
       const secretKey = process.env.JWT_SECRET_KEY;
@@ -81,21 +78,20 @@ export class UserController {
       console.error("Error Loggin In", e);
 
       if (isUserServiceError(e)) {
-        res.status(400).json({ error: e.message });
-        return;
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 
   async create(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            message: error.msg,
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
           })),
         });
       }
@@ -143,24 +139,21 @@ export class UserController {
     } catch (e: unknown) {
       console.error("Error creating user:", e);
 
-      if (isUserServiceValidationError(e)) {
-        res
-          .status(400)
-          .json({ error: e.validationErrors.map((vE) => vE.constraints) });
-        return;
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 
   async update(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            message: error.msg,
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
           })),
         });
       }
@@ -207,28 +200,21 @@ export class UserController {
     } catch (e) {
       console.error("Error updating user:", e);
 
-      if (isUserServiceValidationError(e)) {
-        res
-          .status(400)
-          .json({ error: e.validationErrors.map((vE) => vE.constraints) });
-        return;
-      }
-
       if (isServiceCodeError(e)) {
-        res.status(400).json({ error: e.code });
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 
   async delete(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            message: error.msg,
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
           })),
         });
       }
@@ -246,20 +232,21 @@ export class UserController {
       res.status(201).json(response);
     } catch (e) {
       console.error(e);
-      return {
-        response: { error: "Error deleting User" },
-        status: 500,
-      };
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ errors: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 
   async findByUsername(req: Request, res: Response) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            message: error.msg,
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
           })),
         });
       }
@@ -277,14 +264,11 @@ export class UserController {
     } catch (e) {
       console.error("Error finding username:", e);
 
-      if (isUserServiceValidationError(e)) {
-        res
-          .status(400)
-          .json({ error: e.validationErrors.map((vE) => vE.constraints) });
-        return;
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ errors: [{ msg: e.message }] });
       }
 
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 }

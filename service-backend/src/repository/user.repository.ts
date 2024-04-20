@@ -42,8 +42,11 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     });
   },
 
-  async findByUsername(username: string): Promise<User> {
+  async findByUsername(username: string) {
     return this.findOne({ where: { username } });
+  },
+  async findByEmail(email: string) {
+    return this.findOne({ where: { email } });
   },
 
   async findUserWithPerData(userId: string) {
@@ -55,21 +58,24 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .getOne();
   },
 
+  async findUserInTour(userId: string) {
+    return this.createQueryBuilder("u")
+      .innerJoin("tour_users_user", "tuu", 'u.id = tuu."userId"')
+      .innerJoin("tour", "t", 't.id = tuu."tourId"')
+      .where("u.id = :userId", { userId })
+      .getOne();
+  },
+
   async getUsersByTourId(tourId: string): Promise<User[]> {
-    try {
-      return this.createQueryBuilder("u")
-        .innerJoin("tour_users_user", "tuu", 'u.id = tuu."userId"')
-        .innerJoin("tour", "t", 't.id = tuu."tourId"')
-        .where("t.id = :tourId", { tourId })
-        .getMany();
-    } catch (error) {
-      console.error("Error al obtener usuarios del Tour", error);
-      throw error;
-    }
+    return this.createQueryBuilder("u")
+      .innerJoin("tour_users_user", "tuu", 'u.id = tuu."userId"')
+      .innerJoin("tour", "t", 't.id = tuu."tourId"')
+      .where("t.id = :tourId", { tourId })
+      .getMany();
   },
 
   async getUsersByTeamId(teamId: string): Promise<User[]> {
-    return await this.createQueryBuilder("u")
+    return this.createQueryBuilder("u")
       .innerJoin("team_users_user", "tuu", 'u.id = tuu."userId"')
       .innerJoin("team", "t", 't.id = tuu."teamId"')
       .select("u")

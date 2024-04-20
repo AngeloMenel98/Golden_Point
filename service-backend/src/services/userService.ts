@@ -2,12 +2,9 @@ import { PerDataRepository, UserRepository } from "../repository";
 import { PersonalData, TourCoin, User } from "../entity";
 import valMessage from "../constants/validationMessages";
 
-import { validate } from "class-validator";
-import {
-  UserServiceError,
-  ServiceValidationError,
-  ServiceCodeError,
-} from "../errors/errorsClass";
+import { UserServiceError, ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
+import { isNotUserAdmin } from "../helpers/adminValidation";
 
 /**
  * Definimos el servicio UserService.
@@ -56,7 +53,7 @@ export class UserService {
     if (!existingUser.compareHashPass(password)) {
       throw new UserServiceError(
         valMessage.VALUE_INCORRECT("Contraseña"),
-        existingUser.id
+        password
       );
     }
 
@@ -64,45 +61,36 @@ export class UserService {
   }
 
   async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
-    const userErrors = await validate(user);
-    const perErrors = await validate(perData);
-
-    if (userErrors.length > 0 || perErrors.length > 0) {
-      throw new ServiceValidationError(
-        "Validation error",
-        userErrors.concat(perErrors)
+    const username = await UserRepository.findByUsername(user.username);
+    if (username) {
+      throw new UserServiceError(
+        codeErrors.GEN_3("Nombre de Usuario"),
+        user.username
       );
+    }
+
+    const email = await UserRepository.findByEmail(user.email);
+    if (email) {
+      throw new UserServiceError(codeErrors.GEN_3("Email"), user.username);
     }
 
     return UserRepository.create(user, perData, tourCoin);
   }
 
   async update(user: User, existingUser: User, perData: PersonalData) {
-    const userErrors = await validate(user);
-    const perErrors = await validate(perData);
-
-    if (userErrors.length > 0 || perErrors.length > 0) {
-      throw new ServiceValidationError(
-        "Validation error",
-        userErrors.concat(perErrors)
-      );
-    }
-
     const existingPerData = await PerDataRepository.findByUserId(
       existingUser.id
     );
 
     if (!existingPerData) {
-      throw new ServiceCodeError(
-        valMessage.VALUE_NOT_EXIST("Personal Data"),
-        "UserS-2"
-      );
+      throw new ServiceCodeError(codeErrors.GEN_2("Personal Data"));
     }
 
     return UserRepository.update(existingUser, existingPerData, user, perData);
   }
 
   async delete(user: User) {
+    isNotUserAdmin(user);
     user.isDeleted = true;
     return UserRepository.save(user);
   }
@@ -112,7 +100,7 @@ export class UserService {
 
     if (!user) {
       throw new UserServiceError(
-        valMessage.VALUE_NOT_EXIST("UserName"),
+        valMessage.VALUE_NOT_EXIST("Nombre de Usuario"),
         username
       );
     }
@@ -126,7 +114,7 @@ export class UserService {
     });
 
     if (!existingUser) {
-      throw new UserServiceError(valMessage.VALUE_NOT_EXIST("User ID"), userId);
+      throw new UserServiceError(codeErrors.GEN_1("User"), userId);
     }
     return existingUser;
   }

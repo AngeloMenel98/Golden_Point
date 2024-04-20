@@ -28,9 +28,7 @@ router.post(
     check("password")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("Contraseña"))
-      .isLength({ min: PASSWORD_LENGTH })
-      .withMessage(validationMsg.PASSWORD_LENGTH_RESTRICTION(PASSWORD_LENGTH)),
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Contraseña")),
   ],
   userController.logIn.bind(userController)
 );
@@ -42,10 +40,6 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Nombre de Usuario")),
-    check("email")
-      .not()
-      .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("Email")),
     check("email")
       .not()
       .isEmpty()

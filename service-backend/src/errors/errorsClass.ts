@@ -1,14 +1,3 @@
-import { ValidationError } from "class-validator";
-
-export class ServiceValidationError extends Error {
-  validationErrors: ValidationError[];
-
-  constructor(message: string, validationErrors: ValidationError[]) {
-    super(message);
-    this.validationErrors = validationErrors;
-  }
-}
-
 /**
  * Clase UserServiceError
  * Constructor: recibe los siguientes parametros:
@@ -24,17 +13,14 @@ export class ServiceValidationError extends Error {
 export class UserServiceError extends Error {
   user: string;
 
-  constructor(messsage: string, user: string) {
-    super(messsage);
+  constructor(message: string, user: string) {
+    super(message);
     this.user = user;
   }
 }
 
 export class ServiceCodeError extends Error {
-  code: string;
-
-  constructor(messsage: string, code: string) {
+  constructor(messsage: string) {
     super(messsage);
-    this.code = code;
   }
 }

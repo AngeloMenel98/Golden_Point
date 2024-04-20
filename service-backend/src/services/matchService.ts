@@ -1,59 +1,49 @@
-import { MatchRepository } from '../repository';
-import { Match, Team } from '../entity';
-import { TeamService, TournamentService, CourtService } from '.';
-import { validate } from 'class-validator';
-import {
-    ServiceCodeError,
-    ServiceValidationError,
-} from '../errors/errorsClass';
+import { MatchRepository } from "../repository";
+import { Match, Team } from "../entity";
+import { TeamService, TournamentService, CourtService } from ".";
+import { validate } from "class-validator";
+import { ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
 
 export class MatchService {
-    private teamService: TeamService;
-    private tournamentService: TournamentService;
-    private courtService: CourtService;
+  private teamService: TeamService;
+  private tournamentService: TournamentService;
+  private courtService: CourtService;
 
-    constructor() {
-        this.teamService = new TeamService();
-        this.tournamentService = new TournamentService();
-        this.courtService = new CourtService();
+  constructor() {
+    this.teamService = new TeamService();
+    this.tournamentService = new TournamentService();
+    this.courtService = new CourtService();
+  }
+
+  async create(
+    newMatch: Match,
+    teamIds: string[],
+    tournamentId: string,
+    courtId: string
+  ) {
+    const teams: Team[] = await Promise.all(
+      teamIds.map((teamId) => this.teamService.findById(teamId))
+    );
+    const tournament = await this.tournamentService.findById(tournamentId);
+    const court = await this.courtService.findById(courtId);
+
+    if (teams.length != 2) {
+      throw new ServiceCodeError(codeErrors.MATCH_1);
     }
 
-    async create(
-        newMatch: Match,
-        teamIds: string[],
-        tournamentId: string,
-        courtId: string
-    ) {
-        const matchErrors = await validate(newMatch);
+    return MatchRepository.save({ ...newMatch, teams, tournament, court });
+  }
 
-        if (matchErrors.length > 0) {
-            throw new ServiceValidationError(
-                'Validation error',
-                matchErrors.concat(matchErrors)
-            );
-        }
+  async findById(matchId: string) {
+    const existingMatch = await MatchRepository.findOneBy({
+      id: matchId,
+    });
 
-        const teams: Team[] = await Promise.all(
-            teamIds.map((teamId) => this.teamService.findById(teamId))
-        );
-        const tournament = await this.tournamentService.findById(tournamentId);
-        const court = await this.courtService.findById(courtId);
-
-        if (teams.length != 2) {
-            throw new ServiceCodeError('Amount of teams incorrect', 'MatchS-4');
-        }
-
-        return MatchRepository.save({ ...newMatch, teams, tournament, court });
+    if (!existingMatch) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Match"));
     }
-    async findById(matchId: string) {
-        const existingMatch = await MatchRepository.findOneBy({
-            id: matchId,
-        });
 
-        if (!existingMatch) {
-            throw new ServiceCodeError('Match ID does not exist', 'MatchS-1');
-        }
-
-        return existingMatch;
-    }
+    return existingMatch;
+  }
 }

@@ -15,7 +15,7 @@ import {
   Reward,
 } from "./index";
 import { compareHash, hashValue } from "../helpers/bCrypt.helper";
-import { IsBoolean, IsEmail, IsEnum } from "class-validator";
+import { IsEnum } from "class-validator";
 
 /**
  * Definimos un enum llamado UserRole, que enumera los roles posibles para un usuario: 
@@ -59,14 +59,12 @@ export class User {
   username: string;
 
   @Column()
-  @IsEmail()
   email: string;
 
   @Column()
   password: string;
 
   @Column()
-  @IsBoolean()
   isSingle: boolean;
 
   @Column({ default: false })

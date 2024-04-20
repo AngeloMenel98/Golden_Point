@@ -26,7 +26,7 @@ router.post(
     check("tourCode")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("tourCode")),
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Código del Tour")),
     check("userId")
       .not()
       .isEmpty()
