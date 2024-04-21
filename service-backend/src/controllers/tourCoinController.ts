@@ -1,3 +1,3 @@
-export class PerDataController {}
+export class TourCoinController {}
 
-export default new PerDataController();
+export default new TourCoinController();

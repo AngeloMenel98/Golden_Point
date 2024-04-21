@@ -1,11 +1,10 @@
-import { PerDataRepository, UserRepository } from '../repository';
-import { PersonalData, TourCoin, User } from '../entity';
- 
-import { validate } from 'class-validator';
-import { UserServiceError, ServiceValidationError, ServiceCodeError } from '../errors/errorsClass';
+import { PerDataRepository, UserRepository } from "../repository";
+import { PersonalData, TourCoin, User } from "../entity";
+import valMessage from "../constants/validationMessages";
 
-
-
+import { UserServiceError, ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
+import { isNotUserAdmin } from "../helpers/adminValidation";
 
 /**
  * Definimos el servicio UserService.
@@ -13,13 +12,10 @@ import { UserServiceError, ServiceValidationError, ServiceCodeError } from '../e
         - logIn
  */
 export class UserService {
-    
-    /*Constructor: no realiza ninguna operacion al inicializar el servicio.*/
-    constructor() {} 
+  /*Constructor: no realiza ninguna operacion al inicializar el servicio.*/
+  constructor() {}
 
-
-
-    /**
+  /**
      * Metodo logIn: se utiliza para el inicio de sesión de un usuario. 
      * Recibe como parametros:    
         - username: nombre de usuario
@@ -42,126 +38,104 @@ export class UserService {
           contraseña ingresada es incorrecta.
         - Si el usuario existe, y la contraseña es correcta, el metodo devuelve el usuario encontrado.     
     */
-    async logIn(username: string, password: string) {
-        
-        if (!username) {
-            throw new UserServiceError('El campo nombre de usuario es obligatorio', username);
-        };
+  async logIn(username: string, password: string) {
+    const existingUser = await UserRepository.findOneBy({
+      username: username,
+    });
 
-        if (!password) {
-            throw new UserServiceError('El campo contraseña es obligatorio', password);
-        };
-    
-        const existingUser = await UserRepository.findOneBy({
-            username: username,
-        });
-
-        if (!existingUser) {
-            throw new UserServiceError('El nombre de usuario ingresado no existe', username);
-        }
-
-        if (!existingUser.compareHashPass(password)) {
-            throw new UserServiceError('La contraseña ingresada es incorrecta', existingUser.id);
-        }
-
-        return existingUser;
+    if (!existingUser) {
+      throw new UserServiceError(
+        valMessage.VALUE_NOT_EXIST("Nombre de Usuario"),
+        username
+      );
     }
 
-
-
-
-
-
-
-    async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
-        const userErrors = await validate(user);
-        const perErrors = await validate(perData);
-
-        if (userErrors.length > 0 || perErrors.length > 0) {
-            // TODO: can be done better (identify if user or personal data error, better message, etc)
-            throw new ServiceValidationError(
-                'Validation error',
-                perErrors.concat(perErrors)
-            );
-        }
-
-        return UserRepository.create(user, perData, tourCoin);
+    if (!existingUser.compareHashPass(password)) {
+      throw new UserServiceError(
+        valMessage.VALUE_INCORRECT("Contraseña"),
+        password
+      );
     }
 
-    async update(user: User, existingUser: User, perData: PersonalData) {
-        const userErrors = await validate(user);
-        const perErrors = await validate(perData);
+    return existingUser;
+  }
 
-        if (userErrors.length > 0 || perErrors.length > 0) {
-            // TODO: can be done better (identify if user or personal data error, better message, etc)
-            throw new ServiceValidationError(
-                'Validation error',
-                perErrors.concat(perErrors)
-            );
-        }
-
-        const existingPerData = await PerDataRepository.findByUserId(
-            existingUser.id
-        );
-
-        if (!existingPerData) {
-            throw new ServiceCodeError(
-                'Personal Data does not exist',
-                'UserS-2'
-            );
-        }
-
-        return UserRepository.update(
-            existingUser,
-            existingPerData,
-            user,
-            perData
-        );
+  async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
+    const username = await UserRepository.findByUsername(user.username);
+    if (username) {
+      throw new UserServiceError(
+        codeErrors.GEN_3("Nombre de Usuario"),
+        user.username
+      );
     }
 
-    async delete(user: User) {
-        user.isDeleted = true;
-        return UserRepository.save(user);
+    const email = await UserRepository.findByEmail(user.email);
+    if (email) {
+      throw new UserServiceError(codeErrors.GEN_3("Email"), user.username);
     }
 
-    async findByUsername(username: string) {
-        const user = await UserRepository.findByUsername(username);
+    return UserRepository.create(user, perData, tourCoin);
+  }
 
-        if (!user) {
-            throw new UserServiceError('Username does not exist', username);
-        }
+  async update(user: User, existingUser: User, perData: PersonalData) {
+    const existingPerData = await PerDataRepository.findByUserId(
+      existingUser.id
+    );
 
-        return user;
+    if (!existingPerData) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Personal Data"));
     }
 
-    async findById(userId: string) {
-        const existingUser = await UserRepository.findOneBy({
-            id: userId,
-        });
+    return UserRepository.update(existingUser, existingPerData, user, perData);
+  }
 
-        if (!existingUser) {
-            throw new UserServiceError('User ID does not exist', userId);
-        }
-        return existingUser;
+  async delete(user: User) {
+    isNotUserAdmin(user);
+    user.isDeleted = true;
+    return UserRepository.save(user);
+  }
+
+  async findByUsername(username: string) {
+    const user = await UserRepository.findByUsername(username);
+
+    if (!user) {
+      throw new UserServiceError(
+        valMessage.VALUE_NOT_EXIST("Nombre de Usuario"),
+        username
+      );
     }
 
-    async findByIdWithPersonalData(userId: string) {
-        const userData = await UserRepository.findUserWithPerData(userId);
+    return user;
+  }
 
-        if (!userData) {
-            throw new UserServiceError('User ID does not exist', userId);
-        }
+  async findById(userId: string) {
+    const existingUser = await UserRepository.findOneBy({
+      id: userId,
+    });
 
-        const user = {
-            id: userData.id,
-            username: userData.username,
-            email: userData.email,
-            password: userData.password,
-            isSingle: userData.isSingle,
-            isDeleted: userData.isDeleted,
-            role: userData.role,
-        };
-
-        return { user: user, perData: userData.personalData };
+    if (!existingUser) {
+      throw new UserServiceError(codeErrors.GEN_1("User"), userId);
     }
+    return existingUser;
+  }
+
+  async findByIdWithPersonalData(userId: string) {
+    const userData = await UserRepository.findUserWithPerData(userId);
+
+    if (!userData) {
+      throw new UserServiceError(valMessage.VALUE_NOT_EXIST("User ID"), userId);
+    }
+
+    const user = {
+      id: userData.id,
+      username: userData.username,
+      email: userData.email,
+      password: userData.password,
+      isSingle: userData.isSingle,
+      isDeleted: userData.isDeleted,
+      role: userData.role,
+    };
+
+    return { user: user, perData: userData.personalData };
+  }
 }

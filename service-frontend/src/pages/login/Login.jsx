@@ -24,16 +24,17 @@ const Login = ()=>{
     const handleClick = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://127.0.0.1:8080/api/login", credentials);
+            const res = await axios.post("http://127.0.0.1:8081/api/login", credentials);
             console.log("Login successful", res.data);
             navigate('/');
-        } catch (error) {
-            if (error.response && error.response.data) {
-                const errorMessage = error.response.data.error;
+        } catch (e) {
+            if (e.response && e.response.data && e.response.data.error && e.response.data.error.length > 0) {
+                const errorMessage = e.response.data.error[0].msg;
                 setError(errorMessage);
                 console.error("Login failed", errorMessage);
             } else {
-                setError(null);
+                setError("An unexpected error occurred.");
+                console.error("Login failed - unexpected error");
             }
         }
     };

@@ -1,31 +1,30 @@
-import { SetRepository } from '../repository';
-import { Set } from '../entity';
-import { MatchService, UserService } from '.';
-import { UserRole } from '../entity/User';
-import { ServiceCodeError } from '../errors/errorsClass';
+import { SetRepository } from "../repository";
+import { Set } from "../entity";
+import { MatchService, UserService } from ".";
+import { ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
+import { isNotUserAdmin } from "../helpers/adminValidation";
 
 export class SetService {
-    private matchService: MatchService;
-    private userService: UserService;
+  private matchService: MatchService;
+  private userService: UserService;
 
-    constructor() {
-        this.matchService = new MatchService();
-        this.userService = new UserService();
+  constructor() {
+    this.matchService = new MatchService();
+    this.userService = new UserService();
+  }
+  async create(userId: string, newSet: Set, matchId: string) {
+    const user = await this.userService.findById(userId);
+
+    isNotUserAdmin(user);
+
+    const match = await this.matchService.findById(matchId);
+    const sets = await SetRepository.getSetsByMatchId(matchId);
+
+    if (sets.length >= 3) {
+      throw new ServiceCodeError(codeErrors.SET_1(3));
     }
-    async create(userId: string, newSet: Set, matchId: string): Promise<Set> {
-        const user = await this.userService.findById(userId);
 
-        if (user.role != UserRole.ADMIN) {
-            throw new ServiceCodeError('User is not ADMIN', 'SetS-3');
-        }
-
-        const match = await this.matchService.findById(matchId);
-        const sets = await SetRepository.getSetsByMatchId(matchId);
-
-        if (sets.length >= 3) {
-            throw new ServiceCodeError('Match already has 3 sets', 'SetS-4');
-        }
-
-        return SetRepository.save({ ...newSet, match });
-    }
+    return SetRepository.save({ ...newSet, match });
+  }
 }

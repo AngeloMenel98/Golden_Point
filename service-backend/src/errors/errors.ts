@@ -1,23 +1,11 @@
-import { ServiceCodeError, UserServiceError, ServiceValidationError } from './errorsClass';
+import { ServiceCodeError, UserServiceError } from "./errorsClass";
 
 /**
  * Este archivo proporciona funciones para verificar y manejar los 
    diferentes tipos de errores definidos en errorClass.ts.  
 */
 
-
-
-
-
 //-------------------- User Errors ----------------------------------------
-
-
-export const isUserServiceValidationError = (
-    error: unknown
-): error is ServiceValidationError =>
-    typeof error === 'object' && error !== null && 'validationErrors' in error;
-
-
 
 /**
  * Funcion isUserServiceError
@@ -27,16 +15,9 @@ export const isUserServiceValidationError = (
      true, de lo contrario, devuelve false.
 */
 export const isUserServiceError = (error: unknown): error is UserServiceError =>
-    typeof error === 'object' && error !== null && 'user' in error;
-
-
-
-
-
-
-
+  typeof error === "object" && error !== null && "user" in error;
 
 //---------------------- Service Code Errors ----------------------------------
 
 export const isServiceCodeError = (error: unknown): error is ServiceCodeError =>
-    typeof error === 'object' && error !== null && 'code' in error;
+  typeof error === "object" && error !== null;
