@@ -48,7 +48,7 @@ export class UserController {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
         return res.status(401).json({
-          errors: errs.array().map((e) => ({
+          error: errs.array().map((e) => ({
             msg: e.msg,
           })),
         });
@@ -78,7 +78,7 @@ export class UserController {
       console.error("Error Loggin In", e);
 
       if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });

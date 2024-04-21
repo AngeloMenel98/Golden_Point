@@ -42,11 +42,11 @@ export class TeamController {
       console.error("Error creating teams:", e);
 
       if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       return res
@@ -79,7 +79,7 @@ export class TeamController {
       console.error("Error getting team:", e);
 
       if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       return res

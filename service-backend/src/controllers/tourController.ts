@@ -86,11 +86,11 @@ export class TourController {
       console.error(e);
 
       if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
@@ -123,11 +123,11 @@ export class TourController {
       console.error(e);
 
       if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
@@ -152,7 +152,7 @@ export class TourController {
       console.error(e);
 
       if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });

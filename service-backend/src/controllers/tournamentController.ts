@@ -49,11 +49,11 @@ export class TournamentController {
       console.error("Error creating Tournament:", e);
 
       if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
@@ -64,7 +64,11 @@ export class TournamentController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            message: error.msg,
+          })),
+        });
       }
 
       const { tournamentId, userId } = req.body;
@@ -86,11 +90,11 @@ export class TournamentController {
       res.status(201).json(response);
     } catch (e) {
       if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
