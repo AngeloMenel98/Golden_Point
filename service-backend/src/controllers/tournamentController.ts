@@ -126,6 +126,7 @@ export class TournamentController {
       // Envía los datos de los clubes como respuesta
       res.status(200).json(clubData);
     } catch (e) {
+      console.error(e);
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }

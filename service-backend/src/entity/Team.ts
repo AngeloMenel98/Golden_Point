@@ -16,6 +16,9 @@ export class Team {
   @Column({ length: 50 })
   teamName: string;
 
+  @Column({ length: 50 })
+  category: string;
+
   @ManyToMany(() => User, (user) => user.teams)
   @JoinTable()
   users: User[];

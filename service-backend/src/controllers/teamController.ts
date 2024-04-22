@@ -21,8 +21,9 @@ export class TeamController {
         });
       }
 
-      const { adminUserId, usersId, tournamentId } = req.body;
+      const { adminUserId, usersId, tournamentId, category } = req.body;
       const newTeam = new Team();
+      newTeam.category = category;
 
       const teams = await this.teamService.create(
         newTeam,
@@ -72,6 +73,7 @@ export class TeamController {
       const response = {
         teamId: team.team.id,
         teamName: team.team.teamName,
+        category: team.team.category,
         users: team.users.map((u) => u.id),
       };
       res.status(201).json(response);

@@ -1,4 +1,4 @@
-import { CategoryService, MatchService, TourService, UserService } from ".";
+import { CategoryService, TourService, UserService } from ".";
 import codeErrors from "../constants/codeErrors";
 import { Category, Tournament } from "../entity";
 import { User } from "../entity/User";
@@ -14,13 +14,11 @@ export class TournamentService {
   private tourService: TourService;
   private categoryService: CategoryService;
   private userService: UserService;
-  private matchService: MatchService;
 
   constructor() {
     this.tourService = new TourService();
     this.categoryService = new CategoryService();
     this.userService = new UserService();
-    this.matchService = new MatchService();
   }
 
   async create(
@@ -56,8 +54,18 @@ export class TournamentService {
 
   async start(tournament: Tournament, user: User) {
     const clubsWithCat = await ClubRepository.getClubs(tournament.id);
-    console.log(clubsWithCat);
     const teamsWithCat = await TeamRepository.getTeams(tournament.id);
+    let clubData: unknown[] = [];
+    let teamData: unknown[] = [];
+
+    if (!clubsWithCat || clubsWithCat.length == 0) {
+      throw new Error("Error al iniciar el torneo: No se encontraron datos");
+    }
+
+    if (!teamsWithCat || teamsWithCat.length == 0) {
+      throw new Error("Error al iniciar el torneo: No se encontraron datos");
+    }
+
     isNotUserAdmin(user);
 
     if (!clubsWithCat || clubsWithCat.length == 0) {
@@ -65,16 +73,23 @@ export class TournamentService {
     }
 
     for (const cwc of clubsWithCat) {
-      let info = {
+      clubData.push({
         clubName: cwc.clubName,
         avFrom: new Date(cwc.availableFrom),
         avTo: new Date(cwc.availableTo),
         ctNumbers: cwc.courtNumbers.split(","),
         categories: cwc.categories.split(","),
-      };
+      });
     }
 
-    return clubsWithCat;
+    for (const twc of teamsWithCat) {
+      teamData.push({
+        teamName: twc.teamName,
+        category: twc.category,
+      });
+    }
+
+    return teamData;
   }
 
   async findById(tournamentId: string) {

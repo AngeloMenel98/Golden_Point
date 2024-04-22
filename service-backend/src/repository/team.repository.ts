@@ -1,31 +1,18 @@
-import { UserRepository } from ".";
 import { AppDataSource } from "../data-source";
-import { Team, User } from "../entity";
+import { Team } from "../entity";
 
 export const TeamRepository = AppDataSource.getRepository(Team).extend({
   async getTeams(tournamentId: string) {
-    return this.createQueryBuilder("cl")
-      .select("cl.clubName", "clubName")
-      .addSelect(
-        'STRING_AGG(DISTINCT ct."courtNumber"::TEXT, \', \') AS "courtNumbers"'
-      )
-      .addSelect('MIN(cc."availableFrom") AS "availableFrom"')
-      .addSelect('MAX(cc."availableTo") AS "availableTo"')
-      .addSelect(
-        'STRING_AGG(DISTINCT c."categoryName"::TEXT, \', \') AS "categories"'
-      )
-      .innerJoin("court", "ct", 'ct."clubId" = cl.id')
-      .innerJoin("calendar_club", "cc", 'cc.id = cl."calendarClubId"')
-      .innerJoin("tour", "t", 't.id = cl."tourId"')
+    return this.createQueryBuilder("tm")
+      .select('tm."teamName"', "teamName")
+      .addSelect('tm."category"', "category")
+      .innerJoin("team_users_user", "tuu", 'tuu."teamId" = tm.id ')
+      .innerJoin("user", "u", 'u.id = tuu."userId"')
+      .innerJoin("tour_users_user", "tuu2", 'tuu2."userId" = u.id ')
+      .innerJoin("tour", "t", 't.id = tuu2."tourId" ')
       .innerJoin("tournament", "trn", 'trn."tourId" = t.id')
-      .innerJoin(
-        "tournament_categories_category",
-        "tcc",
-        'tcc."tournamentId" = trn.id'
-      )
-      .innerJoin("category", "c", 'c.id = tcc."categoryId"')
       .where("trn.id = :tournamentId", { tournamentId })
-      .groupBy('cl."clubName"')
+      .groupBy('tm."category",tm."teamName"')
       .getRawMany();
   },
 });
