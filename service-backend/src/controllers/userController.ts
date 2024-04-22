@@ -7,42 +7,13 @@ import { UserService } from "../services";
 import { UserRole } from "../entity/User";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 
-/**
- * Definimos el controlador UserController.
- * Metodos:
-        - logIn
- */
 export class UserController {
   private userService: UserService;
 
-  /*Constructor: inicializa una instancia del servicio UserService.*/
   constructor() {
     this.userService = new UserService();
   }
 
-  /**
-     * Metodo logIn: maneja la solicitud de inicio de sesión de un usuario.    
-     * validationResult(req): valida los datos de entrada de la solicitud utilizando las reglas de validación 
-       definidas en los controladores correspondientes.
-       - Si hay errores de validación, devuelve una respuesta con un estado 400 (Bad Request) y los errores 
-         de validación.
-
-     * req.body: obtiene los datos de inicio de sesion del cuerpo de la solicitud.
-    
-     * this.userService.logIn(username, password): llama al metodo logIn del servicio UserService para verificar 
-       las credenciales de inicio de sesion del usuario.
-       - Si las credenciales son validas, devuelve los datos del usuario.
-
-     * jwt.sign(response, secretKey): genera un token JWT utilizando los datos del usuario y una clave secreta 
-       almacenada en las variables de entorno.
-    
-     * Se retorna una respuesta con el token JWT generado en caso de éxito.
-
-     * Manejo de error:
-       - Si el error, es un error personalizado del servicio, devuelve una respuesta con un estado 400 y el 
-         mensaje de error.
-       - Caso contrario, devuelve una respuesta con un estado 500 (Internal Server Error).
-    */
   async logIn(req: Request, res: Response) {
     try {
       const errs = validationResult(req);

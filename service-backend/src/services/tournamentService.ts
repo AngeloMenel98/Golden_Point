@@ -1,20 +1,26 @@
-import { CategoryService, TourService, UserService } from ".";
+import { CategoryService, MatchService, TourService, UserService } from ".";
 import codeErrors from "../constants/codeErrors";
 import { Category, Tournament } from "../entity";
 import { User } from "../entity/User";
 import { ServiceCodeError } from "../errors/errorsClass";
 import { isNotUserAdmin } from "../helpers/adminValidation";
-import { TournamentRepository } from "../repository";
+import {
+  ClubRepository,
+  TeamRepository,
+  TournamentRepository,
+} from "../repository";
 
 export class TournamentService {
   private tourService: TourService;
   private categoryService: CategoryService;
   private userService: UserService;
+  private matchService: MatchService;
 
   constructor() {
     this.tourService = new TourService();
     this.categoryService = new CategoryService();
     this.userService = new UserService();
+    this.matchService = new MatchService();
   }
 
   async create(
@@ -46,6 +52,29 @@ export class TournamentService {
     isNotUserAdmin(user);
     tournament.isDeleted = true;
     return TournamentRepository.save(tournament);
+  }
+
+  async start(tournament: Tournament, user: User) {
+    const clubsWithCat = await ClubRepository.getClubs(tournament.id);
+    console.log(clubsWithCat);
+    const teamsWithCat = await TeamRepository.getTeams(tournament.id);
+    isNotUserAdmin(user);
+
+    if (!clubsWithCat || clubsWithCat.length == 0) {
+      throw new Error("Error al iniciar el torneo: No se encontraron datos");
+    }
+
+    for (const cwc of clubsWithCat) {
+      let info = {
+        clubName: cwc.clubName,
+        avFrom: new Date(cwc.availableFrom),
+        avTo: new Date(cwc.availableTo),
+        ctNumbers: cwc.courtNumbers.split(","),
+        categories: cwc.categories.split(","),
+      };
+    }
+
+    return clubsWithCat;
   }
 
   async findById(tournamentId: string) {

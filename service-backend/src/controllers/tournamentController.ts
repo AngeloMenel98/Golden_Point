@@ -100,6 +100,35 @@ export class TournamentController {
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
+
+  async start(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            message: error.msg,
+          })),
+        });
+      }
+
+      const { tournamentId, userId } = req.body;
+
+      const existingTourn = await this.tournService.findById(tournamentId);
+      const existingUser = await this.userService.findById(userId);
+
+      // Obtén los datos de los clubes del torneo iniciado
+      const clubData = await this.tournService.start(
+        existingTourn,
+        existingUser
+      );
+
+      // Envía los datos de los clubes como respuesta
+      res.status(200).json(clubData);
+    } catch (e) {
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
 }
 
 export default new TournamentController();
