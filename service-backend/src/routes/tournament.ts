@@ -58,6 +58,10 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+    check("tourId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("tourId")),
   ],
   tournController.start.bind(tournController)
 );

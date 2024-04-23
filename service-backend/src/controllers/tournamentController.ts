@@ -1,16 +1,24 @@
 import { validationResult } from "express-validator";
 import { Tournament } from "../entity";
-import { TournamentService, UserService } from "../services";
+import {
+  MatchService,
+  TourService,
+  TournamentService,
+  UserService,
+} from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { isNotUserAdmin } from "../helpers/adminValidation";
 
 export class TournamentController {
   private tournService: TournamentService;
+  private tourService: TourService;
   private userService: UserService;
 
   constructor() {
     this.tournService = new TournamentService();
     this.userService = new UserService();
+    this.tourService = new TourService();
   }
 
   async create(req: Request, res: Response) {
@@ -26,6 +34,9 @@ export class TournamentController {
 
       const { tourId, userId, title, master, categoryData } = req.body;
 
+      const existingUser = await this.userService.findById(userId);
+      isNotUserAdmin(existingUser);
+
       const newTourn = new Tournament();
       newTourn.title = title;
       newTourn.master = master;
@@ -34,7 +45,6 @@ export class TournamentController {
       const tournament = await this.tournService.create(
         newTourn,
         tourId,
-        userId,
         categoryData
       );
 
@@ -74,11 +84,9 @@ export class TournamentController {
       const { tournamentId, userId } = req.body;
       const existingTourn = await this.tournService.findById(tournamentId);
       const existingUser = await this.userService.findById(userId);
+      isNotUserAdmin(existingUser);
 
-      const tournament = await this.tournService.delete(
-        existingTourn,
-        existingUser
-      );
+      const tournament = await this.tournService.delete(existingTourn);
 
       const response = {
         id: tournament.id,
@@ -112,18 +120,18 @@ export class TournamentController {
         });
       }
 
-      const { tournamentId, userId } = req.body;
+      const { tournamentId, userId, tourId } = req.body;
 
       const existingTourn = await this.tournService.findById(tournamentId);
+      const existingTour = await this.tourService.findById(tourId);
       const existingUser = await this.userService.findById(userId);
+      isNotUserAdmin(existingUser);
 
-      // Obtén los datos de los clubes del torneo iniciado
-      const clubData = await this.tournService.start(
+      const clubData = await this.tournService.startTournamentData(
         existingTourn,
-        existingUser
+        existingTour
       );
 
-      // Envía los datos de los clubes como respuesta
       res.status(200).json(clubData);
     } catch (e) {
       console.error(e);

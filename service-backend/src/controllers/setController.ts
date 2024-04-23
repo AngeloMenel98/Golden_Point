@@ -1,14 +1,17 @@
 import { Request, Response } from "express";
 import { Set } from "../entity";
-import { SetService } from "../services";
+import { SetService, UserService } from "../services";
 import { validationResult } from "express-validator";
 import { isServiceCodeError } from "../errors/errors";
+import { isNotUserAdmin } from "../helpers/adminValidation";
 
 export class MatchController {
   private setService: SetService;
+  private userService: UserService;
 
   constructor() {
     this.setService = new SetService();
+    this.userService = new UserService();
   }
 
   async create(req: Request, res: Response) {
@@ -24,11 +27,14 @@ export class MatchController {
 
       const { userId, gamesTeam1, gamesTeam2, matchId } = req.body;
 
+      const user = await this.userService.findById(userId);
+      isNotUserAdmin(user);
+
       const newSet = new Set();
       newSet.gamesTeam1 = gamesTeam1;
       newSet.gamesTeam2 = gamesTeam2;
 
-      const set = await this.setService.create(userId, newSet, matchId);
+      const set = await this.setService.create(newSet, matchId);
 
       const response = {
         id: set.id,

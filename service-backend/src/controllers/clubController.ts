@@ -1,14 +1,17 @@
-import { ClubService } from "../services";
+import { ClubService, UserService } from "../services";
 import { CalendarClub, Club } from "../entity";
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
 import { isServiceCodeError } from "../errors/errors";
+import { isNotUserAdmin } from "../helpers/adminValidation";
 
 export class ClubController {
   private clubService: ClubService;
+  private userService: UserService;
 
   constructor() {
     this.clubService = new ClubService();
+    this.userService = new UserService();
   }
 
   async create(req: Request, res: Response) {
@@ -32,6 +35,9 @@ export class ClubController {
         courtsNumber,
       } = req.body;
 
+      const existingUser = await this.userService.findById(userId);
+      isNotUserAdmin(existingUser);
+
       const newClub = new Club();
       newClub.clubName = clubName;
       newClub.location = address;
@@ -43,7 +49,6 @@ export class ClubController {
       const club = await this.clubService.create(
         newClub,
         newCalClub,
-        userId,
         tourId,
         courtsNumber
       );

@@ -1,39 +1,40 @@
 import {
-    Entity,
-    Column,
-    PrimaryGeneratedColumn,
-    ManyToOne,
-    ManyToMany,
-    OneToMany,
-} from 'typeorm';
-import { Tournament } from './Tournament';
-import { Team } from './Team';
-import { Set } from './Set';
-import { Court } from './Court';
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  ManyToMany,
+  OneToMany,
+} from "typeorm";
+import { Tournament } from "./Tournament";
+import { Team } from "./Team";
+import { Set } from "./Set";
+import { Court } from "./Court";
+import { TeamMatch } from "./TeamMatch";
 
 @Entity()
 export class Match {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column('float')
-    amountTourPoints: number;
+  @Column("float")
+  amountTourPoints: number;
 
-    @Column('integer')
-    amountTourCoins: number;
+  @Column("integer")
+  amountTourCoins: number;
 
-    @Column('timestamptz')
-    matchDate: string;
+  @Column("timestamptz")
+  matchDate: string;
 
-    @ManyToOne(() => Tournament, (tournament) => tournament.matches)
-    tournament: Tournament;
+  @ManyToOne(() => Tournament, (tournament) => tournament.matches)
+  tournament: Tournament;
 
-    @ManyToOne(() => Court, (court) => court.matches)
-    court: Court;
+  @ManyToOne(() => Court, (court) => court.matches)
+  court: Court;
 
-    @ManyToMany(() => Team, (team) => team.matches)
-    teams: Team[];
+  @OneToMany(() => TeamMatch, (teamMatch) => teamMatch.match)
+  teamMatches: TeamMatch[];
 
-    @OneToMany(() => Set, (set) => set.match)
-    sets: Set[];
+  @OneToMany(() => Set, (set) => set.match)
+  sets: Set[];
 }

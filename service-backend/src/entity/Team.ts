@@ -4,9 +4,11 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from "typeorm";
 import { User } from "./User";
 import { Match } from "./Match";
+import { TeamMatch } from "./TeamMatch";
 
 @Entity()
 export class Team {
@@ -23,7 +25,6 @@ export class Team {
   @JoinTable()
   users: User[];
 
-  @ManyToMany(() => Match, (match) => match.teams)
-  @JoinTable()
-  matches: Match[];
+  @OneToMany(() => TeamMatch, (teamMatch) => teamMatch.team)
+  teamMatches: TeamMatch[];
 }

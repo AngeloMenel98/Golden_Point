@@ -1,13 +1,19 @@
 import { validationResult } from "express-validator";
 import { Team } from "../entity";
-import { TeamService } from "../services";
+import { TeamService, UserService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { isNotUserAdmin } from "../helpers/adminValidation";
+import { ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
+
 export class TeamController {
   private teamService: TeamService;
+  private userService: UserService;
 
   constructor() {
     this.teamService = new TeamService();
+    this.userService = new UserService();
   }
 
   async create(req: Request, res: Response) {
@@ -21,16 +27,25 @@ export class TeamController {
         });
       }
 
-      const { adminUserId, usersId, tournamentId, category } = req.body;
+      const { adminUserId, usersId, category } = req.body;
+
+      const adminUser = await this.userService.findById(adminUserId);
+      isNotUserAdmin(adminUser);
+
       const newTeam = new Team();
       newTeam.category = category;
 
-      const teams = await this.teamService.create(
-        newTeam,
-        usersId,
-        adminUserId,
-        tournamentId
+      const usersWithData = await Promise.all(
+        usersId.map((userId) =>
+          this.userService.findByIdWithPersonalData(userId)
+        )
       );
+
+      if (usersWithData.length > 2) {
+        throw new ServiceCodeError(codeErrors.TEAM_1);
+      }
+
+      const teams = await this.teamService.create(newTeam, usersWithData);
 
       const response = {
         teamId: teams.id,

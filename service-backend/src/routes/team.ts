@@ -16,10 +16,6 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("usersId")),
-    check("tournamentId")
-      .not()
-      .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("tournamentId")),
     check("category")
       .not()
       .isEmpty()

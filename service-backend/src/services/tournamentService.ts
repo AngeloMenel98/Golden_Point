@@ -1,9 +1,8 @@
-import { CategoryService, TourService, UserService } from ".";
+import { CategoryService, MatchService, TourService } from ".";
 import codeErrors from "../constants/codeErrors";
-import { Category, Tournament } from "../entity";
+import { Category, Tour, Tournament } from "../entity";
 import { User } from "../entity/User";
 import { ServiceCodeError } from "../errors/errorsClass";
-import { isNotUserAdmin } from "../helpers/adminValidation";
 import {
   ClubRepository,
   TeamRepository,
@@ -13,24 +12,20 @@ import {
 export class TournamentService {
   private tourService: TourService;
   private categoryService: CategoryService;
-  private userService: UserService;
+  private matchService: MatchService;
 
   constructor() {
     this.tourService = new TourService();
     this.categoryService = new CategoryService();
-    this.userService = new UserService();
+    this.matchService = new MatchService();
   }
 
   async create(
     newTournament: Tournament,
     tourId: string,
-    userId: string,
     categoryData: Category[]
   ) {
     const existingTour = await this.tourService.findById(tourId);
-    const existingUser = await this.userService.findById(userId);
-
-    isNotUserAdmin(existingUser);
 
     const existingCats = await this.categoryService.findCategories(
       categoryData
@@ -46,17 +41,22 @@ export class TournamentService {
     );
   }
 
-  async delete(tournament: Tournament, user: User) {
-    isNotUserAdmin(user);
+  async delete(tournament: Tournament) {
     tournament.isDeleted = true;
     return TournamentRepository.save(tournament);
   }
 
-  async start(tournament: Tournament, user: User) {
+  async startTournamentData(tournament: Tournament, tour: Tour) {
     const clubsWithCat = await ClubRepository.getClubs(tournament.id);
     const teamsWithCat = await TeamRepository.getTeams(tournament.id);
-    let clubData: unknown[] = [];
-    let teamData: unknown[] = [];
+    const userWithPoints = await TeamRepository.getAmountPointPerUser(
+      tour.id,
+      "Masculino-Cuarta"
+    );
+    console.log(userWithPoints);
+
+    const clubData: unknown[] = [];
+    const teamData: unknown[] = [];
 
     if (!clubsWithCat || clubsWithCat.length == 0) {
       throw new Error("Error al iniciar el torneo: No se encontraron datos");
@@ -66,19 +66,13 @@ export class TournamentService {
       throw new Error("Error al iniciar el torneo: No se encontraron datos");
     }
 
-    isNotUserAdmin(user);
-
-    if (!clubsWithCat || clubsWithCat.length == 0) {
-      throw new Error("Error al iniciar el torneo: No se encontraron datos");
-    }
-
     for (const cwc of clubsWithCat) {
       clubData.push({
         clubName: cwc.clubName,
+        master: cwc.master,
         avFrom: new Date(cwc.availableFrom),
         avTo: new Date(cwc.availableTo),
-        ctNumbers: cwc.courtNumbers.split(","),
-        categories: cwc.categories.split(","),
+        ctNumbers: cwc.courtNumbers.split(", "),
       });
     }
 
@@ -89,7 +83,7 @@ export class TournamentService {
       });
     }
 
-    return teamData;
+    return { clubData, teamData };
   }
 
   async findById(tournamentId: string) {

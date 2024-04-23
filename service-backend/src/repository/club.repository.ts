@@ -25,14 +25,12 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
   async getClubs(tournamentId: string) {
     return this.createQueryBuilder("cl")
       .select("cl.clubName", "clubName")
+      .addSelect("trn.master", "master")
       .addSelect(
         'STRING_AGG(DISTINCT ct."courtNumber"::TEXT, \', \') AS "courtNumbers"'
       )
       .addSelect('MIN(cc."availableFrom") AS "availableFrom"')
       .addSelect('MAX(cc."availableTo") AS "availableTo"')
-      .addSelect(
-        'STRING_AGG(DISTINCT CONCAT(c."gender", \'-\', c."categoryName")::TEXT, \', \') AS "categories"'
-      )
       .innerJoin("court", "ct", 'ct."clubId" = cl.id')
       .innerJoin("calendar_club", "cc", 'cc.id = cl."calendarClubId"')
       .innerJoin("tour", "t", 't.id = cl."tourId"')
@@ -44,7 +42,7 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       )
       .innerJoin("category", "c", 'c.id = tcc."categoryId"')
       .where("trn.id = :tournamentId", { tournamentId })
-      .groupBy('cl."clubName"')
+      .groupBy('cl."clubName",trn."master"')
       .getRawMany();
   },
 

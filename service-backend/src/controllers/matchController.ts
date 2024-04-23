@@ -48,7 +48,6 @@ export class MatchController {
         aTourCoins: match.amountTourCoins,
         aTourPoints: match.amountTourPoints,
         matchDate: match.matchDate,
-        teams: match.teams.map((t) => t.id),
         tournament: match.tournament.id,
         court: match.court.id,
       };
