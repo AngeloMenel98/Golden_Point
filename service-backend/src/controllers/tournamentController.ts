@@ -12,13 +12,11 @@ import { isNotUserAdmin } from "../helpers/adminValidation";
 
 export class TournamentController {
   private tournService: TournamentService;
-  private tourService: TourService;
   private userService: UserService;
 
   constructor() {
     this.tournService = new TournamentService();
     this.userService = new UserService();
-    this.tourService = new TourService();
   }
 
   async create(req: Request, res: Response) {
@@ -120,16 +118,14 @@ export class TournamentController {
         });
       }
 
-      const { tournamentId, userId, tourId } = req.body;
+      const { tournamentId, userId } = req.body;
 
       const existingTourn = await this.tournService.findById(tournamentId);
-      const existingTour = await this.tourService.findById(tourId);
       const existingUser = await this.userService.findById(userId);
       isNotUserAdmin(existingUser);
 
       const clubData = await this.tournService.startTournamentData(
-        existingTourn,
-        existingTour
+        existingTourn
       );
 
       res.status(200).json(clubData);

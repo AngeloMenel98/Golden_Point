@@ -46,25 +46,23 @@ export class TournamentService {
     return TournamentRepository.save(tournament);
   }
 
-  async startTournamentData(tournament: Tournament, tour: Tour) {
+  async startTournamentData(tournament: Tournament) {
     const clubsWithCat = await ClubRepository.getClubs(tournament.id);
-    const teamsWithCat = await TeamRepository.getTeams(tournament.id);
-    const userWithPoints = await TeamRepository.getAmountPointPerUser(
-      tour.id,
-      "Masculino-Cuarta"
-    );
-    console.log(userWithPoints);
 
-    const clubData: unknown[] = [];
-    const teamData: unknown[] = [];
+    const teamsWithCat = await TeamRepository.getTeams(tournament.id);
 
     if (!clubsWithCat || clubsWithCat.length == 0) {
-      throw new Error("Error al iniciar el torneo: No se encontraron datos");
+      throw new ServiceCodeError(codeErrors.GEN_2("Club con el Tournament ID"));
     }
 
     if (!teamsWithCat || teamsWithCat.length == 0) {
-      throw new Error("Error al iniciar el torneo: No se encontraron datos");
+      throw new ServiceCodeError(
+        codeErrors.GEN_2("Equipo con el Tournament ID")
+      );
     }
+
+    const clubData: unknown[] = [];
+    const teamData: unknown[] = [];
 
     for (const cwc of clubsWithCat) {
       clubData.push({
@@ -73,13 +71,21 @@ export class TournamentService {
         avFrom: new Date(cwc.availableFrom),
         avTo: new Date(cwc.availableTo),
         ctNumbers: cwc.courtNumbers.split(", "),
+        categories: cwc.categories.split(", "),
       });
     }
 
     for (const twc of teamsWithCat) {
+      const usersWithPoints = await TeamRepository.getAmountPointPerUser(
+        twc.tourId,
+        twc.category,
+        twc.usersId.split(", ")
+      );
+
       teamData.push({
         teamName: twc.teamName,
         category: twc.category,
+        totalPoints: usersWithPoints.reduce((acc, user) => acc + user.sum, 0),
       });
     }
 

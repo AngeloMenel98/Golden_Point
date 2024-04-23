@@ -31,6 +31,9 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       )
       .addSelect('MIN(cc."availableFrom") AS "availableFrom"')
       .addSelect('MAX(cc."availableTo") AS "availableTo"')
+      .addSelect(
+        'STRING_AGG(DISTINCT CONCAT(c."gender", \'-\', c."categoryName")::TEXT, \', \') AS "categories"'
+      )
       .innerJoin("court", "ct", 'ct."clubId" = cl.id')
       .innerJoin("calendar_club", "cc", 'cc.id = cl."calendarClubId"')
       .innerJoin("tour", "t", 't.id = cl."tourId"')
