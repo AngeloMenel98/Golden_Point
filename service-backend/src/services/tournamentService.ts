@@ -1,7 +1,6 @@
 import { CategoryService, MatchService, TourService } from ".";
 import codeErrors from "../constants/codeErrors";
-import { Category, Tour, Tournament } from "../entity";
-import { User } from "../entity/User";
+import { Category, Tournament } from "../entity";
 import { ServiceCodeError } from "../errors/errorsClass";
 import {
   ClubRepository,

@@ -1,22 +1,18 @@
 import { validationResult } from "express-validator";
 import { Tournament } from "../entity";
-import {
-  MatchService,
-  TourService,
-  TournamentService,
-  UserService,
-} from "../services";
+import { TournamentService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { isNotUserAdmin } from "../helpers/adminValidation";
+import { Manager } from "../helpers/manager";
 
 export class TournamentController {
   private tournService: TournamentService;
-  private userService: UserService;
+  private manager: Manager;
 
   constructor() {
     this.tournService = new TournamentService();
-    this.userService = new UserService();
+    this.manager = Manager.getInstance();
   }
 
   async create(req: Request, res: Response) {
@@ -32,7 +28,7 @@ export class TournamentController {
 
       const { tourId, userId, title, master, categoryData } = req.body;
 
-      const existingUser = await this.userService.findById(userId);
+      const existingUser = await this.manager.checkUserExists(userId);
       isNotUserAdmin(existingUser);
 
       const newTourn = new Tournament();
@@ -81,7 +77,7 @@ export class TournamentController {
 
       const { tournamentId, userId } = req.body;
       const existingTourn = await this.tournService.findById(tournamentId);
-      const existingUser = await this.userService.findById(userId);
+      const existingUser = await this.manager.checkUserExists(userId);
       isNotUserAdmin(existingUser);
 
       const tournament = await this.tournService.delete(existingTourn);
@@ -121,7 +117,7 @@ export class TournamentController {
       const { tournamentId, userId } = req.body;
 
       const existingTourn = await this.tournService.findById(tournamentId);
-      const existingUser = await this.userService.findById(userId);
+      const existingUser = await this.manager.checkUserExists(userId);
       isNotUserAdmin(existingUser);
 
       const tournamentData = await this.tournService.startTournamentData(
@@ -137,6 +133,11 @@ export class TournamentController {
       if (isServiceCodeError(e)) {
         return res.status(400).json({ error: [{ msg: e.message }] });
       }
+
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }

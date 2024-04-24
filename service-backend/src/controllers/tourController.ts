@@ -5,14 +5,15 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { isNotUserAdmin } from "../helpers/adminValidation";
+import { Manager } from "../helpers/manager";
 
 export class TourController {
   private tourService: TourService;
-  private userService: UserService;
+  private manager: Manager;
 
   constructor() {
     this.tourService = new TourService();
-    this.userService = new UserService();
+    this.manager = Manager.getInstance();
   }
 
   async create(req: Request, res: Response) {
@@ -32,7 +33,7 @@ export class TourController {
       newTour.title = title;
       newTour.tourCode = generateCode(6);
 
-      const user = await this.userService.findById(userId);
+      const user = await this.manager.checkUserExists(userId);
       isNotUserAdmin(user);
 
       const tour = await this.tourService.create(newTour, user);
@@ -75,7 +76,7 @@ export class TourController {
       const { tourId, userId } = req.body;
 
       const existingTour = await this.tourService.findById(tourId);
-      const existingUser = await this.userService.findById(userId);
+      const existingUser = await this.manager.checkUserExists(userId);
       isNotUserAdmin(existingUser);
 
       const tour = await this.tourService.delete(existingTour);
@@ -116,7 +117,7 @@ export class TourController {
 
       const { userId, tourCode } = req.body;
 
-      const user = await this.userService.findById(userId);
+      const user = await this.manager.checkUserExists(userId);
 
       const tour = await this.tourService.joinUserToTour(user, tourCode);
 
