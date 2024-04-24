@@ -1,5 +1,6 @@
 import { CategoryService, MatchService, TourService } from ".";
 import codeErrors from "../constants/codeErrors";
+import time from "../constants/time";
 import { Category, Tournament } from "../entity";
 import { ServiceCodeError } from "../errors/errorsClass";
 import {
@@ -7,6 +8,22 @@ import {
   TeamRepository,
   TournamentRepository,
 } from "../repository";
+
+export interface ClubData {
+  clubName: string;
+  master: number;
+  avFrom: Date;
+  avTo: Date;
+  allHours?: Date[];
+  ctNumbers: string[];
+  categories: string[];
+}
+
+export interface TeamData {
+  teamName: string;
+  category: string;
+  totalPoints: number;
+}
 
 export class TournamentService {
   private tourService: TourService;
@@ -45,7 +62,7 @@ export class TournamentService {
     return TournamentRepository.save(tournament);
   }
 
-  async startTournamentData(tournament: Tournament) {
+  async startData(tournament: Tournament) {
     const clubsWithCat = await ClubRepository.getClubs(tournament.id);
     const teamsWithCat = await TeamRepository.getTeams(tournament.id);
 
@@ -59,8 +76,8 @@ export class TournamentService {
       );
     }
 
-    const clubData: unknown[] = [];
-    const teamData: unknown[] = [];
+    const clubData: ClubData[] = [];
+    const teamData: TeamData[] = [];
 
     for (const cwc of clubsWithCat) {
       clubData.push({
@@ -90,11 +107,31 @@ export class TournamentService {
     return { clubData, teamData };
   }
 
-  async startTournamentMatch(data: {
-    clubData: unknown[];
-    teamData: unknown[];
-  }) {
-    throw new Error("Method not implemented");
+  async startHoursOfMatches(clubData: ClubData[]) {
+    for (let cl of clubData) {
+      cl.allHours = [];
+      const firstTime = cl.avFrom;
+      cl.allHours.push(firstTime);
+
+      while (cl.avFrom.getTime() < cl.avTo.getTime() - time.DAY) {
+        const newHour = new Date(cl.avFrom.getTime() + time.HOUR_HALF);
+        cl.avFrom = newHour;
+        cl.allHours.push(newHour);
+      }
+
+      cl.avFrom = new Date(firstTime.getTime() + time.DAY);
+      cl.allHours.push(cl.avFrom);
+
+      while (cl.avFrom.getTime() < cl.avTo.getTime()) {
+        const newHour = new Date(cl.avFrom.getTime() + time.HOUR_HALF);
+        cl.avFrom = newHour;
+        cl.allHours.push(newHour);
+      }
+    }
+  }
+
+  async sortTeams(clubData: ClubData[], teamData: TeamData[]) {
+    throw new Error("Method not implented");
   }
 
   async findById(tournamentId: string) {

@@ -4,6 +4,7 @@ import { TournamentService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
+import { ClubData, TeamData } from "../services/tournamentService";
 
 export class TournamentController {
   private tournService: TournamentService;
@@ -119,13 +120,14 @@ export class TournamentController {
       const existingUser = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(existingUser);
 
-      const tournamentData = await this.tournService.startTournamentData(
+      const { clubData, teamData } = await this.tournService.startData(
         existingTourn
       );
 
-      await this.tournService.startTournamentMatch(tournamentData);
+      await this.tournService.startHoursOfMatches(clubData);
 
-      res.status(200).json(tournamentData);
+      await this.tournService.sortTeams(clubData, teamData);
+      res.status(200).json({ clubData, teamData });
     } catch (e) {
       console.error(e);
 
