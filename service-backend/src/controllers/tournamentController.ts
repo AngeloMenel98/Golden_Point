@@ -3,7 +3,6 @@ import { Tournament } from "../entity";
 import { TournamentService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
-import { isNotUserAdmin } from "../helpers/adminValidation";
 import { Manager } from "../helpers/manager";
 
 export class TournamentController {
@@ -29,7 +28,7 @@ export class TournamentController {
       const { tourId, userId, title, master, categoryData } = req.body;
 
       const existingUser = await this.manager.checkUserExists(userId);
-      isNotUserAdmin(existingUser);
+      await this.manager.checkIfADMIN(existingUser);
 
       const newTourn = new Tournament();
       newTourn.title = title;
@@ -78,7 +77,7 @@ export class TournamentController {
       const { tournamentId, userId } = req.body;
       const existingTourn = await this.tournService.findById(tournamentId);
       const existingUser = await this.manager.checkUserExists(userId);
-      isNotUserAdmin(existingUser);
+      await this.manager.checkIfADMIN(existingUser);
 
       const tournament = await this.tournService.delete(existingTourn);
 
@@ -118,7 +117,7 @@ export class TournamentController {
 
       const existingTourn = await this.tournService.findById(tournamentId);
       const existingUser = await this.manager.checkUserExists(userId);
-      isNotUserAdmin(existingUser);
+      await this.manager.checkIfADMIN(existingUser);
 
       const tournamentData = await this.tournService.startTournamentData(
         existingTourn

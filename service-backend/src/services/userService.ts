@@ -4,7 +4,7 @@ import valMessage from "../constants/validationMessages";
 
 import { UserServiceError, ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
-import { isNotUserAdmin } from "../helpers/adminValidation";
+import { isNotUserAdmin } from "../helpers/validations";
 
 export class UserService {
   constructor() {}

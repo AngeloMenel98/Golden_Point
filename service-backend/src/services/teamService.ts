@@ -2,11 +2,25 @@ import { TeamRepository, UserRepository } from "../repository";
 import { Team, Tournament } from "../entity";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
+import { Manager } from "../helpers/manager";
 
 export class TeamService {
   constructor() {}
 
-  async create(newTeam: Team, users: any[], tournament: Tournament) {
+  async create(
+    newTeam: Team,
+    usersId: string[],
+    manager: Manager,
+    tournament: Tournament
+  ) {
+    const users = await Promise.all(
+      usersId.map((userId) => manager.checkUserWithData(userId))
+    );
+
+    if (users.length > 2) {
+      throw new ServiceCodeError(codeErrors.TEAM_1);
+    }
+
     let teamName = "";
     const lastNames = users.map((user) => user.perData.lastName);
     teamName = lastNames.join("-");

@@ -1,17 +1,17 @@
 import { Request, Response } from "express";
 import { Set } from "../entity";
-import { SetService, UserService } from "../services";
+import { SetService } from "../services";
 import { validationResult } from "express-validator";
-import { isServiceCodeError } from "../errors/errors";
-import { isNotUserAdmin } from "../helpers/adminValidation";
+import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { Manager } from "../helpers/manager";
 
-export class MatchController {
+export class SetController {
   private setService: SetService;
-  private userService: UserService;
+  private manager: Manager;
 
   constructor() {
     this.setService = new SetService();
-    this.userService = new UserService();
+    this.manager = Manager.getInstance();
   }
 
   async create(req: Request, res: Response) {
@@ -27,8 +27,8 @@ export class MatchController {
 
       const { userId, gamesTeam1, gamesTeam2, matchId } = req.body;
 
-      const user = await this.userService.findById(userId);
-      isNotUserAdmin(user);
+      const user = await this.manager.checkUserExists(userId);
+      await this.manager.checkIfADMIN(user);
 
       const newSet = new Set();
       newSet.gamesTeam1 = gamesTeam1;
@@ -51,9 +51,13 @@ export class MatchController {
         return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 }
 
-export default new MatchController();
+export default new SetController();

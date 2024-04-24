@@ -1,4 +1,6 @@
+import { User } from "../entity";
 import { UserService } from "../services";
+import { isNotUserAdmin } from "./validations";
 
 export class Manager {
   private static instance: Manager;
@@ -17,5 +19,13 @@ export class Manager {
 
   public async checkUserExists(userId: string) {
     return this.userService.findById(userId);
+  }
+
+  public async checkUserWithData(userId: string) {
+    return this.userService.findByIdWithPersonalData(userId);
+  }
+
+  public async checkIfADMIN(adminUser: User) {
+    isNotUserAdmin(adminUser);
   }
 }

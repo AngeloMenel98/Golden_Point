@@ -4,7 +4,6 @@ import { generateCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
-import { isNotUserAdmin } from "../helpers/adminValidation";
 import { Manager } from "../helpers/manager";
 
 export class TourController {
@@ -34,7 +33,7 @@ export class TourController {
       newTour.tourCode = generateCode(6);
 
       const user = await this.manager.checkUserExists(userId);
-      isNotUserAdmin(user);
+      await this.manager.checkIfADMIN(user);
 
       const tour = await this.tourService.create(newTour, user);
 
@@ -77,7 +76,7 @@ export class TourController {
 
       const existingTour = await this.tourService.findById(tourId);
       const existingUser = await this.manager.checkUserExists(userId);
-      isNotUserAdmin(existingUser);
+      await this.manager.checkIfADMIN(existingUser);
 
       const tour = await this.tourService.delete(existingTour);
 
