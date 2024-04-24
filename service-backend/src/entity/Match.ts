@@ -3,7 +3,6 @@ import {
   Column,
   PrimaryGeneratedColumn,
   ManyToOne,
-  ManyToMany,
   OneToMany,
 } from "typeorm";
 import { Tournament } from "./Tournament";

@@ -124,13 +124,19 @@ export class TournamentController {
       const existingUser = await this.userService.findById(userId);
       isNotUserAdmin(existingUser);
 
-      const clubData = await this.tournService.startTournamentData(
+      const tournamentData = await this.tournService.startTournamentData(
         existingTourn
       );
 
-      res.status(200).json(clubData);
+      await this.tournService.startTournamentMatch(tournamentData);
+
+      res.status(200).json(tournamentData);
     } catch (e) {
       console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }

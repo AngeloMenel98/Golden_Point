@@ -48,7 +48,6 @@ export class TournamentService {
 
   async startTournamentData(tournament: Tournament) {
     const clubsWithCat = await ClubRepository.getClubs(tournament.id);
-
     const teamsWithCat = await TeamRepository.getTeams(tournament.id);
 
     if (!clubsWithCat || clubsWithCat.length == 0) {
@@ -90,6 +89,13 @@ export class TournamentService {
     }
 
     return { clubData, teamData };
+  }
+
+  async startTournamentMatch(data: {
+    clubData: unknown[];
+    teamData: unknown[];
+  }) {
+    throw new Error("Method not implemented");
   }
 
   async findById(tournamentId: string) {

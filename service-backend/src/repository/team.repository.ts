@@ -12,7 +12,7 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .innerJoin("user", "u", 'u.id = tuu."userId"')
       .innerJoin("tour_users_user", "tuu2", 'tuu2."userId" = u.id ')
       .innerJoin("tour", "t", 't.id = tuu2."tourId" ')
-      .innerJoin("tournament", "trn", 'trn."tourId" = t.id')
+      .innerJoin("tournament", "trn", 'trn.id = tm."tournamentId"')
       .where("trn.id = :tournamentId", { tournamentId })
       .groupBy('tm."category",tm."teamName",t."id"')
       .getRawMany();

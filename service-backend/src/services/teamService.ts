@@ -1,12 +1,12 @@
 import { TeamRepository, UserRepository } from "../repository";
-import { Team } from "../entity";
+import { Team, Tournament } from "../entity";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
 
 export class TeamService {
   constructor() {}
 
-  async create(newTeam: Team, users: any[]) {
+  async create(newTeam: Team, users: any[], tournament: Tournament) {
     let teamName = "";
     const lastNames = users.map((user) => user.perData.lastName);
     teamName = lastNames.join("-");
@@ -15,6 +15,7 @@ export class TeamService {
       ...newTeam,
       teamName: teamName,
       users: users.map((user) => user.user),
+      tournament,
     });
   }
 
