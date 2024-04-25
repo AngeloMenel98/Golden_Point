@@ -28,9 +28,7 @@ export class MatchService {
       throw new ServiceCodeError(codeErrors.MATCH_1);
     }
 
-    const t = await MatchRepository.create(newMatch, teams, tournament, court);
-    console.log(t);
-    return t;
+    return MatchRepository.create(newMatch, teams, tournament, court);
   }
 
   async findById(matchId: string) {

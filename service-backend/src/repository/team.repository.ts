@@ -20,6 +20,7 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
 
   async getAmountPointPerUser(
     tourId: string,
+    tournamentId: string,
     category: string,
     userIds: string[]
   ) {
@@ -27,6 +28,7 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .select("u.id", "userId")
       .addSelect("u.username", "userName")
       .addSelect("m.amountTourPoints", "amountPoints")
+      .addSelect("t.category", "category")
       .innerJoin("team_match", "tm", 'tm."teamId" = t.id')
       .innerJoin("match", "m", 'm.id = tm."matchId"')
       .innerJoin("team_users_user", "tuu", 'tuu."teamId" = t.id')
@@ -38,15 +40,17 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .andWhere('t."category" = :category', { category })
       .andWhere("t2.id = :tourId", { tourId })
       .andWhere("u.id IN (:...userIds)", { userIds })
-      .groupBy("u.id, u.username, m.amountTourPoints");
+      .andWhere("trn.id != :tournamentId", { tournamentId })
+      .groupBy("u.id, u.username, m.amountTourPoints, t.category");
 
     return AppDataSource.createQueryBuilder()
       .select('subquery."userId"')
       .addSelect('subquery."userName"')
-      .addSelect('SUM(subquery."amountPoints")')
+      .addSelect('SUM(subquery."amountPoints")', "points")
+      .addSelect('subquery."category"')
       .from("(" + subquery.getQuery() + ")", "subquery")
       .setParameters(subquery.getParameters())
-      .groupBy('subquery."userId", subquery."userName"')
+      .groupBy('subquery."userId", subquery."userName", subquery."category"')
       .getRawMany();
   },
 });

@@ -23,6 +23,7 @@ export interface TeamData {
   teamName: string;
   category: string;
   totalPoints: number;
+  usersId: string[];
 }
 
 export class TournamentService {
@@ -62,7 +63,7 @@ export class TournamentService {
     return TournamentRepository.save(tournament);
   }
 
-  async startData(tournament: Tournament) {
+  async getDataForStartingTournament(tournament: Tournament) {
     const clubsWithCat = await ClubRepository.getClubs(tournament.id);
     const teamsWithCat = await TeamRepository.getTeams(tournament.id);
 
@@ -93,6 +94,7 @@ export class TournamentService {
     for (const twc of teamsWithCat) {
       const usersWithPoints = await TeamRepository.getAmountPointPerUser(
         twc.tourId,
+        tournament.id,
         twc.category,
         twc.usersId.split(", ")
       );
@@ -100,14 +102,18 @@ export class TournamentService {
       teamData.push({
         teamName: twc.teamName,
         category: twc.category,
-        totalPoints: usersWithPoints.reduce((acc, user) => acc + user.sum, 0),
+        totalPoints: usersWithPoints.reduce(
+          (acc, user) => acc + user.points,
+          0
+        ),
+        usersId: twc.usersId.split(", "),
       });
     }
 
     return { clubData, teamData };
   }
 
-  async startHoursOfMatches(clubData: ClubData[]) {
+  async getHoursOfMatches(clubData: ClubData[]) {
     for (let cl of clubData) {
       cl.allHours = [];
       const firstTime = cl.avFrom;
@@ -130,8 +136,9 @@ export class TournamentService {
     }
   }
 
-  async sortTeams(clubData: ClubData[], teamData: TeamData[]) {
-    throw new Error("Method not implented");
+  async createMatchesForCats(clubData: ClubData[], teamData: TeamData[]) {
+    const teams = this.sortTeamsPerCategoryByPoints(teamData);
+    return teams;
   }
 
   async findById(tournamentId: string) {
@@ -144,5 +151,32 @@ export class TournamentService {
     }
 
     return existingTourn;
+  }
+
+  private async sortTeamsPerCategoryByPoints(teamData: TeamData[]) {
+    if (teamData.length === 0) {
+      throw new ServiceCodeError(
+        codeErrors.GEN_2("Equipo para ordenar por puntos")
+      );
+    }
+
+    const teamsByCategory = {};
+
+    teamData.forEach((team) => {
+      const { category } = team;
+
+      // Si la categoría no está en el objeto, agrégala y crea un array para almacenar los equipos
+      if (!teamsByCategory[category]) {
+        teamsByCategory[category] = [];
+      }
+      teamsByCategory[category].push(team);
+    });
+
+    // Ordena los equipos dentro de cada categoría por totalPoints de mayor a menor
+    for (const category in teamsByCategory) {
+      teamsByCategory[category].sort((a, b) => b.totalPoints - a.totalPoints);
+    }
+
+    return teamsByCategory;
   }
 }

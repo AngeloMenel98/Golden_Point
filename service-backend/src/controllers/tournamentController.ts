@@ -116,18 +116,21 @@ export class TournamentController {
 
       const { tournamentId, userId } = req.body;
 
-      const existingTourn = await this.tournService.findById(tournamentId);
+      const tourn = await this.tournService.findById(tournamentId);
       const existingUser = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(existingUser);
 
-      const { clubData, teamData } = await this.tournService.startData(
-        existingTourn
+      const { clubData, teamData } =
+        await this.tournService.getDataForStartingTournament(tourn);
+
+      await this.tournService.getHoursOfMatches(clubData);
+
+      const t = await this.tournService.createMatchesForCats(
+        clubData,
+        teamData
       );
 
-      await this.tournService.startHoursOfMatches(clubData);
-
-      await this.tournService.sortTeams(clubData, teamData);
-      res.status(200).json({ clubData, teamData });
+      res.status(200).json(t);
     } catch (e) {
       console.error(e);
 
