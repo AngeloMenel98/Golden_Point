@@ -8,13 +8,14 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .addSelect('tm."teamName"', "teamName")
       .addSelect('tm."category"', "category")
       .addSelect("t.id", "tourId")
+      .addSelect("tm.id", "teamId")
       .innerJoin("team_users_user", "tuu", 'tuu."teamId" = tm.id ')
       .innerJoin("user", "u", 'u.id = tuu."userId"')
       .innerJoin("tour_users_user", "tuu2", 'tuu2."userId" = u.id ')
       .innerJoin("tour", "t", 't.id = tuu2."tourId" ')
       .innerJoin("tournament", "trn", 'trn.id = tm."tournamentId"')
       .where("trn.id = :tournamentId", { tournamentId })
-      .groupBy('tm."category",tm."teamName",t."id"')
+      .groupBy('tm."category",tm."teamName",t."id", tm.id')
       .getRawMany();
   },
 
@@ -41,6 +42,7 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .andWhere("t2.id = :tourId", { tourId })
       .andWhere("u.id IN (:...userIds)", { userIds })
       .andWhere("trn.id != :tournamentId", { tournamentId })
+      .andWhere("trn.isDeleted != true")
       .groupBy("u.id, u.username, m.amountTourPoints, t.category");
 
     return AppDataSource.createQueryBuilder()

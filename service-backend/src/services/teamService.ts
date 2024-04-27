@@ -22,8 +22,12 @@ export class TeamService {
     }
 
     let teamName = "";
-    const lastNames = users.map((user) => user.perData.lastName);
-    teamName = lastNames.join("-");
+    const namesAndInitials = users.map((user) => {
+      const firstName = user.perData.firstName.charAt(0);
+      const lastName = user.perData.lastName;
+      return `${lastName} ${firstName}.`;
+    });
+    teamName = namesAndInitials.join("-");
 
     return await TeamRepository.save({
       ...newTeam,

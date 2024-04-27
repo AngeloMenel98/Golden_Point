@@ -125,9 +125,10 @@ export class TournamentController {
 
       await this.tournService.getHoursOfMatches(clubData);
 
-      const t = await this.tournService.createMatchesForCats(
+      const t = await this.tournService.createGroupsDTOPerCat(
         clubData,
-        teamData
+        teamData,
+        tourn
       );
 
       res.status(200).json(t);

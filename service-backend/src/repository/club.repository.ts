@@ -26,9 +26,7 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
     return this.createQueryBuilder("cl")
       .select("cl.clubName", "clubName")
       .addSelect("trn.master", "master")
-      .addSelect(
-        'STRING_AGG(DISTINCT ct."courtNumber"::TEXT, \', \') AS "courtNumbers"'
-      )
+      .addSelect('STRING_AGG(DISTINCT ct."id"::TEXT, \', \') AS "courtNumbers"')
       .addSelect('MIN(cc."availableFrom") AS "availableFrom"')
       .addSelect('MAX(cc."availableTo") AS "availableTo"')
       .addSelect(

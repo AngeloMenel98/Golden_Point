@@ -1,7 +1,8 @@
 import { CategoryService, MatchService, TourService } from ".";
 import codeErrors from "../constants/codeErrors";
 import time from "../constants/time";
-import { Category, Tournament } from "../entity";
+import { Category, Match, Tournament } from "../entity";
+import { GroupDTO } from "../entity/dtos/GroupsDTO";
 import { ServiceCodeError } from "../errors/errorsClass";
 import {
   ClubRepository,
@@ -20,10 +21,16 @@ export interface ClubData {
 }
 
 export interface TeamData {
+  teamId: string;
   teamName: string;
   category: string;
   totalPoints: number;
   usersId: string[];
+}
+
+export interface CourtData {
+  courtId: string;
+  allHours: Date[];
 }
 
 export class TournamentService {
@@ -100,6 +107,7 @@ export class TournamentService {
       );
 
       teamData.push({
+        teamId: twc.teamId,
         teamName: twc.teamName,
         category: twc.category,
         totalPoints: usersWithPoints.reduce(
@@ -136,9 +144,47 @@ export class TournamentService {
     }
   }
 
-  async createMatchesForCats(clubData: ClubData[], teamData: TeamData[]) {
-    const teams = this.sortTeamsPerCategoryByPoints(teamData);
-    return teams;
+  async createGroupsDTOPerCat(
+    clubData: ClubData[],
+    teamData: TeamData[],
+    tournament: Tournament
+  ) {
+    const sortedTeams = this.sortTeamsPerCategoryByPoints(teamData);
+
+    const courtData = this.assignHourToCourts(clubData);
+
+    const groupDTOs: GroupDTO[] = [];
+
+    for (const category in sortedTeams) {
+      const teams = sortedTeams[category];
+      const numTeams = teams.length;
+
+      if (numTeams < 3) continue;
+
+      const numGroups = numTeams / 3;
+      for (let i = 0; i < numGroups; i++) {
+        const team1 = teams[i * 3];
+        const team2 = teams[i * 3 + 1];
+        const team3 = teams[i * 3 + 2];
+
+        const courtIndex = i % courtData.length;
+        const court = courtData[courtIndex];
+
+        const groupDTO = new GroupDTO(
+          [team1.teamId, team2.teamId, team3.teamId],
+          [court.courtId],
+          [court.allHours[0], court.allHours[1], court.allHours[2]],
+          20,
+          50
+        );
+        groupDTOs.push(groupDTO);
+
+        court.allHours.splice(0, 3);
+        console.log(courtData[0]);
+      }
+    }
+
+    return groupDTOs;
   }
 
   async findById(tournamentId: string) {
@@ -153,7 +199,29 @@ export class TournamentService {
     return existingTourn;
   }
 
-  private async sortTeamsPerCategoryByPoints(teamData: TeamData[]) {
+  public assignHourToCourts(clubData: ClubData[]) {
+    const courtData: CourtData[] = [];
+
+    clubData.forEach((cl) => {
+      const hours = [...cl.allHours];
+      cl.ctNumbers.forEach((courtId) => {
+        const court: CourtData = {
+          courtId: courtId,
+          allHours: hours,
+        };
+
+        courtData.push(court);
+      });
+    });
+
+    return courtData;
+  }
+
+  async getTeamsIds(sortedTeams: any) {
+    const teamsId = [];
+  }
+
+  private sortTeamsPerCategoryByPoints(teamData: TeamData[]) {
     if (teamData.length === 0) {
       throw new ServiceCodeError(
         codeErrors.GEN_2("Equipo para ordenar por puntos")
