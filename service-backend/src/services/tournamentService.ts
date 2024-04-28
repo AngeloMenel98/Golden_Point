@@ -9,29 +9,11 @@ import {
   TeamRepository,
   TournamentRepository,
 } from "../repository";
-
-export interface ClubData {
-  clubName: string;
-  master: number;
-  avFrom: Date;
-  avTo: Date;
-  allHours?: Date[];
-  ctNumbers: string[];
-  categories: string[];
-}
-
-export interface TeamData {
-  teamId: string;
-  teamName: string;
-  category: string;
-  totalPoints: number;
-  usersId: string[];
-}
-
-export interface CourtData {
-  courtId: string;
-  allHours: Date[];
-}
+import { ClubData, CourtData, TeamData } from "../utils/interfaces";
+import {
+  shuffleArray,
+  sortTeamsPerCategoryByPoints,
+} from "../utils/functionHelpers";
 
 export class TournamentService {
   private tourService: TourService;
@@ -149,7 +131,7 @@ export class TournamentService {
     teamData: TeamData[],
     tournament: Tournament
   ) {
-    const sortedTeams = this.sortTeamsPerCategoryByPoints(teamData);
+    const sortedTeams = sortTeamsPerCategoryByPoints(teamData);
 
     const courtData = this.assignHourToCourts(clubData);
 
@@ -159,6 +141,7 @@ export class TournamentService {
       const teams = sortedTeams[category];
       const numTeams = teams.length;
 
+      //FIXME: Think a way to throw this error
       if (numTeams < 3) continue;
 
       const numGroups = numTeams / 3;
@@ -168,23 +151,49 @@ export class TournamentService {
         const team3 = teams[i * 3 + 2];
 
         const courtIndex = i % courtData.length;
-        const court = courtData[courtIndex];
+
+        const hoursForGroup = courtData[courtIndex].allHours.slice(0, 3);
+        /*let currentDate: Date = null;
+
+        let allHours = courtData[courtIndex].allHours;
+
+        let firstDate: Date = allHours[0];
+
+        allHours.forEach((hour) => {
+          if (
+            (!currentDate ||
+              hour.toDateString() == currentDate.toDateString()) &&
+            hoursForGroup.length < 3 &&
+            firstDate.toDateString() == currentDate.toDateString()
+          ) {
+            console.log(firstDate);
+            shuffleArray(allHours);
+            hoursForGroup.push(hour);
+
+            courtData[courtIndex].allHours = courtData[
+              courtIndex
+            ].allHours.filter((item) => item !== hour);
+
+            allHours = allHours.filter((item) => item !== hour);
+            currentDate = hour;
+          }
+        });*/
+
+        courtData[courtIndex].allHours =
+          courtData[courtIndex].allHours.slice(3);
 
         const groupDTO = new GroupDTO(
           [team1.teamId, team2.teamId, team3.teamId],
-          [court.courtId],
-          [court.allHours[0], court.allHours[1], court.allHours[2]],
+          [courtData[courtIndex].courtId],
+          hoursForGroup,
           20,
           50
         );
-        groupDTOs.push(groupDTO);
 
-        court.allHours.splice(0, 3);
-        console.log(courtData[0]);
+        groupDTOs.push(groupDTO);
       }
     }
-
-    return groupDTOs;
+    return this.createGroupsMatches(groupDTOs, tournament);
   }
 
   async findById(tournamentId: string) {
@@ -217,34 +226,43 @@ export class TournamentService {
     return courtData;
   }
 
-  async getTeamsIds(sortedTeams: any) {
-    const teamsId = [];
-  }
+  async createGroupsMatches(groupDTOs: GroupDTO[], tournament: Tournament) {
+    const matches: Match[] = [];
+    for (const grDTO of groupDTOs) {
+      const teams = grDTO.teamsId;
+      const courtIds = grDTO.courtsId;
+      const matchDates = grDTO.matchDates;
 
-  private sortTeamsPerCategoryByPoints(teamData: TeamData[]) {
-    if (teamData.length === 0) {
-      throw new ServiceCodeError(
-        codeErrors.GEN_2("Equipo para ordenar por puntos")
-      );
-    }
-
-    const teamsByCategory = {};
-
-    teamData.forEach((team) => {
-      const { category } = team;
-
-      // Si la categoría no está en el objeto, agrégala y crea un array para almacenar los equipos
-      if (!teamsByCategory[category]) {
-        teamsByCategory[category] = [];
+      if (matchDates.length < 3) {
+        throw new ServiceCodeError(codeErrors.GEN_2("Match Date"));
       }
-      teamsByCategory[category].push(team);
-    });
 
-    // Ordena los equipos dentro de cada categoría por totalPoints de mayor a menor
-    for (const category in teamsByCategory) {
-      teamsByCategory[category].sort((a, b) => b.totalPoints - a.totalPoints);
+      if (courtIds.length === 0) {
+        throw new ServiceCodeError(codeErrors.GEN_2("Courts IDs"));
+      }
+
+      for (const courtId of courtIds) {
+        let matchIndex = 0;
+        for (let j = 0; j < teams.length; j++) {
+          for (let k = j + 1; k < teams.length; k++) {
+            // Crear un partido entre los equipos j y k
+            const match = new Match();
+            match.amountTourPoints = grDTO.tourPoints;
+            match.amountTourCoins = grDTO.tourCoins;
+            match.matchDate = matchDates[matchIndex].toISOString();
+
+            const m = await this.matchService.create(
+              match,
+              [teams[j], teams[k]],
+              tournament,
+              courtId
+            );
+            matches.push(m);
+            matchIndex++;
+          }
+        }
+      }
     }
-
-    return teamsByCategory;
+    return matches;
   }
 }

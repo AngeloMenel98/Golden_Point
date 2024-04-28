@@ -4,7 +4,6 @@ import { TournamentService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
-import { ClubData, TeamData } from "../services/tournamentService";
 
 export class TournamentController {
   private tournService: TournamentService;
@@ -125,13 +124,13 @@ export class TournamentController {
 
       await this.tournService.getHoursOfMatches(clubData);
 
-      const t = await this.tournService.createGroupsDTOPerCat(
+      const matches = await this.tournService.createGroupsDTOPerCat(
         clubData,
         teamData,
         tourn
       );
 
-      res.status(200).json(t);
+      res.status(200).json(matches);
     } catch (e) {
       console.error(e);
 
