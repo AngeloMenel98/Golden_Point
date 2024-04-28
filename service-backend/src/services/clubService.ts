@@ -1,31 +1,23 @@
 import { ClubRepository } from "../repository";
 import { CalendarClub, Club, Court } from "../entity";
-import { UserRole } from "../entity/User";
-import { TourService, UserService } from ".";
+import { TourService } from ".";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
-import { isNotUserAdmin } from "../helpers/adminValidation";
 
 export class ClubService {
   private tourService: TourService;
-  private userService: UserService;
 
   constructor() {
     this.tourService = new TourService();
-    this.userService = new UserService();
   }
 
   async create(
     newClub: Club,
     newCalClub: CalendarClub,
-    userId: string,
     tourId: string,
     courtsNumber: number
   ) {
     const existingTour = await this.tourService.findById(tourId);
-    const existingUser = await this.userService.findById(userId);
-
-    isNotUserAdmin(existingUser);
 
     const newCourts: Court[] = [];
     for (let i = 0; i < courtsNumber; i = i + 1) {

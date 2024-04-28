@@ -1,33 +1,22 @@
 import { TourRepository, UserRepository } from "../repository";
 import { Tour } from "../entity";
-import { UserService } from ".";
 import { User } from "../entity/User";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
-import { isNotUserAdmin } from "../helpers/adminValidation";
 
 export class TourService {
-  private userService: UserService;
+  constructor() {}
 
-  constructor() {
-    this.userService = new UserService();
-  }
-
-  async create(newTour: Tour, userId: string) {
-    const user = await this.userService.findById(userId);
-
-    isNotUserAdmin(user);
-
+  async create(newTour: Tour, user: User) {
     return TourRepository.save({ ...newTour, users: [user] });
   }
 
-  async delete(tour: Tour, user: User) {
-    isNotUserAdmin(user);
+  async delete(tour: Tour) {
     tour.isDeleted = true;
     return TourRepository.save(tour);
   }
 
-  async joinUserToTour(userId: string, tourCode: string) {
+  async joinUserToTour(user: User, tourCode: string) {
     const existingTour = await TourRepository.findOneBy({
       tourCode: tourCode,
     });
@@ -36,9 +25,7 @@ export class TourService {
       throw new ServiceCodeError(codeErrors.TOUR_1);
     }
 
-    const user = await this.userService.findById(userId);
-
-    const userInTour = await UserRepository.findUserInTour(userId);
+    const userInTour = await UserRepository.findUserInTour(user.id);
 
     if (userInTour) {
       throw new ServiceCodeError(codeErrors.TOUR_2(user.username));

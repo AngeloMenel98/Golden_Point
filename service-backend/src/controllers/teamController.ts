@@ -1,13 +1,19 @@
 import { validationResult } from "express-validator";
 import { Team } from "../entity";
-import { TeamService } from "../services";
+import { TeamService, TournamentService, UserService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { Manager } from "../helpers/manager";
+
 export class TeamController {
   private teamService: TeamService;
+  private manager: Manager;
+  private tournService: TournamentService;
 
   constructor() {
     this.teamService = new TeamService();
+    this.manager = Manager.getInstance();
+    this.tournService = new TournamentService();
   }
 
   async create(req: Request, res: Response) {
@@ -21,15 +27,21 @@ export class TeamController {
         });
       }
 
-      const { adminUserId, usersId, tournamentId, category } = req.body;
+      const { adminUserId, usersId, category, tournamentId } = req.body;
+
+      const adminUser = await this.manager.checkUserExists(adminUserId);
+      await this.manager.checkIfADMIN(adminUser);
+
+      const tournament = await this.tournService.findById(tournamentId);
+
       const newTeam = new Team();
       newTeam.category = category;
 
       const teams = await this.teamService.create(
         newTeam,
         usersId,
-        adminUserId,
-        tournamentId
+        this.manager,
+        tournament
       );
 
       const response = {

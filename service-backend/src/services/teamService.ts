@@ -1,46 +1,39 @@
 import { TeamRepository, UserRepository } from "../repository";
-import { Team } from "../entity";
-import { UserService, TournamentService } from "./index";
+import { Team, Tournament } from "../entity";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
-import { isNotUserAdmin } from "../helpers/adminValidation";
+import { Manager } from "../helpers/manager";
 
 export class TeamService {
-  private userService: UserService;
-  private tournService: TournamentService;
-
-  constructor() {
-    this.userService = new UserService();
-    this.tournService = new TournamentService();
-  }
+  constructor() {}
 
   async create(
     newTeam: Team,
     usersId: string[],
-    adminUserId: string,
-    tournamentId: string
+    manager: Manager,
+    tournament: Tournament
   ) {
-    const adminUser = await this.userService.findById(adminUserId);
-    const tournament = this.tournService.findById(tournamentId);
-
-    const usersWithData = await Promise.all(
-      usersId.map((userId) => this.userService.findByIdWithPersonalData(userId))
+    const users = await Promise.all(
+      usersId.map((userId) => manager.checkUserWithData(userId))
     );
 
-    isNotUserAdmin(adminUser);
-
-    if (usersWithData.length > 2) {
+    if (users.length > 2) {
       throw new ServiceCodeError(codeErrors.TEAM_1);
     }
 
     let teamName = "";
-    const lastNames = usersWithData.map((user) => user.perData.lastName);
-    teamName = lastNames.join("-");
+    const namesAndInitials = users.map((user) => {
+      const firstName = user.perData.firstName.charAt(0);
+      const lastName = user.perData.lastName;
+      return `${lastName} ${firstName}.`;
+    });
+    teamName = namesAndInitials.join("-");
 
     return await TeamRepository.save({
       ...newTeam,
       teamName: teamName,
-      users: usersWithData.map((user) => user.user),
+      users: users.map((user) => user.user),
+      tournament,
     });
   }
 

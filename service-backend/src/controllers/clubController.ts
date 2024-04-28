@@ -2,13 +2,16 @@ import { ClubService } from "../services";
 import { CalendarClub, Club } from "../entity";
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
-import { isServiceCodeError } from "../errors/errors";
+import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { Manager } from "../helpers/manager";
 
 export class ClubController {
   private clubService: ClubService;
+  private manager: Manager;
 
   constructor() {
     this.clubService = new ClubService();
+    this.manager = Manager.getInstance();
   }
 
   async create(req: Request, res: Response) {
@@ -32,6 +35,9 @@ export class ClubController {
         courtsNumber,
       } = req.body;
 
+      const existingUser = await this.manager.checkUserExists(userId);
+      await this.manager.checkIfADMIN(existingUser);
+
       const newClub = new Club();
       newClub.clubName = clubName;
       newClub.location = address;
@@ -43,7 +49,6 @@ export class ClubController {
       const club = await this.clubService.create(
         newClub,
         newCalClub,
-        userId,
         tourId,
         courtsNumber
       );
@@ -61,6 +66,10 @@ export class ClubController {
       console.error("Error creating clubs:", e);
 
       if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      if (isUserServiceError(e)) {
         return res.status(400).json({ error: [{ msg: e.message }] });
       }
 

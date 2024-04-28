@@ -1,9 +1,10 @@
 import { CourtRepository } from "../repository";
-import { Club, Court } from "../entity";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
 
 export class CourtService {
+  constructor() {}
+
   async findById(courtId: string) {
     const existingCourt = await CourtRepository.findOneBy({
       id: courtId,

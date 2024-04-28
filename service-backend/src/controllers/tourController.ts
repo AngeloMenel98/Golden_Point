@@ -4,14 +4,15 @@ import { generateCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { Manager } from "../helpers/manager";
 
 export class TourController {
   private tourService: TourService;
-  private userService: UserService;
+  private manager: Manager;
 
   constructor() {
     this.tourService = new TourService();
-    this.userService = new UserService();
+    this.manager = Manager.getInstance();
   }
 
   async create(req: Request, res: Response) {
@@ -31,7 +32,10 @@ export class TourController {
       newTour.title = title;
       newTour.tourCode = generateCode(6);
 
-      const tour = await this.tourService.create(newTour, userId);
+      const user = await this.manager.checkUserExists(userId);
+      await this.manager.checkIfADMIN(user);
+
+      const tour = await this.tourService.create(newTour, user);
 
       const response = {
         id: tour.id,
@@ -69,10 +73,12 @@ export class TourController {
       }
 
       const { tourId, userId } = req.body;
-      const existingTour = await this.tourService.findById(tourId);
-      const existingUser = await this.userService.findById(userId);
 
-      const tour = await this.tourService.delete(existingTour, existingUser);
+      const existingTour = await this.tourService.findById(tourId);
+      const existingUser = await this.manager.checkUserExists(userId);
+      await this.manager.checkIfADMIN(existingUser);
+
+      const tour = await this.tourService.delete(existingTour);
 
       const response = {
         id: tour.id,
@@ -110,7 +116,9 @@ export class TourController {
 
       const { userId, tourCode } = req.body;
 
-      const tour = await this.tourService.joinUserToTour(userId, tourCode);
+      const user = await this.manager.checkUserExists(userId);
+
+      const tour = await this.tourService.joinUserToTour(user, tourCode);
 
       const response = {
         id: tour.id,
