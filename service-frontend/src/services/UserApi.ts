@@ -1,19 +1,24 @@
-import { AxiosResponse } from "axios";
 import GeneralAPI from "./GeneralApi";
 
-interface Credentials {
+export interface Credentials {
   username: string;
   password: string;
 }
 
 class UserAPI extends GeneralAPI {
-  async login(credentials: Credentials): Promise<AxiosResponse<any>> {
+  async login(credentials: Credentials) {
     try {
-      const response = await this.api.post("/login", credentials);
-      return response;
+      const res = await this.api.post("/login", credentials);
+      return res.data.token;
     } catch (error) {
       throw error;
     }
+  }
+
+  async register() {
+    try {
+      return this.api.post("/create");
+    } catch (e) {}
   }
 }
 

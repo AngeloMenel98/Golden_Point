@@ -1,9 +1,8 @@
 import styled from "styled-components";
-import { mainBlue, red, lightGray, darkGray } from "../../../utils/colors";
+import { darkGreen, red, lightGray, darkGray } from "../../../utils/colors";
 
 export const ButtonStyled = styled.button<{ isDangerousAction?: boolean }>`
-  background-color: ${(props) => (props.isDangerousAction ? red : mainBlue)};
-  //background-color: #40573c;
+  background-color: ${(props) => (props.isDangerousAction ? red : darkGreen)};
   padding: 5px 20px;
   border: none;
   border-radius: 4px;
