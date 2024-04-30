@@ -1,13 +1,11 @@
 import React from "react";
 
-// Define las propiedades que espera el componente
 interface GPLogoProps {
   width: number;
   height: number;
   style?: React.CSSProperties;
 }
 
-// Define el componente de SVG
 const GPLogo: React.FC<GPLogoProps> = ({ width, height, style }) => {
   return (
     <svg

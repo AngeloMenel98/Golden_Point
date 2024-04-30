@@ -10,7 +10,6 @@ import {
   LoginSection,
   LoginFormContainer,
   BannerSection,
-  GPLogoStyle,
   LabelH2,
   LabelH5,
   StyledLink,
@@ -59,20 +58,20 @@ const Login: React.FC = () => {
     <MainContainer>
       <BannerSection>
         <p>
-          Sistema de gestión de torneos de Padel para todas las categorias a lo
-          largo de todo el año a pedido del señor Nestor Cholo Diaz
+          Lorem Ipsum es simplemente el texto de relleno de las imprentas y
+          archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de
+          las industrias desde el año 1500, cuando un impresor.
         </p>
       </BannerSection>
       <LoginSection>
         <LoginFormContainer>
-          <GPLogoStyle>
-            <GPLogo width={300} height={300} />
-          </GPLogoStyle>
-          <LabelH2>Ingrese a su Cuenta</LabelH2>
+          <GPLogo width={200} height={100} />
+          <LabelH2>Iniciar Sesión</LabelH2>
           <LabelH5>
             ¿No tienes una cuenta?
             <StyledLink to="/register">Regístrate</StyledLink>
           </LabelH5>
+
           <PrimaryInput
             label="Nombre de usuario"
             id="username"
@@ -89,15 +88,13 @@ const Login: React.FC = () => {
             maxLength={20}
             onChange={handleChange}
           />
+
           <ForgotPasswordContainer>
-            <LabelH5>
-              <StyledLink to="/forgot-password">
-                ¿Has olvidado tu contraseña?
-              </StyledLink>
-            </LabelH5>
+            <StyledLink to="/forgot-password">
+              ¿Has olvidado tu contraseña?
+            </StyledLink>
           </ForgotPasswordContainer>
-          <div>{error && <span>{error}</span>}</div>
-          <PrimaryButton onClick={handleClick} icon>
+          <PrimaryButton onClick={handleClick} icon errorMessage={error}>
             Iniciar Sesión
           </PrimaryButton>
         </LoginFormContainer>

@@ -32,3 +32,9 @@ export const ButtonStyled = styled.button<{ isDangerousAction?: boolean }>`
     }
   }
 `;
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;

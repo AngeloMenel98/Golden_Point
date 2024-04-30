@@ -1,21 +1,31 @@
 import React from "react";
 import EnterIcon from "../../../icons/EnterIcon/EnterIcon";
-import { ButtonStyled } from "./PrimaryButtonStyle";
+import { ButtonStyled, Container } from "./PrimaryButtonStyle";
+import { red } from "../../../utils/colors";
 
 interface ButtonProps {
   children: React.ReactNode; // Contenido del botón
   icon?: boolean; // Icono del botón, opcional
-  onClick?: () => void; // Función para manejar el evento onClick
+  onClick?: () => void;
+  errorMessage?: string | null;
 }
 
-const PrimaryButton: React.FC<ButtonProps> = ({ children, icon, onClick }) => {
+const PrimaryButton: React.FC<ButtonProps> = ({
+  children,
+  icon,
+  onClick,
+  errorMessage,
+}) => {
   return (
-    <ButtonStyled onClick={onClick}>
-      {children}
-      {icon && (
-        <EnterIcon width={30} height={30} style={{ marginLeft: "20px" }} />
-      )}
-    </ButtonStyled>
+    <Container>
+      <ButtonStyled onClick={onClick}>
+        {children}
+        {icon && (
+          <EnterIcon width={30} height={30} style={{ marginLeft: "20px" }} />
+        )}
+      </ButtonStyled>
+      {errorMessage && <div style={{ color: red }}>{errorMessage}</div>}
+    </Container>
   );
 };
 
