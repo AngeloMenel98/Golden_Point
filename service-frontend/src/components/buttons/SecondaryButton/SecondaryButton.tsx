@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import { ButtonStyled, Container } from "./PrimaryButtonStyle";
 import { red } from "../../../utils/colors";
+import { Button, Container } from "./SecondaryButtonStyle";
 
 interface ButtonProps {
   text: string;
@@ -9,7 +9,7 @@ interface ButtonProps {
   errorMessage?: string | null;
 }
 
-const PrimaryButton: React.FC<ButtonProps> = ({
+const SecondaryButton: React.FC<ButtonProps> = ({
   text,
   icon,
   onClick,
@@ -17,13 +17,13 @@ const PrimaryButton: React.FC<ButtonProps> = ({
 }) => {
   return (
     <Container>
-      <ButtonStyled onClick={onClick}>
+      <Button onClick={onClick}>
         {text}
         {icon}
-      </ButtonStyled>
+      </Button>
       {errorMessage && <div style={{ color: red }}>{errorMessage}</div>}
     </Container>
   );
 };
 
-export default PrimaryButton;
+export default SecondaryButton;

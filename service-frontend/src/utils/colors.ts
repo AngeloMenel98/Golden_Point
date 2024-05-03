@@ -8,6 +8,6 @@ export const darkGray = "#767676";
 export const lightGray = "#DBDBDB";
 export const mint = "#98fb98";
 
-export const yellow = "#EF9E44";
+export const orange = "#EF9E44";
 export const red = "#E67675";
 export const blue_ish = "#618CB3";

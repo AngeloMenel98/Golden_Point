@@ -18,7 +18,7 @@ const EnterIcon: React.FC<EnterIconProps> = ({ width, height, style }) => {
       xmlns="http://www.w3.org/2000/svg"
       style={style}
     >
-      <g clip-path="url(#clip0_246_1095)">
+      <g clipPath="url(#clip0_246_1095)">
         <path
           d="M13.75 8.75L12 10.5L15.25 13.75H2.5V16.25H15.25L12 19.5L13.75 21.25L20 15L13.75 8.75ZM25 23.75H15V26.25H25C26.375 26.25 27.5 25.125 27.5 23.75V6.25C27.5 4.875 26.375 3.75 25 3.75H15V6.25H25V23.75Z"
           fill="white"

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { black, darkGreen, mint, white } from "../../../utils/colors";
+import { black, darkGreen, white } from "../../../utils/colors";
 
 export const InputContainer = styled.div`
   margin-bottom: 20px;

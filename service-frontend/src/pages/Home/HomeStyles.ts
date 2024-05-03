@@ -9,9 +9,11 @@ export const MainContainer = styled.div`
   flex-grow: 1;
 `;
 
-export const LoginSection = styled.div`
+export const HomeSection = styled.div`
+  margin-top: 74px;
+  margin-left: 50px;
   background-color: ${white};
-  background-position: right top;
+  background-position: right;
   background-repeat: no-repeat;
   background-size: 40%;
   display: flex;

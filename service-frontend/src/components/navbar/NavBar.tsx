@@ -1,61 +1,21 @@
 import { useState } from "react";
-import styled from "styled-components";
-import GPLogo from "../../icons/GPLogo/GPLogo";
 import MenuIcon from "../../icons/MenuIcon/MenuIcon";
+import { darkGreen, white } from "../../utils/colors";
+import GPLogo from "../../icons/GPLogo/GPLogo";
 import {
-  darkGray,
-  darkGreen,
-  pastelGreen,
-  red,
-  white,
-  yellow,
-} from "../../utils/colors";
+  IconsContainer,
+  LogoContainer,
+  MenuDropdown,
+  NavbarContainer,
+  StyledButton,
+  Username,
+} from "./NavBarStyle";
 
-const NavbarContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  padding: 0.5rem 1rem;
-  background-color: ${pastelGreen};
-  color: white;
-  z-index: 1000; /* Ajusta el valor según sea necesario */
-`;
+interface NavBarProps {
+  userName: string;
+}
 
-const Username = styled.div`
-  margin-right: 0.1rem;
-`;
-
-const MenuDropdown = styled.div`
-  position: fixed;
-  top: 4rem; /* Ajusta la posición del dropdown según sea necesario */
-  right: 0; /* Ajusta la posición del dropdown según sea necesario */
-  width: 300px; /* Ancho del menú */
-  background-color: ${darkGray};
-  color: white;
-  z-index: 999; /* Ajusta el valor según sea necesario */
-  padding: 20px;
-`;
-
-const StyledButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  outline: none;
-
-  transition: transform 0.3s;
-  &:active {
-    transform: scale(1.2);
-  }
-
-  &:focus {
-    backgroud-color: ${white};
-  }
-`;
-
-const NavBar = () => {
+const NavBar: React.FC<NavBarProps> = ({ userName }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -66,20 +26,23 @@ const NavBar = () => {
   return (
     <>
       <NavbarContainer>
-        <GPLogo width={100} height={50} />
-
-        <Username>User</Username>
-        <StyledButton
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <MenuIcon
-            width={40}
-            height={41}
-            onClick={toggleMenu}
-            color={isHovered ? red : white}
-          />
-        </StyledButton>
+        <LogoContainer>
+          <GPLogo width={100} height={50} />
+        </LogoContainer>
+        <IconsContainer>
+          <Username>{userName}</Username>
+          <StyledButton
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
+            <MenuIcon
+              width={40}
+              height={41}
+              onClick={toggleMenu}
+              color={isHovered ? darkGreen : white}
+            />
+          </StyledButton>
+        </IconsContainer>
       </NavbarContainer>
       {menuOpen && (
         <MenuDropdown>

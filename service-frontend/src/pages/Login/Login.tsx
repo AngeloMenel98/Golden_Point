@@ -15,7 +15,8 @@ import {
   StyledLink,
   ForgotPasswordContainer,
 } from "./LoginStyles";
-import PrimaryInput from "../../components/buttons/PrimaryInput/PrimaryInput";
+import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
+import EnterIcon from "../../icons/EnterIcon/EnterIcon";
 
 const userAPI = new UserAPI();
 
@@ -94,9 +95,18 @@ const Login: React.FC = () => {
               ¿Has olvidado tu contraseña?
             </StyledLink>
           </ForgotPasswordContainer>
-          <PrimaryButton onClick={handleClick} icon errorMessage={error}>
-            Iniciar Sesión
-          </PrimaryButton>
+          <PrimaryButton
+            text="Iniciar Sesión"
+            onClick={handleClick}
+            errorMessage={error}
+            icon={
+              <EnterIcon
+                width={30}
+                height={30}
+                style={{ marginLeft: "20px" }}
+              />
+            }
+          />
         </LoginFormContainer>
       </LoginSection>
     </MainContainer>
