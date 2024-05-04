@@ -4,14 +4,12 @@ import {
   lightGray,
   darkGray,
   pastelGreen,
-  blue_ish,
-  white,
 } from "../../../utils/colors";
 
 export const Button = styled.button`
   background-color: transparent;
   color: ${darkGreen};
-  padding: 5px 20px;
+  padding: 8px 20px;
   border: 2px solid ${darkGreen};
   border-radius: 6px;
   cursor: pointer;
