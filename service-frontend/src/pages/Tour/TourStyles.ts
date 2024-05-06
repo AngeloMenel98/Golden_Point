@@ -25,9 +25,10 @@ export const ButtonInputContainer = styled.div`
 `;
 
 export const ButtonContainer = styled.div`
-  padding: 1rem 1.5rem;
+  padding: 1rem 5rem;
 `;
 
 export const InputContainer = styled.div`
-  padding-top: 1rem;
+  padding-left: 30rem;
+  padding-right: 20rem;
 `;

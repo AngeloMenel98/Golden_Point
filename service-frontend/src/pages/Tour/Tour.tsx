@@ -11,11 +11,10 @@ import {
 import { User } from "../../entities/User";
 import { jwtDecode } from "jwt-decode";
 import SecondaryButton from "../../components/buttons/SecondaryButton/SecondaryButton";
-import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
 import SearchIcon from "../../icons/SearchIcon/SearchIcon";
 import { darkGreen } from "../../utils/colors";
-import BaseRow from "../../components/row/Row";
 import TourRow from "./TourRow/TourRow";
+import SecondaryInput from "../../components/inputs/SecondaryInput/SecondaryInput";
 
 const Tour: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -64,7 +63,7 @@ const Tour: React.FC = () => {
           </ButtonContainer>
 
           <InputContainer>
-            <PrimaryInput
+            <SecondaryInput
               id="searchTour"
               type="text"
               value={tour}
@@ -74,9 +73,7 @@ const Tour: React.FC = () => {
             />
           </InputContainer>
         </ButtonInputContainer>
-        <div>
-          <p style={{ color: "black" }}>Tours</p>
-        </div>
+
         <TourRow />
       </TourSection>
     </MainContainer>

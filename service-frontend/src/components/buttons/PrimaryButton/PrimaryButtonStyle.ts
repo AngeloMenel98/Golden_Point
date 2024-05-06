@@ -5,7 +5,7 @@ export const ButtonStyled = styled.button<{ isDangerousAction?: boolean }>`
   background-color: ${(props) => (props.isDangerousAction ? red : darkGreen)};
   padding: 5px 20px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;

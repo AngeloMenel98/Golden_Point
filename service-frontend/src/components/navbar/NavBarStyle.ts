@@ -4,7 +4,7 @@ export const NavbarContainer = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 98%;
+  width: 99%;
   display: flex;
   align-items: center;
   padding: 0.5rem 1rem;

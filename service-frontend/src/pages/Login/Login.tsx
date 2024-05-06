@@ -40,7 +40,7 @@ const Login: React.FC = () => {
 
       localStorage.setItem("token", token);
 
-      navigate("/home");
+      navigate("/tour");
     } catch (e) {
       if (axios.isAxiosError(e)) {
         if (e.response?.data?.error && e.response.data.error.length > 0) {
@@ -70,7 +70,7 @@ const Login: React.FC = () => {
           <LabelH2>Iniciar Sesión</LabelH2>
           <LabelH5>
             ¿No tienes una cuenta?
-            <StyledLink to="/register">Regístrate</StyledLink>
+            <StyledLink to="/register">Registrate</StyledLink>
           </LabelH5>
 
           <PrimaryInput
