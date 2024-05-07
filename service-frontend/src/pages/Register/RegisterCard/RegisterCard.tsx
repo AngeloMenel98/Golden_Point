@@ -1,63 +1,26 @@
-import { useState } from "react";
 import Card from "../../../components/card/Card";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 import { darkGreen, white } from "../../../utils/colors";
 import { H2, InputContainer, InputGroup } from "./RegisterCardStyle";
 import PrimaryButton from "../../../components/buttons/PrimaryButton/PrimaryButton";
-import axios from "axios";
-import UserAPI, { DataRegister } from "../../../services/UserApi";
+import { DataRegister } from "../../../services/UserApi";
+import { RegisterFieldErrors } from "../../../errors/RegisterErrors";
 
 interface RegisterCardProps {
-  userApi: UserAPI;
+  data: DataRegister;
+  onClick: () => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error: RegisterFieldErrors;
 }
 
-const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
-  const [data, setData] = useState<DataRegister>({
-    username: "",
-    password: "",
-    confirmPassword: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    location: "",
-  });
-
-  const [error, setError] = useState<string | null>(null);
-
-  const handleClick = async () => {
-    try {
-      if (data.password !== data.confirmPassword) {
-        alert("Las contraseñas no coinciden");
-        return;
-      }
-
-      const newUser = await userApi.register(data);
-
-      console.log(newUser);
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        if (e.response?.data?.error && e.response.data.error.length > 0) {
-          const errorMessage: string = e.response.data.error[0].msg;
-          setError(errorMessage);
-          console.error("Login failed", errorMessage);
-        } else {
-          setError("An unexpected error occurred.");
-          console.error(error);
-        }
-      }
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.id === "password" || e.target.id === "confirmPassword") {
-      setData({ ...data, [e.target.id]: e.target.value });
-    } else {
-      setData({ ...data, [e.target.id]: e.target.value });
-    }
-  };
+const RegisterCard: React.FC<RegisterCardProps> = ({
+  data,
+  onClick,
+  onChange,
+  error,
+}) => {
   return (
-    <Card bgColor={white} borderColor={darkGreen} width={750}>
+    <Card bgColor={white} borderColor={darkGreen} width={700}>
       <H2>Registro</H2>
       <InputGroup>
         <InputContainer>
@@ -67,7 +30,8 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="text"
             value={data.username}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.username}
           />
         </InputContainer>
       </InputGroup>
@@ -80,7 +44,8 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="text"
             value={data.firstName}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.firstName}
           />
         </InputContainer>
         <InputContainer>
@@ -90,7 +55,8 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="text"
             value={data.lastName}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.lastName}
           />
         </InputContainer>
       </InputGroup>
@@ -103,7 +69,8 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="text"
             value={data.phoneNumber}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.phoneNumber}
           />
         </InputContainer>
         <InputContainer>
@@ -113,7 +80,8 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="text"
             value={data.location}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.location}
           />
         </InputContainer>
       </InputGroup>
@@ -126,7 +94,8 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="email"
             value={data.email}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.email}
           />
         </InputContainer>
         <InputContainer>
@@ -136,7 +105,8 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="password"
             value={data.password}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.password}
           />
         </InputContainer>
         <InputContainer>
@@ -146,11 +116,12 @@ const RegisterCard: React.FC<RegisterCardProps> = ({ userApi }) => {
             type="password"
             value={data.confirmPassword}
             width={200}
-            onChange={handleChange}
+            onChange={onChange}
+            error={error.confirmPassword}
           />
         </InputContainer>
       </InputGroup>
-      <PrimaryButton text="Registrarse" onClick={handleClick} />
+      <PrimaryButton text="Registrarse" onClick={onClick} />
     </Card>
   );
 };

@@ -46,10 +46,8 @@ const Login: React.FC = () => {
         if (e.response?.data?.error && e.response.data.error.length > 0) {
           const errorMessage: string = e.response.data.error[0].msg;
           setError(errorMessage);
-          console.error("Login failed", errorMessage);
         } else {
           setError("An unexpected error occurred.");
-          console.error("Login failed - unexpected error");
         }
       }
     }
