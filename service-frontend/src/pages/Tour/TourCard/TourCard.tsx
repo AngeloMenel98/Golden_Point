@@ -15,7 +15,7 @@ const TourCard: React.FC<TourCardProps> = ({ tours }) => {
         bgColor={white}
         borderColor={darkGreen}
         boxColor={pastelGreen}
-        width={1400}
+        width={1200}
       >
         {tours.map((tour, index) => (
           <TourRow key={index} tourData={tour} />

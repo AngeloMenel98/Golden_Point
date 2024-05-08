@@ -1,14 +1,19 @@
 import { useState } from "react";
-import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 import {
-  FullRightContainer,
-  TourName,
-  LeftContainer,
-  MemberContainer,
   TourRowContainer,
+  LeftContainer,
+  FullRightContainer,
+  MemberContainer,
+  UserContainer,
+  TournamentContainer,
+  TourName,
   CodeContainer,
+  TextSpan,
 } from "./TourRowStyle";
 import { Tour } from "../../../entities/Tour";
+import CopyableText from "../../../components/copyableText/CopyableText";
+import TrashIcon from "../../../icons/TrashIcon/TrashIcon";
+import { red } from "../../../utils/colors";
 
 interface TourRowProps {
   tourData: Tour;
@@ -24,16 +29,21 @@ const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
     >
       <LeftContainer>
         <MemberContainer>
-          <TourName>{tourData.TourTitle}</TourName>
+          <TourName to="/tournament">{tourData.TourTitle}</TourName>
         </MemberContainer>
-        <CodeContainer>Código del Tour: {tourData.TourCode}</CodeContainer>
+        {isShown && <div>Created by: {tourData.Id}</div>}
+        <CodeContainer>
+          Código del Tour: <CopyableText text={tourData.TourCode} />
+        </CodeContainer>
       </LeftContainer>
       <FullRightContainer>
-        <CodeContainer>UserCount: {tourData.UserCount}</CodeContainer>
-        <CodeContainer>
-          TournamentCount: {tourData.TournamentCount}
-        </CodeContainer>
-        <SearchIcon width={50} height={50} />
+        <UserContainer>
+          Usuarios: <TextSpan>{tourData.UserCount}</TextSpan>
+        </UserContainer>
+        <TournamentContainer>
+          Torneos: <TextSpan>{tourData.TournamentCount}</TextSpan>
+        </TournamentContainer>
+        <TrashIcon width={20} height={20} color={red} />
       </FullRightContainer>
     </TourRowContainer>
   );

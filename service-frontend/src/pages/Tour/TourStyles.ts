@@ -30,13 +30,13 @@ export const ButtonInputContainer = styled.div`
 export const ButtonContainer = styled.div`
   padding-top: 1rem;
   padding-left: 5rem;
-  padding-right: 21rem;
+  padding-right: 15rem;
 `;
 
 export const InputContainer = styled.div`
   padding-top: 1rem;
-  padding-left: 42rem;
-  padding-right: 5rem;
+  padding-left: 30rem;
+  padding-right: 6rem;
 `;
 export const H2 = styled.h2`
   color: ${black};

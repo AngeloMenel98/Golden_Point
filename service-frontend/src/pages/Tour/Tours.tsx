@@ -34,7 +34,6 @@ const Tours: React.FC = () => {
     const tourArray: Tour[] = [];
     const tourRes = await tourAPI.getTours();
 
-    // Itera sobre cada elemento en tourRes
     tourRes.forEach((t: any) => {
       const newTour = new Tour();
 
@@ -46,6 +45,7 @@ const Tours: React.FC = () => {
 
       tourArray.push(newTour);
     });
+
     setTours(tourArray);
   };
 
