@@ -7,21 +7,46 @@ import {
   InputContainer,
   MainContainer,
   NavBarContainer,
+  H2,
 } from "./TourStyles";
 import { User } from "../../entities/User";
 import { jwtDecode } from "jwt-decode";
 import SecondaryButton from "../../components/buttons/SecondaryButton/SecondaryButton";
 import SearchIcon from "../../icons/SearchIcon/SearchIcon";
 import { darkGreen } from "../../utils/colors";
-import TourRow from "./TourRow/TourRow";
 import SecondaryInput from "../../components/inputs/SecondaryInput/SecondaryInput";
+import TourCard from "./TourCard/TourCard";
+import { Tour } from "../../entities/Tour";
+import TourAPI from "../../services/TourApi";
 
-const Tour: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [tour, setTour] = useState<string>("");
+const tourAPI = new TourAPI();
+
+const Tours: React.FC = () => {
+  const [user, setUser] = useState<User>(new User());
+  const [tourTitle, setTourTitle] = useState<string>("");
+  const [tours, setTours] = useState<Tour[]>([]);
 
   const getTokenFromLocalStorage = () => {
     return localStorage.getItem("token");
+  };
+
+  const getTours = async () => {
+    const tourArray: Tour[] = [];
+    const tourRes = await tourAPI.getTours();
+
+    // Itera sobre cada elemento en tourRes
+    tourRes.forEach((t: any) => {
+      const newTour = new Tour();
+
+      newTour.Id = t.tourid;
+      newTour.TourTitle = t.tourtitle;
+      newTour.TourCode = t.tourcode;
+      newTour.UserCount = t.usercount;
+      newTour.TournamentCount = t.tournamentcount;
+
+      tourArray.push(newTour);
+    });
+    setTours(tourArray);
   };
 
   useEffect(() => {
@@ -39,22 +64,26 @@ const Tour: React.FC = () => {
         newUser.Role = decodeToken.role;
 
         setUser(newUser);
+        getTours();
       } catch (error) {
         console.error("Error decoding token:", error);
       }
     }
   }, []);
 
-  const handleClick = async () => {};
+  const handleClick = async () => {
+    console.log(tours.map((t) => t.TourTitle));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    throw new Error("Function not implemented.");
+    const newValue = e.target.value;
+    setTourTitle(newValue);
   };
 
   return (
     <MainContainer>
       <NavBarContainer>
-        <NavBar userName={user ? user.username : ""} />
+        <NavBar userName={user.username} />
       </NavBarContainer>
       <TourSection>
         <ButtonInputContainer>
@@ -66,18 +95,19 @@ const Tour: React.FC = () => {
             <SecondaryInput
               id="searchTour"
               type="text"
-              value={tour}
+              value={tourTitle}
+              width={250}
               placeholder="Buscar Tour"
               icon={<SearchIcon width={20} height={17} color={darkGreen} />}
               onChange={handleChange}
             />
           </InputContainer>
         </ButtonInputContainer>
-
-        <TourRow />
+        <H2>Todos los Tours</H2>
+        <TourCard tours={tours} />
       </TourSection>
     </MainContainer>
   );
 };
 
-export default Tour;
+export default Tours;

@@ -1,14 +1,18 @@
 import styled from "styled-components";
 import { black } from "../../../utils/colors";
 
+export const MainContainer = styled.div`
+  height: 100vh;
+`;
+
 export const H2 = styled.h2`
   color: ${black};
 `;
 
 export const InputGroup = styled.div`
   display: flex;
-  flex-direction: row; /* Establecer la dirección de flexión a fila */
-  align-items: center; /* Alinear los elementos verticalmente */
+  flex-direction: row;
+  align-items: center;
   justify-content: flex-start;
 `;
 

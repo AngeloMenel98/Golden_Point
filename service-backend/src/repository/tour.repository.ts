@@ -22,6 +22,7 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
     try {
       return this.createQueryBuilder("t")
         .select([
+          "t.id AS tourId",
           "t.title AS tourTitle",
           "t.tourCode AS tourCode",
           "COUNT(DISTINCT tuu.userId) AS userCount",

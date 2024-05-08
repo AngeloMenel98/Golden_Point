@@ -126,6 +126,7 @@ export class TourController {
         tourCode: tour.tourCode,
         usersId: tour.users.map((u) => u.id),
       };
+
       res.status(201).json(response);
     } catch (e) {
       console.error(e);

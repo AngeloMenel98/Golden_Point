@@ -1,4 +1,3 @@
-import React from "react";
 import styled from "styled-components";
 import { white, lightGray, darkGray } from "../../utils/colors";
 
