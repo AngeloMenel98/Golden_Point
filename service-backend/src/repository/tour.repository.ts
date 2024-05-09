@@ -27,6 +27,7 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
           "t.tourCode AS tourCode",
           "COUNT(DISTINCT tuu.userId) AS userCount",
           "COUNT(DISTINCT tt.id) AS tournamentCount",
+          '(SELECT u.username FROM tour_users_user tu LEFT JOIN "user" u ON tu."userId" = u."id" WHERE tu."tourId" = t.id LIMIT 1) AS firstUserName',
         ])
         .innerJoin("tour_users_user", "tuu", "tuu.tourId = t.id")
         .leftJoin("user", "u", "tuu.userId = u.id")

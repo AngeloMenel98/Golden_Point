@@ -9,18 +9,33 @@ import {
   TourName,
   CodeContainer,
   TextSpan,
+  CreatedBy,
 } from "./TourRowStyle";
-import { Tour } from "../../../entities/Tour";
+import { TourDTO } from "../../../entities/dtos/TourDTO";
 import CopyableText from "../../../components/copyableText/CopyableText";
 import TrashIcon from "../../../icons/TrashIcon/TrashIcon";
 import { red } from "../../../utils/colors";
+import TourAPI, { DeletedTour } from "../../../services/TourApi";
+import { User } from "../../../entities/User";
 
 interface TourRowProps {
-  tourData: Tour;
+  tourData: TourDTO;
+  tourApi: TourAPI;
+  user: User;
 }
 
-const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
+const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi, user }) => {
   const [isShown, setIsShown] = useState(false);
+
+  const handleDeleteTour = async () => {
+    const deleteTour: DeletedTour = {
+      tourId: tourData.Id,
+      userId: user.Id,
+    };
+
+    const tourRes = await tourApi.deleteTour(deleteTour);
+    //window.location.reload();
+  };
 
   return (
     <TourRowContainer
@@ -31,7 +46,11 @@ const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
         <MemberContainer>
           <TourName to="/tournament">{tourData.TourTitle}</TourName>
         </MemberContainer>
-        {isShown && <div>Created by: {tourData.Id}</div>}
+        {isShown && (
+          <CreatedBy>
+            Creado por: <TextSpan>{tourData.UserOwner}</TextSpan>
+          </CreatedBy>
+        )}
         <CodeContainer>
           Código del Tour: <CopyableText text={tourData.TourCode} />
         </CodeContainer>
@@ -43,7 +62,14 @@ const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
         <TournamentContainer>
           Torneos: <TextSpan>{tourData.TournamentCount}</TextSpan>
         </TournamentContainer>
-        <TrashIcon width={20} height={20} color={red} />
+        {isShown && (
+          <TrashIcon
+            width={20}
+            height={20}
+            color={red}
+            onClick={handleDeleteTour}
+          />
+        )}
       </FullRightContainer>
     </TourRowContainer>
   );

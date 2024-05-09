@@ -16,32 +16,35 @@ import SearchIcon from "../../icons/SearchIcon/SearchIcon";
 import { darkGreen } from "../../utils/colors";
 import SecondaryInput from "../../components/inputs/SecondaryInput/SecondaryInput";
 import TourCard from "./TourCard/TourCard";
-import { Tour } from "../../entities/Tour";
+import { TourDTO } from "../../entities/dtos/TourDTO";
 import TourAPI from "../../services/TourApi";
+import TourModal from "./TourModal/TourModal";
 
 const tourAPI = new TourAPI();
 
 const Tours: React.FC = () => {
   const [user, setUser] = useState<User>(new User());
   const [tourTitle, setTourTitle] = useState<string>("");
-  const [tours, setTours] = useState<Tour[]>([]);
+  const [tours, setTours] = useState<TourDTO[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getTokenFromLocalStorage = () => {
     return localStorage.getItem("token");
   };
 
   const getTours = async () => {
-    const tourArray: Tour[] = [];
+    const tourArray: TourDTO[] = [];
     const tourRes = await tourAPI.getTours();
 
     tourRes.forEach((t: any) => {
-      const newTour = new Tour();
+      const newTour = new TourDTO();
 
       newTour.Id = t.tourid;
       newTour.TourTitle = t.tourtitle;
       newTour.TourCode = t.tourcode;
       newTour.UserCount = t.usercount;
       newTour.TournamentCount = t.tournamentcount;
+      newTour.UserOwner = t.firstusername;
 
       tourArray.push(newTour);
     });
@@ -72,7 +75,11 @@ const Tours: React.FC = () => {
   }, []);
 
   const handleClick = async () => {
-    console.log(tours.map((t) => t.TourTitle));
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,8 +110,9 @@ const Tours: React.FC = () => {
             />
           </InputContainer>
         </ButtonInputContainer>
+        {isModalOpen && <TourModal onClose={handleCloseModal} user={user} />}
         <H2>Todos los Tours</H2>
-        <TourCard tours={tours} />
+        <TourCard tours={tours} tourApi={tourAPI} user={user} />
       </TourSection>
     </MainContainer>
   );

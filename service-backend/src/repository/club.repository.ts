@@ -52,6 +52,7 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       .select([
         "c.id AS id",
         'c."clubName"',
+        'c."location" AS address',
         'COUNT(co."courtNumber") AS courtCount',
         'cc."availableFrom"',
         'cc."availableTo"',

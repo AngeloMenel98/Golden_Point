@@ -1,9 +1,10 @@
-export class Tour {
+export class TourDTO {
   private id: string = "";
   private tourTitle: string = "";
   private tourCode: string = "";
   private userCount: number = 0;
   private tournamentCount: number = 0;
+  private userOwner: string = "";
 
   //Setters
   set Id(value: string) {
@@ -26,6 +27,10 @@ export class Tour {
     this.tournamentCount = value;
   }
 
+  set UserOwner(value: string) {
+    this.userOwner = value;
+  }
+
   //Getters
   get Id(): string {
     return this.id;
@@ -45,5 +50,9 @@ export class Tour {
 
   get TournamentCount(): number {
     return this.tournamentCount;
+  }
+
+  get UserOwner(): string {
+    return this.userOwner;
   }
 }

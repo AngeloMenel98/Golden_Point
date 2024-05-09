@@ -3,7 +3,7 @@ import { ButtonStyled, Container } from "./PrimaryButtonStyle";
 import { red } from "../../../utils/colors";
 
 interface ButtonProps {
-  text: string;
+  text?: string;
   icon?: ReactNode;
   onClick?: () => void;
   errorMessage?: string | null;

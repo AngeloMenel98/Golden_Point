@@ -7,5 +7,6 @@ export const mint = "#98fb98";
 
 export const darkGray = "#767676";
 export const lightGray = "#DBDBDB";
+export const grayModal = "#00000080";
 
 export const red = "#7f0000";

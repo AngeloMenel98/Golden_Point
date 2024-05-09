@@ -1,14 +1,18 @@
 import Card from "../../../components/card/Card";
-import { Tour } from "../../../entities/Tour";
+import { User } from "../../../entities/User";
+import { TourDTO } from "../../../entities/dtos/TourDTO";
+import TourAPI from "../../../services/TourApi";
 import { darkGreen, pastelGreen, white } from "../../../utils/colors";
 import TourRow from "../TourRow/TourRow";
 import { CardContainer } from "./TourCardStyle";
 
 interface TourCardProps {
-  tours: Tour[];
+  tours: TourDTO[];
+  tourApi: TourAPI;
+  user: User;
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tours }) => {
+const TourCard: React.FC<TourCardProps> = ({ tours, tourApi, user }) => {
   return (
     <CardContainer>
       <Card
@@ -18,7 +22,7 @@ const TourCard: React.FC<TourCardProps> = ({ tours }) => {
         width={1200}
       >
         {tours.map((tour, index) => (
-          <TourRow key={index} tourData={tour} />
+          <TourRow key={index} tourData={tour} tourApi={tourApi} user={user} />
         ))}
       </Card>
     </CardContainer>

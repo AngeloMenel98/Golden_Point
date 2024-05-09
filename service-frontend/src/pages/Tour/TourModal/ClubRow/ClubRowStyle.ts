@@ -1,8 +1,8 @@
 import styled from "styled-components";
-import { black, darkGreen, mint, pastelGreen } from "../../../utils/colors";
 import { Link } from "react-router-dom";
+import { black, darkGreen, mint, pastelGreen } from "../../../../utils/colors";
 
-export const TourRowContainer = styled.div`
+export const ClubRowContainer = styled.div`
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -26,7 +26,7 @@ export const MemberData = styled.div`
   margin-right: 40px;
 `;
 
-export const MemberContainer = styled(MemberData)`
+export const ClubContainer = styled(MemberData)`
   margin-left: 20px;
   align-items: flex-start;
 `;
@@ -47,14 +47,14 @@ export const FullRightContainer = styled.div`
   padding-right: 20px;
 `;
 
-export const CodeContainer = styled.div`
+export const AddressContainer = styled.div`
   height: 20px;
   padding: 20px 15px;
   color: ${darkGreen};
   font-weight: 900;
 `;
 
-export const UserContainer = styled.div`
+export const HoursContainer = styled.div`
   height: 20px;
   padding: 20px 20px;
   color: ${darkGreen};
@@ -63,7 +63,7 @@ export const UserContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-export const TournamentContainer = styled.div`
+export const CourtsContainer = styled.div`
   display: flex;
   align-items: center;
 
@@ -73,16 +73,10 @@ export const TournamentContainer = styled.div`
   font-weight: 900;
 `;
 
-export const TourName = styled(Link)`
+export const ClubName = styled.span`
   color: ${darkGreen};
-  cursor: pointer;
   line-height: 16px;
   font-weight: 900;
-  transition: 0.3s ease;
-
-  &:hover {
-    color: ${mint};
-  }
 `;
 
 export const CreatedBy = styled.span`
