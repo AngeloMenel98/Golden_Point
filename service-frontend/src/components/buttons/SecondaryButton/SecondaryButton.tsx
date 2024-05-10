@@ -1,9 +1,8 @@
 import React, { ReactNode } from "react";
-import { red } from "../../../utils/colors";
-import { Button, Container } from "./SecondaryButtonStyle";
+import { Button, Container, StuffContainer } from "./SecondaryButtonStyle";
 
 interface ButtonProps {
-  text: string;
+  text?: string;
   icon?: ReactNode;
   isDangerous?: boolean;
   onClick?: () => void;
@@ -18,8 +17,8 @@ const SecondaryButton: React.FC<ButtonProps> = ({
   return (
     <Container>
       <Button onClick={onClick} isDangerous={isDangerous}>
-        {text}
-        {icon}
+        {text && text}
+        {icon && <StuffContainer>{icon}</StuffContainer>}
       </Button>
     </Container>
   );

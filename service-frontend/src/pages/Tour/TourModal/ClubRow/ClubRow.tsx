@@ -11,6 +11,7 @@ import {
 } from "./ClubRowStyle";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
 import { useState } from "react";
+import Checkbox from "../../../../components/checkbox/Checkbox";
 
 interface ClubRowProps {
   clubData: ClubDTO;
@@ -42,11 +43,7 @@ const ClubRow: React.FC<ClubRowProps> = ({ clubData, onCheckboxChange }) => {
         <CourtsContainer>
           Canchas: <TextSpan>{clubData.CourtCount}</TextSpan>
         </CourtsContainer>
-        <input
-          type="checkbox"
-          checked={isChecked}
-          onChange={handleCheckboxChange}
-        />
+        <Checkbox checked={isChecked} onChange={handleCheckboxChange} />
       </FullRightContainer>
     </ClubRowContainer>
   );

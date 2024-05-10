@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { black, darkGreen, white } from "../../utils/colors";
+import { darkGreen, white } from "../../utils/colors";
 
 export const MainContainer = styled.div`
   width: 100%;

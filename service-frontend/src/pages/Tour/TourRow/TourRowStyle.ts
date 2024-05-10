@@ -73,18 +73,21 @@ export const TournamentContainer = styled.div`
   font-weight: 900;
 `;
 
-export const TourName = styled(Link)`
+export const TourName = styled.button`
   color: ${darkGreen};
   cursor: pointer;
   line-height: 16px;
   font-weight: 900;
+  font-size: 16px;
   transition: 0.3s ease;
+
+  background-color: transparent;
+  border: none;
 
   &:hover {
     color: ${mint};
   }
 `;
-
 export const CreatedBy = styled.span`
   padding: 0rem 1rem;
   font-weight: 900;

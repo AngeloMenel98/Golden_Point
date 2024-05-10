@@ -40,7 +40,7 @@ const Login: React.FC = () => {
 
       localStorage.setItem("token", token);
 
-      navigate("/tour");
+      navigate("/tours");
     } catch (e) {
       if (axios.isAxiosError(e)) {
         if (e.response?.data?.error && e.response.data.error.length > 0) {

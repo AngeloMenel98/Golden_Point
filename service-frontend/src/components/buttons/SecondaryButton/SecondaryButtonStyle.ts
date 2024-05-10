@@ -9,6 +9,12 @@ import {
   lightRed,
 } from "../../../utils/colors";
 
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 export const Button = styled.button<{ isDangerous?: boolean }>`
   background-color: ${(props) => (props.isDangerous ? red : "transparent")};
   color: ${(props) => (props.isDangerous ? white : darkGreen)};
@@ -44,8 +50,6 @@ export const Button = styled.button<{ isDangerous?: boolean }>`
   }*/
 `;
 
-export const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+export const StuffContainer = styled.div`
+  padding-left: 5px;
 `;

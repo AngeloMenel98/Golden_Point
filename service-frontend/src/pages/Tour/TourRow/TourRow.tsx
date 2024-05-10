@@ -17,6 +17,7 @@ import TrashIcon from "../../../icons/TrashIcon/TrashIcon";
 import { red } from "../../../utils/colors";
 import TourAPI, { DeletedTour } from "../../../services/TourApi";
 import { User } from "../../../entities/User";
+import { useNavigate } from "react-router-dom";
 
 interface TourRowProps {
   tourData: TourDTO;
@@ -37,6 +38,11 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi, user }) => {
     //window.location.reload();
   };
 
+  const navigate = useNavigate();
+  const handleTourClick = () => {
+    navigate("/tournaments", { state: { tourData, user } });
+  };
+
   return (
     <TourRowContainer
       onMouseEnter={() => setIsShown(true)}
@@ -44,7 +50,7 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi, user }) => {
     >
       <LeftContainer>
         <MemberContainer>
-          <TourName to="/tournament">{tourData.TourTitle}</TourName>
+          <TourName onClick={handleTourClick}>{tourData.TourTitle}</TourName>
         </MemberContainer>
         {isShown && (
           <CreatedBy>
