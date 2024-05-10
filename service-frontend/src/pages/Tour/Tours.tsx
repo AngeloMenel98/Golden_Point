@@ -50,12 +50,17 @@ const Tours: React.FC = () => {
         newUser.Role = decodeToken.role;
 
         setUser(newUser);
-        getTours();
       } catch (error) {
         console.error("Error decoding token:", error);
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (user.Id) {
+      getTours();
+    }
+  }, [user.Id]);
 
   const getTours = async () => {
     const tourArray: TourDTO[] = [];
@@ -122,7 +127,12 @@ const Tours: React.FC = () => {
           />
         )}
         <H2>Todos los Tours</H2>
-        <TourCard tours={tours} tourApi={tourAPI} user={user} />
+        <TourCard
+          tours={tours}
+          tourApi={tourAPI}
+          user={user}
+          tourTitle={tourTitle}
+        />
       </TourSection>
     </MainContainer>
   );

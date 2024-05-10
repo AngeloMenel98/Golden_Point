@@ -121,6 +121,10 @@ const TourModal: React.FC<TourModalProps> = ({
     setAllClubs(clubArray);
   };
 
+  const filteredClubs = allClubs.filter((club) =>
+    club.ClubName.toLowerCase().includes(data.clubName.toLowerCase())
+  );
+
   return (
     <ModalWrapper>
       <ModalContent width={1100} height={520}>
@@ -169,7 +173,7 @@ const TourModal: React.FC<TourModalProps> = ({
             width={50}
             maxLength={2}
             onChange={handleChange}
-            error={fieldErrors.tourName}
+            error={fieldErrors.courts}
           />
           <SecondaryInput
             label="Horario Inicial"
@@ -204,7 +208,7 @@ const TourModal: React.FC<TourModalProps> = ({
           width={1000}
           maxHeight={200}
         >
-          {allClubs.map((club, index) => (
+          {filteredClubs.map((club, index) => (
             <ClubRow
               key={index}
               clubData={club}

@@ -39,16 +39,15 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
         .select([
           "t.id AS tourId",
           "t.title AS tourTitle",
-          "t.tourCode AS tourCode",
-          "COUNT(DISTINCT tuu.userId) AS userCount",
-          "COUNT(DISTINCT tt.id) AS tournamentCount",
-          '(SELECT u.username FROM tour_users_user tu LEFT JOIN "user" u ON tu."userId" = u."id" WHERE tu."tourId" = t.id LIMIT 1) AS firstUserName',
+          "t.tourCode",
+          '(SELECT COUNT(DISTINCT tuu."userId") FROM tour_users_user tuu WHERE tuu."tourId" = t."id") AS userCount',
+          "(SELECT COUNT(DISTINCT tt.id) FROM tournament tt WHERE tt.tourId = t.id) AS tournamentCount",
+          '(SELECT u.username FROM tour_users_user tuu2 LEFT JOIN "user" u ON tuu2."userId" = u."id" WHERE tuu2."tourId" = t."id" LIMIT 1) AS firstUserName',
         ])
-        .innerJoin("tour_users_user", "tuu", "tuu.tourId = t.id")
-        .leftJoin("user", "u", "tuu.userId = u.id")
         .leftJoin("tournament", "tt", "tt.tourId = t.id")
+        .innerJoin("tour_users_user", "tuu", "tuu.tourId = t.id")
         .where('t."isDeleted" = false')
-        .where("u.id = :userId", { userId })
+        .andWhere("tuu.userId = :userId", { userId })
         .groupBy("t.id, t.title, t.tourCode")
         .getRawMany();
     } catch (error) {

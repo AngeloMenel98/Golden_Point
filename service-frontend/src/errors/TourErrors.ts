@@ -4,4 +4,5 @@ export interface TourFieldErrors {
   address?: string;
   avFrom?: string;
   avTo?: string;
+  courts?: string;
 }

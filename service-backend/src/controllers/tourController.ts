@@ -164,6 +164,7 @@ export class TourController {
       }
 
       const userId = req.params.userId;
+
       const tours = await this.tourService.getAll(userId);
 
       res.status(201).json(tours);

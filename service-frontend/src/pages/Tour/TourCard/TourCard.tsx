@@ -9,10 +9,20 @@ import { CardContainer } from "./TourCardStyle";
 interface TourCardProps {
   tours: TourDTO[];
   tourApi: TourAPI;
+  tourTitle: string;
   user: User;
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tours, tourApi, user }) => {
+const TourCard: React.FC<TourCardProps> = ({
+  tours,
+  tourApi,
+  user,
+  tourTitle,
+}) => {
+  const filteredTours = tours.filter((tour) =>
+    tour.TourTitle.toLowerCase().includes(tourTitle.toLowerCase())
+  );
+
   return (
     <CardContainer>
       <Card
@@ -21,7 +31,7 @@ const TourCard: React.FC<TourCardProps> = ({ tours, tourApi, user }) => {
         boxColor={pastelGreen}
         width={1200}
       >
-        {tours.map((tour, index) => (
+        {filteredTours.map((tour, index) => (
           <TourRow key={index} tourData={tour} tourApi={tourApi} user={user} />
         ))}
       </Card>
