@@ -7,6 +7,7 @@ interface CardProps {
   borderColor: string;
   boxColor: string;
   width: number;
+  maxHeight?: number;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -15,6 +16,7 @@ const Card: React.FC<CardProps> = ({
   bgColor,
   boxColor,
   width,
+  maxHeight = 300,
 }) => {
   return (
     <CardContainer>
@@ -23,6 +25,7 @@ const Card: React.FC<CardProps> = ({
         bgColor={bgColor}
         boxColor={boxColor}
         width={width}
+        maxHeight={maxHeight}
       >
         {children}
       </StyledCard>

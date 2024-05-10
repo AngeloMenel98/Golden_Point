@@ -5,6 +5,7 @@ interface StyledCardProps {
   bgColor: string;
   boxColor: string;
   width: number;
+  maxHeight: number;
 }
 
 export const CardContainer = styled.div`
@@ -20,4 +21,7 @@ export const StyledCard = styled.div<StyledCardProps>`
   border-radius: 5px;
   box-shadow: 0 0 15px ${(props) => props.boxColor};
   background-color: ${(props) => props.bgColor};
+
+  max-height: ${(props) => props.maxHeight}px; // Aplicar la altura máxima
+  overflow-y: auto;
 `;

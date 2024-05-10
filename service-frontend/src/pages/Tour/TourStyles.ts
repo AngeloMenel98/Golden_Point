@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { black, white } from "../../utils/colors";
+import { black, darkGreen, white } from "../../utils/colors";
 
 export const MainContainer = styled.div`
   width: 100%;
@@ -39,6 +39,6 @@ export const InputContainer = styled.div`
   padding-right: 6rem;
 `;
 export const H2 = styled.h2`
-  color: ${black};
+  color: ${darkGreen};
   padding: 0.01rem 5rem;
 `;

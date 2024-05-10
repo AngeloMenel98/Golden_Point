@@ -16,10 +16,6 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Dirección")),
-    check("tourId")
-      .not()
-      .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("tourId")),
     check("userId")
       .not()
       .isEmpty()
@@ -27,11 +23,11 @@ router.post(
     check("availableFrom")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("Horario Inicial")),
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Fecha Inicial")),
     check("availableTo")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("Horario Final")),
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Fecha Final")),
   ],
   clubController.create.bind(clubController)
 );

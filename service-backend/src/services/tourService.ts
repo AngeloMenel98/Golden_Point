@@ -1,5 +1,5 @@
 import { TourRepository, UserRepository } from "../repository";
-import { Tour } from "../entity";
+import { Club, Tour } from "../entity";
 import { User } from "../entity/User";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
@@ -7,8 +7,8 @@ import codeErrors from "../constants/codeErrors";
 export class TourService {
   constructor() {}
 
-  async create(newTour: Tour, user: User) {
-    return TourRepository.save({ ...newTour, users: [user] });
+  async create(newTour: Tour, user: User, clubs: Club[]) {
+    return TourRepository.create(newTour, user, clubs);
   }
 
   async delete(tour: Tour) {
@@ -44,8 +44,8 @@ export class TourService {
     return existingTour;
   }
 
-  async getAll() {
-    const tours: unknown[] = await TourRepository.getAll();
+  async getAll(userId: string) {
+    const tours: unknown[] = await TourRepository.getAll(userId);
 
     if (tours.length == 0) {
       throw new ServiceCodeError(codeErrors.GEN_2("Tour"));

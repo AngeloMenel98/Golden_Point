@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { pastelGreen, white, darkGray } from "../../utils/colors";
+import { pastelGreen, white, darkGray, darkGreen } from "../../utils/colors";
 export const NavbarContainer = styled.div`
   position: fixed;
   top: 0;
@@ -28,7 +28,7 @@ export const Username = styled.div`
   margin-right: 1rem;
 `;
 
-export const StyledButton = styled.button`
+export const IconButton = styled.button`
   background: none;
   border: none;
   padding: 0;
@@ -46,12 +46,33 @@ export const StyledButton = styled.button`
 `;
 
 export const MenuDropdown = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: fixed;
   top: 4rem;
   right: 0;
   width: 10rem;
-  background-color: ${darkGray};
+  background-color: ${darkGreen};
   color: white;
   z-index: 999;
   padding: 20px;
+`;
+
+export const DropDownButton = styled.button`
+  width: 100%;
+  background-color: ${darkGreen};
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background-color: ${pastelGreen};
+    color: ${darkGreen};
+    width: 100%;
+  }
 `;

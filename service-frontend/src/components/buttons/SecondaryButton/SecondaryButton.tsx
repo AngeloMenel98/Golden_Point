@@ -5,13 +5,19 @@ import { Button, Container } from "./SecondaryButtonStyle";
 interface ButtonProps {
   text: string;
   icon?: ReactNode;
+  isDangerous?: boolean;
   onClick?: () => void;
 }
 
-const SecondaryButton: React.FC<ButtonProps> = ({ text, icon, onClick }) => {
+const SecondaryButton: React.FC<ButtonProps> = ({
+  text,
+  icon,
+  isDangerous,
+  onClick,
+}) => {
   return (
     <Container>
-      <Button onClick={onClick}>
+      <Button onClick={onClick} isDangerous={isDangerous}>
         {text}
         {icon}
       </Button>

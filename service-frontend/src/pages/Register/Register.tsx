@@ -32,7 +32,6 @@ const Register: React.FC = () => {
 
   const handleClick = async () => {
     try {
-      setFieldErrors({});
       if (data.password !== data.confirmPassword) {
         setFieldErrors((prevErrors) => ({
           ...prevErrors,

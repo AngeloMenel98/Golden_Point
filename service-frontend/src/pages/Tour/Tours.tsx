@@ -19,6 +19,7 @@ import TourCard from "./TourCard/TourCard";
 import { TourDTO } from "../../entities/dtos/TourDTO";
 import TourAPI from "../../services/TourApi";
 import TourModal from "./TourModal/TourModal";
+import { TourFieldErrors } from "../../errors/TourErrors";
 
 const tourAPI = new TourAPI();
 
@@ -28,28 +29,10 @@ const Tours: React.FC = () => {
   const [tours, setTours] = useState<TourDTO[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [fieldErrors, setFieldErrors] = useState<TourFieldErrors>({});
+
   const getTokenFromLocalStorage = () => {
     return localStorage.getItem("token");
-  };
-
-  const getTours = async () => {
-    const tourArray: TourDTO[] = [];
-    const tourRes = await tourAPI.getTours();
-
-    tourRes.forEach((t: any) => {
-      const newTour = new TourDTO();
-
-      newTour.Id = t.tourid;
-      newTour.TourTitle = t.tourtitle;
-      newTour.TourCode = t.tourcode;
-      newTour.UserCount = t.usercount;
-      newTour.TournamentCount = t.tournamentcount;
-      newTour.UserOwner = t.firstusername;
-
-      tourArray.push(newTour);
-    });
-
-    setTours(tourArray);
   };
 
   useEffect(() => {
@@ -74,7 +57,27 @@ const Tours: React.FC = () => {
     }
   }, []);
 
-  const handleClick = async () => {
+  const getTours = async () => {
+    const tourArray: TourDTO[] = [];
+    const tourRes = await tourAPI.getTours(user.Id);
+
+    tourRes.forEach((t: any) => {
+      const newTour = new TourDTO();
+
+      newTour.Id = t.tourid;
+      newTour.TourTitle = t.tourtitle;
+      newTour.TourCode = t.tourcode;
+      newTour.UserCount = t.usercount;
+      newTour.TournamentCount = t.tournamentcount;
+      newTour.UserOwner = t.firstusername;
+
+      tourArray.push(newTour);
+    });
+
+    setTours(tourArray);
+  };
+
+  const handleOpenModal = async () => {
     setIsModalOpen(true);
   };
 
@@ -95,7 +98,7 @@ const Tours: React.FC = () => {
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>
-            <SecondaryButton text="Crear Tour" onClick={handleClick} />
+            <SecondaryButton text="Crear Tour" onClick={handleOpenModal} />
           </ButtonContainer>
 
           <InputContainer>
@@ -110,7 +113,14 @@ const Tours: React.FC = () => {
             />
           </InputContainer>
         </ButtonInputContainer>
-        {isModalOpen && <TourModal onClose={handleCloseModal} user={user} />}
+        {isModalOpen && (
+          <TourModal
+            onClose={handleCloseModal}
+            user={user}
+            tourApi={tourAPI}
+            fieldErrors={fieldErrors}
+          />
+        )}
         <H2>Todos los Tours</H2>
         <TourCard tours={tours} tourApi={tourAPI} user={user} />
       </TourSection>

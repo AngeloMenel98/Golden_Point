@@ -7,9 +7,11 @@ import {
   LogoContainer,
   MenuDropdown,
   NavbarContainer,
-  StyledButton,
+  IconButton,
   Username,
+  DropDownButton,
 } from "./NavBarStyle";
+import { useNavigate } from "react-router-dom";
 
 interface NavBarProps {
   userName: string;
@@ -19,8 +21,16 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
+  const navigate = useNavigate();
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  const handleLogOut = () => {
+    localStorage.removeItem("token");
+
+    navigate("/");
   };
 
   return (
@@ -31,7 +41,7 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
         </LogoContainer>
         <IconsContainer>
           <Username>{userName}</Username>
-          <StyledButton
+          <IconButton
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
           >
@@ -41,7 +51,7 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
               onClick={toggleMenu}
               color={isHovered ? darkGreen : white}
             />
-          </StyledButton>
+          </IconButton>
         </IconsContainer>
       </NavbarContainer>
       {menuOpen && (
@@ -49,8 +59,7 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
           {/* Aquí puedes agregar los elementos del menú */}
           <div>Elemento 1</div>
           <div>Elemento 2</div>
-          <div>Elemento 3</div>
-          {/* ... */}
+          <DropDownButton onClick={handleLogOut}>Log Out</DropDownButton>
         </MenuDropdown>
       )}
     </>

@@ -1,8 +1,23 @@
 import { AppDataSource } from "../data-source";
-import { Tour, User } from "../entity";
+import { Club, Tour, User } from "../entity";
 import { UserRepository } from "./user.repository";
 
 export const TourRepository = AppDataSource.getRepository(Tour).extend({
+  async create(tour: Tour, user: User, clubs: Club[]) {
+    return this.manager.transaction(async (transactionalEntityManager) => {
+      const savedTour = await transactionalEntityManager
+        .getRepository(Tour)
+        .save(tour);
+
+      savedTour.users = [user];
+      savedTour.clubs = clubs;
+
+      // Guardar el tour actualizado
+      await transactionalEntityManager.getRepository(Tour).save(savedTour);
+      return savedTour;
+    });
+  },
+
   async joinUser(user: User, tour: Tour) {
     return this.manager.transaction(async (transactionalEntityManager) => {
       const usersInTour = await UserRepository.getUsersByTourId(tour.id);
@@ -18,7 +33,7 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
     });
   },
 
-  async getAll() {
+  async getAll(userId: string) {
     try {
       return this.createQueryBuilder("t")
         .select([
@@ -33,6 +48,7 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
         .leftJoin("user", "u", "tuu.userId = u.id")
         .leftJoin("tournament", "tt", "tt.tourId = t.id")
         .where('t."isDeleted" = false')
+        .where("u.id = :userId", { userId })
         .groupBy("t.id, t.title, t.tourCode")
         .getRawMany();
     } catch (error) {

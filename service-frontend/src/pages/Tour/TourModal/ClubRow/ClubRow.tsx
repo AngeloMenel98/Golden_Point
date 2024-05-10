@@ -1,4 +1,3 @@
-import { User } from "../../../../entities/User";
 import {
   ClubRowContainer,
   ClubContainer,
@@ -13,17 +12,19 @@ import {
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
 import { useState } from "react";
 
-interface TourRowProps {
+interface ClubRowProps {
   clubData: ClubDTO;
-  user: User;
+  onCheckboxChange: (club: ClubDTO, isChecked: boolean) => void;
 }
 
-const ClubRow: React.FC<TourRowProps> = ({ user, clubData }) => {
+const ClubRow: React.FC<ClubRowProps> = ({ clubData, onCheckboxChange }) => {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
+    onCheckboxChange(clubData, !isChecked);
   };
+
   return (
     <ClubRowContainer>
       <LeftContainer>

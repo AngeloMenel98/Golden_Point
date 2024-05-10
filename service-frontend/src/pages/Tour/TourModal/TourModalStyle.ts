@@ -27,8 +27,8 @@ export const ModalContent = styled.div<{ width: number; height: number }>`
   border-radius: 8px;
 
   box-shadow: 0 2px 4px ${black};
-  width: ${(props) => props.width}px; /* Usa la prop width */
-  height: ${(props) => props.height}px; /* Usa la prop height */
+  width: ${(props) => props.width}px;
+  height: ${(props) => props.height}px;
   overflow-y: auto;
 `;
 
@@ -38,6 +38,17 @@ export const ClubContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0rem;
+`;
+
+export const FooterContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const ButtonSection = styled.div`
+  padding: 1rem;
 `;
 
 export const H3Styled = styled.h3`

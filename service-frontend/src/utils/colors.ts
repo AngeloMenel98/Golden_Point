@@ -10,3 +10,4 @@ export const lightGray = "#DBDBDB";
 export const grayModal = "#00000080";
 
 export const red = "#7f0000";
+export const lightRed = "#ce6161";
