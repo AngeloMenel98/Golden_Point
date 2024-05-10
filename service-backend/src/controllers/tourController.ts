@@ -1,5 +1,5 @@
-import { Tour } from "../entity";
-import { TourService, UserService } from "../services";
+import { Club, Tour } from "../entity";
+import { ClubService, TourService, UserService } from "../services";
 import { generateCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
@@ -8,10 +8,12 @@ import { Manager } from "../helpers/manager";
 
 export class TourController {
   private tourService: TourService;
+  private clubService: ClubService;
   private manager: Manager;
 
   constructor() {
     this.tourService = new TourService();
+    this.clubService = new ClubService();
     this.manager = Manager.getInstance();
   }
 
@@ -26,7 +28,7 @@ export class TourController {
         });
       }
 
-      const { title, userId } = req.body;
+      const { title, userId, clubsId } = req.body;
 
       const newTour = new Tour();
       newTour.title = title;
@@ -35,7 +37,13 @@ export class TourController {
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
 
-      const tour = await this.tourService.create(newTour, user);
+      const clubs: Club[] = [];
+      for (let clubId of clubsId) {
+        const club = await this.clubService.findById(clubId);
+        clubs.push(club);
+      }
+
+      const tour = await this.tourService.create(newTour, user, clubs);
 
       const response = {
         id: tour.id,
@@ -43,6 +51,7 @@ export class TourController {
         tourCode: tour.tourCode,
         isDeleted: tour.isDeleted,
         usersId: tour.users.map((u) => u.id),
+        clubsId: tour.clubs.map((c) => c.id),
       };
 
       res.status(201).json(response);
@@ -126,6 +135,7 @@ export class TourController {
         tourCode: tour.tourCode,
         usersId: tour.users.map((u) => u.id),
       };
+
       res.status(201).json(response);
     } catch (e) {
       console.error(e);
@@ -153,7 +163,9 @@ export class TourController {
         });
       }
 
-      const tours = await this.tourService.getAll();
+      const userId = req.params.userId;
+
+      const tours = await this.tourService.getAll(userId);
 
       res.status(201).json(tours);
     } catch (e) {

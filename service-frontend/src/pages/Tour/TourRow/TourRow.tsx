@@ -1,79 +1,78 @@
 import { useState } from "react";
-import styled from "styled-components";
-import { black, darkGray, white } from "../../../utils/colors";
-import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
+import {
+  TourRowContainer,
+  LeftContainer,
+  FullRightContainer,
+  MemberContainer,
+  UserContainer,
+  TournamentContainer,
+  TourName,
+  CodeContainer,
+  TextSpan,
+  CreatedBy,
+} from "./TourRowStyle";
+import { TourDTO } from "../../../entities/dtos/TourDTO";
+import CopyableText from "../../../components/copyableText/CopyableText";
+import TrashIcon from "../../../icons/TrashIcon/TrashIcon";
+import { red } from "../../../utils/colors";
+import TourAPI, { DeletedTour } from "../../../services/TourApi";
+import { User } from "../../../entities/User";
 
-const MemberData = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 40px;
-`;
+interface TourRowProps {
+  tourData: TourDTO;
+  tourApi: TourAPI;
+  user: User;
+}
 
-const MemberContainer = styled(MemberData)`
-  margin-left: 20px;
-  align-items: flex-start;
-`;
-const BeneficiaryNumber = styled.div`
-  height: 20px;
-  padding: 20px 0px;
-  color: ${black};
-`;
-
-const LeftContainer = styled.div`
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const FullRightContainer = styled.div`
-  display: flex;
-  color: ${black}
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding-right: 20px;
-`;
-
-const TourRow = styled.div`
-  height: 60px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: ${white};
-  margin-bottom: 10px;
-  box-sizing: border-box;
-`;
-
-const Groups = styled.h3`
-  color: ${black};
-  cursor: default;
-  line-height: 16px;
-  margin: 5px 0px 0px 0px;
-`;
-
-/*interface RowPatientProps {
-  patientData: Patient;
-}*/
-
-export default () => {
+const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi, user }) => {
   const [isShown, setIsShown] = useState(false);
 
+  const handleDeleteTour = async () => {
+    const deleteTour: DeletedTour = {
+      tourId: tourData.Id,
+      userId: user.Id,
+    };
+
+    const tourRes = await tourApi.deleteTour(deleteTour);
+    //window.location.reload();
+  };
+
   return (
-    <TourRow
+    <TourRowContainer
       onMouseEnter={() => setIsShown(true)}
       onMouseLeave={() => setIsShown(false)}
     >
       <LeftContainer>
         <MemberContainer>
-          <Groups>All Tours</Groups>
+          <TourName to="/tournament">{tourData.TourTitle}</TourName>
         </MemberContainer>
-        <BeneficiaryNumber>esto que eso?</BeneficiaryNumber>
+        {isShown && (
+          <CreatedBy>
+            Creado por: <TextSpan>{tourData.UserOwner}</TextSpan>
+          </CreatedBy>
+        )}
+        <CodeContainer>
+          Código del Tour: <CopyableText text={tourData.TourCode} />
+        </CodeContainer>
       </LeftContainer>
       <FullRightContainer>
-        <SearchIcon width={50} height={50} />
+        <UserContainer>
+          Usuarios: <TextSpan>{tourData.UserCount}</TextSpan>
+        </UserContainer>
+        <TournamentContainer>
+          Torneos: <TextSpan>{tourData.TournamentCount}</TextSpan>
+        </TournamentContainer>
+        {isShown && (
+          <TrashIcon
+            width={20}
+            height={20}
+            color={red}
+            onClick={handleDeleteTour}
+          />
+        )}
       </FullRightContainer>
-    </TourRow>
+    </TourRowContainer>
   );
 };
+
+export default TourRow;

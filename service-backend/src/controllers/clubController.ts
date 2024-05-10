@@ -27,7 +27,6 @@ export class ClubController {
 
       const {
         clubName,
-        tourId,
         address,
         userId,
         availableFrom,
@@ -49,7 +48,6 @@ export class ClubController {
       const club = await this.clubService.create(
         newClub,
         newCalClub,
-        tourId,
         courtsNumber
       );
 
@@ -58,7 +56,6 @@ export class ClubController {
         clubName: club.clubName,
         address: club.location,
         calendarClub: club.calendarClub.id,
-        tour: club.tour.id,
       };
 
       res.status(201).json(response);

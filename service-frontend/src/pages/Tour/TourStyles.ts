@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { white } from "../../utils/colors";
+import { black, darkGreen, white } from "../../utils/colors";
 
 export const MainContainer = styled.div`
   width: 100%;
@@ -16,6 +16,9 @@ export const TourSection = styled.div`
   flex: 10;
   background-color: ${white};
   width: 100%;
+  display: flex; /* Añadido */
+  flex-direction: column; /* Añadido */
+  align-items: flex-start;
 `;
 
 export const ButtonInputContainer = styled.div`
@@ -25,10 +28,17 @@ export const ButtonInputContainer = styled.div`
 `;
 
 export const ButtonContainer = styled.div`
-  padding: 1rem 5rem;
+  padding-top: 1rem;
+  padding-left: 5rem;
+  padding-right: 15rem;
 `;
 
 export const InputContainer = styled.div`
+  padding-top: 1rem;
   padding-left: 30rem;
-  padding-right: 20rem;
+  padding-right: 6rem;
+`;
+export const H2 = styled.h2`
+  color: ${darkGreen};
+  padding: 0.01rem 5rem;
 `;

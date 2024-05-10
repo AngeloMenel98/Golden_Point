@@ -16,6 +16,10 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+    check("clubsId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("clubsId")),
   ],
   tourController.create.bind(tourController)
 );
@@ -50,6 +54,6 @@ router.post(
   tourController.delete.bind(tourController)
 );
 
-router.get("/tour/tours", tourController.getAll.bind(tourController));
+router.get("/tour/tours/:userId", tourController.getAll.bind(tourController));
 
 export default router;

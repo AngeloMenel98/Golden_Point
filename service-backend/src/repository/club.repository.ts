@@ -2,14 +2,14 @@ import { AppDataSource } from "../data-source";
 import { CalendarClub, Club, Court, Tour } from "../entity";
 
 export const ClubRepository = AppDataSource.getRepository(Club).extend({
-  async create(club: Club, tour: Tour, calClub: CalendarClub, court: Court[]) {
+  async create(club: Club, calClub: CalendarClub, court: Court[]) {
     return this.manager.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
         .getRepository(CalendarClub)
         .save(calClub);
       const savedClub = await transactionalEntityManager
         .getRepository(Club)
-        .save({ ...club, calendarClub: calClub, tour });
+        .save({ ...club, calendarClub: calClub });
 
       await transactionalEntityManager.getRepository(Court).save(
         court.map((courtInstance) => ({
@@ -52,6 +52,7 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       .select([
         "c.id AS id",
         'c."clubName"',
+        'c."location" AS address',
         'COUNT(co."courtNumber") AS courtCount',
         'cc."availableFrom"',
         'cc."availableTo"',

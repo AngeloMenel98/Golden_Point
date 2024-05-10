@@ -4,13 +4,16 @@ import {
   lightGray,
   darkGray,
   pastelGreen,
+  red,
+  white,
+  lightRed,
 } from "../../../utils/colors";
 
-export const Button = styled.button`
-  background-color: transparent;
-  color: ${darkGreen};
+export const Button = styled.button<{ isDangerous?: boolean }>`
+  background-color: ${(props) => (props.isDangerous ? red : "transparent")};
+  color: ${(props) => (props.isDangerous ? white : darkGreen)};
   padding: 8px 20px;
-  border: 2px solid ${darkGreen};
+  border: 2px solid ${(props) => (props.isDangerous ? lightRed : darkGreen)};
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -20,9 +23,9 @@ export const Button = styled.button`
 
   /* Estilos cuando el botón está activo o enfocado */
   &:hover {
-    background-color: ${darkGreen};
-    color: ${pastelGreen};
-    border-color: ${pastelGreen};
+    background-color: ${(props) => (props.isDangerous ? lightGray : darkGreen)};
+    color: ${(props) => (props.isDangerous ? red : pastelGreen)};
+    border-color: ${(props) => (props.isDangerous ? darkGray : pastelGreen)};
     opacity: 0.8;
   }
   ,
