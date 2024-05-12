@@ -37,10 +37,9 @@ const Login: React.FC = () => {
   const handleClick = async () => {
     try {
       const token = await userAPI.login(credentials);
-
       localStorage.setItem("token", token);
 
-      navigate("/tours");
+      navigate("/");
     } catch (e) {
       if (axios.isAxiosError(e)) {
         if (e.response?.data?.error && e.response.data.error.length > 0) {

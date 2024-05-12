@@ -4,13 +4,23 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Tour from "../pages/Tour/Tours";
 import Tournament from "../pages/Tournament/Tournament";
+import { RootState } from "../reduxSlices/store";
+import { useSelector } from "react-redux";
+import useSetUser from "../hooks/useSetUser";
 
 const AppRoutes: React.FC = () => {
+  useSetUser();
+  const user = useSelector((state: RootState) => state.user.user);
+
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      {user.Id != "" ? (
+        <Route path="/" element={<Tour />} />
+      ) : (
+        <Route path="/" element={<Login />} />
+      )}
+
       <Route path="/register" element={<Register />} />
-      <Route path="/tours" element={<Tour />} />
       <Route path="/tournaments" element={<Tournament />} />
     </Routes>
   );

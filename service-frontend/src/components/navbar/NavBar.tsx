@@ -12,9 +12,11 @@ import {
   DropDownButton,
 } from "./NavBarStyle";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logOutUser } from "../../reduxSlices/user/userSlice";
 
 interface NavBarProps {
-  userName: string;
+  userName: string | undefined;
 }
 
 const NavBar: React.FC<NavBarProps> = ({ userName }) => {
@@ -23,12 +25,15 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   const handleLogOut = () => {
     localStorage.removeItem("token");
+    dispatch(logOutUser());
 
     navigate("/");
   };
