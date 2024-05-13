@@ -1,7 +1,7 @@
 import GeneralAPI from "./GeneralApi";
 
 export interface ClubCredentials {
-  userId: string;
+  userId?: string;
   clubName: string;
   address: string;
   availableFrom: string;

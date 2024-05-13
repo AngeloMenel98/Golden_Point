@@ -1,8 +1,7 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
 import { black, darkGreen, mint, pastelGreen } from "../../../../utils/colors";
 
-export const ClubRowContainer = styled.div`
+export const TourRowContainer = styled.div`
   height: 50px;
   display: flex;
   justify-content: space-between;
@@ -26,7 +25,7 @@ export const MemberData = styled.div`
   margin-right: 40px;
 `;
 
-export const ClubContainer = styled(MemberData)`
+export const MemberContainer = styled(MemberData)`
   margin-left: 20px;
   align-items: flex-start;
 `;
@@ -47,14 +46,14 @@ export const FullRightContainer = styled.div`
   padding-right: 20px;
 `;
 
-export const AddressContainer = styled.div`
+export const CodeContainer = styled.div`
   height: 20px;
   padding: 20px 15px;
   color: ${darkGreen};
   font-weight: 900;
 `;
 
-export const HoursContainer = styled.div`
+export const UserContainer = styled.div`
   height: 20px;
   padding: 20px 20px;
   color: ${darkGreen};
@@ -63,7 +62,7 @@ export const HoursContainer = styled.div`
   display: flex;
   align-items: center;
 `;
-export const CourtsContainer = styled.div`
+export const TournamentContainer = styled.div`
   display: flex;
   align-items: center;
 
@@ -73,12 +72,21 @@ export const CourtsContainer = styled.div`
   font-weight: 900;
 `;
 
-export const ClubName = styled.span`
+export const TourName = styled.button`
   color: ${darkGreen};
+  cursor: pointer;
   line-height: 16px;
   font-weight: 900;
-`;
+  font-size: 16px;
+  transition: 0.3s ease;
 
+  background-color: transparent;
+  border: none;
+
+  &:hover {
+    color: ${mint};
+  }
+`;
 export const CreatedBy = styled.span`
   padding: 0rem 1rem;
   font-weight: 900;

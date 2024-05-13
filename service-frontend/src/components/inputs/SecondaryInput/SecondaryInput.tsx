@@ -13,7 +13,7 @@ interface PrimaryInputProps {
   label?: string;
   id: string;
   type: string;
-  value: string;
+  value: string | number;
   width: number;
   placeholder?: string;
   maxLength?: number;

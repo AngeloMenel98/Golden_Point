@@ -61,9 +61,6 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
       </NavbarContainer>
       {menuOpen && (
         <MenuDropdown>
-          {/* Aquí puedes agregar los elementos del menú */}
-          <div>Elemento 1</div>
-          <div>Elemento 2</div>
           <DropDownButton onClick={handleLogOut}>Log Out</DropDownButton>
         </MenuDropdown>
       )}

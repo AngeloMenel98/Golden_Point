@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import NavBar from "../../components/navbar/NavBar";
-import SecondaryButton from "../../components/buttons/SecondaryButton/SecondaryButton";
-import SecondaryInput from "../../components/inputs/SecondaryInput/SecondaryInput";
+import NavBar from "../../../components/navbar/NavBar";
+import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
+import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
 import {
   ButtonContainer,
@@ -14,14 +14,14 @@ import {
   NavBarContainer,
   H2,
 } from "./TourStyles";
-import { darkGreen } from "../../utils/colors";
-import SearchIcon from "../../icons/SearchIcon/SearchIcon";
+import { darkGreen } from "../../../utils/colors";
+import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 
 import TourCard from "./TourCard/TourCard";
 import TourModal from "./TourModal/TourModal";
-import { TourFieldErrors } from "../../errors/TourErrors";
-import { RootState } from "../../reduxSlices/store";
-import useGetTours from "../../hooks/useGetTours";
+import { TourFieldErrors } from "../../../errors/TourErrors";
+import { RootState } from "../../../reduxSlices/store";
+import useGetTours from "../../../hooks/useGetTours";
 
 const Tours: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -47,7 +47,7 @@ const Tours: React.FC = () => {
   return (
     <MainContainer>
       <NavBarContainer>
-        <NavBar userName={user.username} />
+        <NavBar userName={user?.UserName} />
       </NavBarContainer>
       <TourSection>
         <ButtonInputContainer>
@@ -70,18 +70,12 @@ const Tours: React.FC = () => {
         {isModalOpen && (
           <TourModal
             onClose={handleCloseModal}
-            user={user}
             tourApi={tourAPI}
             fieldErrors={fieldErrors}
           />
         )}
         <H2>Todos los Tours</H2>
-        <TourCard
-          tours={tours}
-          tourApi={tourAPI}
-          user={user}
-          tourTitle={tourTitle}
-        />
+        <TourCard tours={tours} tourApi={tourAPI} tourTitle={tourTitle} />
       </TourSection>
     </MainContainer>
   );

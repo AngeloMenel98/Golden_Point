@@ -2,11 +2,11 @@ import GeneralAPI from "./GeneralApi";
 
 export interface DeletedTour {
   tourId: string;
-  userId: string;
+  userId?: string;
 }
 
 export interface TourCredentials {
-  userId: string;
+  userId?: string;
   clubsId: string[];
   title: string;
 }

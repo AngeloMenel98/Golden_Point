@@ -9,9 +9,9 @@ import {
   CourtsContainer,
   TextSpan,
 } from "./ClubRowStyle";
-import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
+import { ClubDTO } from "../../../../../entities/dtos/ClubDTO";
 import { useState } from "react";
-import Checkbox from "../../../../components/checkbox/Checkbox";
+import Checkbox from "../../../../../components/checkbox/Checkbox";
 
 interface ClubRowProps {
   clubData: ClubDTO;

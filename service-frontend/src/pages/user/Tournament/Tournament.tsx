@@ -1,4 +1,6 @@
 import React, { ChangeEvent } from "react";
+import { useSelector } from "react-redux";
+
 import {
   H2,
   MainContainer,
@@ -6,22 +8,22 @@ import {
   SpaceContainer,
   TournamentSection,
   InputContainer,
-  ButtonContainer,
 } from "./TournamentStyle";
-import NavBar from "../../components/navbar/NavBar";
-import SecondaryButton from "../../components/buttons/SecondaryButton/SecondaryButton";
-import { useLocation } from "react-router-dom";
-import RankingIcon from "../../icons/RankingIcon/RankingIcon";
-import { darkGreen } from "../../utils/colors";
-import SecondaryInput from "../../components/inputs/SecondaryInput/SecondaryInput";
-import SearchIcon from "../../icons/SearchIcon/SearchIcon";
+import { darkGreen } from "../../../utils/colors";
+import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
+import RankingIcon from "../../../icons/RankingIcon/RankingIcon";
+
+import NavBar from "../../../components/navbar/NavBar";
 import TournamentCard from "./TournamentCard/TournamentCard";
+import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
+import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
-const Tournament: React.FC = () => {
-  const location = useLocation();
+import { RootState } from "../../../reduxSlices/store";
+
+const TournamentUser: React.FC = () => {
+  const user = useSelector((state: RootState) => state.user.user);
+  const tourData = useSelector((state: RootState) => state.tour.tour);
   const tourTitle = "";
-
-  const { tourData, user } = location.state || {};
 
   function handleChange(e: ChangeEvent<HTMLInputElement>): void {
     throw new Error("Function not implemented.");
@@ -30,12 +32,11 @@ const Tournament: React.FC = () => {
   return (
     <MainContainer>
       <NavBarContainer>
-        <NavBar userName={user.userName} />
+        <NavBar userName={user?.UserName} />
       </NavBarContainer>
       <TournamentSection>
         <SpaceContainer>
-          <H2>{tourData.tourTitle}</H2>
-          <SecondaryButton text="Usuarios" />
+          <H2>{tourData?.TourTitle}</H2>
           <SecondaryButton text="Torneos" />
           <SecondaryButton
             text="Rankings"
@@ -43,9 +44,6 @@ const Tournament: React.FC = () => {
           />
         </SpaceContainer>
         <SpaceContainer>
-          <ButtonContainer>
-            <SecondaryButton text="Crear Torneos" />
-          </ButtonContainer>
           <InputContainer>
             <SecondaryInput
               id="searchTournament"
@@ -64,4 +62,4 @@ const Tournament: React.FC = () => {
   );
 };
 
-export default Tournament;
+export default TournamentUser;

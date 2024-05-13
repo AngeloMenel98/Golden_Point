@@ -1,13 +1,15 @@
-import Card from "../../../components/card/Card";
-import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
-import { darkGreen, lightGray, white } from "../../../utils/colors";
 import {
   H2,
   InputContainer,
   InputGroup,
   MainContainer,
 } from "./RegisterCardStyle";
+import { darkGreen, lightGray, white } from "../../../utils/colors";
+
+import Card from "../../../components/card/Card";
 import PrimaryButton from "../../../components/buttons/PrimaryButton/PrimaryButton";
+import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
+
 import { DataRegister } from "../../../services/UserApi";
 import { RegisterFieldErrors } from "../../../errors/RegisterErrors";
 

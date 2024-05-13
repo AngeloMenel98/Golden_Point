@@ -1,13 +1,15 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import RegisterCard from "./RegisterCard/RegisterCard";
 import { CardContainer, MainContainer } from "./RegisterStyle";
+
 import UserAPI, { DataRegister } from "../../services/UserApi";
-import axios from "axios";
 import {
   RegisterFieldErrors,
   errorMappings,
 } from "../../errors/RegisterErrors";
-import { useNavigate } from "react-router-dom";
 
 const userAPI = new UserAPI();
 

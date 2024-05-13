@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { black, darkGreen, mint, pastelGreen } from "../../../utils/colors";
-import { Link } from "react-router-dom";
+import { black, darkGreen, mint, pastelGreen } from "../../../../utils/colors";
 
 export const TourRowContainer = styled.div`
   height: 50px;

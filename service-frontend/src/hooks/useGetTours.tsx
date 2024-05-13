@@ -5,9 +5,14 @@ import TourAPI from "../services/TourApi";
 
 const tourAPI = new TourAPI();
 
-export default function useGetTours(user: User) {
+export default function useGetTours(user: User | null) {
   const [tours, setTours] = useState<TourDTO[]>([]);
-
+  if (!user) {
+    return {
+      tours,
+      tourAPI,
+    };
+  }
   const getTours = async () => {
     const tourArray: TourDTO[] = [];
 

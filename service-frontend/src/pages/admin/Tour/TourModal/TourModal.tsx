@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import Card from "../../../components/card/Card";
-import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
-import CrossIcon from "../../../icons/CrossIcon/CrossIcon";
+import Card from "../../../../components/card/Card";
+import SecondaryInput from "../../../../components/inputs/SecondaryInput/SecondaryInput";
+import CrossIcon from "../../../../icons/CrossIcon/CrossIcon";
 import {
   black,
   darkGreen,
   pastelGreen,
   red,
   white,
-} from "../../../utils/colors";
+} from "../../../../utils/colors";
 import {
   ModalContent,
   ModalWrapper,
@@ -18,18 +18,18 @@ import {
   FooterContainer,
   ButtonSection,
 } from "./TourModalStyle";
-import { TourFieldErrors } from "../../../errors/TourErrors";
-import PlusIcon from "../../../icons/PlusIcon/PlusIcon";
-import { User } from "../../../entities/User";
-import { ClubDTO } from "../../../entities/dtos/ClubDTO";
-import ClubAPI, { ClubCredentials } from "../../../services/ClubApi";
+import { TourFieldErrors } from "../../../../errors/TourErrors";
+import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
+import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
+import ClubAPI, { ClubCredentials } from "../../../../services/ClubApi";
 import ClubRow from "./ClubRow/ClubRow";
-import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
-import TourAPI, { TourCredentials } from "../../../services/TourApi";
+import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
+import TourAPI, { TourCredentials } from "../../../../services/TourApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../reduxSlices/store";
 
 interface TourModalProps {
   onClose: () => void;
-  user: User;
   tourApi: TourAPI;
   fieldErrors: TourFieldErrors;
 }
@@ -47,10 +47,11 @@ const clubAPI = new ClubAPI();
 
 const TourModal: React.FC<TourModalProps> = ({
   onClose,
-  user,
   tourApi,
   fieldErrors,
 }) => {
+  const user = useSelector((state: RootState) => state.user.user);
+
   const [data, setData] = useState<CreationData>({
     tourName: "",
     clubName: "",
@@ -80,7 +81,7 @@ const TourModal: React.FC<TourModalProps> = ({
 
   const handleSaveClub = async () => {
     const club: ClubCredentials = {
-      userId: user.Id,
+      userId: user?.Id,
       clubName: data.clubName,
       address: data.address,
       availableFrom: data.avFrom,
@@ -93,7 +94,7 @@ const TourModal: React.FC<TourModalProps> = ({
 
   const handleSaveTour = async () => {
     const tour: TourCredentials = {
-      userId: user.Id,
+      userId: user?.Id,
       clubsId: clubsSelected.map((c) => c.Id),
       title: data.tourName,
     };

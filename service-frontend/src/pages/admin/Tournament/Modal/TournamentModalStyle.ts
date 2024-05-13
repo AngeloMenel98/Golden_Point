@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { black, darkGreen, grayModal, white } from "../../../utils/colors";
+import { black, darkGreen, grayModal, white } from "../../../../utils/colors";
 
 export const ModalWrapper = styled.div`
   position: fixed;
@@ -11,6 +11,7 @@ export const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${grayModal};
+  z-index: 1000;
 `;
 
 export const HeaderContainer = styled.div`

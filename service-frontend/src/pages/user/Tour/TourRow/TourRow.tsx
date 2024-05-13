@@ -11,36 +11,31 @@ import {
   TextSpan,
   CreatedBy,
 } from "./TourRowStyle";
-import { TourDTO } from "../../../entities/dtos/TourDTO";
-import CopyableText from "../../../components/copyableText/CopyableText";
-import TrashIcon from "../../../icons/TrashIcon/TrashIcon";
-import { red } from "../../../utils/colors";
-import TourAPI, { DeletedTour } from "../../../services/TourApi";
-import { User } from "../../../entities/User";
+import { TourDTO } from "../../../../entities/dtos/TourDTO";
+import CopyableText from "../../../../components/copyableText/CopyableText";
+import TourAPI from "../../../../services/TourApi";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../reduxSlices/store";
+import { useDispatch } from "react-redux";
+import { setTour } from "../../../../reduxSlices/tour/tourSlice";
 
 interface TourRowProps {
   tourData: TourDTO;
   tourApi: TourAPI;
-  user: User;
 }
 
-const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi, user }) => {
+const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
+  const user = useSelector((state: RootState) => state.user.user);
+
   const [isShown, setIsShown] = useState(false);
 
-  const handleDeleteTour = async () => {
-    const deleteTour: DeletedTour = {
-      tourId: tourData.Id,
-      userId: user.Id,
-    };
-
-    const tourRes = await tourApi.deleteTour(deleteTour);
-    //window.location.reload();
-  };
-
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleTourClick = () => {
-    navigate("/tournaments", { state: { tourData, user } });
+    dispatch(setTour(tourData));
+    navigate("/tournaments");
   };
 
   return (
@@ -68,14 +63,6 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi, user }) => {
         <TournamentContainer>
           Torneos: <TextSpan>{tourData.TournamentCount}</TextSpan>
         </TournamentContainer>
-        {isShown && (
-          <TrashIcon
-            width={20}
-            height={20}
-            color={red}
-            onClick={handleDeleteTour}
-          />
-        )}
       </FullRightContainer>
     </TourRowContainer>
   );
