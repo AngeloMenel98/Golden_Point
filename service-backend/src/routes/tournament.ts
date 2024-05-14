@@ -62,4 +62,8 @@ router.post(
   tournController.start.bind(tournController)
 );
 
+router.get(
+  "/tournament/tourns/:tourId",
+  tournController.getAll.bind(tournController)
+);
 export default router;

@@ -1,11 +1,10 @@
-import { useDebugValue, useState } from "react";
+import { useState } from "react";
 import {
   TourRowContainer,
   LeftContainer,
   FullRightContainer,
   MemberContainer,
-  UserContainer,
-  TournamentContainer,
+  TeamsContainer,
   TourName,
   CodeContainer,
   TextSpan,
@@ -14,13 +13,13 @@ import {
 import CopyableText from "../../../../components/copyableText/CopyableText";
 import TrashIcon from "../../../../icons/TrashIcon/TrashIcon";
 import { red } from "../../../../utils/colors";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../reduxSlices/store";
-interface TourRowProps {}
+import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 
-const TournamentRow: React.FC<TourRowProps> = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+interface TournamentRowProps {
+  tournData: TournamentDTO;
+}
 
+const TournamentRow: React.FC<TournamentRowProps> = ({ tournData }) => {
   const [isShown, setIsShown] = useState(false);
 
   return (
@@ -30,24 +29,22 @@ const TournamentRow: React.FC<TourRowProps> = () => {
     >
       <LeftContainer>
         <MemberContainer>
-          <TourName>Chau</TourName>
+          <TourName>{tournData.Title}</TourName>
         </MemberContainer>
         {isShown && (
           <CreatedBy>
-            Creado por: <TextSpan>Hola</TextSpan>
+            Creado por:
+            <CopyableText text="Chau" />
           </CreatedBy>
         )}
         <CodeContainer>
-          Código del Tour: <CopyableText text="Chau" />
+          Master: <TextSpan>{tournData.Master}</TextSpan>
         </CodeContainer>
       </LeftContainer>
       <FullRightContainer>
-        <UserContainer>
-          Usuarios: <TextSpan>chau</TextSpan>
-        </UserContainer>
-        <TournamentContainer>
-          Torneos: <TextSpan>Chau</TextSpan>
-        </TournamentContainer>
+        <TeamsContainer>
+          Equipos: <TextSpan>{tournData.TeamsCount}/24</TextSpan>
+        </TeamsContainer>
         {isShown && <TrashIcon width={20} height={20} color={red} />}
       </FullRightContainer>
     </TourRowContainer>

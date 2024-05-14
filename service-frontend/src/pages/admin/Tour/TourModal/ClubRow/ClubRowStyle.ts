@@ -1,11 +1,5 @@
 import styled from "styled-components";
-import { Link } from "react-router-dom";
-import {
-  black,
-  darkGreen,
-  mint,
-  pastelGreen,
-} from "../../../../../utils/colors";
+import { black, darkGreen, pastelGreen } from "../../../../../utils/colors";
 
 export const ClubRowContainer = styled.div`
   height: 50px;

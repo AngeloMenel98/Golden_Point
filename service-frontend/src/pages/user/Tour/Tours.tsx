@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import NavBar from "../../../components/navbar/NavBar";
-import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
 import {

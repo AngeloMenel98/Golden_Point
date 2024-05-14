@@ -15,4 +15,19 @@ export const TournamentRepository = AppDataSource.getRepository(
       return savedTournament;
     });
   },
+
+  async getAll(tourId: string) {
+    return this.createQueryBuilder("t")
+      .select([
+        "t.id as tournamentId",
+        "t.title AS tournamentName",
+        "count(distinct tm.id) as teamsCount",
+        "t.master as master",
+      ])
+      .innerJoin("tour", "tr", 'tr.id = t."tourId"')
+      .leftJoin("team", "tm", 't.id = tm."tournamentId"')
+      .where("tr.id = :tourId", { tourId })
+      .groupBy("t.id, t.title, t.master")
+      .getRawMany();
+  },
 });

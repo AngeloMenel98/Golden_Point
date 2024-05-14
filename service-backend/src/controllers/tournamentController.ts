@@ -145,6 +145,33 @@ export class TournamentController {
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            message: error.msg,
+          })),
+        });
+      }
+
+      const tourId = req.params.tourId;
+
+      const tours = await this.tournService.getAll(tourId);
+
+      res.status(201).json(tours);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
 }
 
 export default new TournamentController();

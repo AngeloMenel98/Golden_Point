@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import CheckIcon from "../../icons/CheckIcon/CheckIcon";
-import { darkGreen, pastelGreen, red, white } from "../../utils/colors";
+import { darkGreen, pastelGreen, white } from "../../utils/colors";
 
 interface CheckboxProps {
   checked: boolean;

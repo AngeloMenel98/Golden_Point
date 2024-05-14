@@ -22,17 +22,19 @@ import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryI
 
 import { RootState } from "../../../reduxSlices/store";
 import TournamentModal from "./Modal/TournamentModal";
+import useGetTournaments from "../../../hooks/useGetTournaments";
 
 const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tourData = useSelector((state: RootState) => state.tour.tour);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { tournaments, tournAPI } = useGetTournaments(tourData);
 
-  const tourTitle = "";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tournamentTitle, setTournTitle] = useState("");
 
   function handleChange(e: ChangeEvent<HTMLInputElement>): void {
-    throw new Error("Function not implemented.");
+    setTournTitle(e.target.value);
   }
 
   const handleOpenModal = async () => {
@@ -73,7 +75,7 @@ const Tournament: React.FC = () => {
             <SecondaryInput
               id="searchTournament"
               type="text"
-              value={tourTitle}
+              value={tournamentTitle}
               width={250}
               placeholder="Buscar Torneo"
               icon={<SearchIcon width={20} height={18} color={darkGreen} />}
@@ -81,7 +83,10 @@ const Tournament: React.FC = () => {
             />
           </InputContainer>
         </SpaceContainer>
-        <TournamentCard />
+        <TournamentCard
+          tournaments={tournaments}
+          tournamentTitle={tournamentTitle}
+        />
       </TournamentSection>
     </MainContainer>
   );

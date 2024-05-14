@@ -53,7 +53,7 @@ export const CodeContainer = styled.div`
   font-weight: 900;
 `;
 
-export const UserContainer = styled.div`
+export const TeamsContainer = styled.div`
   height: 20px;
   padding: 20px 20px;
   color: ${darkGreen};
@@ -96,12 +96,4 @@ export const CreatedBy = styled.span`
 export const TextSpan = styled.span`
   padding: 0rem 1rem;
   font-weight: 350;
-`;
-
-export const StyledLink = `
-  color: ${darkGreen};
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-  margin-left: 10px;
 `;

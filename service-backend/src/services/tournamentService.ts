@@ -265,4 +265,13 @@ export class TournamentService {
     }
     return matches;
   }
+
+  async getAll(tourId: string) {
+    const tournaments: unknown[] = await TournamentRepository.getAll(tourId);
+    if (tournaments.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Torneo"));
+    }
+
+    return tournaments;
+  }
 }

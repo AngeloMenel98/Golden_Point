@@ -3,10 +3,20 @@ import Card from "../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
 import { CardContainer } from "./TournamentStyle";
 import TournamentRow from "../Row/TournamentRow";
+import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 
-interface TournamentCardProps {}
+interface TournamentCardProps {
+  tournaments: TournamentDTO[];
+  tournamentTitle: string;
+}
 
-const TournamentCard: React.FC<TournamentCardProps> = ({}) => {
+const TournamentCard: React.FC<TournamentCardProps> = ({
+  tournaments,
+  tournamentTitle,
+}) => {
+  const filteredTourns = tournaments.filter((tourn) =>
+    tourn.Title.toLowerCase().includes(tournamentTitle.toLowerCase())
+  );
   return (
     <CardContainer>
       <Card
@@ -15,7 +25,9 @@ const TournamentCard: React.FC<TournamentCardProps> = ({}) => {
         boxColor={pastelGreen}
         width={1200}
       >
-        <TournamentRow />
+        {filteredTourns.map((tourn, index) => (
+          <TournamentRow key={index} tournData={tourn} />
+        ))}
       </Card>
     </CardContainer>
   );

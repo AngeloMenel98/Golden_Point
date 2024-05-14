@@ -22,6 +22,6 @@ export const StyledCard = styled.div<StyledCardProps>`
   box-shadow: 0 0 15px ${(props) => props.boxColor};
   background-color: ${(props) => props.bgColor};
 
-  max-height: ${(props) => props.maxHeight}px; // Aplicar la altura máxima
+  max-height: ${(props) => props.maxHeight}px;
   overflow-y: auto;
 `;

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { pastelGreen, white, darkGray, darkGreen } from "../../utils/colors";
+import { pastelGreen, white, darkGreen } from "../../utils/colors";
 export const NavbarContainer = styled.div`
   position: fixed;
   top: 0;

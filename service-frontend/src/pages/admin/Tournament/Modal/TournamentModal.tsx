@@ -1,14 +1,7 @@
-import { useEffect, useState } from "react";
-import Card from "../../../../components/card/Card";
+import { useState } from "react";
 import SecondaryInput from "../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../icons/CrossIcon/CrossIcon";
-import {
-  black,
-  darkGreen,
-  pastelGreen,
-  red,
-  white,
-} from "../../../../utils/colors";
+import { black, red } from "../../../../utils/colors";
 import {
   ModalContent,
   ModalWrapper,
@@ -18,10 +11,11 @@ import {
   FooterContainer,
   ButtonSection,
 } from "./TournamentModalStyle";
-import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
+import DropDown from "../../../../components/dropdown/DropDown/DropDown";
+import DropDownItem from "../../../../components/dropdown/DropDownItem/DropDownItem";
 
 interface TournamentModalProps {
   onClose: () => void;
@@ -34,6 +28,15 @@ interface CreationData {
 
 const TourModal: React.FC<TournamentModalProps> = ({ onClose }) => {
   const tourData = useSelector((state: RootState) => state.tour.tour);
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const categories: string[] = [
+    "Cuarta",
+    "Quinta",
+    "Sexta",
+    "Séptima",
+    "Octava",
+  ];
 
   const [data, setData] = useState<CreationData>({
     tournamentName: "",
@@ -69,10 +72,30 @@ const TourModal: React.FC<TournamentModalProps> = ({ onClose }) => {
             id="master"
             type="text"
             value={data.master}
-            width={120}
-            maxLength={20}
+            width={50}
+            maxLength={4}
             onChange={handleChange}
             //error={fieldErrors.clubName}
+          />
+          <DropDown
+            buttonText="Masculino"
+            content={
+              <>
+                {categories.map((cat) => (
+                  <DropDownItem key={cat}>{cat}</DropDownItem>
+                ))}
+              </>
+            }
+          />
+          <DropDown
+            buttonText="Femenino"
+            content={
+              <>
+                {categories.map((cat) => (
+                  <DropDownItem key={cat}>{cat}</DropDownItem>
+                ))}
+              </>
+            }
           />
         </ClubContainer>
 
