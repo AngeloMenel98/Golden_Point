@@ -1,5 +1,5 @@
-interface Category {
-  name: string;
+export interface Category {
+  category: string;
   gender: string;
 }
 
@@ -8,7 +8,7 @@ export class TournamentDTO {
   private title: string = "";
   private teamsCount: number = 0;
   private master: number = 0;
-  private categories?: Category[] = [];
+  private categories: Category[] = [];
 
   //Setters
   set Id(value: string) {
@@ -48,7 +48,7 @@ export class TournamentDTO {
     return this.master;
   }
 
-  get Categories(): Category[] | undefined {
+  get Categories(): Category[] {
     return this.categories;
   }
 }

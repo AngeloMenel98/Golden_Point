@@ -9,7 +9,7 @@ import {
   TeamRepository,
   TournamentRepository,
 } from "../repository";
-import { ClubData, CourtData, TeamData } from "../utils/interfaces";
+import { ClubData, CourtData, TeamData, TourData } from "../utils/interfaces";
 import {
   shuffleArray,
   sortTeamsPerCategoryByPoints,
@@ -267,7 +267,7 @@ export class TournamentService {
   }
 
   async getAll(tourId: string) {
-    const tournaments: unknown[] = await TournamentRepository.getAll(tourId);
+    const tournaments: TourData[] = await TournamentRepository.getAll(tourId);
     if (tournaments.length == 0) {
       throw new ServiceCodeError(codeErrors.GEN_2("Torneo"));
     }

@@ -4,6 +4,7 @@ import { TournamentService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
+import { TourData } from "../utils/interfaces";
 
 export class TournamentController {
   private tournService: TournamentService;
@@ -159,9 +160,33 @@ export class TournamentController {
 
       const tourId = req.params.tourId;
 
-      const tours = await this.tournService.getAll(tourId);
+      const tours: TourData[] = await this.tournService.getAll(tourId);
 
-      res.status(201).json(tours);
+      const response = {};
+
+      tours.forEach((tour) => {
+        const tournamentId = tour.tournamentid;
+        const tournamentName = tour.tournamentname;
+        const genderCategory = tour.gender_category.split("-");
+        const gender = genderCategory[0];
+        const category = genderCategory[1];
+
+        if (!response.hasOwnProperty(tournamentName)) {
+          response[tournamentName] = {
+            tournamentId: tournamentId,
+            teamsCount: tour.teamscount,
+            master: tour.master,
+            categories: [],
+          };
+        }
+
+        response[tournamentName].categories.push({
+          gender: gender,
+          category: category,
+        });
+      });
+
+      res.status(201).json(response);
     } catch (e) {
       console.error(e);
 

@@ -70,7 +70,12 @@ const Tournament: React.FC = () => {
           <ButtonContainer>
             <SecondaryButton text="Crear Torneos" onClick={handleOpenModal} />
           </ButtonContainer>
-          {isModalOpen && <TournamentModal onClose={handleCloseModal} />}
+          {isModalOpen && (
+            <TournamentModal
+              onClose={handleCloseModal}
+              tournaments={tournaments}
+            />
+          )}
           <InputContainer>
             <SecondaryInput
               id="searchTournament"

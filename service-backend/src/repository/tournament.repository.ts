@@ -23,11 +23,18 @@ export const TournamentRepository = AppDataSource.getRepository(
         "t.title AS tournamentName",
         "count(distinct tm.id) as teamsCount",
         "t.master as master",
+        'STRING_AGG(DISTINCT CONCAT(c."gender", \'-\', c."categoryName")::TEXT, \', \') AS "gender_category"',
       ])
       .innerJoin("tour", "tr", 'tr.id = t."tourId"')
+      .innerJoin(
+        "tournament_categories_category",
+        "tcc",
+        't.id = tcc."tournamentId"'
+      )
+      .innerJoin("category", "c", 'c.id = tcc."categoryId"')
       .leftJoin("team", "tm", 't.id = tm."tournamentId"')
       .where("tr.id = :tourId", { tourId })
-      .groupBy("t.id, t.title, t.master")
+      .groupBy("t.id, t.title, t.master, c.gender, c.categoryName")
       .getRawMany();
   },
 });

@@ -20,3 +20,11 @@ export interface CourtData {
   courtId: string;
   allHours: Date[];
 }
+
+export interface TourData {
+  tournamentid: string;
+  tournamentname: string;
+  teamscount: string;
+  master: number;
+  gender_category: string;
+}

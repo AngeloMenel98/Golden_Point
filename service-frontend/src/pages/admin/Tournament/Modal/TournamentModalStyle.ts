@@ -11,13 +11,21 @@ export const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${grayModal};
-  z-index: 1001;
+  z-index: 1000;
 `;
 
 export const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0.5rem;
+`;
+
+export const TournamentContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 
 export const ModalContent = styled.div<{ width: number; height: number }>`
@@ -33,12 +41,12 @@ export const ModalContent = styled.div<{ width: number; height: number }>`
   overflow-y: auto;
 `;
 
-export const ClubContainer = styled.div`
+export const CategoriesContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0rem;
+  padding: 1rem;
 `;
 
 export const FooterContainer = styled.div`

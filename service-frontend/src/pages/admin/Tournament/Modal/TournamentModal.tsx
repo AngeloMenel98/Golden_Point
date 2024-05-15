@@ -7,7 +7,8 @@ import {
   ModalWrapper,
   H3Styled,
   HeaderContainer,
-  ClubContainer,
+  TournamentContainer,
+  CategoriesContainer,
   FooterContainer,
   ButtonSection,
 } from "./TournamentModalStyle";
@@ -16,9 +17,12 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
 import DropDown from "../../../../components/dropdown/DropDown/DropDown";
 import DropDownItem from "../../../../components/dropdown/DropDownItem/DropDownItem";
+import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
+import useSeparateCats from "../../../../hooks/useSeparateCats";
 
 interface TournamentModalProps {
   onClose: () => void;
+  tournaments: TournamentDTO[];
 }
 
 interface CreationData {
@@ -26,17 +30,18 @@ interface CreationData {
   master: number;
 }
 
-const TourModal: React.FC<TournamentModalProps> = ({ onClose }) => {
+const TourModal: React.FC<TournamentModalProps> = ({
+  onClose,
+  tournaments,
+}) => {
   const tourData = useSelector((state: RootState) => state.tour.tour);
   const user = useSelector((state: RootState) => state.user.user);
 
-  const categories: string[] = [
-    "Cuarta",
-    "Quinta",
-    "Sexta",
-    "Séptima",
-    "Octava",
-  ];
+  /* const { maleCat, femaleCat } = useSeparateCats(
+    tournaments.map((t) => t.Categories)
+  );*/
+
+  const cats = ["Cuarta", "Quinta", "Sexta", "Septima"];
 
   const [data, setData] = useState<CreationData>({
     tournamentName: "",
@@ -49,24 +54,22 @@ const TourModal: React.FC<TournamentModalProps> = ({ onClose }) => {
 
   return (
     <ModalWrapper>
-      <ModalContent width={500} height={520}>
+      <ModalContent width={350} height={370}>
         <HeaderContainer>
           <H3Styled>Crear Torneo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
         </HeaderContainer>
-
-        <SecondaryInput
-          label="Nombre del Torneo"
-          id="tournamentName"
-          type="text"
-          value={data.tournamentName}
-          width={200}
-          maxLength={20}
-          onChange={handleChange}
-          // error={fieldErrors.tourName}
-        />
-
-        <ClubContainer>
+        <TournamentContainer>
+          <SecondaryInput
+            label="Nombre del Torneo"
+            id="tournamentName"
+            type="text"
+            value={data.tournamentName}
+            width={200}
+            maxLength={20}
+            onChange={handleChange}
+            // error={fieldErrors.tourName}
+          />
           <SecondaryInput
             label="Master"
             id="master"
@@ -77,11 +80,13 @@ const TourModal: React.FC<TournamentModalProps> = ({ onClose }) => {
             onChange={handleChange}
             //error={fieldErrors.clubName}
           />
+        </TournamentContainer>
+        <CategoriesContainer>
           <DropDown
             buttonText="Masculino"
             content={
               <>
-                {categories.map((cat) => (
+                {cats.map((cat) => (
                   <DropDownItem key={cat}>{cat}</DropDownItem>
                 ))}
               </>
@@ -91,13 +96,13 @@ const TourModal: React.FC<TournamentModalProps> = ({ onClose }) => {
             buttonText="Femenino"
             content={
               <>
-                {categories.map((cat) => (
+                {cats.map((cat) => (
                   <DropDownItem key={cat}>{cat}</DropDownItem>
                 ))}
               </>
             }
           />
-        </ClubContainer>
+        </CategoriesContainer>
 
         <FooterContainer>
           <ButtonSection>
