@@ -3,6 +3,7 @@ export const white = "#FFFFFF";
 
 export const darkGreen = "#40573C";
 export const pastelGreen = "#96a259";
+export const lightGreen = "#dbead5";
 export const mint = "#98fb98";
 
 export const darkGray = "#767676";

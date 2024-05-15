@@ -26,7 +26,7 @@ export class TournamentController {
         });
       }
 
-      const { tourId, userId, title, master, categoryData } = req.body;
+      const { tourId, userId, title, master, categories } = req.body;
 
       const existingUser = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(existingUser);
@@ -39,7 +39,7 @@ export class TournamentController {
       const tournament = await this.tournService.create(
         newTourn,
         tourId,
-        categoryData
+        categories
       );
 
       const response = {
@@ -171,16 +171,16 @@ export class TournamentController {
         const gender = genderCategory[0];
         const category = genderCategory[1];
 
-        if (!response.hasOwnProperty(tournamentName)) {
-          response[tournamentName] = {
-            tournamentId: tournamentId,
+        if (!response.hasOwnProperty(tournamentId)) {
+          response[tournamentId] = {
+            tournamentName: tournamentName,
             teamsCount: tour.teamscount,
             master: tour.master,
             categories: [],
           };
         }
 
-        response[tournamentName].categories.push({
+        response[tournamentId].categories.push({
           gender: gender,
           category: category,
         });

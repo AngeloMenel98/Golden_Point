@@ -1,14 +1,23 @@
 import styled from "styled-components";
-import { black, lightGray } from "../../../utils/colors";
+import { lightGreen } from "../../../utils/colors";
 
-export const Container = styled.div`
+export const Container = styled.div<{ width: number }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
   padding: 0.5rem;
   margin: 0.1rem;
-  width: 100%;
+  width: ${(props) => props.width}px;
   border-radius: 0.5rem;
   cursor: pointer;
 
   &:hover {
-    background-color: ${lightGray};
+    background-color: ${lightGreen};
   }
+`;
+
+export const Icon = styled.div`
+  padding-left: 0.5rem;
 `;

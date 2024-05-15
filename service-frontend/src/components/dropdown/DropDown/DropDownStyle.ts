@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { darkGreen } from "../../../utils/colors";
 
 export const Container = styled.div`
   display: flex;
@@ -15,4 +16,11 @@ export const ButtonContainer = styled.div`
 
 export const ContentContainer = styled.div`
   width: 100%;
+`;
+
+export const Label = styled.span`
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+  color: ${darkGreen};
 `;

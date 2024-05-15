@@ -11,7 +11,7 @@ export const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${grayModal};
-  z-index: 1000;
+  z-index: 1001;
 `;
 
 export const HeaderContainer = styled.div`
@@ -21,11 +21,12 @@ export const HeaderContainer = styled.div`
   padding: 0.5rem;
 `;
 
-export const TournamentContainer = styled.div`
+export const DataContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  padding: 1rem;
 `;
 
 export const ModalContent = styled.div<{ width: number; height: number }>`
@@ -41,19 +42,12 @@ export const ModalContent = styled.div<{ width: number; height: number }>`
   overflow-y: auto;
 `;
 
-export const CategoriesContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-`;
-
 export const FooterContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  padding-top: 1rem;
 `;
 
 export const ButtonSection = styled.div`

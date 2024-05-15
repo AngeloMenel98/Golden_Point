@@ -6,8 +6,8 @@ import { TourDTO } from "../entities/dtos/TourDTO";
 const tournAPI = new TournamentAPI();
 
 interface TournamentResponse {
-  [tournamentName: string]: {
-    tournamentId: string;
+  [tournamentId: string]: {
+    tournamentName: string;
     teamsCount: string;
     master: number;
     categories: Category[];
@@ -29,12 +29,11 @@ export default function useGetTournaments(tour: TourDTO | null) {
 
     const tournRes: TournamentResponse = await tournAPI.getTournaments(tour.Id);
 
-    // Iterar sobre las propiedades del objeto de respuesta
-    for (const [tournamentName, tournamentData] of Object.entries(tournRes)) {
+    for (const [tournamentId, tournamentData] of Object.entries(tournRes)) {
       const newTourn = new TournamentDTO();
 
-      newTourn.Id = tournamentData.tournamentId;
-      newTourn.Title = tournamentName;
+      newTourn.Id = tournamentId;
+      newTourn.Title = tournamentData.tournamentName;
       newTourn.TeamsCount = parseInt(tournamentData.teamsCount, 10);
       newTourn.Master = tournamentData.master;
       newTourn.Categories = tournamentData.categories;

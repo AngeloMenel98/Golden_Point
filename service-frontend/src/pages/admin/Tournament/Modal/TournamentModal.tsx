@@ -1,39 +1,38 @@
 import { useState } from "react";
 import SecondaryInput from "../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../icons/CrossIcon/CrossIcon";
-import { black, red } from "../../../../utils/colors";
+import { red } from "../../../../utils/colors";
 import {
   ModalContent,
   ModalWrapper,
   H3Styled,
   HeaderContainer,
-  TournamentContainer,
-  CategoriesContainer,
   FooterContainer,
   ButtonSection,
+  DataContainer,
 } from "./TournamentModalStyle";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
 import DropDown from "../../../../components/dropdown/DropDown/DropDown";
-import DropDownItem from "../../../../components/dropdown/DropDownItem/DropDownItem";
-import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
-import useSeparateCats from "../../../../hooks/useSeparateCats";
+import { Category } from "../../../../entities/dtos/TournamentDTO";
+import TournamentAPI, {
+  TournCredentials,
+} from "../../../../services/TournamentApi";
 
 interface TournamentModalProps {
   onClose: () => void;
-  tournaments: TournamentDTO[];
+  tournApi: TournamentAPI;
 }
 
 interface CreationData {
   tournamentName: string;
   master: number;
+  maleCat: string[];
+  femaleCat: string[];
 }
 
-const TourModal: React.FC<TournamentModalProps> = ({
-  onClose,
-  tournaments,
-}) => {
+const TourModal: React.FC<TournamentModalProps> = ({ onClose, tournApi }) => {
   const tourData = useSelector((state: RootState) => state.tour.tour);
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -41,25 +40,56 @@ const TourModal: React.FC<TournamentModalProps> = ({
     tournaments.map((t) => t.Categories)
   );*/
 
-  const cats = ["Cuarta", "Quinta", "Sexta", "Septima"];
+  const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
 
   const [data, setData] = useState<CreationData>({
     tournamentName: "",
     master: 0,
+    maleCat: [],
+    femaleCat: [],
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
+  const handleSaveTournament = async () => {
+    const categories: Category[] = [];
+
+    data.maleCat.forEach((category) => {
+      categories.push({
+        gender: "Masculino",
+        category: category,
+      });
+    });
+
+    data.femaleCat.forEach((category) => {
+      categories.push({
+        gender: "Femenino",
+        category: category,
+      });
+    });
+
+    const tournament: TournCredentials = {
+      userId: user?.Id,
+      tourId: tourData?.Id,
+      title: data.tournamentName,
+      master: data.master,
+      categories: categories,
+    };
+    console.log(tournament);
+
+    await tournApi.addTournament(tournament);
+  };
+
   return (
     <ModalWrapper>
-      <ModalContent width={350} height={370}>
+      <ModalContent width={400} height={400}>
         <HeaderContainer>
           <H3Styled>Crear Torneo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
         </HeaderContainer>
-        <TournamentContainer>
+        <DataContainer>
           <SecondaryInput
             label="Nombre del Torneo"
             id="tournamentName"
@@ -75,34 +105,30 @@ const TourModal: React.FC<TournamentModalProps> = ({
             id="master"
             type="text"
             value={data.master}
-            width={50}
+            width={40}
             maxLength={4}
             onChange={handleChange}
             //error={fieldErrors.clubName}
           />
-        </TournamentContainer>
-        <CategoriesContainer>
+        </DataContainer>
+        <DataContainer>
           <DropDown
             buttonText="Masculino"
-            content={
-              <>
-                {cats.map((cat) => (
-                  <DropDownItem key={cat}>{cat}</DropDownItem>
-                ))}
-              </>
+            items={cats}
+            width={180}
+            onChange={(selectedItems) =>
+              setData({ ...data, maleCat: selectedItems })
             }
           />
           <DropDown
             buttonText="Femenino"
-            content={
-              <>
-                {cats.map((cat) => (
-                  <DropDownItem key={cat}>{cat}</DropDownItem>
-                ))}
-              </>
+            items={cats}
+            width={180}
+            onChange={(selectedItems) =>
+              setData({ ...data, femaleCat: selectedItems })
             }
           />
-        </CategoriesContainer>
+        </DataContainer>
 
         <FooterContainer>
           <ButtonSection>
@@ -113,7 +139,7 @@ const TourModal: React.FC<TournamentModalProps> = ({
             />
           </ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Crear" />
+            <SecondaryButton text="Crear" onClick={handleSaveTournament} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

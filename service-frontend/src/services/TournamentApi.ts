@@ -1,20 +1,23 @@
+import { Category } from "../entities/dtos/TournamentDTO";
 import GeneralAPI from "./GeneralApi";
 
 export interface TournCredentials {
   userId?: string;
-  clubsId: string[];
+  tourId?: string;
   title: string;
+  master: number;
+  categories: Category[];
 }
 
 class TournamentAPI extends GeneralAPI {
-  /*async addTournament(newTour: TournCredentials) {
+  async addTournament(newTournament: TournCredentials) {
     try {
-      const res = await this.api.post("/tour/create", newTour);
+      const res = await this.api.post("/tournament/create", newTournament);
       return res.data;
     } catch (e) {
       throw e;
     }
-  }*/
+  }
 
   async getTournaments(tourId: string) {
     try {

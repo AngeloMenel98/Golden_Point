@@ -11,7 +11,7 @@ router.post(
     check("title")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("title")),
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Titulo")),
     check("tourId")
       .not()
       .isEmpty()
@@ -23,11 +23,11 @@ router.post(
     check("master")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("master")),
-    check("categoryData")
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Master")),
+    check("categories")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("categoryData")),
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Categorias")),
   ],
   tournController.create.bind(tournController)
 );
