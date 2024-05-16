@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Category, TournamentDTO } from "../entities/dtos/TournamentDTO";
 import TournamentAPI from "../services/TournamentApi";
 import { TourDTO } from "../entities/dtos/TourDTO";
+import { TournamentFieldErrors } from "../errors/TournamentErrors";
 
 const tournAPI = new TournamentAPI();
 
@@ -17,36 +18,51 @@ interface TournamentResponse {
 export default function useGetTournaments(tour: TourDTO | null) {
   const [tournaments, setTournaments] = useState<TournamentDTO[]>([]);
 
+  const [error, setError] = useState<string>("");
+
   if (!tour) {
     return {
       tournaments,
       tournAPI,
+      error,
     };
   }
 
   const getTournaments = async () => {
     const tournArray: TournamentDTO[] = [];
+    let tournData: TournamentResponse = {};
 
-    const tournRes: TournamentResponse = await tournAPI.getTournaments(tour.Id);
+    const tournRes = await tournAPI.getTournaments(tour.Id);
 
-    for (const [tournamentId, tournamentData] of Object.entries(tournRes)) {
-      const newTourn = new TournamentDTO();
+    if (!tournRes.fieldErrors?.notFound) {
+      tournData = tournRes;
+      for (const [tournamentId, tournamentData] of Object.entries(tournData)) {
+        const newTourn = new TournamentDTO();
 
-      newTourn.Id = tournamentId;
-      newTourn.Title = tournamentData.tournamentName;
-      newTourn.TeamsCount = parseInt(tournamentData.teamsCount, 10);
-      newTourn.Master = tournamentData.master;
-      newTourn.Categories = tournamentData.categories;
+        newTourn.Id = tournamentId;
+        newTourn.Title = tournamentData.tournamentName;
+        newTourn.TeamsCount = parseInt(tournamentData.teamsCount, 10);
+        newTourn.Master = tournamentData.master;
+        newTourn.Categories = tournamentData.categories;
 
-      tournArray.push(newTourn);
+        tournArray.push(newTourn);
+      }
+
+      setTournaments(tournArray);
+    } else {
+      setError(tournRes.fieldErrors.notFound);
+
+      return {
+        tournaments,
+        tournAPI,
+        error,
+      };
     }
-
-    setTournaments(tournArray);
   };
 
   useEffect(() => {
     getTournaments();
   }, []);
 
-  return { tournaments, tournAPI };
+  return { tournaments, tournAPI, error };
 }

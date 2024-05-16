@@ -6,16 +6,9 @@ import RegisterCard from "./RegisterCard/RegisterCard";
 import { CardContainer, MainContainer } from "./RegisterStyle";
 
 import UserAPI, { DataRegister } from "../../services/UserApi";
-import {
-  RegisterFieldErrors,
-  errorMappings,
-} from "../../errors/RegisterErrors";
+import { Errors } from "../../errors/Errors";
 
 const userAPI = new UserAPI();
-
-interface RegisterError {
-  msg: string;
-}
 
 const Register: React.FC = () => {
   const [data, setData] = useState<DataRegister>({
@@ -29,40 +22,28 @@ const Register: React.FC = () => {
     location: "",
   });
 
-  const [fieldErrors, setFieldErrors] = useState<RegisterFieldErrors>({});
+  const [fieldErrors, setFieldErrors] = useState<Errors>({});
   const navigate = useNavigate();
 
   const handleClick = async () => {
-    try {
-      if (data.password !== data.confirmPassword) {
-        setFieldErrors((prevErrors) => ({
-          ...prevErrors,
-          confirmPassword: "Las contraseñas no coinciden",
-        }));
-        return;
-      }
-
-      const newUser = await userAPI.register(data);
-
-      navigate("/tour");
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        if (e.response?.data?.errors && e.response.data.errors.length > 0) {
-          const errorMessage: RegisterError[] = e.response.data.errors;
-          const fieldErrors: RegisterFieldErrors = {};
-
-          errorMessage.forEach((error) => {
-            const fieldName = errorMappings[error.msg];
-            if (fieldName) {
-              fieldErrors[fieldName] = error.msg;
-            } else {
-              fieldErrors.general = "An unexpected error occurred";
-            }
-          });
-          setFieldErrors(fieldErrors);
-        }
-      }
+    if (data.password !== data.confirmPassword) {
+      setFieldErrors((prevErrors) => ({
+        ...prevErrors,
+        confirmPassword: fieldErrors.confirmPassword,
+      }));
+      return;
     }
+
+    const newUser = await userAPI.register(data);
+
+    if (newUser.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...newUser.fieldErrors,
+      }));
+    }
+
+    navigate("/");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -38,7 +38,7 @@ const TournamentRow: React.FC<TournamentRowProps> = ({
       userId: user?.Id,
     };
 
-    const tournRes = await tournApi.deleteTour(deleteTourn);
+    const tournRes = await tournApi.deleteTournament(deleteTourn);
   };
 
   return (
@@ -62,7 +62,10 @@ const TournamentRow: React.FC<TournamentRowProps> = ({
       </LeftContainer>
       <FullRightContainer>
         <TeamsContainer>
-          Equipos: <TextSpan>{tournData.TeamsCount}/24</TextSpan>
+          Equipos:{" "}
+          <TextSpan>
+            {tournData.TeamsCount}/{tournData.Categories.length * 12}
+          </TextSpan>
         </TeamsContainer>
         {isShown && (
           <TrashIcon

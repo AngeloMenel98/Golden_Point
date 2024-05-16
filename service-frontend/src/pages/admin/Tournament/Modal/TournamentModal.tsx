@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SecondaryInput from "../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../icons/CrossIcon/CrossIcon";
 import { red } from "../../../../utils/colors";
@@ -12,77 +12,48 @@ import {
   DataContainer,
 } from "./TournamentModalStyle";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../reduxSlices/store";
 import DropDown from "../../../../components/dropdown/DropDown/DropDown";
-import { Category } from "../../../../entities/dtos/TournamentDTO";
-import TournamentAPI, {
-  TournCredentials,
-} from "../../../../services/TournamentApi";
+import { CreationData } from "../Tournament";
+import { Errors } from "../../../../errors/Errors";
 
 interface TournamentModalProps {
+  data: CreationData;
+  onChangeData: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
-  tournApi: TournamentAPI;
+  onSaveTourn: () => void;
+  errors: Errors;
 }
 
-interface CreationData {
-  tournamentName: string;
-  master: number;
+interface DropDownData {
+  master: number[];
   maleCat: string[];
   femaleCat: string[];
 }
 
 const TournamentModal: React.FC<TournamentModalProps> = ({
+  data,
   onClose,
-  tournApi,
+  onChangeData,
+  onSaveTourn,
+  errors,
 }) => {
-  const tourData = useSelector((state: RootState) => state.tour.tour);
-  const user = useSelector((state: RootState) => state.user.user);
-
   /* const { maleCat, femaleCat } = useSeparateCats(
     tournaments.map((t) => t.Categories)
   );*/
 
+  const masters = [1000, 1500];
   const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
 
-  const [data, setData] = useState<CreationData>({
-    tournamentName: "",
-    master: 0,
+  const [dropDownData, setDropDownData] = useState<DropDownData>({
+    master: [],
     maleCat: [],
     femaleCat: [],
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ ...data, [e.target.id]: e.target.value });
-  };
-
-  const handleSaveTournament = async () => {
-    const categories: Category[] = [];
-
-    data.maleCat.forEach((category) => {
-      categories.push({
-        gender: "Masculino",
-        categoryName: category,
-      });
-    });
-
-    data.femaleCat.forEach((category) => {
-      categories.push({
-        gender: "Femenino",
-        categoryName: category,
-      });
-    });
-
-    const tournament: TournCredentials = {
-      userId: user?.Id,
-      tourId: tourData?.Id,
-      title: data.tournamentName,
-      master: data.master,
-      categories: categories,
-    };
-
-    await tournApi.addTournament(tournament);
-  };
+  useEffect(() => {
+    data.maleCat = dropDownData.maleCat;
+    data.femaleCat = dropDownData.femaleCat;
+  }, [dropDownData]);
 
   return (
     <ModalWrapper>
@@ -99,18 +70,26 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             value={data.tournamentName}
             width={200}
             maxLength={20}
-            onChange={handleChange}
-            // error={fieldErrors.tourName}
+            onChange={onChangeData}
+            error={errors.tournamentName}
           />
-          <SecondaryInput
+          {/*<SecondaryInput
             label="Master"
             id="master"
             type="text"
             value={data.master}
             width={40}
             maxLength={4}
-            onChange={handleChange}
-            //error={fieldErrors.clubName}
+            onChange={onChangeData}
+            error={errors.master}
+  />*/}
+          <DropDown
+            buttonText="Master"
+            items={masters}
+            width={100}
+            onChange={(selectedItem: number[]) => {
+              setDropDownData({ ...dropDownData, master: selectedItem });
+            }}
           />
         </DataContainer>
         <DataContainer>
@@ -118,17 +97,17 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             buttonText="Masculino"
             items={cats}
             width={180}
-            onChange={(selectedItems) =>
-              setData({ ...data, maleCat: selectedItems })
-            }
+            onChange={(selectedItems: string[]) => {
+              setDropDownData({ ...dropDownData, maleCat: selectedItems });
+            }}
           />
           <DropDown
             buttonText="Femenino"
             items={cats}
             width={180}
-            onChange={(selectedItems) =>
-              setData({ ...data, femaleCat: selectedItems })
-            }
+            onChange={(selectedItems: string[]) => {
+              setDropDownData({ ...dropDownData, femaleCat: selectedItems });
+            }}
           />
         </DataContainer>
 
@@ -141,7 +120,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             />
           </ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Crear" onClick={handleSaveTournament} />
+            <SecondaryButton text="Crear" onClick={onSaveTourn} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import NavBar from "../../../components/navbar/NavBar";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
+
+import TourCard from "./TourCard/TourCard";
+import TourModal from "./TourModal/TourModal";
 
 import {
   ButtonContainer,
@@ -17,14 +20,12 @@ import {
 import { darkGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 
-import TourCard from "./TourCard/TourCard";
-import TourModal from "./TourModal/TourModal";
-import { TourFieldErrors } from "../../../errors/TourErrors";
 import { RootState } from "../../../reduxSlices/store";
 import useGetTours from "../../../hooks/useGetTours";
 import ClubAPI, { ClubCredentials } from "../../../services/ClubApi";
 import { TourCredentials } from "../../../services/TourApi";
 import { ClubDTO } from "../../../entities/dtos/ClubDTO";
+import { Errors } from "../../../errors/Errors";
 
 export interface CreationData {
   tourName: string;
@@ -53,7 +54,7 @@ const Tours: React.FC = () => {
   const [tourTitle, setTourTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [fieldErrors, setFieldErrors] = useState<TourFieldErrors>({});
+  const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const { tours, tourAPI, error } = useGetTours(user);
 

@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { Category } from "../entities/dtos/TournamentDTO";
 import GeneralAPI from "./GeneralApi";
 
@@ -20,7 +21,7 @@ class TournamentAPI extends GeneralAPI {
       const res = await this.api.post("/tournament/create", newTournament);
       return res.data;
     } catch (e) {
-      throw e;
+      isAxiosError(e);
     }
   }
 
@@ -29,16 +30,16 @@ class TournamentAPI extends GeneralAPI {
       const res = await this.api.get(`/tournament/tourns/${tourId}`);
       return res.data;
     } catch (e) {
-      throw e;
+      isAxiosError(e);
     }
   }
 
-  async deleteTour(deletedTour: DeletedTournament) {
+  async deleteTournament(deletedTour: DeletedTournament) {
     try {
       const res = await this.api.post("/tournament/delete", deletedTour);
       return res.data;
     } catch (e) {
-      throw e;
+      isAxiosError(e);
     }
   }
 }

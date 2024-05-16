@@ -10,12 +10,14 @@ interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
   tournApi: TournamentAPI;
+  error: string;
 }
 
 const TournamentCard: React.FC<TournamentCardProps> = ({
   tournaments,
   tournamentTitle,
   tournApi,
+  error,
 }) => {
   const filteredTourns = tournaments.filter((tourn) =>
     tourn.Title.toLowerCase().includes(tournamentTitle.toLowerCase())
@@ -27,6 +29,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         borderColor={darkGreen}
         boxColor={pastelGreen}
         width={1200}
+        error={error}
       >
         {filteredTourns.map((tourn, index) => (
           <TournamentRow key={index} tournData={tourn} tournApi={tournApi} />

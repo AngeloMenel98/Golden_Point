@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -23,19 +23,38 @@ import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryI
 import { RootState } from "../../../reduxSlices/store";
 import TournamentModal from "./Modal/TournamentModal";
 import useGetTournaments from "../../../hooks/useGetTournaments";
+import { Category } from "../../../entities/dtos/TournamentDTO";
+import { TournCredentials } from "../../../services/TournamentApi";
+import { Errors } from "../../../errors/Errors";
+
+export interface CreationData {
+  tournamentName: string;
+  master: number;
+  maleCat: string[];
+  femaleCat: string[];
+}
 
 const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tourData = useSelector((state: RootState) => state.tour.tour);
 
-  const { tournaments, tournAPI } = useGetTournaments(tourData);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [tournamentTitle, setTournTitle] = useState("");
 
-  function handleChange(e: ChangeEvent<HTMLInputElement>): void {
+  const [data, setData] = useState<CreationData>({
+    tournamentName: "",
+    master: 0,
+    maleCat: [],
+    femaleCat: [],
+  });
+
+  const [fieldErrors, setFieldErrors] = useState<Errors>({});
+
+  const { tournaments, tournAPI, error } = useGetTournaments(tourData);
+
+  const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
-  }
+  };
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -43,6 +62,45 @@ const Tournament: React.FC = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleSaveTournament = async () => {
+    const categories: Category[] = [];
+
+    data.maleCat.forEach((category) => {
+      categories.push({
+        gender: "Masculino",
+        categoryName: category,
+      });
+    });
+
+    data.femaleCat.forEach((category) => {
+      categories.push({
+        gender: "Femenino",
+        categoryName: category,
+      });
+    });
+
+    const tournament: TournCredentials = {
+      userId: user?.Id,
+      tourId: tourData?.Id,
+      title: data.tournamentName,
+      master: data.master,
+      categories: categories,
+    };
+
+    const res = await tournAPI.addTournament(tournament);
+
+    if (res.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...res.fieldErrors,
+      }));
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setData({ ...data, [e.target.id]: e.target.value });
   };
 
   return (
@@ -71,7 +129,14 @@ const Tournament: React.FC = () => {
             <SecondaryButton text="Crear Torneos" onClick={handleOpenModal} />
           </ButtonContainer>
           {isModalOpen && (
-            <TournamentModal onClose={handleCloseModal} tournApi={tournAPI} />
+            <TournamentModal
+              data={data}
+              onClose={handleCloseModal}
+              onChangeData={handleChange}
+              onSaveTourn={handleSaveTournament}
+              //onChangeItems={handleSelectedItems}
+              errors={fieldErrors}
+            />
           )}
           <InputContainer>
             <SecondaryInput
@@ -81,7 +146,7 @@ const Tournament: React.FC = () => {
               width={250}
               placeholder="Buscar Torneo"
               icon={<SearchIcon width={20} height={18} color={darkGreen} />}
-              onChange={handleChange}
+              onChange={handleTournTitle}
             />
           </InputContainer>
         </SpaceContainer>
@@ -89,6 +154,7 @@ const Tournament: React.FC = () => {
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
           tournApi={tournAPI}
+          error={error}
         />
       </TournamentSection>
     </MainContainer>

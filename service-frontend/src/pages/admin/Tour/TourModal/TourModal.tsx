@@ -17,13 +17,13 @@ import {
   FooterContainer,
   ButtonSection,
 } from "./TourModalStyle";
-import { TourFieldErrors } from "../../../../errors/TourErrors";
 import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
 import ClubRow from "./ClubRow/ClubRow";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import { CreationData } from "../Tours";
 import useGetClubs from "../../../../hooks/useGetClubs";
+import { Errors } from "../../../../errors/Errors";
 
 interface TourModalProps {
   data: CreationData;
@@ -32,7 +32,7 @@ interface TourModalProps {
   onCheckBox: (club: ClubDTO, isChecked: boolean) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
-  errors: TourFieldErrors;
+  errors: Errors;
 }
 
 const TourModal: React.FC<TourModalProps> = ({
@@ -132,7 +132,7 @@ const TourModal: React.FC<TourModalProps> = ({
           boxColor={black}
           width={1000}
           maxHeight={200}
-          errors={errors}
+          error={errors.notFound}
         >
           {filteredClubs.map((club, index) => (
             <ClubRow

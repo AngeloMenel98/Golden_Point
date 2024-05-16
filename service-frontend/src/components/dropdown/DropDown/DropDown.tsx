@@ -9,22 +9,27 @@ import {
 } from "./DropDownStyle";
 import DropDownItem from "../DropDownItem/DropDownItem";
 
-interface DropDownProps {
+interface DropDownProps<T extends string | number | boolean> {
   buttonText: React.ReactNode;
-  items: string[];
+  items: T[];
   width: number;
-  onChange: (selectedItems: string[]) => void;
+  onChange: (selectedItems: T[]) => void;
 }
 
-const DropDown = ({ buttonText, items, width, onChange }: DropDownProps) => {
+const DropDown = <T extends string | number | boolean>({
+  buttonText,
+  items,
+  width,
+  onChange,
+}: DropDownProps<T>) => {
   const [open, setOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<T[]>([]);
 
   const toggleDropDown = () => {
     setOpen((open) => !open);
   };
 
-  const handleItemClick = (item: string) => {
+  const handleItemClick = (item: T) => {
     setSelectedItems((prevItems) => {
       const newSelectedItems = prevItems.includes(item)
         ? prevItems.filter((selectedItem) => selectedItem !== item)
@@ -52,14 +57,14 @@ const DropDown = ({ buttonText, items, width, onChange }: DropDownProps) => {
 
       <ContentContainer>
         <DropDownContent open={open} width={width}>
-          {items.map((item) => (
+          {items.map((item, index) => (
             <DropDownItem
-              key={item}
+              key={index}
               onClick={() => handleItemClick(item)}
               selected={selectedItems.includes(item)}
               width={width}
             >
-              {item}
+              {item.toString()}
             </DropDownItem>
           ))}
         </DropDownContent>
