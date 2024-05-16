@@ -1,12 +1,5 @@
 import styled from "styled-components";
-import {
-  black,
-  darkGray,
-  darkGreen,
-  lightGray,
-  pastelGreen,
-  white,
-} from "../../../utils/colors";
+import { black, lightGray, pastelGreen, white } from "../../../utils/colors";
 
 export const ButtonContainer = styled.div`
   display: flex;

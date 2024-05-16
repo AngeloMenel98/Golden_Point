@@ -1,6 +1,11 @@
 import { Category } from "../entities/dtos/TournamentDTO";
 import GeneralAPI from "./GeneralApi";
 
+export interface DeletedTournament {
+  tournamentId: string;
+  userId?: string;
+}
+
 export interface TournCredentials {
   userId?: string;
   tourId?: string;
@@ -28,14 +33,14 @@ class TournamentAPI extends GeneralAPI {
     }
   }
 
-  /*async deleteTour(deletedTour: DeletedTour) {
+  async deleteTour(deletedTour: DeletedTournament) {
     try {
-      const res = await this.api.post("/tour/delete", deletedTour);
+      const res = await this.api.post("/tournament/delete", deletedTour);
       return res.data;
     } catch (e) {
       throw e;
     }
-  }*/
+  }
 }
 
 export default TournamentAPI;

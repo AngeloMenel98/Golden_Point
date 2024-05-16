@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { CardContainer, StyledCard } from "./CardStyle";
+import { black } from "../../utils/colors";
 
 interface CardProps {
   children: ReactNode;
@@ -8,6 +9,7 @@ interface CardProps {
   boxColor: string;
   width: number;
   maxHeight?: number;
+  error: string;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -17,6 +19,7 @@ const Card: React.FC<CardProps> = ({
   boxColor,
   width,
   maxHeight = 300,
+  error,
 }) => {
   return (
     <CardContainer>
@@ -27,6 +30,7 @@ const Card: React.FC<CardProps> = ({
         width={width}
         maxHeight={maxHeight}
       >
+        {error && <p style={{ color: black }}>{error}</p>}
         {children}
       </StyledCard>
     </CardContainer>

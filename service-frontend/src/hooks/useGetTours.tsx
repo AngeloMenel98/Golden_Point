@@ -7,16 +7,30 @@ const tourAPI = new TourAPI();
 
 export default function useGetTours(user: User | null) {
   const [tours, setTours] = useState<TourDTO[]>([]);
+
+  const [error, setError] = useState<string>("");
+
   if (!user) {
     return {
       tours,
       tourAPI,
+      error,
     };
   }
   const getTours = async () => {
     const tourArray: TourDTO[] = [];
 
     const tourRes = await tourAPI.getTours(user.Id);
+
+    if (tourRes.fieldErrors) {
+      setError(tourRes.fieldErrors.notFound);
+
+      return {
+        tours,
+        tourAPI,
+        error,
+      };
+    }
 
     tourRes.forEach((t: any) => {
       const newTour = new TourDTO();
@@ -38,5 +52,5 @@ export default function useGetTours(user: User | null) {
     getTours();
   }, []);
 
-  return { tours, tourAPI };
+  return { tours, tourAPI, error };
 }

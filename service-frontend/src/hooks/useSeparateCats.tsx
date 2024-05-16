@@ -7,8 +7,8 @@ export default function useSeparateCats(categories: Category[][]) {
   categories.forEach((c) =>
     c.forEach((c) => {
       c.gender === "Masculino"
-        ? maleCat.push(c.category)
-        : femaleCat.push(c.category);
+        ? maleCat.push(c.categoryName)
+        : femaleCat.push(c.categoryName);
     })
   );
 

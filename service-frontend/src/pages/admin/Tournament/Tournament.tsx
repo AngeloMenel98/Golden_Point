@@ -37,7 +37,7 @@ const Tournament: React.FC = () => {
     setTournTitle(e.target.value);
   }
 
-  const handleOpenModal = async () => {
+  const handleOpenModal = () => {
     setIsModalOpen(true);
   };
 
@@ -88,6 +88,7 @@ const Tournament: React.FC = () => {
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
+          tournApi={tournAPI}
         />
       </TournamentSection>
     </MainContainer>

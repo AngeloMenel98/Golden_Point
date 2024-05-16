@@ -1,4 +1,10 @@
+import axios from "axios";
 import GeneralAPI from "./GeneralApi";
+import { TourFieldErrors, errorMappings } from "../errors/TourErrors";
+
+interface ClubError {
+  msg: string;
+}
 
 export interface ClubCredentials {
   userId?: string;
@@ -24,7 +30,24 @@ class ClubAPI extends GeneralAPI {
       const res = await this.api.post("/club/create", club);
       return res.data;
     } catch (e) {
-      throw e;
+      if (axios.isAxiosError(e)) {
+        if (e.response?.data?.error && e.response.data.error.length > 0) {
+          const errorMessages: ClubError[] = e.response.data.error;
+
+          const fieldErrors: TourFieldErrors = {};
+
+          errorMessages.forEach((error) => {
+            const fieldName = errorMappings[error.msg];
+
+            if (fieldName) {
+              fieldErrors[fieldName] = error.msg;
+            } else {
+              fieldErrors.general = "An unexpected error occurred";
+            }
+          });
+          return { fieldErrors };
+        }
+      }
     }
   }
 }

@@ -29,16 +29,16 @@ export const ButtonInputContainer = styled.div`
 
 export const ButtonContainer = styled.div`
   padding-top: 1rem;
-  padding-left: 5rem;
-  padding-right: 15rem;
+  padding-left: 3rem;
+  padding-right: 17rem;
 `;
 
 export const InputContainer = styled.div`
   padding-top: 1rem;
-  padding-left: 30rem;
-  padding-right: 6rem;
+  padding-left: 35rem;
+  padding-right: 3rem;
 `;
 export const H2 = styled.h2`
   color: ${darkGreen};
-  padding: 0.01rem 5rem;
+  padding: 0.01rem 3rem;
 `;

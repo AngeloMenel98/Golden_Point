@@ -4,15 +4,18 @@ import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
 import { CardContainer } from "./TournamentStyle";
 import TournamentRow from "../Row/TournamentRow";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
+import TournamentAPI from "../../../../services/TournamentApi";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
+  tournApi: TournamentAPI;
 }
 
 const TournamentCard: React.FC<TournamentCardProps> = ({
   tournaments,
   tournamentTitle,
+  tournApi,
 }) => {
   const filteredTourns = tournaments.filter((tourn) =>
     tourn.Title.toLowerCase().includes(tournamentTitle.toLowerCase())
@@ -26,7 +29,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         width={1200}
       >
         {filteredTourns.map((tourn, index) => (
-          <TournamentRow key={index} tournData={tourn} />
+          <TournamentRow key={index} tournData={tourn} tournApi={tournApi} />
         ))}
       </Card>
     </CardContainer>

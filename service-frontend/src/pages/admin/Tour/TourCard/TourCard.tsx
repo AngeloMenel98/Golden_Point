@@ -9,9 +9,15 @@ interface TourCardProps {
   tours: TourDTO[];
   tourApi: TourAPI;
   tourTitle: string;
+  error: string;
 }
 
-const TourCard: React.FC<TourCardProps> = ({ tours, tourApi, tourTitle }) => {
+const TourCard: React.FC<TourCardProps> = ({
+  tours,
+  tourApi,
+  tourTitle,
+  error,
+}) => {
   const filteredTours = tours.filter((tour) =>
     tour.TourTitle.toLowerCase().includes(tourTitle.toLowerCase())
   );
@@ -23,6 +29,7 @@ const TourCard: React.FC<TourCardProps> = ({ tours, tourApi, tourTitle }) => {
         borderColor={darkGreen}
         boxColor={pastelGreen}
         width={1200}
+        error={error}
       >
         {filteredTours.map((tour, index) => (
           <TourRow key={index} tourData={tour} tourApi={tourApi} />

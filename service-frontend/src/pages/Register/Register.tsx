@@ -64,6 +64,7 @@ const Register: React.FC = () => {
       }
     }
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === "password" || e.target.id === "confirmPassword") {
       setData({ ...data, [e.target.id]: e.target.value });

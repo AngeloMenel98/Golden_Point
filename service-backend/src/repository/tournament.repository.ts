@@ -34,6 +34,7 @@ export const TournamentRepository = AppDataSource.getRepository(
       .innerJoin("category", "c", 'c.id = tcc."categoryId"')
       .leftJoin("team", "tm", 't.id = tm."tournamentId"')
       .where("tr.id = :tourId", { tourId })
+      .andWhere('t."isDeleted" = false')
       .groupBy("t.id, t.title, t.master, c.gender, c.categoryName")
       .getRawMany();
   },

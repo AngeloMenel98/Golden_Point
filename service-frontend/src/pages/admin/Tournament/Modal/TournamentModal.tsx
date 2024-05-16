@@ -32,7 +32,10 @@ interface CreationData {
   femaleCat: string[];
 }
 
-const TourModal: React.FC<TournamentModalProps> = ({ onClose, tournApi }) => {
+const TournamentModal: React.FC<TournamentModalProps> = ({
+  onClose,
+  tournApi,
+}) => {
   const tourData = useSelector((state: RootState) => state.tour.tour);
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -59,14 +62,14 @@ const TourModal: React.FC<TournamentModalProps> = ({ onClose, tournApi }) => {
     data.maleCat.forEach((category) => {
       categories.push({
         gender: "Masculino",
-        category: category,
+        categoryName: category,
       });
     });
 
     data.femaleCat.forEach((category) => {
       categories.push({
         gender: "Femenino",
-        category: category,
+        categoryName: category,
       });
     });
 
@@ -77,7 +80,6 @@ const TourModal: React.FC<TournamentModalProps> = ({ onClose, tournApi }) => {
       master: data.master,
       categories: categories,
     };
-    console.log(tournament);
 
     await tournApi.addTournament(tournament);
   };
@@ -147,4 +149,4 @@ const TourModal: React.FC<TournamentModalProps> = ({ onClose, tournApi }) => {
   );
 };
 
-export default TourModal;
+export default TournamentModal;

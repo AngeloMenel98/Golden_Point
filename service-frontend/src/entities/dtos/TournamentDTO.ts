@@ -1,5 +1,5 @@
 export interface Category {
-  category: string;
+  categoryName: string;
   gender: string;
 }
 
