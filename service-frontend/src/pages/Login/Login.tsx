@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserAPI, { Credentials } from "../../services/UserApi";
@@ -17,6 +16,7 @@ import {
 } from "./LoginStyles";
 import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
 import EnterIcon from "../../icons/EnterIcon/EnterIcon";
+import { Errors } from "../../errors/Errors";
 
 const userAPI = new UserAPI();
 
@@ -26,7 +26,7 @@ const Login: React.FC = () => {
     password: "",
   });
 
-  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const navigate = useNavigate();
 
@@ -35,12 +35,20 @@ const Login: React.FC = () => {
   };
 
   const handleClick = async () => {
-    try {
-      const token = await userAPI.login(credentials);
-      localStorage.setItem("token", token);
+    /*try {*/
+    const token = await userAPI.login(credentials);
+    if (token.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...token.fieldErrors,
+      }));
+      return;
+    }
 
-      navigate("/");
-    } catch (e) {
+    localStorage.setItem("token", token);
+
+    navigate("/");
+    /* } catch (e) {
       if (axios.isAxiosError(e)) {
         if (e.response?.data?.error && e.response.data.error.length > 0) {
           const errorMessage: string = e.response.data.error[0].msg;
@@ -49,7 +57,7 @@ const Login: React.FC = () => {
           setError("An unexpected error occurred.");
         }
       }
-    }
+    }*/
   };
 
   return (
@@ -77,6 +85,7 @@ const Login: React.FC = () => {
             value={credentials.username}
             maxLength={20}
             onChange={handleChange}
+            error={fieldErrors.username}
           />
           <PrimaryInput
             label="Contraseña"
@@ -85,6 +94,7 @@ const Login: React.FC = () => {
             value={credentials.password}
             maxLength={20}
             onChange={handleChange}
+            error={fieldErrors.password}
           />
 
           <ForgotPasswordContainer>
@@ -95,7 +105,6 @@ const Login: React.FC = () => {
           <PrimaryButton
             text="Iniciar Sesión"
             onClick={handleClick}
-            errorMessage={error}
             icon={
               <EnterIcon
                 width={30}

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Category, TournamentDTO } from "../entities/dtos/TournamentDTO";
 import TournamentAPI from "../services/TournamentApi";
 import { TourDTO } from "../entities/dtos/TourDTO";
-import { TournamentFieldErrors } from "../errors/TournamentErrors";
 
 const tournAPI = new TournamentAPI();
 

@@ -1,10 +1,6 @@
 import styled from "styled-components";
 import { black } from "../../../utils/colors";
 
-export const MainContainer = styled.div`
-  height: 100vh;
-`;
-
 export const H2 = styled.h2`
   color: ${black};
 `;

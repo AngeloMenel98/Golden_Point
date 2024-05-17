@@ -9,7 +9,7 @@ interface CardProps {
   boxColor: string;
   width: number;
   maxHeight?: number;
-  error: string | undefined;
+  error?: string;
 }
 
 const Card: React.FC<CardProps> = ({

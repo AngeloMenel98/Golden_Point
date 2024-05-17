@@ -13,12 +13,16 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 `;
 
-export const Button = styled.button<{ isDangerous?: boolean }>`
+export const Button = styled.button<{
+  isDangerous?: boolean;
+  hasIcon: boolean;
+}>`
   background-color: ${(props) => (props.isDangerous ? red : "transparent")};
   color: ${(props) => (props.isDangerous ? white : darkGreen)};
-  padding: 8px 20px;
+  padding: ${(props) => (props.hasIcon ? "5px" : "8px 20px")};
   border: 2px solid ${(props) => (props.isDangerous ? lightRed : darkGreen)};
   border-radius: 6px;
   cursor: pointer;
@@ -48,8 +52,4 @@ export const Button = styled.button<{ isDangerous?: boolean }>`
       opacity: 1;
     }
   }*/
-`;
-
-export const StuffContainer = styled.div`
-  padding-left: 5px;
 `;

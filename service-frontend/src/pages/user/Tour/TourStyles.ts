@@ -13,27 +13,29 @@ export const NavBarContainer = styled.div`
 `;
 
 export const TourSection = styled.div`
-  display: flex;
-  flex-direction: column;
-
   flex: 10;
   background-color: ${white};
   width: 100%;
+`;
 
-  padding-left: 1rem;
-  padding-right: 1rem;
+export const ButtonInputContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+
+export const ButtonContainer = styled.div`
+  padding-top: 1rem;
+  padding-left: 3rem;
+  padding-right: 17rem;
 `;
 
 export const InputContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-
   padding-top: 1rem;
+  padding-left: 35rem;
+  padding-right: 5rem;
 `;
 export const H2 = styled.h2`
   color: ${darkGreen};
-
-  padding: 0.1rem 1rem;
+  padding: 0.01rem 3rem;
 `;

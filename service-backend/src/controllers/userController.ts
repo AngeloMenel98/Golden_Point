@@ -61,7 +61,7 @@ export class UserController {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
         return res.status(401).json({
-          errors: errs.array().map((e) => ({
+          error: errs.array().map((e) => ({
             msg: e.msg,
           })),
         });

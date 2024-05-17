@@ -23,7 +23,7 @@ class UserAPI extends GeneralAPI {
       const res = await this.api.post("/login", credentials);
       return res.data.token;
     } catch (e) {
-      throw e;
+      return isAxiosError(e);
     }
   }
 
@@ -32,7 +32,7 @@ class UserAPI extends GeneralAPI {
       const res = await this.api.post("/register", data);
       return res.data;
     } catch (e) {
-      isAxiosError(e);
+      return isAxiosError(e);
     }
   }
 }

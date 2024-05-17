@@ -21,7 +21,7 @@ class TournamentAPI extends GeneralAPI {
       const res = await this.api.post("/tournament/create", newTournament);
       return res.data;
     } catch (e) {
-      isAxiosError(e);
+      return isAxiosError(e);
     }
   }
 
@@ -30,7 +30,7 @@ class TournamentAPI extends GeneralAPI {
       const res = await this.api.get(`/tournament/tourns/${tourId}`);
       return res.data;
     } catch (e) {
-      isAxiosError(e);
+      return isAxiosError(e);
     }
   }
 
@@ -39,7 +39,7 @@ class TournamentAPI extends GeneralAPI {
       const res = await this.api.post("/tournament/delete", deletedTour);
       return res.data;
     } catch (e) {
-      isAxiosError(e);
+      return isAxiosError(e);
     }
   }
 }

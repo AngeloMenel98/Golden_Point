@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Button, Container, StuffContainer } from "./SecondaryButtonStyle";
+import { Button, Container } from "./SecondaryButtonStyle";
 
 interface ButtonProps {
   text?: string;
@@ -16,9 +16,9 @@ const SecondaryButton: React.FC<ButtonProps> = ({
 }) => {
   return (
     <Container>
-      <Button onClick={onClick} isDangerous={isDangerous}>
+      <Button onClick={onClick} isDangerous={isDangerous} hasIcon={!!icon}>
         {text && text}
-        {icon && <StuffContainer>{icon}</StuffContainer>}
+        {icon && icon}
       </Button>
     </Container>
   );

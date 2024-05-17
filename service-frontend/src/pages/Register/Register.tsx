@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import RegisterCard from "./RegisterCard/RegisterCard";
@@ -41,6 +40,7 @@ const Register: React.FC = () => {
         ...prevErrors,
         ...newUser.fieldErrors,
       }));
+      return;
     }
 
     navigate("/");
