@@ -11,7 +11,7 @@ import {
   InputContainer,
   ButtonContainer,
 } from "./TournamentStyle";
-import { darkGreen } from "../../../utils/colors";
+import { darkGreen, pastelGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 import RankingIcon from "../../../icons/RankingIcon/RankingIcon";
 
@@ -21,11 +21,13 @@ import SecondaryButton from "../../../components/buttons/SecondaryButton/Seconda
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
 import { RootState } from "../../../reduxSlices/store";
-import TournamentModal from "./Modal/TournamentModal";
+import TournamentModal from "./Modal/CreateTournament/TournamentModal";
 import useGetTournaments from "../../../hooks/useGetTournaments";
 import { Category } from "../../../entities/dtos/TournamentDTO";
 import { TournCredentials } from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
+import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
+import UsersModal from "./Modal/UsersModal/UsersModal";
 
 export interface CreationData {
   tournamentName: string;
@@ -38,7 +40,8 @@ const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tourData = useSelector((state: RootState) => state.tour.tour);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateOpen, setCreateOpen] = useState(false);
+  const [isUserOpen, setUserOpen] = useState(false);
   const [tournamentTitle, setTournTitle] = useState("");
 
   const [data, setData] = useState<CreationData>({
@@ -56,12 +59,18 @@ const Tournament: React.FC = () => {
     setTournTitle(e.target.value);
   };
 
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  const createOpenModal = () => {
+    setCreateOpen(true);
+  };
+  const usersOpenModal = () => {
+    setUserOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const createCloseModal = () => {
+    setCreateOpen(false);
+  };
+  const usersCloseModal = () => {
+    setUserOpen(false);
   };
 
   const handleSaveTournament = async () => {
@@ -112,32 +121,46 @@ const Tournament: React.FC = () => {
         <SpaceContainer>
           <H2>{tourData?.TourTitle}</H2>
           <HeaderButtons>
-            <SecondaryButton text="Usuarios" />
+            <SecondaryButton
+              icon={
+                <UsersIcon
+                  width={23}
+                  height={23}
+                  color={pastelGreen}
+                  onClick={usersOpenModal}
+                />
+              }
+              onClick={usersOpenModal}
+            />
           </HeaderButtons>
+
+          {isUserOpen && <UsersModal onClose={usersCloseModal} />}
+
           <HeaderButtons>
             <SecondaryButton text="Torneos" />
           </HeaderButtons>
           <HeaderButtons>
             <SecondaryButton
               text="Rankings"
-              icon={<RankingIcon width={20} height={18} color={darkGreen} />}
+              icon={<RankingIcon width={23} height={18} color={pastelGreen} />}
             />
           </HeaderButtons>
         </SpaceContainer>
         <SpaceContainer>
           <ButtonContainer>
-            <SecondaryButton text="Crear Torneos" onClick={handleOpenModal} />
+            <SecondaryButton text="Crear Torneos" onClick={createOpenModal} />
           </ButtonContainer>
-          {isModalOpen && (
+
+          {isCreateOpen && (
             <TournamentModal
               data={data}
-              onClose={handleCloseModal}
+              onClose={createCloseModal}
               onChangeData={handleChange}
               onSaveTourn={handleSaveTournament}
-              //onChangeItems={handleSelectedItems}
               errors={fieldErrors}
             />
           )}
+
           <InputContainer>
             <SecondaryInput
               id="searchTournament"

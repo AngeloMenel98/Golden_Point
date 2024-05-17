@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import SecondaryInput from "../../../../components/inputs/SecondaryInput/SecondaryInput";
-import CrossIcon from "../../../../icons/CrossIcon/CrossIcon";
-import { red } from "../../../../utils/colors";
+import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
+import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
+import { red } from "../../../../../utils/colors";
 import {
   ModalContent,
   ModalWrapper,
@@ -11,10 +11,10 @@ import {
   ButtonSection,
   DataContainer,
 } from "./TournamentModalStyle";
-import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
-import DropDown from "../../../../components/dropdown/DropDown/DropDown";
-import { CreationData } from "../Tournament";
-import { Errors } from "../../../../errors/Errors";
+import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
+import DropDown from "../../../../../components/dropdown/DropDown/DropDown";
+import { CreationData } from "../../Tournament";
+import { Errors } from "../../../../../errors/Errors";
 
 interface TournamentModalProps {
   data: CreationData;
@@ -73,16 +73,6 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             onChange={onChangeData}
             error={errors.tournamentName}
           />
-          {/*<SecondaryInput
-            label="Master"
-            id="master"
-            type="text"
-            value={data.master}
-            width={40}
-            maxLength={4}
-            onChange={onChangeData}
-            error={errors.master}
-  />*/}
           <DropDown
             buttonText="Master"
             items={masters}

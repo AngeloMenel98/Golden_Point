@@ -12,13 +12,16 @@ import {
 } from "./TournamentRowStyle";
 import CopyableText from "../../../../components/copyableText/CopyableText";
 import TrashIcon from "../../../../icons/TrashIcon/TrashIcon";
-import { red } from "../../../../utils/colors";
+import { mint } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import TournamentAPI, {
   DeletedTournament,
 } from "../../../../services/TournamentApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
+import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
+import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
+import OptsModal from "../Modal/OptionsModal/OptionsModal";
 
 interface TournamentRowProps {
   tournData: TournamentDTO;
@@ -30,6 +33,8 @@ const TournamentRow: React.FC<TournamentRowProps> = ({
   tournApi,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShown, setIsShown] = useState(false);
 
   const deleteTournament = async () => {
@@ -39,6 +44,14 @@ const TournamentRow: React.FC<TournamentRowProps> = ({
     };
 
     const tournRes = await tournApi.deleteTournament(deleteTourn);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -62,17 +75,28 @@ const TournamentRow: React.FC<TournamentRowProps> = ({
       </LeftContainer>
       <FullRightContainer>
         <TeamsContainer>
-          Equipos:{" "}
+          Equipos:
           <TextSpan>
             {tournData.TeamsCount}/{tournData.Categories.length * 12}
           </TextSpan>
         </TeamsContainer>
         {isShown && (
-          <TrashIcon
-            width={20}
-            height={20}
-            color={red}
-            onClick={deleteTournament}
+          <SecondaryButton
+            icon={
+              <OptsIcon
+                width={20}
+                height={20}
+                color={mint}
+                onClick={handleOpenModal}
+              />
+            }
+          />
+        )}
+        {isModalOpen && (
+          <OptsModal
+            open={isModalOpen}
+            width={250}
+            onClose={handleCloseModal}
           />
         )}
       </FullRightContainer>

@@ -1,5 +1,10 @@
 import styled from "styled-components";
-import { black, darkGreen, grayModal, white } from "../../../../utils/colors";
+import {
+  black,
+  darkGreen,
+  grayModal,
+  white,
+} from "../../../../../utils/colors";
 
 export const ModalWrapper = styled.div`
   position: fixed;
