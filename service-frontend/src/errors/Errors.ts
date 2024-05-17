@@ -2,7 +2,6 @@ export interface Errors {
   //Register
   username?: string;
   password?: string;
-  passwordLength?: string;
   confirmPassword?: string;
   firstName?: string;
   lastName?: string;
@@ -21,6 +20,7 @@ export interface Errors {
   avFrom?: string;
   avTo?: string;
   courts?: string;
+  tourCode?: string;
 
   general?: string;
   notFound?: string;
@@ -40,6 +40,8 @@ export const ErrorsRes = {
   avToReq: "Fecha Final es obligatorio",
   courtsReq: "Numero de Canchas es obligatorio",
   notFoundTourReq: "No se encontro ningún Tour.",
+  tourCodeReq: "Código del Tour es obligatorio",
+  tourCodeExistReq: "El código del Tour no existe.",
 
   //Register
   usernameRequired: "Nombre de Usuario es obligatorio",
@@ -66,11 +68,13 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   [ErrorsRes.avToReq]: "avTo",
   [ErrorsRes.courtsReq]: "courts",
   [ErrorsRes.notFoundTourReq]: "notFound",
+  [ErrorsRes.tourCodeReq]: "tourCode",
+  [ErrorsRes.tourCodeExistReq]: "tourCode",
 
   //Register
   [ErrorsRes.usernameRequired]: "username",
   [ErrorsRes.passwordRequired]: "password",
-  [ErrorsRes.passwordMinLength]: "passwordLength",
+  [ErrorsRes.passwordMinLength]: "password",
   [ErrorsRes.emailRequired]: "email",
   [ErrorsRes.firstNameRequired]: "firstName",
   [ErrorsRes.lastNameRequired]: "lastName",

@@ -21,8 +21,12 @@ import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 import { RootState } from "../../../reduxSlices/store";
 import useGetTours from "../../../hooks/useGetTours";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
-import EnterIcon from "../../../icons/EnterIcon/EnterIcon";
-import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
+
+import JoinIcon from "../../../icons/JoinIcon/JoinIcon";
+import JoinModal from "./Modals/JoinModal/JoinModal";
+import { JoinCredentials } from "../../../services/TourApi";
+import { Errors } from "../../../errors/Errors";
+
 export interface CreationData {
   tourName: string;
   clubName: string;
@@ -36,8 +40,38 @@ const ToursUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const [tourTitle, setTourTitle] = useState<string>("");
+  const [code, setCode] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Errors>();
 
   const { tours, tourAPI, error } = useGetTours(user);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleJoin = async () => {
+    const joinCred: JoinCredentials = {
+      userId: user?.Id,
+      tourCode: code,
+    };
+    const res = await tourAPI.joinUser(joinCred);
+
+    if (res.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...res.fieldErrors,
+      }));
+    }
+  };
+
+  const handleJoinCode = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCode(e.target.value);
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTourTitle(e.target.value);
@@ -52,7 +86,15 @@ const ToursUser: React.FC = () => {
         <ButtonInputContainer>
           <ButtonContainer>
             <SecondaryButton
-              icon={<UsersIcon width={27} height={27} color={pastelGreen} />}
+              icon={
+                <JoinIcon
+                  width={25}
+                  height={22}
+                  color={pastelGreen}
+                  onClick={handleOpenModal}
+                />
+              }
+              onClick={handleOpenModal}
             />
           </ButtonContainer>
           <InputContainer>
@@ -67,6 +109,17 @@ const ToursUser: React.FC = () => {
             />
           </InputContainer>
         </ButtonInputContainer>
+        {isModalOpen && (
+          <JoinModal
+            open={isModalOpen}
+            width={250}
+            code={code}
+            onJoin={handleJoin}
+            onJoinCode={handleJoinCode}
+            onClose={handleCloseModal}
+            error={fieldErrors}
+          />
+        )}
         <H2>Todos los Tours</H2>
         <TourCard
           tours={tours}

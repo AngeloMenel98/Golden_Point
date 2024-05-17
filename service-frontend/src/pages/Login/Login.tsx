@@ -17,6 +17,7 @@ import {
 import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
 import EnterIcon from "../../icons/EnterIcon/EnterIcon";
 import { Errors } from "../../errors/Errors";
+import { white } from "../../utils/colors";
 
 const userAPI = new UserAPI();
 
@@ -35,7 +36,6 @@ const Login: React.FC = () => {
   };
 
   const handleClick = async () => {
-    /*try {*/
     const token = await userAPI.login(credentials);
     if (token.fieldErrors) {
       setFieldErrors((prevErrors: any) => ({
@@ -48,16 +48,6 @@ const Login: React.FC = () => {
     localStorage.setItem("token", token);
 
     navigate("/");
-    /* } catch (e) {
-      if (axios.isAxiosError(e)) {
-        if (e.response?.data?.error && e.response.data.error.length > 0) {
-          const errorMessage: string = e.response.data.error[0].msg;
-          setError(errorMessage);
-        } else {
-          setError("An unexpected error occurred.");
-        }
-      }
-    }*/
   };
 
   return (
@@ -105,13 +95,7 @@ const Login: React.FC = () => {
           <PrimaryButton
             text="Iniciar Sesión"
             onClick={handleClick}
-            icon={
-              <EnterIcon
-                width={30}
-                height={30}
-                style={{ marginLeft: "20px" }}
-              />
-            }
+            icon={<EnterIcon width={30} height={30} color={white} />}
           />
         </LoginFormContainer>
       </LoginSection>

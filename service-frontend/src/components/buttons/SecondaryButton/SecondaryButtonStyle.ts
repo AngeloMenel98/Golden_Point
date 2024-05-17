@@ -22,7 +22,7 @@ export const Button = styled.button<{
 }>`
   background-color: ${(props) => (props.isDangerous ? red : "transparent")};
   color: ${(props) => (props.isDangerous ? white : darkGreen)};
-  padding: ${(props) => (props.hasIcon ? "5px" : "8px 20px")};
+  padding: ${(props) => (props.hasIcon ? "8px" : "8px 20px")};
   border: 2px solid ${(props) => (props.isDangerous ? lightRed : darkGreen)};
   border-radius: 6px;
   cursor: pointer;
