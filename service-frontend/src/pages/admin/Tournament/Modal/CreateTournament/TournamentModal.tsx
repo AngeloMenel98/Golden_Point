@@ -51,6 +51,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
   });
 
   useEffect(() => {
+    data.master = dropDownData.master[0];
     data.maleCat = dropDownData.maleCat;
     data.femaleCat = dropDownData.femaleCat;
   }, [dropDownData]);
@@ -80,6 +81,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             onChange={(selectedItem: number[]) => {
               setDropDownData({ ...dropDownData, master: selectedItem });
             }}
+            error={errors.master}
           />
         </DataContainer>
         <DataContainer>
@@ -90,6 +92,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             onChange={(selectedItems: string[]) => {
               setDropDownData({ ...dropDownData, maleCat: selectedItems });
             }}
+            error={errors.categories}
           />
           <DropDown
             buttonText="Femenino"
@@ -98,6 +101,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             onChange={(selectedItems: string[]) => {
               setDropDownData({ ...dropDownData, femaleCat: selectedItems });
             }}
+            error={errors.categories}
           />
         </DataContainer>
 

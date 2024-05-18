@@ -17,13 +17,13 @@ interface TournamentResponse {
 export default function useGetTournaments(tour: TourDTO | null) {
   const [tournaments, setTournaments] = useState<TournamentDTO[]>([]);
 
-  const [error, setError] = useState<string>("");
+  const [errorTournament, setError] = useState<string>("");
 
   if (!tour) {
     return {
       tournaments,
       tournAPI,
-      error,
+      errorTournament,
     };
   }
 
@@ -54,7 +54,7 @@ export default function useGetTournaments(tour: TourDTO | null) {
       return {
         tournaments,
         tournAPI,
-        error,
+        errorTournament,
       };
     }
   };
@@ -63,5 +63,5 @@ export default function useGetTournaments(tour: TourDTO | null) {
     getTournaments();
   }, []);
 
-  return { tournaments, tournAPI, error };
+  return { tournaments, tournAPI, errorTournament };
 }

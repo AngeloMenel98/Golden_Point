@@ -21,7 +21,7 @@ export class TournamentController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           error: errors.array().map((error) => ({
-            message: error.msg,
+            msg: error.msg,
           })),
         });
       }
@@ -70,7 +70,7 @@ export class TournamentController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           error: errors.array().map((error) => ({
-            message: error.msg,
+            msg: error.msg,
           })),
         });
       }
@@ -109,7 +109,7 @@ export class TournamentController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           error: errors.array().map((error) => ({
-            message: error.msg,
+            msg: error.msg,
           })),
         });
       }
@@ -153,7 +153,7 @@ export class TournamentController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           error: errors.array().map((error) => ({
-            message: error.msg,
+            msg: error.msg,
           })),
         });
       }

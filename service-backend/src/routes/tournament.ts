@@ -11,7 +11,7 @@ router.post(
     check("title")
       .not()
       .isEmpty()
-      .withMessage(validationMsg.VALUE_IS_REQUIRED("Titulo")),
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Nombre del Torneo")),
     check("tourId")
       .not()
       .isEmpty()

@@ -26,7 +26,7 @@ class ClubAPI extends GeneralAPI {
       const res = await this.api.post("/club/create", club);
       return res.data;
     } catch (e) {
-      isAxiosError(e);
+      return isAxiosError(e);
     }
   }
 }

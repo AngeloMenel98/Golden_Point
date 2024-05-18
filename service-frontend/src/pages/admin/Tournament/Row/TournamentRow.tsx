@@ -63,12 +63,6 @@ const TournamentRow: React.FC<TournamentRowProps> = ({
         <MemberContainer>
           <TourName>{tournData.Title}</TourName>
         </MemberContainer>
-        {isShown && (
-          <CreatedBy>
-            Creado por:
-            <CopyableText text="Chau" />
-          </CreatedBy>
-        )}
         <CodeContainer>
           Master: <TextSpan>{tournData.Master}</TextSpan>
         </CodeContainer>

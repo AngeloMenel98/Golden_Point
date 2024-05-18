@@ -1,7 +1,7 @@
 import React from "react";
 import Card from "../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
-import { CardContainer } from "./TournamentStyle";
+import { CardContainer } from "./TournamentCardStyle";
 import TournamentRow from "../Row/TournamentRow";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import TournamentAPI from "../../../../services/TournamentApi";

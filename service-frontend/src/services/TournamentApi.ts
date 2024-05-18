@@ -1,5 +1,5 @@
-import { isAxiosError } from "axios";
 import { Category } from "../entities/dtos/TournamentDTO";
+import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface DeletedTournament {

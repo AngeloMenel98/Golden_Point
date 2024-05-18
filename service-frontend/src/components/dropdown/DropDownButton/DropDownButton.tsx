@@ -9,6 +9,7 @@ interface DropDownButtonProps {
   open: boolean;
   toggle: () => void;
   width: number;
+  error: string | undefined;
 }
 
 function DropDownButton({
@@ -16,10 +17,11 @@ function DropDownButton({
   open,
   toggle,
   width,
+  error,
 }: DropDownButtonProps) {
   return (
     <ButtonContainer>
-      <Button onClick={toggle} open={open} width={width}>
+      <Button onClick={toggle} open={open} width={width} error={!!error}>
         <ButtonText>{children}</ButtonText>
         <Icon>
           {open ? (

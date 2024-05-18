@@ -31,3 +31,19 @@ export const ModalContent = styled.div<{ width: number; height: number }>`
   height: ${(props) => props.height}px;
   overflow-y: auto;
 `;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+`;
+
+export const H3Styled = styled.h3`
+  color: ${darkGreen};
+  margin: 0;
+`;
+
+export const Container = styled.div`
+  padding-top: 1rem;
+`;

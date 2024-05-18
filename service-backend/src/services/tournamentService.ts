@@ -31,6 +31,14 @@ export class TournamentService {
     tourId: string,
     categoryData: Category[]
   ) {
+    if (newTournament.master <= 0) {
+      throw new ServiceCodeError(codeErrors.TOURN_1);
+    }
+
+    if (categoryData.length == 0) {
+      throw new ServiceCodeError(codeErrors.TOURN_2);
+    }
+
     const existingTour = await this.tourService.findById(tourId);
 
     const existingCats = await this.categoryService.findCategories(

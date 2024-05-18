@@ -5,6 +5,7 @@ import {
   ButtonContainer,
   Container,
   ContentContainer,
+  ErrorMessage,
   Label,
 } from "./DropDownStyle";
 import DropDownItem from "../DropDownItem/DropDownItem";
@@ -13,6 +14,7 @@ interface DropDownProps<T extends string | number | boolean> {
   buttonText: React.ReactNode;
   items: T[];
   width: number;
+  error: string | undefined;
   onChange: (selectedItems: T[]) => void;
 }
 
@@ -20,6 +22,7 @@ const DropDown = <T extends string | number | boolean>({
   buttonText,
   items,
   width,
+  error,
   onChange,
 }: DropDownProps<T>) => {
   const [open, setOpen] = useState(false);
@@ -49,8 +52,13 @@ const DropDown = <T extends string | number | boolean>({
   return (
     <Container>
       <ButtonContainer>
-        <Label>{buttonText}</Label>
-        <DropDownButton open={open} toggle={toggleDropDown} width={width}>
+        <Label error={!!error}>{buttonText}</Label>
+        <DropDownButton
+          open={open}
+          toggle={toggleDropDown}
+          width={width}
+          error={error}
+        >
           {truncateItems}
         </DropDownButton>
       </ButtonContainer>
@@ -68,6 +76,7 @@ const DropDown = <T extends string | number | boolean>({
             </DropDownItem>
           ))}
         </DropDownContent>
+        {error && <ErrorMessage>{error}</ErrorMessage>}
       </ContentContainer>
     </Container>
   );

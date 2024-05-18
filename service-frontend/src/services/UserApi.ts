@@ -35,6 +35,15 @@ class UserAPI extends GeneralAPI {
       return isAxiosError(e);
     }
   }
+
+  async getUsers(tourId: string) {
+    try {
+      const res = await this.api.get(`/users/${tourId}`);
+      return res.data;
+    } catch (e) {
+      return isAxiosError(e);
+    }
+  }
 }
 
 export default UserAPI;

@@ -12,6 +12,7 @@ export interface Errors {
   //Tournaments
   tournamentName?: string;
   master?: string;
+  categories?: string;
 
   //Tour
   tourName?: string;
@@ -28,8 +29,9 @@ export interface Errors {
 
 export const ErrorsRes = {
   //Tournaments
-  tournamentNameReq: "Titulo es obligatorio",
-  masterReq: "Nombre del Club es obligatorio",
+  tournamentNameReq: "Nombre del Torneo es obligatorio",
+  masterReq: "Master es obligatorio",
+  categoriesReq: "Al menos se necesita una categoría",
   notFoundTournReq: "No se encontro ningún Torneo.",
 
   //Tour
@@ -58,6 +60,7 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   //Tournaments
   [ErrorsRes.tournamentNameReq]: "tournamentName",
   [ErrorsRes.masterReq]: "master",
+  [ErrorsRes.categoriesReq]: "categories",
   [ErrorsRes.notFoundTournReq]: "notFound",
 
   //Tours

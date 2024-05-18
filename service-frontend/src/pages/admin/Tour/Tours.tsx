@@ -75,6 +75,7 @@ const Tours: React.FC = () => {
   };
 
   const handleSaveClub = async () => {
+    setFieldErrors({});
     const club: ClubCredentials = {
       userId: user?.Id,
       clubName: data.clubName,
@@ -95,6 +96,7 @@ const Tours: React.FC = () => {
   };
 
   const handleSaveTour = async () => {
+    setFieldErrors({});
     const tour: TourCredentials = {
       userId: user?.Id,
       clubsId: clubsSelected.map((c) => c.Id),

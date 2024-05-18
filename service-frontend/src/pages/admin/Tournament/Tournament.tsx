@@ -53,7 +53,8 @@ const Tournament: React.FC = () => {
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const { tournaments, tournAPI, error } = useGetTournaments(tourData);
+  const { tournaments, tournAPI, errorTournament } =
+    useGetTournaments(tourData);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -67,13 +68,14 @@ const Tournament: React.FC = () => {
   };
 
   const createCloseModal = () => {
+    setFieldErrors({});
     setCreateOpen(false);
   };
   const usersCloseModal = () => {
     setUserOpen(false);
   };
-
   const handleSaveTournament = async () => {
+    setFieldErrors({});
     const categories: Category[] = [];
 
     data.maleCat.forEach((category) => {
@@ -99,7 +101,7 @@ const Tournament: React.FC = () => {
     };
 
     const res = await tournAPI.addTournament(tournament);
-
+    console.log(res);
     if (res.fieldErrors) {
       setFieldErrors((prevErrors: any) => ({
         ...prevErrors,
@@ -134,7 +136,9 @@ const Tournament: React.FC = () => {
             />
           </HeaderButtons>
 
-          {isUserOpen && <UsersModal onClose={usersCloseModal} />}
+          {isUserOpen && (
+            <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
+          )}
 
           <HeaderButtons>
             <SecondaryButton text="Torneos" />
@@ -177,7 +181,7 @@ const Tournament: React.FC = () => {
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
           tournApi={tournAPI}
-          error={error}
+          error={errorTournament}
         />
       </TournamentSection>
     </MainContainer>
