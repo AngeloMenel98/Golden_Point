@@ -6,7 +6,8 @@ import {
   white,
 } from "../../../../../utils/colors";
 
-export const ModalWrapper = styled.div`
+export const ModalWrapper = styled.div<{ open: boolean }>`
+  display: ${({ open }) => (open ? "block" : "none")};
   position: fixed;
   top: 0;
   left: 0;

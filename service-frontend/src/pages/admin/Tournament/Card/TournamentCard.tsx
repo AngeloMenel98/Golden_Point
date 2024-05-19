@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import Card from "../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
 import { CardContainer } from "./TournamentCardStyle";
 import TournamentRow from "../Row/TournamentRow";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import TournamentAPI from "../../../../services/TournamentApi";
+import OptsModal from "../Modal/OptionsModal/OptionsModal";
+import AddTeamModal from "../Modal/AddTeam/AddTeam";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
@@ -19,9 +21,40 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   tournApi,
   error,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const [modalPosition, setModalPosition] = useState({ top: 0, right: 0 });
+  const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
+
   const filteredTourns = tournaments.filter((tourn) =>
     tourn.Title.toLowerCase().includes(tournamentTitle.toLowerCase())
   );
+
+  const handleOpenModal = (index: number) => {
+    const rowRef = rowRefs.current[index];
+    if (rowRef) {
+      const rect = rowRef.getBoundingClientRect();
+      console.log(rect);
+      setModalPosition({
+        top: rect.bottom,
+        right: rect.left,
+      });
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleOpenAddTeamModal = () => {
+    setIsAddTeamModalOpen(true);
+  };
+
+  const handleCloseAddTeamModal = () => {
+    setIsAddTeamModalOpen(false);
+  };
+
   return (
     <CardContainer>
       <Card
@@ -32,9 +65,32 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         error={error}
       >
         {filteredTourns.map((tourn, index) => (
-          <TournamentRow key={index} tournData={tourn} tournApi={tournApi} />
+          <TournamentRow
+            key={index}
+            ref={(el) => (rowRefs.current[index] = el)}
+            tournData={tourn}
+            tournApi={tournApi}
+            onOpen={() => handleOpenModal(index)}
+            onClose={handleCloseModal}
+          />
         ))}
       </Card>
+
+      {isModalOpen && (
+        <OptsModal
+          open={isModalOpen}
+          width={180}
+          onAddTeam={handleOpenAddTeamModal}
+          onClose={handleCloseModal}
+          position={modalPosition}
+        />
+      )}
+      {isAddTeamModalOpen && (
+        <AddTeamModal
+          open={isAddTeamModalOpen}
+          onClose={handleCloseAddTeamModal}
+        />
+      )}
     </CardContainer>
   );
 };

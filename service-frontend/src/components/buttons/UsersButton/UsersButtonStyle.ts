@@ -8,6 +8,7 @@ import {
   white,
   lightRed,
 } from "../../../utils/colors";
+
 export const Button = styled.button<{
   isDangerous?: boolean;
   hasIcon: boolean;
@@ -47,5 +48,6 @@ export const Button = styled.button<{
 `;
 
 export const Icon = styled.div`
+  padding-top: 5px;
   padding-right: 5px;
 `;

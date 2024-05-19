@@ -15,10 +15,11 @@ import useGetUsers from "../../../../../hooks/useGetUsers";
 
 interface UsersModalProps {
   tourId: string | undefined;
+  open: boolean;
   onClose: () => void;
 }
 
-const UsersModal: React.FC<UsersModalProps> = ({ tourId, onClose }) => {
+const UsersModal: React.FC<UsersModalProps> = ({ tourId, open, onClose }) => {
   const { users, userAPI, errorUsers } = useGetUsers(tourId);
 
   const [fullName, setFullName] = useState<string>("");
@@ -28,7 +29,7 @@ const UsersModal: React.FC<UsersModalProps> = ({ tourId, onClose }) => {
   };
 
   return (
-    <ModalWrapper>
+    <ModalWrapper open={open}>
       <ModalContent width={600} height={500}>
         <HeaderContainer>
           <H3Styled>Usuarios</H3Styled>

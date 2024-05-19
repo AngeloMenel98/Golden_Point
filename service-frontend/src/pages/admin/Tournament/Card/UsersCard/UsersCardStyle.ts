@@ -4,9 +4,9 @@ import { white } from "../../../../../utils/colors";
 export const UsersContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  gap: 10px;
   background-color: ${white};
   padding: 10px;
-  max-width: 500px;
+  max-width: 600px;
   overflow-y: auto;
 `;
