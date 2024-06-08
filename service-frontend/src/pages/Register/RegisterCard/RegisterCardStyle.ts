@@ -10,6 +10,10 @@ export const InputGroup = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
+
+  @media screen and (max-width: 480px) {
+    flex-direction: column;
+  }
 `;
 
 export const InputContainer = styled.div`

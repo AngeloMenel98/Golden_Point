@@ -4,31 +4,28 @@ import { black } from "../../utils/colors";
 
 interface CardProps {
   children: ReactNode;
-  bgColor: string;
-  borderColor: string;
-  boxColor: string;
-  width: number;
-  maxHeight?: number;
+  backgroundCol: string;
+  borderCol: string;
+  boxCol: string;
+  mWidth: number;
   error?: string;
 }
 
 const Card: React.FC<CardProps> = ({
   children,
-  borderColor,
-  bgColor,
-  boxColor,
-  width,
-  maxHeight = 300,
+  borderCol,
+  backgroundCol,
+  boxCol,
+  mWidth,
   error,
 }) => {
   return (
     <CardContainer>
       <StyledCard
-        borderColor={borderColor}
-        bgColor={bgColor}
-        boxColor={boxColor}
-        width={width}
-        maxHeight={maxHeight}
+        borderCol={borderCol}
+        backgroundCol={backgroundCol}
+        boxCol={boxCol}
+        width={mWidth}
       >
         {error && <p style={{ color: black }}>{error}</p>}
         {children}

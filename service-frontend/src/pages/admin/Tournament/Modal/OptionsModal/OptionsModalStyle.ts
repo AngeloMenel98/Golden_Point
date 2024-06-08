@@ -43,7 +43,7 @@ export const Container = styled.div`
   padding-bottom: 3px;
 `;
 
-export const Icon = styled.div`
+export const MyIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,7 +51,7 @@ export const Icon = styled.div`
   padding-right: 5px;
 `;
 
-export const Button = styled.button<{
+export const MyButton = styled.button<{
   isDangerous?: boolean;
   hasIcon: boolean;
 }>`

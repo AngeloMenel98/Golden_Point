@@ -56,7 +56,7 @@ const Register: React.FC = () => {
 
   return (
     <MainContainer>
-      <CardContainer>
+      <CardContainer id="CardContainer">
         <RegisterCard
           data={data}
           onChange={handleChange}

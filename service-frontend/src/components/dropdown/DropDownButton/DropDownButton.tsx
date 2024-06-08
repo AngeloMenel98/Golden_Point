@@ -23,13 +23,15 @@ function DropDownButton({
     <ButtonContainer>
       <Button onClick={toggle} open={open} width={width} error={!!error}>
         <ButtonText>{children}</ButtonText>
-        <Icon>
-          {open ? (
-            <ChevronUpIcon width={20} height={20} color={darkGreen} />
-          ) : (
-            <ChevronDownIcon width={20} height={20} color={darkGreen} />
-          )}
-        </Icon>
+        {
+          <Icon>
+            {open ? (
+              <ChevronUpIcon width={20} height={20} color={darkGreen} />
+            ) : (
+              <ChevronDownIcon width={20} height={20} color={darkGreen} />
+            )}
+          </Icon>
+        }
       </Button>
     </ButtonContainer>
   );

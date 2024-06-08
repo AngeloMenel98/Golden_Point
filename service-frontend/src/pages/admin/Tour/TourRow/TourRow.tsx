@@ -30,8 +30,6 @@ interface TourRowProps {
 const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
   const user = useSelector((state: RootState) => state.user.user);
 
-  const [isShown, setIsShown] = useState(false);
-
   const handleDeleteTour = async () => {
     const deleteTour: DeletedTour = {
       tourId: tourData.Id,
@@ -50,19 +48,15 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
   };
 
   return (
-    <TourRowContainer
-      onMouseEnter={() => setIsShown(true)}
-      onMouseLeave={() => setIsShown(false)}
-    >
+    <TourRowContainer>
       <LeftContainer>
         <MemberContainer>
           <TourName onClick={handleTourClick}>{tourData.TourTitle}</TourName>
         </MemberContainer>
-        {isShown && (
-          <CreatedBy>
-            Creado por: <TextSpan>{tourData.UserOwner}</TextSpan>
-          </CreatedBy>
-        )}
+        <CreatedBy>
+          Creado por: <TextSpan>{tourData.UserOwner}</TextSpan>
+        </CreatedBy>
+
         <CodeContainer>
           Código del Tour: <CopyableText text={tourData.TourCode} />
         </CodeContainer>
@@ -74,14 +68,13 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
         <TournamentContainer>
           Torneos: <TextSpan>{tourData.TournamentCount}</TextSpan>
         </TournamentContainer>
-        {isShown && (
-          <TrashIcon
-            width={20}
-            height={20}
-            color={red}
-            onClick={handleDeleteTour}
-          />
-        )}
+
+        <TrashIcon
+          width={20}
+          height={20}
+          color={red}
+          onClick={handleDeleteTour}
+        />
       </FullRightContainer>
     </TourRowContainer>
   );

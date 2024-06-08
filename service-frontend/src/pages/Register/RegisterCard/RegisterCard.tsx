@@ -23,11 +23,10 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
 }) => {
   return (
     <Card
-      bgColor={white}
-      borderColor={darkGreen}
-      boxColor={lightGray}
-      width={700}
-      maxHeight={700}
+      backgroundCol={white}
+      borderCol={darkGreen}
+      boxCol={lightGray}
+      mWidth={700}
     >
       <H2>Registro</H2>
       <InputGroup>

@@ -25,9 +25,9 @@ const TourCard: React.FC<TourCardProps> = ({
   return (
     <CardContainer>
       <Card
-        bgColor={white}
-        borderColor={darkGreen}
-        boxColor={pastelGreen}
+        backgroundCol={white}
+        borderCol={darkGreen}
+        boxCol={pastelGreen}
         width={1200}
         error={error}
       >

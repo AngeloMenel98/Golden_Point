@@ -14,8 +14,8 @@ import {
   TourSection,
   InputContainer,
   MainContainer,
-  NavBarContainer,
   H2,
+  NavBarContainer,
 } from "./TourStyles";
 import { darkGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
@@ -137,7 +137,7 @@ const Tours: React.FC = () => {
               id="searchTour"
               type="text"
               value={tourTitle}
-              width={250}
+              width={200}
               placeholder="Buscar Tour"
               icon={<SearchIcon width={20} height={17} color={darkGreen} />}
               onChange={handleChange}

@@ -18,7 +18,7 @@ const UsersButton: React.FC<ButtonProps> = ({
 }) => {
   return (
     <Button onClick={onClick} isDangerous={isDangerous} hasIcon={!!icon}>
-      {icon && <Icon>{icon}</Icon>}
+      {/*icon && <Icon>{icon}</Icon>*/}
       {text && text}
     </Button>
   );

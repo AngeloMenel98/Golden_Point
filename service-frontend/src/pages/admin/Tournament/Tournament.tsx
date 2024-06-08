@@ -137,7 +137,11 @@ const Tournament: React.FC = () => {
           </HeaderButtons>
 
           {isUserOpen && (
-            <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
+            <UsersModal
+              tourId={tourData?.Id}
+              onClose={usersCloseModal}
+              open={isUserOpen}
+            />
           )}
 
           <HeaderButtons>

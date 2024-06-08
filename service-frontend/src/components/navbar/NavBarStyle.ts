@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { pastelGreen, white, darkGreen } from "../../utils/colors";
+
 export const NavbarContainer = styled.div`
   position: fixed;
   top: 0;
@@ -11,6 +12,18 @@ export const NavbarContainer = styled.div`
   background-color: ${pastelGreen};
   color: white;
   z-index: 1000;
+
+  @media screen and (max-width: 1024px) {
+    width: 98%;
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 97%;
+  }
+
+  @media screen and (max-width: 480px) {
+    width: 95%;
+  }
 `;
 
 export const LogoContainer = styled.div`

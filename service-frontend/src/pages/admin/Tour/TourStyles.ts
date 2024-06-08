@@ -6,6 +6,18 @@ export const MainContainer = styled.div`
   height: 100vh;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    width: 95%;
+  }
+
+  @media (max-width: 480px) {
+    width: 90%;
+  }
 `;
 
 export const NavBarContainer = styled.div`
@@ -15,9 +27,8 @@ export const NavBarContainer = styled.div`
 export const TourSection = styled.div`
   flex: 10;
   background-color: ${white};
-  width: 100%;
-  display: flex; /* Añadido */
-  flex-direction: column; /* Añadido */
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
 `;
 
@@ -28,16 +39,17 @@ export const ButtonInputContainer = styled.div`
 `;
 
 export const ButtonContainer = styled.div`
-  padding-top: 1rem;
-  padding-left: 3rem;
-  padding-right: 17rem;
+  padding-top: 10px;
+  padding-left: 15px;
+  padding-right: 500px;
 `;
 
 export const InputContainer = styled.div`
-  padding-top: 1rem;
-  padding-left: 35rem;
-  padding-right: 3rem;
+  padding-top: 10px;
+  padding-left: 500px;
+  padding-right: 10px;
 `;
+
 export const H2 = styled.h2`
   color: ${darkGreen};
   padding: 0.01rem 3rem;
