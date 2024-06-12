@@ -9,13 +9,12 @@ import TourCard from "./TourCard/TourCard";
 import TourModal from "./TourModal/TourModal";
 
 import {
-  ButtonContainer,
   ButtonInputContainer,
   TourSection,
-  InputContainer,
   MainContainer,
   H2,
-  NavBarContainer,
+  ButtonContainer,
+  InputContainer,
 } from "./TourStyles";
 import { darkGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
@@ -123,23 +122,20 @@ const Tours: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBarContainer>
-        <NavBar userName={user?.UserName} />
-      </NavBarContainer>
+      <NavBar userName={user?.UserName} />
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>
             <SecondaryButton text="Crear Tour" onClick={handleOpenModal} />
           </ButtonContainer>
-
           <InputContainer>
             <SecondaryInput
               id="searchTour"
               type="text"
               value={tourTitle}
-              width={200}
               placeholder="Buscar Tour"
               icon={<SearchIcon width={20} height={17} color={darkGreen} />}
+              maxLength={10}
               onChange={handleChange}
             />
           </InputContainer>

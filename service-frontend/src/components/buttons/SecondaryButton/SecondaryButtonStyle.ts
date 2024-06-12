@@ -20,18 +20,19 @@ export const Button = styled.button<{
   isDangerous?: boolean;
   hasIcon: boolean;
 }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   background-color: ${(props) => (props.isDangerous ? red : "transparent")};
   color: ${(props) => (props.isDangerous ? white : darkGreen)};
   padding: ${(props) => (props.hasIcon ? "8px" : "8px 20px")};
   border: 2px solid ${(props) => (props.isDangerous ? lightRed : darkGreen)};
   border-radius: 6px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
   transition: background-color 0.3s ease;
 
-  /* Estilos cuando el botón está activo o enfocado */
   &:hover {
     background-color: ${(props) => (props.isDangerous ? lightGray : darkGreen)};
     color: ${(props) => (props.isDangerous ? red : pastelGreen)};

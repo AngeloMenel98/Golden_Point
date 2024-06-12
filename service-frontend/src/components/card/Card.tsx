@@ -25,7 +25,7 @@ const Card: React.FC<CardProps> = ({
         borderCol={borderCol}
         backgroundCol={backgroundCol}
         boxCol={boxCol}
-        width={mWidth}
+        mWidth={mWidth}
       >
         {error && <p style={{ color: black }}>{error}</p>}
         {children}

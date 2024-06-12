@@ -3,8 +3,7 @@ import MenuIcon from "../../icons/MenuIcon/MenuIcon";
 import { darkGreen, white } from "../../utils/colors";
 import GPLogo from "../../icons/GPLogo/GPLogo";
 import {
-  IconsContainer,
-  LogoContainer,
+  DataContainer,
   MenuDropdown,
   NavbarContainer,
   IconButton,
@@ -41,10 +40,8 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
   return (
     <>
       <NavbarContainer>
-        <LogoContainer>
-          <GPLogo width={100} height={50} />
-        </LogoContainer>
-        <IconsContainer>
+        <GPLogo width={100} height={50} />
+        <DataContainer>
           <Username>{userName}</Username>
           <IconButton
             onMouseEnter={() => setIsHovered(true)}
@@ -57,10 +54,10 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
               color={isHovered ? darkGreen : white}
             />
           </IconButton>
-        </IconsContainer>
+        </DataContainer>
       </NavbarContainer>
       {menuOpen && (
-        <MenuDropdown>
+        <MenuDropdown id="MenuDropdown">
           <DropDownButton onClick={handleLogOut}>Log Out</DropDownButton>
         </MenuDropdown>
       )}

@@ -4,7 +4,7 @@ interface StyledCardProps {
   borderCol: string;
   backgroundCol: string;
   boxCol: string;
-  width: number;
+  mWidth: number;
 }
 
 export const CardContainer = styled.div`
@@ -18,7 +18,7 @@ export const CardContainer = styled.div`
 export const StyledCard = styled.div<StyledCardProps>`
   flex: 1;
 
-  max-width: ${({ width }) => `${width}px`};
+  max-width: ${({ mWidth }) => `${mWidth}px`};
   padding: 20px;
   border: 3px solid ${(props) => props.borderCol};
   border-radius: 5px;

@@ -36,7 +36,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="username"
             type="text"
             value={data.username}
-            width={200}
             onChange={onChange}
             error={error.username}
           />
@@ -50,7 +49,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="firstName"
             type="text"
             value={data.firstName}
-            width={200}
             onChange={onChange}
             error={error.firstName}
           />
@@ -61,7 +59,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="lastName"
             type="text"
             value={data.lastName}
-            width={200}
             onChange={onChange}
             error={error.lastName}
           />
@@ -75,7 +72,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="phoneNumber"
             type="text"
             value={data.phoneNumber}
-            width={200}
             onChange={onChange}
             error={error.phoneNumber}
           />
@@ -86,7 +82,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="location"
             type="text"
             value={data.location}
-            width={200}
             onChange={onChange}
             error={error.location}
           />
@@ -100,7 +95,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="email"
             type="email"
             value={data.email}
-            width={200}
             onChange={onChange}
             error={error.email}
           />
@@ -111,7 +105,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="password"
             type="password"
             value={data.password}
-            width={200}
             onChange={onChange}
             error={error.password}
           />
@@ -122,7 +115,6 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
             id="confirmPassword"
             type="password"
             value={data.confirmPassword}
-            width={200}
             onChange={onChange}
             error={error.confirmPassword}
           />

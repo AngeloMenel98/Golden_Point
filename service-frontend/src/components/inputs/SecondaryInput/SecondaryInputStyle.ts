@@ -3,7 +3,7 @@ import { black, darkGray, darkGreen, red, white } from "../../../utils/colors";
 
 export const InputContainer = styled.div`
   display: flex;
-  flex-direction: column; /* Hacer que el contenido se muestre en columnas */
+  flex-direction: column;
 `;
 
 export const Label = styled.label<{
@@ -17,16 +17,14 @@ export const Label = styled.label<{
 export const InputFieldWithIcon = styled.div`
   position: relative;
   display: flex;
-  width: 100%;
   align-items: center;
 `;
 
 export const InputField = styled.input<{
-  hasIcon: boolean;
-  width: number;
+  hasIconInside: boolean;
   hasError: boolean;
 }>`
-  width: ${({ width }) => `${width}px`};
+  width: 10rem;
   padding: 8px;
   border: 2px solid ${({ hasError }) => (hasError ? red : darkGreen)};
   border-radius: 6px;
@@ -34,7 +32,7 @@ export const InputField = styled.input<{
   color: ${black};
   background-color: ${white};
   transition: box-shadow 0.3s ease;
-  padding-left: ${({ hasIcon }) => (hasIcon ? "35px" : "8px")};
+  padding-left: ${({ hasIconInside }) => (hasIconInside ? "35px" : "8px")};
 
   &::placeholder {
     color: ${darkGray};
@@ -47,6 +45,10 @@ export const InputField = styled.input<{
 
   &:focus {
     outline: none;
+  }
+
+  @media screen and (max-width: 480px) {
+    width: 8rem;
   }
 `;
 

@@ -5,5 +5,5 @@ export const CardContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  width: 100%; /* O ajusta el tamaño según tus necesidades */
+  width: 100%;
 `;

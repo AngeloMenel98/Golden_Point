@@ -2,36 +2,23 @@ import styled from "styled-components";
 import { pastelGreen, white, darkGreen } from "../../utils/colors";
 
 export const NavbarContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 99%;
   display: flex;
   align-items: center;
-  padding: 0.5rem 1rem;
+  flex: 1;
+  width: 100%;
+
+  padding: 0.01rem 0.01rem;
+  justify-content: space-between;
   background-color: ${pastelGreen};
   color: white;
   z-index: 1000;
 
-  @media screen and (max-width: 1024px) {
-    width: 98%;
-  }
-
-  @media screen and (max-width: 768px) {
-    width: 97%;
-  }
-
   @media screen and (max-width: 480px) {
-    width: 95%;
+    padding: 0rem;
   }
 `;
 
-export const LogoContainer = styled.div`
-  flex: 1;
-`;
-
-export const IconsContainer = styled.div`
-  margin-left: auto;
+export const DataContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,14 +50,11 @@ export const MenuDropdown = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  position: fixed;
-  top: 4rem;
-  right: 0;
-  width: 10rem;
+
   background-color: ${darkGreen};
   color: white;
-  z-index: 999;
-  padding: 20px;
+
+  padding: 0.5rem;
 `;
 
 export const DropDownButton = styled.button`
@@ -78,14 +62,12 @@ export const DropDownButton = styled.button`
   background-color: ${darkGreen};
   color: white;
   border: none;
-  padding: 10px;
-  margin-bottom: 10px;
   cursor: pointer;
   outline: none;
 
   &:hover {
     background-color: ${pastelGreen};
     color: ${darkGreen};
-    width: 100%;
+    width: 10%;
   }
 `;
