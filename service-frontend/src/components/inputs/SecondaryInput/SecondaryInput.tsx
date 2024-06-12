@@ -16,6 +16,8 @@ interface PrimaryInputProps {
   value: string | number;
   placeholder?: string;
   maxLength?: number;
+  isSmall?: boolean;
+  isBig?: boolean;
   icon?: ReactNode;
   error?: string;
 
@@ -29,6 +31,8 @@ const SecondaryInput: React.FC<PrimaryInputProps> = ({
   value,
   placeholder,
   maxLength,
+  isSmall,
+  isBig,
   icon,
   onChange,
   error,
@@ -43,6 +47,8 @@ const SecondaryInput: React.FC<PrimaryInputProps> = ({
           id={id}
           value={value}
           maxLength={maxLength}
+          isSmall={isSmall}
+          isBig={isBig}
           placeholder={placeholder}
           hasIconInside={!!icon}
           onChange={onChange}

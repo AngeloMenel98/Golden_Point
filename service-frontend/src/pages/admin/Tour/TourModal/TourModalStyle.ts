@@ -19,16 +19,19 @@ export const HeaderContainer = styled.div`
   align-items: center;
 `;
 
-export const ModalContent = styled.div<{ width: number; height: number }>`
+export const ModalContent = styled.div<{ width: number }>`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
   background-color: ${white};
-  padding: 20px;
+  padding: 1rem;
 
   border: 3px solid ${darkGreen};
   border-radius: 8px;
 
   box-shadow: 0 2px 4px ${black};
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
+  max-width: ${(props) => props.width}rem;
   overflow-y: auto;
 `;
 
@@ -38,7 +41,18 @@ export const ClubContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0rem;
+
+  @media screen and (max-width: 900px) {
+    flex-direction: column;
+    align-items: start;
+    padding: 0.5rem;
+    margin: 0.5rem 0rem;
+    border: 2px solid ${darkGreen};
+    border-radius: 10px;
+  }
 `;
+export const LeftContainer = styled.div``;
+export const RightContainer = styled.div``;
 
 export const FooterContainer = styled.div`
   display: flex;

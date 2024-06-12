@@ -23,9 +23,12 @@ export const InputFieldWithIcon = styled.div`
 export const InputField = styled.input<{
   hasIconInside: boolean;
   hasError: boolean;
+  isSmall: boolean | undefined;
+  isBig: boolean | undefined;
 }>`
-  width: 10rem;
-  padding: 8px;
+  width: ${({ isSmall, isBig }) =>
+    isSmall ? "2rem" : isBig ? "16rem" : "10rem"};
+  padding: 0.5rem;
   border: 2px solid ${({ hasError }) => (hasError ? red : darkGreen)};
   border-radius: 6px;
   font-size: 1rem;

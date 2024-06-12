@@ -14,6 +14,8 @@ import {
   H3Styled,
   HeaderContainer,
   ClubContainer,
+  LeftContainer,
+  RightContainer,
   FooterContainer,
   ButtonSection,
 } from "./TourModalStyle";
@@ -51,8 +53,8 @@ const TourModal: React.FC<TourModalProps> = ({
   );
 
   return (
-    <ModalWrapper>
-      <ModalContent width={1100} height={520}>
+    <ModalWrapper id="ModalWrapper">
+      <ModalContent width={50}>
         <HeaderContainer>
           <H3Styled>Crear Tour</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
@@ -63,75 +65,76 @@ const TourModal: React.FC<TourModalProps> = ({
           id="tourName"
           type="text"
           value={data.tourName}
-          width={200}
           maxLength={20}
           onChange={onChange}
           error={errors.tourName}
         />
 
         <ClubContainer>
-          <SecondaryInput
-            label="Nombre del Club"
-            id="clubName"
-            type="text"
-            value={data.clubName}
-            width={120}
-            maxLength={20}
-            onChange={onChange}
-            error={errors.clubName}
-          />
-          <SecondaryInput
-            label="Dirección"
-            id="address"
-            type="text"
-            value={data.address}
-            width={150}
-            maxLength={20}
-            onChange={onChange}
-            error={errors.address}
-          />
-          <SecondaryInput
-            label="N° Canchas"
-            id="courts"
-            type="text"
-            value={data.courts}
-            width={50}
-            maxLength={2}
-            onChange={onChange}
-            error={errors.courts}
-          />
-          <SecondaryInput
-            label="Horario Inicial"
-            id="avFrom"
-            type="datetime-local"
-            value={data.avFrom}
-            width={250}
-            onChange={onChange}
-            error={errors.avFrom}
-          />
-          <SecondaryInput
-            label="Horario Final"
-            id="avTo"
-            type="datetime-local"
-            value={data.avTo}
-            width={250}
-            onChange={onChange}
-            error={errors.avTo}
-          />
-          <PlusIcon
-            width={30}
-            height={30}
-            color={pastelGreen}
-            onClick={saveClubs}
-          />
+          <LeftContainer>
+            <SecondaryInput
+              label="Nombre del Club"
+              id="clubName"
+              type="text"
+              value={data.clubName}
+              maxLength={20}
+              onChange={onChange}
+              error={errors.clubName}
+            />
+            <SecondaryInput
+              label="Dirección"
+              id="address"
+              type="text"
+              value={data.address}
+              maxLength={20}
+              onChange={onChange}
+              error={errors.address}
+            />
+            <SecondaryInput
+              label="N° Canchas"
+              id="courts"
+              type="text"
+              value={data.courts}
+              maxLength={2}
+              isSmall={true}
+              onChange={onChange}
+              error={errors.courts}
+            />
+          </LeftContainer>
+
+          <RightContainer>
+            <SecondaryInput
+              label="Horario Inicial"
+              id="avFrom"
+              type="datetime-local"
+              value={data.avFrom}
+              isBig={true}
+              onChange={onChange}
+              error={errors.avFrom}
+            />
+            <SecondaryInput
+              label="Horario Final"
+              id="avTo"
+              type="datetime-local"
+              value={data.avTo}
+              isBig={true}
+              onChange={onChange}
+              error={errors.avTo}
+            />
+            <PlusIcon
+              width={30}
+              height={30}
+              color={pastelGreen}
+              onClick={saveClubs}
+            />
+          </RightContainer>
         </ClubContainer>
 
         <Card
-          bgColor={white}
-          borderColor={darkGreen}
-          boxColor={black}
-          width={1000}
-          maxHeight={200}
+          backgroundCol={white}
+          borderCol={darkGreen}
+          boxCol={black}
+          mWidth={1000}
           error={errors.notFound}
         >
           {filteredClubs.map((club, index) => (
