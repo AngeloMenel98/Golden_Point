@@ -9,14 +9,16 @@ import {
   lightRed,
 } from "../../../utils/colors";
 
-export const Button = styled.button<{
-  isDangerous?: boolean;
+export const MyButton = styled.button<{
+  isDangerousAction?: boolean;
   hasIcon: boolean;
 }>`
-  background-color: ${(props) => (props.isDangerous ? red : "transparent")};
-  color: ${(props) => (props.isDangerous ? white : darkGreen)};
+  background-color: ${(props) =>
+    props.isDangerousAction ? red : "transparent"};
+  color: ${(props) => (props.isDangerousAction ? white : darkGreen)};
   padding: ${(props) => (props.hasIcon ? "8px" : "8px 20px")};
-  border: 2px solid ${(props) => (props.isDangerous ? lightRed : darkGreen)};
+  border: 2px solid
+    ${(props) => (props.isDangerousAction ? lightRed : darkGreen)};
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -26,9 +28,11 @@ export const Button = styled.button<{
 
   /* Estilos cuando el botón está activo o enfocado */
   &:hover {
-    background-color: ${(props) => (props.isDangerous ? lightGray : darkGreen)};
-    color: ${(props) => (props.isDangerous ? red : pastelGreen)};
-    border-color: ${(props) => (props.isDangerous ? darkGray : pastelGreen)};
+    background-color: ${(props) =>
+      props.isDangerousAction ? lightGray : darkGreen};
+    color: ${(props) => (props.isDangerousAction ? red : pastelGreen)};
+    border-color: ${(props) =>
+      props.isDangerousAction ? darkGray : pastelGreen};
     opacity: 0.8;
   }
   ,
@@ -47,7 +51,7 @@ export const Button = styled.button<{
   }*/
 `;
 
-export const Icon = styled.div`
+export const MyIcon = styled.div`
   padding-top: 5px;
   padding-right: 5px;
 `;

@@ -68,7 +68,6 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             id="tournamentName"
             type="text"
             value={data.tournamentName}
-            width={200}
             maxLength={20}
             onChange={onChangeData}
             error={errors.tournamentName}
@@ -115,7 +114,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
           <ButtonSection>
             <SecondaryButton
               text="Cancelar"
-              isDangerous={true}
+              isDangerousAction={true}
               onClick={onClose}
             />
           </ButtonSection>

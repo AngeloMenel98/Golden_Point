@@ -2,13 +2,13 @@ import { forwardRef, useState } from "react";
 import {
   TourRowContainer,
   LeftContainer,
+  RightContainer,
   FullRightContainer,
   MemberContainer,
   TeamsContainer,
   TourName,
-  CodeContainer,
+  MasterContainer,
   TextSpan,
-  CreatedBy,
 } from "./TournamentRowStyle";
 import { mint } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
@@ -59,17 +59,19 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
           <MemberContainer>
             <TourName onClick={handleTourClick}>{tournData.Title}</TourName>
           </MemberContainer>
-          <CodeContainer>
-            Master: <TextSpan>{tournData.Master}</TextSpan>
-          </CodeContainer>
         </LeftContainer>
-        <FullRightContainer>
+        <RightContainer>
+          <MasterContainer>
+            Master: <TextSpan>{tournData.Master}</TextSpan>
+          </MasterContainer>
           <TeamsContainer>
             Equipos:
             <TextSpan>
               {tournData.TeamsCount}/{tournData.Categories.length * 12}
             </TextSpan>
           </TeamsContainer>
+        </RightContainer>
+        <FullRightContainer>
           <SecondaryButton
             icon={
               <OptsIcon width={20} height={20} color={mint} onClick={onOpen} />

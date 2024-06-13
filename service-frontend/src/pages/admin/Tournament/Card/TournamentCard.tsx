@@ -34,7 +34,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
     const rowRef = rowRefs.current[index];
     if (rowRef) {
       const rect = rowRef.getBoundingClientRect();
-      console.log(rect);
+      rect;
       setModalPosition({
         top: rect.bottom,
         right: rect.left,
@@ -61,7 +61,8 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         backgroundCol={white}
         borderCol={darkGreen}
         boxCol={pastelGreen}
-        width={1200}
+        mWidth={1200}
+        mHeight={1000}
         error={error}
       >
         {filteredTourns.map((tourn, index) => (
@@ -85,12 +86,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
           position={modalPosition}
         />
       )}
-      {isAddTeamModalOpen && (
-        <AddTeamModal
-          open={isAddTeamModalOpen}
-          onClose={handleCloseAddTeamModal}
-        />
-      )}
+      {isAddTeamModalOpen && <AddTeamModal onClose={handleCloseAddTeamModal} />}
     </CardContainer>
   );
 };

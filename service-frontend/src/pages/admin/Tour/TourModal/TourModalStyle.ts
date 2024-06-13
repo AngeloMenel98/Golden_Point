@@ -32,27 +32,41 @@ export const ModalContent = styled.div<{ width: number }>`
 
   box-shadow: 0 2px 4px ${black};
   max-width: ${(props) => props.width}rem;
-  overflow-y: auto;
 `;
 
 export const ClubContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   padding: 1rem 0rem;
 
+  margin: 0.5rem 0rem;
+  border: 2px solid ${darkGreen};
+  border-radius: 10px;
+
   @media screen and (max-width: 900px) {
-    flex-direction: column;
-    align-items: start;
     padding: 0.5rem;
-    margin: 0.5rem 0rem;
-    border: 2px solid ${darkGreen};
-    border-radius: 10px;
   }
 `;
-export const LeftContainer = styled.div``;
-export const RightContainer = styled.div``;
+export const LeftContainer = styled.div`
+  padding: 0rem 1rem;
+
+  @media screen and (max-width: 900px) {
+    padding: 0.5rem;
+  }
+`;
+export const RightContainer = styled.div`
+  padding: 0rem 1rem;
+
+  @media screen and (max-width: 900px) {
+    padding: 0.5rem;
+  }
+`;
+
+export const FullRightContainer = styled.div`
+  padding: 0rem 1rem;
+`;
 
 export const FooterContainer = styled.div`
   display: flex;

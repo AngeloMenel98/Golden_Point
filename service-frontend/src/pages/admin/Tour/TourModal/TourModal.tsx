@@ -18,6 +18,7 @@ import {
   RightContainer,
   FooterContainer,
   ButtonSection,
+  FullRightContainer,
 } from "./TourModalStyle";
 import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
@@ -53,8 +54,8 @@ const TourModal: React.FC<TourModalProps> = ({
   );
 
   return (
-    <ModalWrapper id="ModalWrapper">
-      <ModalContent width={50}>
+    <ModalWrapper>
+      <ModalContent width={45}>
         <HeaderContainer>
           <H3Styled>Crear Tour</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
@@ -121,13 +122,15 @@ const TourModal: React.FC<TourModalProps> = ({
               onChange={onChange}
               error={errors.avTo}
             />
+          </RightContainer>
+          <FullRightContainer>
             <PlusIcon
               width={30}
               height={30}
               color={pastelGreen}
               onClick={saveClubs}
             />
-          </RightContainer>
+          </FullRightContainer>
         </ClubContainer>
 
         <Card
@@ -150,7 +153,7 @@ const TourModal: React.FC<TourModalProps> = ({
           <ButtonSection>
             <SecondaryButton
               text="Cancelar"
-              isDangerous={true}
+              isDangerousAction={true}
               onClick={onClose}
             />
           </ButtonSection>

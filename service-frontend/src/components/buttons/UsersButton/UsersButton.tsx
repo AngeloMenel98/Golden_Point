@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Button, Icon } from "./UsersButtonStyle";
+import { MyButton, MyIcon } from "./UsersButtonStyle";
 import { UserDTO } from "../../../entities/dtos/UserDTO";
 
 interface ButtonProps {
@@ -17,10 +17,14 @@ const UsersButton: React.FC<ButtonProps> = ({
   onClick,
 }) => {
   return (
-    <Button onClick={onClick} isDangerous={isDangerous} hasIcon={!!icon}>
-      {/*icon && <Icon>{icon}</Icon>*/}
+    <MyButton
+      onClick={onClick}
+      isDangerousAction={isDangerous}
+      hasIcon={!!icon}
+    >
+      {icon && <MyIcon>{icon}</MyIcon>}
       {text && text}
-    </Button>
+    </MyButton>
   );
 };
 

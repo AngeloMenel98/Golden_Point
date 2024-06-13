@@ -11,7 +11,6 @@ export const NavbarContainer = styled.div`
   justify-content: space-between;
   background-color: ${pastelGreen};
   color: white;
-  z-index: 1000;
 
   @media screen and (max-width: 480px) {
     padding: 0rem;

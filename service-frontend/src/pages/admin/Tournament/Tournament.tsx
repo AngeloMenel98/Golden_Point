@@ -4,9 +4,9 @@ import { useSelector } from "react-redux";
 import {
   H2,
   MainContainer,
-  NavBarContainer,
   SpaceContainer,
   TournamentSection,
+  HeaderContainer,
   HeaderButtons,
   InputContainer,
   ButtonContainer,
@@ -101,7 +101,7 @@ const Tournament: React.FC = () => {
     };
 
     const res = await tournAPI.addTournament(tournament);
-    console.log(res);
+
     if (res.fieldErrors) {
       setFieldErrors((prevErrors: any) => ({
         ...prevErrors,
@@ -116,11 +116,9 @@ const Tournament: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBarContainer>
-        <NavBar userName={user?.UserName} />
-      </NavBarContainer>
+      <NavBar userName={user?.UserName} />
       <TournamentSection>
-        <SpaceContainer>
+        <HeaderContainer>
           <H2>{tourData?.TourTitle}</H2>
           <HeaderButtons>
             <SecondaryButton
@@ -140,7 +138,7 @@ const Tournament: React.FC = () => {
             <UsersModal
               tourId={tourData?.Id}
               onClose={usersCloseModal}
-              open={isUserOpen}
+              isAddTeam={false}
             />
           )}
 
@@ -153,7 +151,7 @@ const Tournament: React.FC = () => {
               icon={<RankingIcon width={23} height={18} color={pastelGreen} />}
             />
           </HeaderButtons>
-        </SpaceContainer>
+        </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>
             <SecondaryButton text="Crear Torneos" onClick={createOpenModal} />
@@ -174,8 +172,8 @@ const Tournament: React.FC = () => {
               id="searchTournament"
               type="text"
               value={tournamentTitle}
-              width={250}
               placeholder="Buscar Torneo"
+              isBig={true}
               icon={<SearchIcon width={20} height={18} color={darkGreen} />}
               onChange={handleTournTitle}
             />

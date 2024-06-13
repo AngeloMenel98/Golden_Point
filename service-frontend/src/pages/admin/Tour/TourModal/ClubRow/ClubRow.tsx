@@ -2,8 +2,9 @@ import {
   ClubRowContainer,
   ClubContainer,
   AddressContainer,
-  FullRightContainer,
+  RightContainer,
   LeftContainer,
+  FullRightContainer,
   HoursContainer,
   ClubName,
   CourtsContainer,
@@ -36,13 +37,15 @@ const ClubRow: React.FC<ClubRowProps> = ({ clubData, onCheckboxChange }) => {
           Dirección:<TextSpan>{clubData.Address}</TextSpan>
         </AddressContainer>
       </LeftContainer>
-      <FullRightContainer>
+      <RightContainer>
         <HoursContainer>
           Horario: <TextSpan>{clubData.AvFrom}</TextSpan>
         </HoursContainer>
         <CourtsContainer>
           Canchas: <TextSpan>{clubData.CourtCount}</TextSpan>
         </CourtsContainer>
+      </RightContainer>
+      <FullRightContainer>
         <Checkbox checked={isChecked} onChange={handleCheckboxChange} />
       </FullRightContainer>
     </ClubRowContainer>

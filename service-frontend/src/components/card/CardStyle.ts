@@ -5,6 +5,7 @@ interface StyledCardProps {
   backgroundCol: string;
   boxCol: string;
   mWidth: number;
+  mHeight: number;
 }
 
 export const CardContainer = styled.div`
@@ -19,7 +20,8 @@ export const StyledCard = styled.div<StyledCardProps>`
   flex: 1;
 
   max-width: ${({ mWidth }) => `${mWidth}px`};
-  padding: 20px;
+  max-height: ${({ mHeight }) => `${mHeight}px`};
+  padding: 1rem;
   border: 3px solid ${(props) => props.borderCol};
   border-radius: 5px;
   box-shadow: 0 0 15px ${(props) => props.boxCol};

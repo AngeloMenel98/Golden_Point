@@ -2,12 +2,12 @@ import styled from "styled-components";
 import { black, darkGreen, pastelGreen } from "../../../../../utils/colors";
 
 export const ClubRowContainer = styled.div`
-  height: 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  height: 50px;
   background: ${pastelGreen};
-  margin-bottom: 5px;
+  margin-bottom: 0.5rem;
   box-sizing: border-box;
   border-radius: 6px;
 
@@ -16,58 +16,103 @@ export const ClubRowContainer = styled.div`
   &:hover {
     box-shadow: 0 0 15px ${black};
   }
+
+  @media screen and (max-width: 900px) {
+    height: 8rem;
+  }
 `;
 
 export const MemberData = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-right: 40px;
+
+  justify-content: center;
+  align-items: flex-start;
+
+  padding: 0rem 0.5rem;
 `;
 
 export const ClubContainer = styled(MemberData)`
-  margin-left: 20px;
-  align-items: flex-start;
+  @media screen and (max-width: 900px) {
+    padding: 0rem;
+  }
 `;
 
 export const LeftContainer = styled.div`
   display: flex;
-  width: 100%;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
+  width: 100%;
+  padding-left: 0.5rem;
+
+  @media screen and (max-width: 900px) {
+    flex-direction: column;
+  }
+`;
+
+export const RightContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  color: ${black};
+
+  padding-right: 0.5rem;
+
+  @media screen and (max-width: 900px) {
+    flex-direction: column;
+  }
 `;
 
 export const FullRightContainer = styled.div`
   display: flex;
-  color: ${black}
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding-right: 20px;
+
+  color: ${black};
+  padding-right: 0.5rem;
+
+  @media screen and (max-width: 900px) {
+    flex-direction: column;
+  }
 `;
 
 export const AddressContainer = styled.div`
-  height: 20px;
-  padding: 20px 15px;
+  display: flex;
+  flex-direction: row;
+  padding: 0rem 0.5rem;
+
   color: ${darkGreen};
   font-weight: 900;
+
+  @media screen and (max-width: 900px) {
+    flex-direction: column;
+  }
 `;
 
 export const HoursContainer = styled.div`
-  height: 20px;
-  padding: 20px 20px;
+  display: flex;
+  align-items: center;
+  padding: 0rem 0.5rem;
+
   color: ${darkGreen};
   font-weight: 900;
 
-  display: flex;
-  align-items: center;
+  @media screen and (max-width: 900px) {
+    flex-direction: column;
+  }
 `;
+
 export const CourtsContainer = styled.div`
   display: flex;
   align-items: center;
 
-  height: 20px;
-  padding: 20px 0px;
+  padding: 0rem 0.5rem;
+
   color: ${darkGreen};
   font-weight: 900;
 `;
@@ -78,21 +123,7 @@ export const ClubName = styled.span`
   font-weight: 900;
 `;
 
-export const CreatedBy = styled.span`
-  padding: 0rem 1rem;
-  font-weight: 900;
-  color: ${darkGreen};
-`;
-
 export const TextSpan = styled.span`
-  padding: 0rem 1rem;
-  font-weight: 350;
-`;
-
-export const StyledLink = `
-  color: ${darkGreen};
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-  margin-left: 10px;
+  padding: 0rem 0.5rem;
+  font-weight: 450;
 `;

@@ -24,8 +24,8 @@ const UsersCard: React.FC<UsersCardProps> = ({ users, error, name }) => {
       backgroundCol={white}
       borderCol={darkGreen}
       boxCol={pastelGreen}
-      width={600}
-      height={350}
+      mWidth={600}
+      mHeight={400}
       error={error}
     >
       <UsersContainer>

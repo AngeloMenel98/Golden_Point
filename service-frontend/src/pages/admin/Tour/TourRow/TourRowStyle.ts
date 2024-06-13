@@ -18,6 +18,11 @@ export const TourRowContainer = styled.div`
   }
 
   @media screen and (max-width: 900px) {
+    height: 8rem;
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 480px) {
     height: 10rem;
     justify-content: center;
   }
@@ -46,9 +51,21 @@ export const LeftContainer = styled.div`
   }
 `;
 
+export const RightContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  @media screen and (max-width: 900px) {
+    flex-direction: column;
+    justify-content: center;
+    padding: 0;
+  }
+`;
+
 export const FullRightContainer = styled.div`
   display: flex;
-  color: ${black}
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -57,7 +74,7 @@ export const FullRightContainer = styled.div`
   @media screen and (max-width: 900px) {
     flex-direction: column;
     justify-content: center;
-    padding: 0;
+    padding: 0rem 1rem;
   }
 `;
 

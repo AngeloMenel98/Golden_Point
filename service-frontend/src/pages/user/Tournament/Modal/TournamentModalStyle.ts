@@ -11,7 +11,6 @@ export const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${grayModal};
-  z-index: 1001;
 `;
 
 export const HeaderContainer = styled.div`

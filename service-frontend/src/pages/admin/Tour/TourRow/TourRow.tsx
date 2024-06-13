@@ -1,6 +1,7 @@
 import {
   TourRowContainer,
   LeftContainer,
+  RightContainer,
   FullRightContainer,
   MemberContainer,
   UserContainer,
@@ -60,14 +61,16 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
           Código del Tour: <CopyableText text={tourData.TourCode} />
         </CodeContainer>
       </LeftContainer>
-      <FullRightContainer>
+      <RightContainer>
         <UserContainer>
           Usuarios: <TextSpan>{tourData.UserCount}</TextSpan>
         </UserContainer>
         <TournamentContainer>
           Torneos: <TextSpan>{tourData.TournamentCount}</TextSpan>
         </TournamentContainer>
+      </RightContainer>
 
+      <FullRightContainer>
         <TrashIcon
           width={20}
           height={20}

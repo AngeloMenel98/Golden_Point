@@ -58,7 +58,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
 
   return (
     <ModalWrapper>
-      <ModalContent width={400} height={400}>
+      <ModalContent width={25} id="mdoal">
         <HeaderContainer>
           <H3Styled>Crear Torneo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
@@ -69,7 +69,6 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             id="tournamentName"
             type="text"
             value={data.tournamentName}
-            width={200}
             maxLength={20}
             onChange={onChangeData}
             error={errors.tournamentName}
@@ -109,7 +108,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
           <ButtonSection>
             <SecondaryButton
               text="Cancelar"
-              isDangerous={true}
+              isDangerousAction={true}
               onClick={onClose}
             />
           </ButtonSection>

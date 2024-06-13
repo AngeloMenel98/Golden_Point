@@ -102,7 +102,6 @@ const ToursUser: React.FC = () => {
               id="searchTour"
               type="text"
               value={tourTitle}
-              width={250}
               placeholder="Buscar Tour"
               icon={<SearchIcon width={20} height={17} color={darkGreen} />}
               onChange={handleChange}

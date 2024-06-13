@@ -6,8 +6,7 @@ import {
   white,
 } from "../../../../../utils/colors";
 
-export const ModalWrapper = styled.div<{ open: boolean }>`
-  display: ${({ open }) => (open ? "block" : "none")};
+export const ModalWrapper = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -20,16 +19,15 @@ export const ModalWrapper = styled.div<{ open: boolean }>`
   z-index: 1001;
 `;
 
-export const ModalContent = styled.div<{ width: number; height: number }>`
+export const ModalContent = styled.div<{ width: number }>`
   background-color: ${white};
-  padding: 20px;
+  padding: 1rem;
 
   border: 3px solid ${darkGreen};
   border-radius: 8px;
 
   box-shadow: 0 2px 4px ${black};
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
+  max-width: ${(props) => props.width}rem;
   overflow-y: auto;
 `;
 
@@ -47,4 +45,11 @@ export const H3Styled = styled.h3`
 
 export const Container = styled.div`
   padding-top: 1rem;
+`;
+
+export const ButtonsContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
 `;

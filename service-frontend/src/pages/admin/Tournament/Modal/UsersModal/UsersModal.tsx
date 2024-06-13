@@ -10,16 +10,22 @@ import {
   HeaderContainer,
   ModalContent,
   ModalWrapper,
+  ButtonsContainer,
 } from "./UsersModalStyle";
 import useGetUsers from "../../../../../hooks/useGetUsers";
+import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
 
 interface UsersModalProps {
   tourId: string | undefined;
-  open: boolean;
+  isAddTeam: boolean;
   onClose: () => void;
 }
 
-const UsersModal: React.FC<UsersModalProps> = ({ tourId, open, onClose }) => {
+const UsersModal: React.FC<UsersModalProps> = ({
+  tourId,
+  isAddTeam,
+  onClose,
+}) => {
   const { users, userAPI, errorUsers } = useGetUsers(tourId);
 
   const [fullName, setFullName] = useState<string>("");
@@ -29,8 +35,8 @@ const UsersModal: React.FC<UsersModalProps> = ({ tourId, open, onClose }) => {
   };
 
   return (
-    <ModalWrapper open={open}>
-      <ModalContent width={600} height={500}>
+    <ModalWrapper>
+      <ModalContent width={40}>
         <HeaderContainer>
           <H3Styled>Usuarios</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
@@ -39,7 +45,6 @@ const UsersModal: React.FC<UsersModalProps> = ({ tourId, open, onClose }) => {
           id="searchUser"
           type="text"
           value={fullName}
-          width={150}
           placeholder="Buscar Usuario"
           icon={<SearchIcon width={27} height={20} color={darkGreen} />}
           onChange={handleChange}
@@ -47,6 +52,20 @@ const UsersModal: React.FC<UsersModalProps> = ({ tourId, open, onClose }) => {
         <Container>
           <UsersCard name={fullName} users={users} error={errorUsers} />
         </Container>
+        {isAddTeam ? (
+          <Container>
+            <ButtonsContainer>
+              <SecondaryButton
+                text="Cancelar"
+                isDangerousAction={true}
+                onClick={onClose}
+              />
+              <SecondaryButton text="Guardar" onClick={onClose} />
+            </ButtonsContainer>
+          </Container>
+        ) : (
+          <></>
+        )}
       </ModalContent>
     </ModalWrapper>
   );

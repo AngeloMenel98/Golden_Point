@@ -35,7 +35,8 @@ const TournamentUser: React.FC = () => {
 
   const [tournamentTitle, setTournTitle] = useState("");
 
-  const { tournaments, tournAPI, error } = useGetTournaments(tourData);
+  const { tournaments, tournAPI, errorTournament } =
+    useGetTournaments(tourData);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -68,7 +69,6 @@ const TournamentUser: React.FC = () => {
               id="searchTournament"
               type="text"
               value={tournamentTitle}
-              width={250}
               placeholder="Buscar Torneo"
               icon={<SearchIcon width={20} height={18} color={darkGreen} />}
               onChange={handleTournTitle}
@@ -79,7 +79,7 @@ const TournamentUser: React.FC = () => {
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
           tournApi={tournAPI}
-          error={error}
+          error={errorTournament}
         />
       </TournamentSection>
     </MainContainer>

@@ -4,19 +4,19 @@ import { ButtonStyled, Container, Icon } from "./PrimaryButtonStyle";
 interface ButtonProps {
   text?: string;
   icon?: ReactNode;
-  isDangerous?: boolean;
+  isDangerousAction?: boolean;
   onClick?: () => void;
 }
 
 const PrimaryButton: React.FC<ButtonProps> = ({
   text,
   icon,
-  isDangerous,
+  isDangerousAction,
   onClick,
 }) => {
   return (
     <Container>
-      <ButtonStyled onClick={onClick} isDangerous={isDangerous}>
+      <ButtonStyled onClick={onClick} isDangerous={isDangerousAction}>
         {text}
         {icon && <Icon>{icon}</Icon>}
       </ButtonStyled>

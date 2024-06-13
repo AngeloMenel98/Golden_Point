@@ -1,11 +1,9 @@
 import React from "react";
-import { ModalWrapper, Container, MyButton } from "./OptionsModalStyle";
+import { ModalWrapper, Container, MyButton, MyIcon } from "./OptionsModalStyle";
 import PrimaryButton from "../../../../../components/buttons/PrimaryButton/PrimaryButton";
-
-import { pastelGreen, red } from "../../../../../utils/colors";
-
 import AddIcon from "../../../../../icons/AddIcon/AddIcon";
 import TrashIcon from "../../../../../icons/TrashIcon/TrashIcon";
+import { pastelGreen, red } from "../../../../../utils/colors";
 
 interface OptsModalProps {
   open: boolean;
@@ -30,7 +28,7 @@ const OptsModal: React.FC<OptsModalProps> = ({
       right={position.right}
     >
       <Container>
-        {/*<MyButton hasIcon={true} onClick={onAddTeam}>
+        <MyButton hasIcon={true} onClick={onAddTeam}>
           <MyIcon>
             <AddIcon width={15} height={15} color={pastelGreen} />
           </MyIcon>
@@ -39,14 +37,18 @@ const OptsModal: React.FC<OptsModalProps> = ({
       </Container>
       <Container>
         <MyButton hasIcon={true} isDangerous={true}>
-          <Icon>
+          <MyIcon>
             <TrashIcon width={17} height={17} color={red} />
-          </Icon>
+          </MyIcon>
           Quitar Equipo
-  </MyButton>*/}
+        </MyButton>
       </Container>
       <Container>
-        <PrimaryButton text="Cancelar" isDangerous={true} onClick={onClose} />
+        <PrimaryButton
+          text="Cancelar"
+          isDangerousAction={true}
+          onClick={onClose}
+        />
       </Container>
     </ModalWrapper>
   );

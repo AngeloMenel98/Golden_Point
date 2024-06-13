@@ -30,7 +30,6 @@ const JoinModal: React.FC<JoinModalProps> = ({
           type="text"
           label="Código del Tour"
           value={code}
-          width={185}
           maxLength={20}
           placeholder="Código"
           onChange={onJoinCode}
@@ -39,7 +38,11 @@ const JoinModal: React.FC<JoinModalProps> = ({
       </Container>
       <Container>
         <ButtonContainer>
-          <PrimaryButton text="Cancelar" isDangerous={true} onClick={onClose} />
+          <PrimaryButton
+            text="Cancelar"
+            isDangerousAction={true}
+            onClick={onClose}
+          />
         </ButtonContainer>
         <PrimaryButton text="Unirse" onClick={onJoin} />
       </Container>

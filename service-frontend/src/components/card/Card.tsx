@@ -8,6 +8,7 @@ interface CardProps {
   borderCol: string;
   boxCol: string;
   mWidth: number;
+  mHeight: number;
   error?: string;
 }
 
@@ -17,6 +18,7 @@ const Card: React.FC<CardProps> = ({
   backgroundCol,
   boxCol,
   mWidth,
+  mHeight,
   error,
 }) => {
   return (
@@ -26,6 +28,7 @@ const Card: React.FC<CardProps> = ({
         backgroundCol={backgroundCol}
         boxCol={boxCol}
         mWidth={mWidth}
+        mHeight={mHeight}
       >
         {error && <p style={{ color: black }}>{error}</p>}
         {children}

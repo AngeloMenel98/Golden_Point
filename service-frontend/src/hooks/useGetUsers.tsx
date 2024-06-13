@@ -43,8 +43,6 @@ export default function useGetUsers(tourId: string | undefined) {
       userArray.push(newUser);
     });
 
-    console.log(userArray);
-
     setUsers(userArray);
   };
 

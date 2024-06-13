@@ -8,42 +8,41 @@ export const MainContainer = styled.div`
   flex-direction: column;
 `;
 
-export const NavBarContainer = styled.div`
-  flex: 1;
-`;
-
 export const TournamentSection = styled.div`
   flex: 10;
   background-color: ${white};
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+`;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
 `;
 
 export const SpaceContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-`;
-
-export const TourNameContainer = styled.div`
-  padding: 11rem;
+  width: 100%;
 `;
 
 export const InputContainer = styled.div`
-  padding: 1rem 1rem 1rem 35rem;
+  padding: 0.5rem;
 `;
 
 export const ButtonContainer = styled.div`
-  padding: 1rem 15rem 1rem 1rem;
+  padding: 0.5rem;
 `;
 
 export const HeaderButtons = styled.div`
-  padding-left: 1rem;
+  padding-left: 0.5rem;
 `;
 
 export const H2 = styled.h2`
   color: ${darkGreen};
-  padding: 0.0011rem 1rem;
+
+  padding: 0.01rem 0.5rem;
 `;

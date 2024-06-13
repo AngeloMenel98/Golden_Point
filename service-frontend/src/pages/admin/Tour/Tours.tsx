@@ -136,6 +136,7 @@ const Tours: React.FC = () => {
               placeholder="Buscar Tour"
               icon={<SearchIcon width={20} height={17} color={darkGreen} />}
               maxLength={10}
+              isBig={true}
               onChange={handleChange}
             />
           </InputContainer>

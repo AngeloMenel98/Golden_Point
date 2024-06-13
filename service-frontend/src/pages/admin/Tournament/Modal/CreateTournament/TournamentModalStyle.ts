@@ -7,16 +7,32 @@ import {
 } from "../../../../../utils/colors";
 
 export const ModalWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: ${grayModal};
   z-index: 1001;
+`;
+
+export const ModalContent = styled.div<{ width: number }>`
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+
+  background-color: ${white};
+  padding: 1rem;
+
+  border: 3px solid ${darkGreen};
+  border-radius: 8px;
+
+  box-shadow: 0 2px 4px ${black};
+  max-width: ${(props) => props.width}rem;
 `;
 
 export const HeaderContainer = styled.div`
@@ -32,19 +48,6 @@ export const DataContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-`;
-
-export const ModalContent = styled.div<{ width: number; height: number }>`
-  background-color: ${white};
-  padding: 20px;
-
-  border: 3px solid ${darkGreen};
-  border-radius: 8px;
-
-  box-shadow: 0 2px 4px ${black};
-  width: ${(props) => props.width}px;
-  height: ${(props) => props.height}px;
-  overflow-y: auto;
 `;
 
 export const FooterContainer = styled.div`
