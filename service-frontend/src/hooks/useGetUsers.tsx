@@ -31,7 +31,7 @@ export default function useGetUsers(tourId: string | undefined) {
     userRes.forEach((u: any) => {
       const newUser = new UserDTO();
 
-      newUser.Id = u.id;
+      newUser.Id = u.userid;
       newUser.UserName = u.username;
       newUser.Email = u.email;
       newUser.IsSingle = u.issingle;

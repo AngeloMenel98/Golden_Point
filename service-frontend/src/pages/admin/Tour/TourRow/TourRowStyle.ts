@@ -51,7 +51,7 @@ export const LeftContainer = styled.div`
   }
 `;
 
-export const RightContainer = styled.div`
+export const MiddleContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -64,7 +64,7 @@ export const RightContainer = styled.div`
   }
 `;
 
-export const FullRightContainer = styled.div`
+export const RightContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;

@@ -11,9 +11,17 @@ interface UsersCardProps {
   users: UserDTO[];
   name: string;
   error: string;
+  addPlayers: (player: UserDTO) => void;
+  selectedPlayers: UserDTO[];
 }
 
-const UsersCard: React.FC<UsersCardProps> = ({ users, error, name }) => {
+const UsersCard: React.FC<UsersCardProps> = ({
+  users,
+  error,
+  name,
+  addPlayers,
+  selectedPlayers,
+}) => {
   const filteredUsers = users.filter(
     (user) =>
       user.LastName.toLowerCase().includes(name.toLowerCase()) ||
@@ -35,6 +43,8 @@ const UsersCard: React.FC<UsersCardProps> = ({ users, error, name }) => {
             user={user}
             text={user.FirstName + " " + user.LastName}
             icon={<UserCircleIcon width={20} height={20} color={pastelGreen} />}
+            onClick={addPlayers}
+            isSelected={selectedPlayers.includes(user)}
           />
         ))}
       </UsersContainer>

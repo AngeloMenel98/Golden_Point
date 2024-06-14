@@ -1,15 +1,15 @@
 import {
-  TourRowContainer,
-  LeftContainer,
-  RightContainer,
-  FullRightContainer,
-  MemberContainer,
-  UserContainer,
-  TournamentContainer,
-  TourName,
   CodeContainer,
-  TextSpan,
   CreatedBy,
+  RightContainer,
+  LeftContainer,
+  MemberContainer,
+  MiddleContainer,
+  TextSpan,
+  TourName,
+  TourRowContainer,
+  TournamentContainer,
+  UserContainer,
 } from "./TourRowStyle";
 import { TourDTO } from "../../../../entities/dtos/TourDTO";
 import CopyableText from "../../../../components/copyableText/CopyableText";
@@ -61,23 +61,23 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
           Código del Tour: <CopyableText text={tourData.TourCode} />
         </CodeContainer>
       </LeftContainer>
-      <RightContainer>
+      <MiddleContainer>
         <UserContainer>
           Usuarios: <TextSpan>{tourData.UserCount}</TextSpan>
         </UserContainer>
         <TournamentContainer>
           Torneos: <TextSpan>{tourData.TournamentCount}</TextSpan>
         </TournamentContainer>
-      </RightContainer>
+      </MiddleContainer>
 
-      <FullRightContainer>
+      <RightContainer>
         <TrashIcon
           width={20}
           height={20}
           color={red}
           onClick={handleDeleteTour}
         />
-      </FullRightContainer>
+      </RightContainer>
     </TourRowContainer>
   );
 };

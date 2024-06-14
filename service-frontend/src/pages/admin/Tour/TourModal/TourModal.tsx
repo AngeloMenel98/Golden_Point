@@ -138,6 +138,7 @@ const TourModal: React.FC<TourModalProps> = ({
           borderCol={darkGreen}
           boxCol={black}
           mWidth={1000}
+          mHeight={800}
           error={errors.notFound}
         >
           {filteredClubs.map((club, index) => (

@@ -12,13 +12,24 @@ import {
 export const MyButton = styled.button<{
   isDangerousAction?: boolean;
   hasIcon: boolean;
+  isSelected: boolean;
 }>`
   background-color: ${(props) =>
-    props.isDangerousAction ? red : "transparent"};
-  color: ${(props) => (props.isDangerousAction ? white : darkGreen)};
+    props.isDangerousAction ? red : props.isSelected ? darkGreen : white};
+  color: ${(props) =>
+    props.isDangerousAction
+      ? white
+      : props.isSelected
+      ? pastelGreen
+      : darkGreen};
   padding: ${(props) => (props.hasIcon ? "8px" : "8px 20px")};
   border: 2px solid
-    ${(props) => (props.isDangerousAction ? lightRed : darkGreen)};
+    ${(props) =>
+      props.isDangerousAction
+        ? lightRed
+        : props.isSelected
+        ? pastelGreen
+        : darkGreen};
   border-radius: 6px;
   cursor: pointer;
   display: flex;
@@ -26,7 +37,6 @@ export const MyButton = styled.button<{
   justify-content: center;
   transition: background-color 0.3s ease;
 
-  /* Estilos cuando el botón está activo o enfocado */
   &:hover {
     background-color: ${(props) =>
       props.isDangerousAction ? lightGray : darkGreen};

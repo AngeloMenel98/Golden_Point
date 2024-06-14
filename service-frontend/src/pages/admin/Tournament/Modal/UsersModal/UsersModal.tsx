@@ -14,24 +14,40 @@ import {
 } from "./UsersModalStyle";
 import useGetUsers from "../../../../../hooks/useGetUsers";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
+import { UserDTO } from "../../../../../entities/dtos/UserDTO";
 
 interface UsersModalProps {
   tourId: string | undefined;
   isAddTeam: boolean;
   onClose: () => void;
+  onNext: () => void;
 }
 
 const UsersModal: React.FC<UsersModalProps> = ({
   tourId,
   isAddTeam,
   onClose,
+  onNext,
 }) => {
   const { users, userAPI, errorUsers } = useGetUsers(tourId);
 
   const [fullName, setFullName] = useState<string>("");
+  const [players, setPlayers] = useState<UserDTO[]>([]);
 
   const handleChange = (e: any) => {
     setFullName(e.target.value);
+  };
+
+  const addPlayer = (player: UserDTO) => {
+    setPlayers((prevPlayers) => {
+      if (prevPlayers.includes(player)) {
+        return prevPlayers.filter((id) => id !== player);
+      }
+      if (prevPlayers.length >= 2) {
+        return prevPlayers;
+      }
+      return [...prevPlayers, player];
+    });
   };
 
   return (
@@ -49,8 +65,15 @@ const UsersModal: React.FC<UsersModalProps> = ({
           icon={<SearchIcon width={27} height={20} color={darkGreen} />}
           onChange={handleChange}
         />
+        <H3Styled>Jugadores: {players.length}/2</H3Styled>
         <Container>
-          <UsersCard name={fullName} users={users} error={errorUsers} />
+          <UsersCard
+            name={fullName}
+            users={users}
+            error={errorUsers}
+            addPlayers={addPlayer}
+            selectedPlayers={players}
+          />
         </Container>
         {isAddTeam ? (
           <Container>
@@ -60,7 +83,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
                 isDangerousAction={true}
                 onClick={onClose}
               />
-              <SecondaryButton text="Guardar" onClick={onClose} />
+              <SecondaryButton text="Siguiente" onClick={onNext} />
             </ButtonsContainer>
           </Container>
         ) : (

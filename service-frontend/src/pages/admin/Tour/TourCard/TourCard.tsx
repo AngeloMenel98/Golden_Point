@@ -29,6 +29,7 @@ const TourCard: React.FC<TourCardProps> = ({
         borderCol={darkGreen}
         boxCol={pastelGreen}
         mWidth={1200}
+        mHeight={1000}
         error={error}
       >
         {filteredTours.map((tour, index) => (
