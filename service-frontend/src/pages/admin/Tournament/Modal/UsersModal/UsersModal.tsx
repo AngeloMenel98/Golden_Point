@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../../../../icons/SearchIcon/SearchIcon";
@@ -21,6 +21,7 @@ interface UsersModalProps {
   isAddTeam: boolean;
   onClose: () => void;
   onNext: () => void;
+  onPlayersChange: (players: UserDTO[]) => void;
 }
 
 const UsersModal: React.FC<UsersModalProps> = ({
@@ -28,11 +29,16 @@ const UsersModal: React.FC<UsersModalProps> = ({
   isAddTeam,
   onClose,
   onNext,
+  onPlayersChange,
 }) => {
   const { users, userAPI, errorUsers } = useGetUsers(tourId);
 
   const [fullName, setFullName] = useState<string>("");
   const [players, setPlayers] = useState<UserDTO[]>([]);
+
+  useEffect(() => {
+    onPlayersChange(players);
+  }, [players, onPlayersChange]);
 
   const handleChange = (e: any) => {
     setFullName(e.target.value);

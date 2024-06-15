@@ -6,7 +6,7 @@ import TournamentRow from "../Row/TournamentRow";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import TournamentAPI from "../../../../services/TournamentApi";
 import OptsModal from "../Modal/OptionsModal/OptionsModal";
-import AddTeamModal from "../Modal/AddTeam/AddTeam";
+import ManagerModal from "../Modal/ManagerModal/ManagerModal";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
@@ -22,7 +22,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   error,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAddTeamModalOpen, setIsAddTeamModalOpen] = useState(false);
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [modalPosition, setModalPosition] = useState({ top: 0, right: 0 });
   const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
 
@@ -48,11 +48,11 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   };
 
   const handleOpenAddTeamModal = () => {
-    setIsAddTeamModalOpen(true);
+    setIsManagerOpen(true);
   };
 
   const handleCloseAddTeamModal = () => {
-    setIsAddTeamModalOpen(false);
+    setIsManagerOpen(false);
   };
 
   return (
@@ -86,7 +86,8 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
           position={modalPosition}
         />
       )}
-      {isAddTeamModalOpen && <AddTeamModal onClose={handleCloseAddTeamModal} />}
+
+      {isManagerOpen && <ManagerModal onClose={handleCloseAddTeamModal} />}
     </CardContainer>
   );
 };

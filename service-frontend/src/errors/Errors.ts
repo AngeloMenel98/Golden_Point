@@ -23,6 +23,8 @@ export interface Errors {
   courts?: string;
   tourCode?: string;
 
+  //Team
+
   general?: string;
   notFound?: string;
 }
@@ -44,6 +46,8 @@ export const ErrorsRes = {
   notFoundTourReq: "No se encontro ningún Tour.",
   tourCodeReq: "Código del Tour es obligatorio",
   tourCodeExistReq: "El código del Tour no existe.",
+
+  //Team
 
   //Register
   usernameRequired: "Nombre de Usuario es obligatorio",
@@ -73,6 +77,8 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   [ErrorsRes.notFoundTourReq]: "notFound",
   [ErrorsRes.tourCodeReq]: "tourCode",
   [ErrorsRes.tourCodeExistReq]: "tourCode",
+
+  //Team
 
   //Register
   [ErrorsRes.usernameRequired]: "username",
