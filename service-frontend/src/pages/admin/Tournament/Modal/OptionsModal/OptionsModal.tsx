@@ -9,6 +9,7 @@ interface OptsModalProps {
   open: boolean;
   width: number;
   onAddTeam: () => void;
+  onDeleteTeam: () => void;
   onClose: () => void;
   position: { top: number; right: number };
 }
@@ -17,6 +18,7 @@ const OptsModal: React.FC<OptsModalProps> = ({
   open,
   width,
   onAddTeam,
+  onDeleteTeam,
   onClose,
   position,
 }) => {
@@ -36,7 +38,7 @@ const OptsModal: React.FC<OptsModalProps> = ({
         </MyButton>
       </Container>
       <Container>
-        <MyButton hasIcon={true} isDangerous={true}>
+        <MyButton hasIcon={true} isDangerous={true} onClick={onDeleteTeam}>
           <MyIcon>
             <TrashIcon width={17} height={17} color={red} />
           </MyIcon>

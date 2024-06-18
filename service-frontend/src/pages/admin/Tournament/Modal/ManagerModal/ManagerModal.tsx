@@ -4,8 +4,10 @@ import UsersModal from "../UsersModal/UsersModal";
 import { useState } from "react";
 import AddTeamModal from "../AddTeam/AddTeam";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
+import { TournamentDTO } from "../../../../../entities/dtos/TournamentDTO";
 
 interface ManagerProps {
+  tournament: TournamentDTO;
   onClose: () => void;
 }
 
@@ -14,7 +16,7 @@ export interface CreationData {
   usersId: string[];
 }
 
-const ManagerModal: React.FC<ManagerProps> = ({ onClose }) => {
+const ManagerModal: React.FC<ManagerProps> = ({ tournament, onClose }) => {
   const tour = useSelector((state: RootState) => state.tour.tour);
 
   const [activeModal, setActiveModal] = useState<number>(0);
@@ -37,7 +39,13 @@ const ManagerModal: React.FC<ManagerProps> = ({ onClose }) => {
         onNext={onNext}
         onPlayersChange={handlePlayersChange}
       />
-      {activeModal == 1 && <AddTeamModal onClose={onClose} players={players} />}
+      {activeModal == 1 && (
+        <AddTeamModal
+          onClose={onClose}
+          players={players}
+          tournament={tournament}
+        />
+      )}
     </>
   );
 };

@@ -16,9 +16,14 @@ import DropDown from "../../../../../components/dropdown/DropDown/DropDown";
 import TeamAPI, { TeamCredentials } from "../../../../../services/TeamApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
+import {
+  Category,
+  TournamentDTO,
+} from "../../../../../entities/dtos/TournamentDTO";
 
 interface AddTeamProps {
   players: UserDTO[];
+  tournament: TournamentDTO;
   onClose: () => void;
 }
 
@@ -27,8 +32,14 @@ interface DropDownData {
   femaleCat: string[];
 }
 
-const AddTeamModal: React.FC<AddTeamProps> = ({ players, onClose }) => {
-  const user = useSelector((state: RootState) => state.tour.tour);
+const teamApi = new TeamAPI();
+
+const AddTeamModal: React.FC<AddTeamProps> = ({
+  players,
+  tournament,
+  onClose,
+}) => {
+  const user = useSelector((state: RootState) => state.user.user);
   const [teamName, setTeamName] = useState<string>("");
 
   const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
@@ -47,7 +58,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({ players, onClose }) => {
   };
 
   const addTeam = async () => {
-    /*const categories: Category[] = [];
+    const categories: Category[] = [];
     dropDownData.maleCat.forEach((category) => {
       categories.push({
         gender: "Masculino",
@@ -61,15 +72,15 @@ const AddTeamModal: React.FC<AddTeamProps> = ({ players, onClose }) => {
         categoryName: category,
       });
     });
-
+    console.log(user);
     const team: TeamCredentials = {
-     adminUserId: user?.Id,
-     tournamentId: ,
-     category: categories[0].gender + categories[0].categoryName ,
-     usersId: players.map(p => p.Id),
-   };
-  
-   const res = await teamApi.addTeam(team);*/
+      adminUserId: user?.Id,
+      tournamentId: tournament.Id,
+      category: categories[0].gender + "-" + categories[0].categoryName,
+      usersId: players.map((p) => p.Id),
+    };
+
+    const res = await teamApi.addTeam(team);
   };
 
   return (

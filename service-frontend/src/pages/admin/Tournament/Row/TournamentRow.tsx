@@ -12,11 +12,7 @@ import {
 } from "./TournamentRowStyle";
 import { mint } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
-import TournamentAPI, {
-  DeletedTournament,
-} from "../../../../services/TournamentApi";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../reduxSlices/store";
+import TournamentAPI from "../../../../services/TournamentApi";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
 import { useNavigate } from "react-router-dom";
@@ -24,24 +20,22 @@ import { useNavigate } from "react-router-dom";
 interface TournamentRowProps {
   tournData: TournamentDTO;
   tournApi: TournamentAPI;
-  onOpen: () => void;
+  onOpen: (tournament: TournamentDTO) => void;
   onClose: () => void;
 }
 
 const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
   ({ tournData, tournApi, onOpen, onClose }, ref) => {
-    const user = useSelector((state: RootState) => state.user.user);
-
     const [isShown, setIsShown] = useState(false);
 
-    const deleteTournament = async () => {
+    /*const deleteTournament = async () => {
       const deleteTourn: DeletedTournament = {
         tournamentId: tournData.Id,
         userId: user?.Id,
       };
 
       const tournRes = await tournApi.deleteTournament(deleteTourn);
-    };
+    };*/
 
     const navigate = useNavigate();
 
@@ -74,9 +68,14 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
         <FullRightContainer>
           <SecondaryButton
             icon={
-              <OptsIcon width={20} height={20} color={mint} onClick={onOpen} />
+              <OptsIcon
+                width={20}
+                height={20}
+                color={mint}
+                onClick={() => onOpen(tournData)}
+              />
             }
-            onClick={onOpen}
+            onClick={() => onOpen(tournData)}
           />
         </FullRightContainer>
       </TourRowContainer>
