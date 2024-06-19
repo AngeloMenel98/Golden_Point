@@ -1,9 +1,8 @@
-import { Category } from "../entities/dtos/TournamentDTO";
 import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface DeletedTeam {
-  tournamentId: string;
+  teamsId: string[];
   userId?: string;
 }
 
@@ -24,23 +23,23 @@ class TeamAPI extends GeneralAPI {
     }
   }
 
-  /*async getTournaments(tourId: string) {
+  async getTeams(tournamentId: string) {
     try {
-      const res = await this.api.get(`/tournament/tourns/${tourId}`);
+      const res = await this.api.get(`/teams/${tournamentId}`);
       return res.data;
     } catch (e) {
       return isAxiosError(e);
     }
-  }*/
+  }
 
-  /* async deleteTournament(deletedTour: DeletedTournament) {
+  async deleteTournament(deletedTeams: DeletedTeam) {
     try {
-      const res = await this.api.post("/tournament/delete", deletedTour);
+      const res = await this.api.post("/team/delete", deletedTeams);
       return res.data;
     } catch (e) {
       return isAxiosError(e);
     }
-  }*/
+  }
 }
 
 export default TeamAPI;

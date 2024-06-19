@@ -20,6 +20,7 @@ import {
   Category,
   TournamentDTO,
 } from "../../../../../entities/dtos/TournamentDTO";
+import useSeparateCats from "../../../../../hooks/useSeparateCats";
 
 interface AddTeamProps {
   players: UserDTO[];
@@ -42,7 +43,16 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
   const user = useSelector((state: RootState) => state.user.user);
   const [teamName, setTeamName] = useState<string>("");
 
-  const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
+  //TODO: Get Categories from the tournament.
+  const maleCats = tournament.Categories.filter(
+    (cat) => cat.gender === "Masculino"
+  ).map((cat) => cat.category);
+
+  const femaleCats = tournament.Categories.filter(
+    (cat) => cat.gender === "Femenino"
+  ).map((cat) => cat.category);
+
+  //const { maleCat, femaleCat } = useSeparateCats(tournament.Categories);
 
   const [dropDownData, setDropDownData] = useState<DropDownData>({
     maleCat: [],
@@ -62,25 +72,31 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
     dropDownData.maleCat.forEach((category) => {
       categories.push({
         gender: "Masculino",
-        categoryName: category,
+        category: category,
       });
     });
 
     dropDownData.femaleCat.forEach((category) => {
       categories.push({
         gender: "Femenino",
-        categoryName: category,
+        category: category,
       });
     });
-    console.log(user);
+
     const team: TeamCredentials = {
       adminUserId: user?.Id,
       tournamentId: tournament.Id,
-      category: categories[0].gender + "-" + categories[0].categoryName,
+      category: categories[0].gender + "-" + categories[0].category,
       usersId: players.map((p) => p.Id),
     };
 
     const res = await teamApi.addTeam(team);
+
+    if (res != null) {
+      onClose();
+    } else {
+      alert("Error");
+    }
   };
 
   return (
@@ -100,7 +116,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
         <SpaceContainer id="space">
           <DropDown
             buttonText="Masculino"
-            items={cats}
+            items={maleCats}
             width={150}
             onChange={(selectedItems: string[]) => {
               setDropDownData({ ...dropDownData, maleCat: selectedItems });
@@ -109,7 +125,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
           />
           <DropDown
             buttonText="Femenino"
-            items={cats}
+            items={femaleCats}
             width={150}
             onChange={(selectedItems: string[]) => {
               setDropDownData({

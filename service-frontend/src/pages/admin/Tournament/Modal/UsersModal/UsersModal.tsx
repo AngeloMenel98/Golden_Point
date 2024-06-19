@@ -71,7 +71,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
           icon={<SearchIcon width={27} height={20} color={darkGreen} />}
           onChange={handleChange}
         />
-        <H3Styled>Jugadores: {players.length}/2</H3Styled>
+        {isAddTeam ? <H3Styled>Jugadores: {players.length}/2</H3Styled> : <></>}
         <Container>
           <UsersCard
             name={fullName}

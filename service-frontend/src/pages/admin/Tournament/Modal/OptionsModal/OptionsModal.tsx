@@ -42,7 +42,7 @@ const OptsModal: React.FC<OptsModalProps> = ({
           <MyIcon>
             <TrashIcon width={17} height={17} color={red} />
           </MyIcon>
-          Quitar Equipo
+          Quitar Equipos
         </MyButton>
       </Container>
       <Container>

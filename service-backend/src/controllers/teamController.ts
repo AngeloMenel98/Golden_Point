@@ -101,5 +101,69 @@ export class TeamController {
         .json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
+
+  async getTeams(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const tournamentId = req.params.tournamentId;
+      const teams = await this.teamService.getTeams(tournamentId);
+
+      res.status(201).json(teams);
+    } catch (e) {
+      console.error("Error getting team:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      return res
+        .status(500)
+        .json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const { userId, teamsId } = req.body;
+
+      const adminUser = await this.manager.checkUserExists(userId);
+      await this.manager.checkIfADMIN(adminUser);
+
+      const teams = await this.teamService.delete(teamsId);
+
+      res.status(201).json(teams.affected);
+    } catch (e) {
+      console.error("Error creating teams:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      return res
+        .status(500)
+        .json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
 }
 export default new TeamController();

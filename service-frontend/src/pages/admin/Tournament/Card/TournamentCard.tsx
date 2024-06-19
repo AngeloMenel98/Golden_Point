@@ -110,7 +110,9 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         />
       )}
 
-      {isDeleteOpen && <DeleteTeam onClose={deleteTeamClose} />}
+      {isDeleteOpen && (
+        <DeleteTeam onClose={deleteTeamClose} tournamentId={tournSelected.Id} />
+      )}
     </CardContainer>
   );
 };

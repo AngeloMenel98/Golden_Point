@@ -3,7 +3,6 @@ import SecondaryInput from "../../../../../components/inputs/SecondaryInput/Seco
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../../../../icons/SearchIcon/SearchIcon";
 import { darkGreen, red } from "../../../../../utils/colors";
-import UsersCard from "../../Card/UsersCard/UsersCard";
 import {
   ButtonsContainer,
   Container,
@@ -12,35 +11,55 @@ import {
   ModalContent,
   ModalWrapper,
 } from "./DeleteTeamStyle";
-import useGetUsers from "../../../../../hooks/useGetUsers";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
-import { UserDTO } from "../../../../../entities/dtos/UserDTO";
 import TeamsCard from "../../Card/TeamsCard/TeamsCard";
+import useGetTeams from "../../../../../hooks/useGetTeams";
+import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
+import { DeletedTeam } from "../../../../../services/TeamApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../reduxSlices/store";
 
 interface DeleteTeamProps {
+  tournamentId: string;
   onClose: () => void;
 }
 
-const DeleteTeam: React.FC<DeleteTeamProps> = ({ onClose }) => {
-  //const { users, userAPI, errorUsers } = useGetUsers(tourId);
+const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournamentId, onClose }) => {
+  const { allTeams, teamApi } = useGetTeams(tournamentId);
+
+  const user = useSelector((state: RootState) => state.user.user);
 
   const [fullName, setFullName] = useState<string>("");
-  const [players, setPlayers] = useState<UserDTO[]>([]);
+  const [teams, setTeams] = useState<TeamDTO[]>([]);
 
   const handleChange = (e: any) => {
     setFullName(e.target.value);
   };
 
-  const addPlayer = (player: UserDTO) => {
-    setPlayers((prevPlayers) => {
-      if (prevPlayers.includes(player)) {
-        return prevPlayers.filter((id) => id !== player);
+  const deleteTeam = (team: TeamDTO) => {
+    setTeams((prevTeams) => {
+      if (prevTeams.includes(team)) {
+        return prevTeams.filter((id) => id !== team);
       }
-      if (prevPlayers.length >= 2) {
-        return prevPlayers;
-      }
-      return [...prevPlayers, player];
+      return [...prevTeams, team];
     });
+  };
+
+  const onDeleteTeams = async () => {
+    const deletedTeams: DeletedTeam = { teamsId: [], userId: "" };
+
+    teams.forEach((t) => {
+      deletedTeams.teamsId.push(t.TeamId);
+      deletedTeams.userId = user?.Id;
+    });
+
+    const res = await teamApi.deleteTournament(deletedTeams);
+
+    if (res >= 1) {
+      onClose();
+    } else {
+      alert("Error");
+    }
   };
 
   return (
@@ -54,15 +73,16 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ onClose }) => {
           id="searchUser"
           type="text"
           value={fullName}
-          placeholder="Buscar Usuario"
+          placeholder="Buscar Equipo"
           icon={<SearchIcon width={27} height={20} color={darkGreen} />}
           onChange={handleChange}
         />
         <Container>
           <TeamsCard
             name={fullName}
-            addPlayers={addPlayer}
-            selectedPlayers={players}
+            deletedTeams={deleteTeam}
+            allTeams={allTeams}
+            selectedTeams={teams}
           />
         </Container>
 
@@ -73,7 +93,7 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ onClose }) => {
               isDangerousAction={true}
               onClick={onClose}
             />
-            <SecondaryButton text="Eliminar" />
+            <SecondaryButton text="Eliminar" onClick={onDeleteTeams} />
           </ButtonsContainer>
         </Container>
       </ModalContent>

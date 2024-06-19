@@ -44,9 +44,9 @@ export class TeamService {
       throw new ServiceCodeError(codeErrors.GEN_1("Team"));
     }
 
-    const userByTeam = await UserRepository.getUsersByTeamId(teamId);
+    const usersByTeam = await UserRepository.getUsersByTeamId(teamId);
 
-    return { team, users: userByTeam };
+    return { team, users: usersByTeam };
   }
 
   async findById(teamId: string) {
@@ -59,5 +59,19 @@ export class TeamService {
     }
 
     return existingTeam;
+  }
+
+  async getTeams(tournamentId: string) {
+    const teams = await TeamRepository.getTeams(tournamentId);
+
+    if (!teams) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Teams"));
+    }
+
+    return teams;
+  }
+
+  async delete(teamsId: string[]) {
+    return TeamRepository.delete(teamsId);
   }
 }

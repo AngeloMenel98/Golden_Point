@@ -27,6 +27,7 @@ import { Category } from "../../../entities/dtos/TournamentDTO";
 import { TournCredentials } from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
+import UsersModal from "./Modal/UsersModal/UsersModal";
 
 export interface CreationData {
   tournamentName: string;
@@ -62,6 +63,7 @@ const Tournament: React.FC = () => {
   const createOpenModal = () => {
     setCreateOpen(true);
   };
+
   const usersOpenModal = () => {
     setUserOpen(true);
   };
@@ -70,9 +72,11 @@ const Tournament: React.FC = () => {
     setFieldErrors({});
     setCreateOpen(false);
   };
+
   const usersCloseModal = () => {
     setUserOpen(false);
   };
+
   const handleSaveTournament = async () => {
     setFieldErrors({});
     const categories: Category[] = [];
@@ -80,14 +84,14 @@ const Tournament: React.FC = () => {
     data.maleCat.forEach((category) => {
       categories.push({
         gender: "Masculino",
-        categoryName: category,
+        category: category,
       });
     });
 
     data.femaleCat.forEach((category) => {
       categories.push({
         gender: "Femenino",
-        categoryName: category,
+        category: category,
       });
     });
 
@@ -133,14 +137,15 @@ const Tournament: React.FC = () => {
             />
           </HeaderButtons>
 
-          {/*isUserOpen && (
+          {isUserOpen && (
             <UsersModal
               tourId={tourData?.Id}
               onClose={usersCloseModal}
               isAddTeam={false}
               onNext={() => {}}
+              onPlayersChange={() => {}}
             />
-          )*/}
+          )}
 
           <HeaderButtons>
             <SecondaryButton text="Torneos" />

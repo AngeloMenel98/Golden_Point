@@ -27,7 +27,7 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
       borderCol={darkGreen}
       boxCol={lightGray}
       mWidth={700}
-      mHeight={400}
+      mHeight={550}
     >
       <H2>Registro</H2>
       <InputGroup>

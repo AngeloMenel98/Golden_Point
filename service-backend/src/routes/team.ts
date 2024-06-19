@@ -30,4 +30,24 @@ router.post(
 
 router.get("/team/:id", teamController.getTeam.bind(teamController));
 
+router.get(
+  "/teams/:tournamentId",
+  teamController.getTeams.bind(teamController)
+);
+
+router.post(
+  "/team/delete",
+  [
+    check("userId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+    check("teamsId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("teamsId")),
+  ],
+  teamController.delete.bind(teamController)
+);
+
 export default router;

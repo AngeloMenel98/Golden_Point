@@ -3,28 +3,28 @@ import { UsersContainer } from "./TeamCardStyle";
 import Card from "../../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 
-import UsersButton from "../../../../../components/buttons/UsersButton/UsersButton";
-import { UserDTO } from "../../../../../entities/dtos/UserDTO";
-import UserCircleIcon from "../../../../../icons/UserCircleIcon/UserCircleIcon";
+import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
+import TeamsButton from "../../../../../components/buttons/TeamsButton/TeamsButton";
 
 interface TeamsCardProps {
   name: string;
-  error: string;
-  addPlayers: (player: UserDTO) => void;
-  selectedPlayers: UserDTO[];
+  error?: string;
+  deletedTeams: (teams: TeamDTO) => void;
+  allTeams: TeamDTO[];
+  selectedTeams: TeamDTO[];
 }
 
 const TeamsCard: React.FC<TeamsCardProps> = ({
   error,
   name,
-  addPlayers,
-  selectedPlayers,
+  deletedTeams,
+  allTeams,
+  selectedTeams,
 }) => {
-  const filteredUsers = users.filter(
-    (user) =>
-      user.LastName.toLowerCase().includes(name.toLowerCase()) ||
-      user.FirstName.toLowerCase().includes(name.toLowerCase())
+  const filteredTeams = allTeams.filter((team: TeamDTO) =>
+    team.TeamName.toLowerCase().includes(name.toLowerCase())
   );
+
   return (
     <Card
       backgroundCol={white}
@@ -35,14 +35,13 @@ const TeamsCard: React.FC<TeamsCardProps> = ({
       error={error}
     >
       <UsersContainer>
-        {filteredUsers.map((user, index) => (
-          <UsersButton
+        {filteredTeams.map((team, index) => (
+          <TeamsButton
             key={index}
-            user={user}
-            text={user.FirstName + " " + user.LastName}
-            icon={<UserCircleIcon width={20} height={20} color={pastelGreen} />}
-            onClick={addPlayers}
-            isSelected={selectedPlayers.includes(user)}
+            team={team}
+            text={team.TeamName}
+            onClick={deletedTeams}
+            isSelected={selectedTeams.includes(team)}
           />
         ))}
       </UsersContainer>
