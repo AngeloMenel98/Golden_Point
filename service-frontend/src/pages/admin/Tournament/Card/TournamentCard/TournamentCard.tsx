@@ -1,25 +1,22 @@
 import React, { useRef, useState } from "react";
-import Card from "../../../../components/card/Card";
-import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
+import Card from "../../../../../components/card/Card";
+import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
+import TournamentRow from "../../Row/TournamentRow";
+import { TournamentDTO } from "../../../../../entities/dtos/TournamentDTO";
+import OptsModal from "../../Modal/OptionsModal/OptionsModal";
+import ManagerModal from "../../Modal/ManagerModal/ManagerModal";
+import DeleteTeam from "../../Modal/DeleteTeam/DeleteTeam";
 import { CardContainer } from "./TournamentCardStyle";
-import TournamentRow from "../Row/TournamentRow";
-import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
-import TournamentAPI from "../../../../services/TournamentApi";
-import OptsModal from "../Modal/OptionsModal/OptionsModal";
-import ManagerModal from "../Modal/ManagerModal/ManagerModal";
-import DeleteTeam from "../Modal/DeleteTeam/DeleteTeam";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
-  tournApi: TournamentAPI;
   error: string;
 }
 
 const TournamentCard: React.FC<TournamentCardProps> = ({
   tournaments,
   tournamentTitle,
-  tournApi,
   error,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -85,9 +82,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
             key={index}
             ref={(el) => (rowRefs.current[index] = el)}
             tournData={tourn}
-            tournApi={tournApi}
             onOpen={() => handleOpenModal(index, tourn)}
-            onClose={handleCloseModal}
           />
         ))}
       </Card>

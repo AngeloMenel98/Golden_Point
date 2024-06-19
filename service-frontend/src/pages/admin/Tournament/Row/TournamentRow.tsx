@@ -12,30 +12,18 @@ import {
 } from "./TournamentRowStyle";
 import { mint } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
-import TournamentAPI from "../../../../services/TournamentApi";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
 import { useNavigate } from "react-router-dom";
 
 interface TournamentRowProps {
   tournData: TournamentDTO;
-  tournApi: TournamentAPI;
   onOpen: (tournament: TournamentDTO) => void;
-  onClose: () => void;
 }
 
 const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
-  ({ tournData, tournApi, onOpen, onClose }, ref) => {
+  ({ tournData, onOpen }, ref) => {
     const [isShown, setIsShown] = useState(false);
-
-    /*const deleteTournament = async () => {
-      const deleteTourn: DeletedTournament = {
-        tournamentId: tournData.Id,
-        userId: user?.Id,
-      };
-
-      const tournRes = await tournApi.deleteTournament(deleteTourn);
-    };*/
 
     const navigate = useNavigate();
 

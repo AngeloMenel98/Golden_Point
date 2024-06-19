@@ -43,16 +43,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
   const user = useSelector((state: RootState) => state.user.user);
   const [teamName, setTeamName] = useState<string>("");
 
-  //TODO: Get Categories from the tournament.
-  const maleCats = tournament.Categories.filter(
-    (cat) => cat.gender === "Masculino"
-  ).map((cat) => cat.category);
-
-  const femaleCats = tournament.Categories.filter(
-    (cat) => cat.gender === "Femenino"
-  ).map((cat) => cat.category);
-
-  //const { maleCat, femaleCat } = useSeparateCats(tournament.Categories);
+  const { maleCat, femaleCat } = useSeparateCats(tournament.Categories);
 
   const [dropDownData, setDropDownData] = useState<DropDownData>({
     maleCat: [],
@@ -116,7 +107,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
         <SpaceContainer id="space">
           <DropDown
             buttonText="Masculino"
-            items={maleCats}
+            items={maleCat}
             width={150}
             onChange={(selectedItems: string[]) => {
               setDropDownData({ ...dropDownData, maleCat: selectedItems });
@@ -125,7 +116,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
           />
           <DropDown
             buttonText="Femenino"
-            items={femaleCats}
+            items={femaleCat}
             width={150}
             onChange={(selectedItems: string[]) => {
               setDropDownData({

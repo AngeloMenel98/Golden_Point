@@ -16,7 +16,7 @@ import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 import RankingIcon from "../../../icons/RankingIcon/RankingIcon";
 
 import NavBar from "../../../components/navbar/NavBar";
-import TournamentCard from "./Card/TournamentCard";
+import TournamentCard from "./Card/TournamentCard/TournamentCard";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
@@ -187,7 +187,6 @@ const Tournament: React.FC = () => {
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
-          tournApi={tournAPI}
           error={errorTournament}
         />
       </TournamentSection>
