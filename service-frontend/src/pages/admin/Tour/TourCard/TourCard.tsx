@@ -1,9 +1,12 @@
+import { useEffect, useState } from "react";
 import Card from "../../../../components/card/Card";
 import { TourDTO } from "../../../../entities/dtos/TourDTO";
-import TourAPI from "../../../../services/TourApi";
+import TourAPI, { DeletedTour } from "../../../../services/TourApi";
 import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
 import TourRow from "../TourRow/TourRow";
 import { CardContainer } from "./TourCardStyle";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../reduxSlices/store";
 
 interface TourCardProps {
   tours: TourDTO[];
@@ -13,14 +16,35 @@ interface TourCardProps {
 }
 
 const TourCard: React.FC<TourCardProps> = ({
-  tours,
+  tours: initialTours,
   tourApi,
   tourTitle,
   error,
 }) => {
+  const user = useSelector((state: RootState) => state.user.user);
+  const [tours, setTours] = useState<TourDTO[]>(initialTours);
+
+  useEffect(() => {
+    setTours(initialTours);
+  }, [initialTours]);
+
   const filteredTours = tours.filter((tour) =>
     tour.TourTitle.toLowerCase().includes(tourTitle.toLowerCase())
   );
+
+  const handleDeleteTour = async (tt: TourDTO) => {
+    const deleteTour: DeletedTour = {
+      tourId: tt.Id,
+      userId: user?.Id,
+    };
+
+    const tourRes = await tourApi.deleteTour(deleteTour);
+    if (tourRes != null) {
+      setTours(tours.filter((tour) => tour.Id !== tt.Id));
+    } else {
+      console.error("Failed to delete tour");
+    }
+  };
 
   return (
     <CardContainer>
@@ -32,8 +56,12 @@ const TourCard: React.FC<TourCardProps> = ({
         mHeight={1000}
         error={error}
       >
-        {filteredTours.map((tour, index) => (
-          <TourRow key={index} tourData={tour} tourApi={tourApi} />
+        {filteredTours.map((tour) => (
+          <TourRow
+            key={tour.Id}
+            tourData={tour}
+            onDelete={() => handleDeleteTour(tour)}
+          />
         ))}
       </Card>
     </CardContainer>

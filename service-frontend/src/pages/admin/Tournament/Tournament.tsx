@@ -110,6 +110,8 @@ const Tournament: React.FC = () => {
         ...prevErrors,
         ...res.fieldErrors,
       }));
+    } else {
+      createCloseModal();
     }
   };
 

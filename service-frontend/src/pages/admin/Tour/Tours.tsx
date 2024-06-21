@@ -109,6 +109,8 @@ const Tours: React.FC = () => {
         ...prevErrors,
         ...res.fieldErrors,
       }));
+    } else {
+      handleCloseModal();
     }
   };
 

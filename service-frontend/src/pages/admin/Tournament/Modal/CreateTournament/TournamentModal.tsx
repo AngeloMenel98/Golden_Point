@@ -37,12 +37,9 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
   onSaveTourn,
   errors,
 }) => {
-  /* const { maleCat, femaleCat } = useSeparateCats(
-    tournaments.map((t) => t.Categories)
-  );*/
+  const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
 
   const masters = [1000, 1500];
-  const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
 
   const [dropDownData, setDropDownData] = useState<DropDownData>({
     master: [],
@@ -58,7 +55,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
 
   return (
     <ModalWrapper>
-      <ModalContent width={25} id="mdoal">
+      <ModalContent width={25}>
         <HeaderContainer>
           <H3Styled>Crear Torneo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />

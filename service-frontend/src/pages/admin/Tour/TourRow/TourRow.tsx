@@ -15,20 +15,17 @@ import { TourDTO } from "../../../../entities/dtos/TourDTO";
 import CopyableText from "../../../../components/copyableText/CopyableText";
 import TrashIcon from "../../../../icons/TrashIcon/TrashIcon";
 import { red } from "../../../../utils/colors";
-import TourAPI, { DeletedTour } from "../../../../services/TourApi";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../reduxSlices/store";
 import { useDispatch } from "react-redux";
 import { setTour } from "../../../../reduxSlices/tour/tourSlice";
 
 interface TourRowProps {
   tourData: TourDTO;
-  tourApi: TourAPI;
+  onDelete: () => void;
 }
 
-const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
-  const user = useSelector((state: RootState) => state.user.user);
+const TourRow: React.FC<TourRowProps> = ({ tourData, onDelete }) => {
+  /*const user = useSelector((state: RootState) => state.user.user);
 
   const handleDeleteTour = async () => {
     const deleteTour: DeletedTour = {
@@ -37,7 +34,7 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
     };
 
     const tourRes = await tourApi.deleteTour(deleteTour);
-  };
+  };*/
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -71,12 +68,7 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
       </MiddleContainer>
 
       <RightContainer>
-        <TrashIcon
-          width={20}
-          height={20}
-          color={red}
-          onClick={handleDeleteTour}
-        />
+        <TrashIcon width={20} height={20} color={red} onClick={onDelete} />
       </RightContainer>
     </TourRowContainer>
   );

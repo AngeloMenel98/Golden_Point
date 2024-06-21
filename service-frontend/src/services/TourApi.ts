@@ -2,7 +2,7 @@ import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface DeletedTour {
-  tourId: string;
+  tourId?: string;
   userId?: string;
 }
 

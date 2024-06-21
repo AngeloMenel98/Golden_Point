@@ -50,7 +50,7 @@ export default function useGetTournaments(tour: TourDTO | null) {
       setTournaments(tournArray);
     } else {
       setError(tournRes.fieldErrors.notFound);
-
+      console.log("Tournament:", tournaments);
       return {
         tournaments,
         tournAPI,
