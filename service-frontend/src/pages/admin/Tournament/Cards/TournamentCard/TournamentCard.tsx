@@ -3,9 +3,9 @@ import Card from "../../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import TournamentRow from "../../Row/TournamentRow";
 import { TournamentDTO } from "../../../../../entities/dtos/TournamentDTO";
-import OptsModal from "../../Modal/OptionsModal/OptionsModal";
-import ManagerModal from "../../Modal/ManagerModal/ManagerModal";
-import DeleteTeam from "../../Modal/DeleteTeam/DeleteTeam";
+import OptsModal from "../../Modals/OptionsModal/OptionsModal";
+import ManagerModal from "../../Modals/ManagerModal/ManagerModal";
+import DeleteTeam from "../../Modals/DeleteTeam/DeleteTeam";
 import { CardContainer } from "./TournamentCardStyle";
 
 interface TournamentCardProps {

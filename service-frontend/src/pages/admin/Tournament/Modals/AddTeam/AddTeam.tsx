@@ -104,7 +104,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
           value={teamName}
           onChange={handleChange}
         />
-        <SpaceContainer id="space">
+        <SpaceContainer>
           <DropDown
             buttonText="Masculino"
             items={maleCat}

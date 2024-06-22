@@ -13,6 +13,7 @@ import {
 import { ClubDTO } from "../../../../../entities/dtos/ClubDTO";
 import { useState } from "react";
 import Checkbox from "../../../../../components/checkbox/Checkbox";
+import { formatDateTime } from "../../../../../utils/transformDate";
 
 interface ClubRowProps {
   clubData: ClubDTO;
@@ -39,7 +40,7 @@ const ClubRow: React.FC<ClubRowProps> = ({ clubData, onCheckboxChange }) => {
       </LeftContainer>
       <RightContainer>
         <HoursContainer>
-          Horario: <TextSpan>{clubData.AvFrom}</TextSpan>
+          Horario: <TextSpan>{formatDateTime(clubData.AvFrom)}</TextSpan>
         </HoursContainer>
         <CourtsContainer>
           Canchas: <TextSpan>{clubData.CourtCount}</TextSpan>

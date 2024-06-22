@@ -6,7 +6,7 @@ import SecondaryButton from "../../../components/buttons/SecondaryButton/Seconda
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
 import TourCard from "./TourCard/TourCard";
-import TourModal from "./TourModal/TourModal";
+import TourModal from "./Modals/TourModal";
 
 import {
   ButtonInputContainer,
@@ -21,10 +21,7 @@ import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 
 import { RootState } from "../../../reduxSlices/store";
 import useGetTours from "../../../hooks/useGetTours";
-import ClubAPI, { ClubCredentials } from "../../../services/ClubApi";
-import { TourCredentials } from "../../../services/TourApi";
-import { ClubDTO } from "../../../entities/dtos/ClubDTO";
-import { Errors } from "../../../errors/Errors";
+import { TourDTO } from "../../../entities/dtos/TourDTO";
 
 export interface CreationData {
   tourName: string;
@@ -35,25 +32,11 @@ export interface CreationData {
   avTo: string;
 }
 
-const clubAPI = new ClubAPI();
-
 const Tours: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
-  const [data, setData] = useState<CreationData>({
-    tourName: "",
-    clubName: "",
-    address: "",
-    courts: "",
-    avFrom: "",
-    avTo: "",
-  });
-
-  const [clubsSelected, setClubsSelected] = useState<ClubDTO[]>([]);
   const [tourTitle, setTourTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const { tours, tourAPI, error } = useGetTours(user);
 
@@ -67,59 +50,6 @@ const Tours: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTourTitle(e.target.value);
-  };
-
-  const handleData = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData({ ...data, [e.target.id]: e.target.value });
-  };
-
-  const handleSaveClub = async () => {
-    setFieldErrors({});
-    const club: ClubCredentials = {
-      userId: user?.Id,
-      clubName: data.clubName,
-      address: data.address,
-      availableFrom: data.avFrom,
-      availableTo: data.avTo,
-      courtsNumber: data.courts,
-    };
-
-    const res = await clubAPI.addClub(club);
-
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    }
-  };
-
-  const handleSaveTour = async () => {
-    setFieldErrors({});
-    const tour: TourCredentials = {
-      userId: user?.Id,
-      clubsId: clubsSelected.map((c) => c.Id),
-      title: data.tourName,
-    };
-
-    const res = await tourAPI.addTour(tour);
-
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    } else {
-      handleCloseModal();
-    }
-  };
-
-  const handleCheckboxChange = (club: ClubDTO, isChecked: boolean) => {
-    if (isChecked) {
-      setClubsSelected([...clubsSelected, club]);
-    } else {
-      setClubsSelected(clubsSelected.filter((c) => c !== club));
-    }
   };
 
   return (
@@ -144,15 +74,7 @@ const Tours: React.FC = () => {
           </InputContainer>
         </ButtonInputContainer>
         {isModalOpen && (
-          <TourModal
-            data={data}
-            saveClubs={handleSaveClub}
-            saveTour={handleSaveTour}
-            onCheckBox={handleCheckboxChange}
-            onChange={handleData}
-            onClose={handleCloseModal}
-            errors={fieldErrors}
-          />
+          <TourModal tourApi={tourAPI} onClose={handleCloseModal} />
         )}
         <H2>Todos los Tours</H2>
         <TourCard

@@ -12,7 +12,7 @@ import {
   ModalWrapper,
 } from "./DeleteTeamStyle";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
-import TeamsCard from "../../Card/TeamsCard/TeamsCard";
+import TeamsCard from "../../Cards/TeamsCard/TeamsCard";
 import useGetTeams from "../../../../../hooks/useGetTeams";
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 import { DeletedTeam } from "../../../../../services/TeamApi";

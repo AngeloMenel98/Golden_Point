@@ -3,14 +3,16 @@ import SecondaryInput from "../../../../../components/inputs/SecondaryInput/Seco
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../../../../icons/SearchIcon/SearchIcon";
 import { darkGreen, red } from "../../../../../utils/colors";
-import UsersCard from "../../Card/UsersCard/UsersCard";
+import UsersCard from "../../Cards/UsersCard/UsersCard";
 import {
   Container,
-  H3Styled,
   HeaderContainer,
+  PlayersContainer,
   ModalContent,
   ModalWrapper,
   ButtonsContainer,
+  H3Styled,
+  H4Styled,
 } from "./UsersModalStyle";
 import useGetUsers from "../../../../../hooks/useGetUsers";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
@@ -31,7 +33,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
   onNext,
   onPlayersChange,
 }) => {
-  const { users, userAPI, errorUsers } = useGetUsers(tourId);
+  const { users, errorUsers } = useGetUsers(tourId);
 
   const [fullName, setFullName] = useState<string>("");
   const [players, setPlayers] = useState<UserDTO[]>([]);
@@ -63,15 +65,21 @@ const UsersModal: React.FC<UsersModalProps> = ({
           <H3Styled>Usuarios</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
         </HeaderContainer>
-        <SecondaryInput
-          id="searchUser"
-          type="text"
-          value={fullName}
-          placeholder="Buscar Usuario"
-          icon={<SearchIcon width={27} height={20} color={darkGreen} />}
-          onChange={handleChange}
-        />
-        {isAddTeam ? <H3Styled>Jugadores: {players.length}/2</H3Styled> : <></>}
+        <PlayersContainer>
+          <SecondaryInput
+            id="searchUser"
+            type="text"
+            value={fullName}
+            placeholder="Buscar Usuario"
+            icon={<SearchIcon width={27} height={20} color={darkGreen} />}
+            onChange={handleChange}
+          />
+          {isAddTeam ? (
+            <H4Styled>Jugadores: {players.length}/2</H4Styled>
+          ) : (
+            <></>
+          )}
+        </PlayersContainer>
         <Container>
           <UsersCard
             name={fullName}

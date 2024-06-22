@@ -16,18 +16,18 @@ import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 import RankingIcon from "../../../icons/RankingIcon/RankingIcon";
 
 import NavBar from "../../../components/navbar/NavBar";
-import TournamentCard from "./Card/TournamentCard/TournamentCard";
+import TournamentCard from "./Cards/TournamentCard/TournamentCard";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
 import { RootState } from "../../../reduxSlices/store";
-import TournamentModal from "./Modal/CreateTournament/TournamentModal";
+import TournamentModal from "./Modals/CreateTournament/TournamentModal";
 import useGetTournaments from "../../../hooks/useGetTournaments";
 import { Category } from "../../../entities/dtos/TournamentDTO";
 import { TournCredentials } from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
-import UsersModal from "./Modal/UsersModal/UsersModal";
+import UsersModal from "../../user/Tournament/Modal/UsersModal/UsersModal";
 
 export interface CreationData {
   tournamentName: string;
@@ -140,13 +140,7 @@ const Tournament: React.FC = () => {
           </HeaderButtons>
 
           {isUserOpen && (
-            <UsersModal
-              tourId={tourData?.Id}
-              onClose={usersCloseModal}
-              isAddTeam={false}
-              onNext={() => {}}
-              onPlayersChange={() => {}}
-            />
+            <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
           )}
 
           <HeaderButtons>

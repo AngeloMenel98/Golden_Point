@@ -84,6 +84,7 @@ export const FullRightContainer = styled.div`
 export const AddressContainer = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
   padding: 0rem 0.5rem;
 
   color: ${darkGreen};

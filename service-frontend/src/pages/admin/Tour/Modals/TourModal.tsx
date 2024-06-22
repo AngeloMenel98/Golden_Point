@@ -22,32 +22,101 @@ import {
 } from "./TourModalStyle";
 import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
-import ClubRow from "./ClubRow/ClubRow";
+import ClubRow from "../Rows/ClubRow/ClubRow";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import { CreationData } from "../Tours";
 import useGetClubs from "../../../../hooks/useGetClubs";
 import { Errors } from "../../../../errors/Errors";
+import { useState } from "react";
+import ClubAPI, { ClubCredentials } from "../../../../services/ClubApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../reduxSlices/store";
+import TourAPI, { TourCredentials } from "../../../../services/TourApi";
+import { TourDTO } from "../../../../entities/dtos/TourDTO";
 
 interface TourModalProps {
-  data: CreationData;
-  saveClubs: () => void;
-  saveTour: () => void;
-  onCheckBox: (club: ClubDTO, isChecked: boolean) => void;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  tourApi: TourAPI;
   onClose: () => void;
-  errors: Errors;
 }
 
-const TourModal: React.FC<TourModalProps> = ({
-  data,
-  saveClubs,
-  saveTour,
-  onCheckBox,
-  onChange,
-  onClose,
-  errors,
-}) => {
+const clubAPI = new ClubAPI();
+
+const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose }) => {
+  const user = useSelector((state: RootState) => state.user.user);
   const allClubs = useGetClubs();
+
+  const [data, setData] = useState<CreationData>({
+    tourName: "",
+    clubName: "",
+    address: "",
+    courts: "",
+    avFrom: "",
+    avTo: "",
+  });
+  const [clubsSelected, setClubsSelected] = useState<ClubDTO[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<Errors>({});
+
+  const handleSaveClub = async () => {
+    setFieldErrors({});
+    const club: ClubCredentials = {
+      userId: user?.Id,
+      clubName: data.clubName,
+      address: data.address,
+      availableFrom: data.avFrom,
+      availableTo: data.avTo,
+      courtsNumber: data.courts,
+    };
+
+    setData({
+      tourName: "",
+      clubName: "",
+      address: "",
+      courts: "",
+      avFrom: "",
+      avTo: "",
+    });
+
+    const res = await clubAPI.addClub(club);
+
+    if (res.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...res.fieldErrors,
+      }));
+    }
+  };
+
+  const handleSaveTour = async () => {
+    setFieldErrors({});
+    const tour: TourCredentials = {
+      userId: user?.Id,
+      clubsId: clubsSelected.map((c) => c.Id),
+      title: data.tourName,
+    };
+
+    const res = await tourApi.addTour(tour);
+
+    if (res.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...res.fieldErrors,
+      }));
+    } else {
+      onClose();
+    }
+  };
+
+  const handleData = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setData({ ...data, [e.target.id]: e.target.value });
+  };
+
+  const handleCheckboxChange = (club: ClubDTO, isChecked: boolean) => {
+    if (isChecked) {
+      setClubsSelected([...clubsSelected, club]);
+    } else {
+      setClubsSelected(clubsSelected.filter((c) => c !== club));
+    }
+  };
 
   const filteredClubs = allClubs.filter((club) =>
     club.ClubName.toLowerCase().includes(data.clubName.toLowerCase())
@@ -67,8 +136,8 @@ const TourModal: React.FC<TourModalProps> = ({
           type="text"
           value={data.tourName}
           maxLength={20}
-          onChange={onChange}
-          error={errors.tourName}
+          onChange={handleData}
+          error={fieldErrors.tourName}
         />
 
         <ClubContainer>
@@ -79,8 +148,8 @@ const TourModal: React.FC<TourModalProps> = ({
               type="text"
               value={data.clubName}
               maxLength={20}
-              onChange={onChange}
-              error={errors.clubName}
+              onChange={handleData}
+              error={fieldErrors.clubName}
             />
             <SecondaryInput
               label="Dirección"
@@ -88,8 +157,8 @@ const TourModal: React.FC<TourModalProps> = ({
               type="text"
               value={data.address}
               maxLength={20}
-              onChange={onChange}
-              error={errors.address}
+              onChange={handleData}
+              error={fieldErrors.address}
             />
             <SecondaryInput
               label="N° Canchas"
@@ -98,8 +167,8 @@ const TourModal: React.FC<TourModalProps> = ({
               value={data.courts}
               maxLength={2}
               isSmall={true}
-              onChange={onChange}
-              error={errors.courts}
+              onChange={handleData}
+              error={fieldErrors.courts}
             />
           </LeftContainer>
 
@@ -110,8 +179,8 @@ const TourModal: React.FC<TourModalProps> = ({
               type="datetime-local"
               value={data.avFrom}
               isBig={true}
-              onChange={onChange}
-              error={errors.avFrom}
+              onChange={handleData}
+              error={fieldErrors.avFrom}
             />
             <SecondaryInput
               label="Horario Final"
@@ -119,8 +188,8 @@ const TourModal: React.FC<TourModalProps> = ({
               type="datetime-local"
               value={data.avTo}
               isBig={true}
-              onChange={onChange}
-              error={errors.avTo}
+              onChange={handleData}
+              error={fieldErrors.avTo}
             />
           </RightContainer>
           <FullRightContainer>
@@ -128,7 +197,7 @@ const TourModal: React.FC<TourModalProps> = ({
               width={30}
               height={30}
               color={pastelGreen}
-              onClick={saveClubs}
+              onClick={handleSaveClub}
             />
           </FullRightContainer>
         </ClubContainer>
@@ -139,13 +208,13 @@ const TourModal: React.FC<TourModalProps> = ({
           boxCol={black}
           mWidth={1000}
           mHeight={800}
-          error={errors.notFound}
+          error={fieldErrors.notFound}
         >
           {filteredClubs.map((club, index) => (
             <ClubRow
               key={index}
               clubData={club}
-              onCheckboxChange={onCheckBox}
+              onCheckboxChange={handleCheckboxChange}
             />
           ))}
         </Card>
@@ -159,7 +228,7 @@ const TourModal: React.FC<TourModalProps> = ({
             />
           </ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Crear" onClick={saveTour} />
+            <SecondaryButton text="Crear" onClick={handleSaveTour} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

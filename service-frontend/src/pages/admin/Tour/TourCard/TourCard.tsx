@@ -3,7 +3,7 @@ import Card from "../../../../components/card/Card";
 import { TourDTO } from "../../../../entities/dtos/TourDTO";
 import TourAPI, { DeletedTour } from "../../../../services/TourApi";
 import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
-import TourRow from "../TourRow/TourRow";
+import TourRow from "../Rows/TourRow";
 import { CardContainer } from "./TourCardStyle";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
