@@ -109,4 +109,13 @@ export class UserService {
 
     return { user: user, perData: userData.personalData };
   }
+
+  async getAll(tourId: string) {
+    const users: unknown[] = await UserRepository.getAll(tourId);
+
+    if (users.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Usuarios"));
+    }
+    return users;
+  }
 }

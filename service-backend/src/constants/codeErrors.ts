@@ -8,6 +8,9 @@ const codeErrors = {
   TOUR_1: `El código del Tour no existe.`,
   TOUR_2: (value: any) => `${value} ya esta unido al Tour.`,
 
+  TOURN_1: `Master obligatorio`,
+  TOURN_2: `Al menos se necesita una categoría`,
+
   TEAM_1: `La cantidad de jugadores por equipo son 2.`,
 
   MATCH_1: `Cantidad de equipos incorrectos.`,

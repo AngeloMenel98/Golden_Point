@@ -94,4 +94,6 @@ router.post(
 
 router.get("/:username", userController.findByUsername.bind(userController));
 
+router.get("/users/:tourId", userController.getUsers.bind(userController));
+
 export default router;

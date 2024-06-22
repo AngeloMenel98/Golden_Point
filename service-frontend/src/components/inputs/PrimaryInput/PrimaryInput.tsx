@@ -5,6 +5,7 @@ import {
   InputField,
   IconContainer,
   InputFieldWithIcon,
+  ErrorMessage,
 } from "./PrimaryInputStyle";
 
 // Definir una interfaz para las props del componente
@@ -16,6 +17,8 @@ interface PrimaryInputProps {
   placeholder?: string;
   maxLength?: number;
   icon?: ReactNode;
+  error?: string;
+
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -28,10 +31,11 @@ const PrimaryInput: React.FC<PrimaryInputProps> = ({
   maxLength,
   icon,
   onChange,
+  error,
 }) => {
   return (
     <InputContainer>
-      <Label>{label}</Label>
+      <Label hasError={!!error}>{label}</Label>
 
       <InputFieldWithIcon>
         {icon && <IconContainer>{icon}</IconContainer>}
@@ -43,8 +47,10 @@ const PrimaryInput: React.FC<PrimaryInputProps> = ({
           placeholder={placeholder}
           hasIcon={!!icon}
           onChange={onChange}
+          hasError={!!error}
         />
       </InputFieldWithIcon>
+      {error && <ErrorMessage>{error}</ErrorMessage>}
     </InputContainer>
   );
 };

@@ -45,6 +45,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
   async findByUsername(username: string) {
     return this.findOne({ where: { username } });
   },
+
   async findByEmail(email: string) {
     return this.findOne({ where: { email } });
   },
@@ -66,7 +67,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .getOne();
   },
 
-  async getUsersByTourId(tourId: string): Promise<User[]> {
+  async getUsersByTourId(tourId: string) {
     return this.createQueryBuilder("u")
       .innerJoin("tour_users_user", "tuu", 'u.id = tuu."userId"')
       .innerJoin("tour", "t", 't.id = tuu."tourId"')
@@ -81,5 +82,24 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .select("u")
       .where("t.id = :teamId", { teamId })
       .getMany();
+  },
+
+  async getAll(tourId: string) {
+    return this.createQueryBuilder("u")
+      .select([
+        "u.id AS userId",
+        "u.username AS userName",
+        "u.email as email",
+        "u.isSingle as isSingle",
+        'pd."lastName" as lastName',
+        'pd."firstName" as firstName',
+        'pd."phoneNumber" as phoneNumber',
+        'pd."location" as location',
+      ])
+      .innerJoin("personal_data", "pd", 'pd."userId" = u.id')
+      .innerJoin("tour_users_user", "tuu", 'u.id = tuu."userId"')
+      .innerJoin("tour", "t", 't.id = tuu."tourId"')
+      .where("t.id = :tourId", { tourId })
+      .getRawMany();
   },
 });

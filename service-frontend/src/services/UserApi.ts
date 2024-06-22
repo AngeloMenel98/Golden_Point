@@ -1,3 +1,4 @@
+import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface Credentials {
@@ -22,15 +23,25 @@ class UserAPI extends GeneralAPI {
       const res = await this.api.post("/login", credentials);
       return res.data.token;
     } catch (e) {
-      throw e;
+      return isAxiosError(e);
     }
   }
 
   async register(data: DataRegister) {
     try {
-      return this.api.post("/register", data);
+      const res = await this.api.post("/register", data);
+      return res.data;
     } catch (e) {
-      throw e;
+      return isAxiosError(e);
+    }
+  }
+
+  async getUsers(tourId: string) {
+    try {
+      const res = await this.api.get(`/users/${tourId}`);
+      return res.data;
+    } catch (e) {
+      return isAxiosError(e);
     }
   }
 }

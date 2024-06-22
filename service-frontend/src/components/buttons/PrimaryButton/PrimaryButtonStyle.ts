@@ -1,8 +1,14 @@
 import styled from "styled-components";
-import { darkGreen, red, lightGray, darkGray } from "../../../utils/colors";
+import {
+  darkGreen,
+  red,
+  lightGray,
+  darkGray,
+  pastelGreen,
+} from "../../../utils/colors";
 
-export const ButtonStyled = styled.button<{ isDangerousAction?: boolean }>`
-  background-color: ${(props) => (props.isDangerousAction ? red : darkGreen)};
+export const ButtonStyled = styled.button<{ isDangerous?: boolean }>`
+  background-color: ${(props) => (props.isDangerous ? red : darkGreen)};
   padding: 5px 20px;
   border: none;
   border-radius: 6px;
@@ -14,7 +20,9 @@ export const ButtonStyled = styled.button<{ isDangerousAction?: boolean }>`
 
   /* Estilos cuando el botón está activo o enfocado */
   &:hover {
-    background-color: #608259;
+    background-color: ${(props) => (props.isDangerous ? lightGray : darkGreen)};
+    color: ${(props) => (props.isDangerous ? red : pastelGreen)};
+    border-color: ${(props) => (props.isDangerous ? darkGray : pastelGreen)};
     opacity: 0.8;
   }
   ,
@@ -37,4 +45,12 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`;
+
+export const Icon = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-left: 5px;
 `;

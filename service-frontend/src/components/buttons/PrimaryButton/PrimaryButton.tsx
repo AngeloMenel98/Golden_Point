@@ -1,27 +1,25 @@
 import React, { ReactNode } from "react";
-import { ButtonStyled, Container } from "./PrimaryButtonStyle";
-import { red } from "../../../utils/colors";
+import { ButtonStyled, Container, Icon } from "./PrimaryButtonStyle";
 
 interface ButtonProps {
   text?: string;
   icon?: ReactNode;
+  isDangerousAction?: boolean;
   onClick?: () => void;
-  errorMessage?: string | null;
 }
 
 const PrimaryButton: React.FC<ButtonProps> = ({
   text,
   icon,
+  isDangerousAction,
   onClick,
-  errorMessage,
 }) => {
   return (
     <Container>
-      <ButtonStyled onClick={onClick}>
+      <ButtonStyled onClick={onClick} isDangerous={isDangerousAction}>
         {text}
-        {icon}
+        {icon && <Icon>{icon}</Icon>}
       </ButtonStyled>
-      {errorMessage && <div style={{ color: red }}>{errorMessage}</div>}
     </Container>
   );
 };

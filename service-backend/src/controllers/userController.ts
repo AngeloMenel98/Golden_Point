@@ -61,7 +61,7 @@ export class UserController {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
         return res.status(401).json({
-          errors: errs.array().map((e) => ({
+          error: errs.array().map((e) => ({
             msg: e.msg,
           })),
         });
@@ -237,6 +237,33 @@ export class UserController {
 
       if (isUserServiceError(e)) {
         return res.status(400).json({ errors: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
+
+  async getUsers(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const tourId = req.params.tourId;
+
+      const users = await this.userService.getAll(tourId);
+
+      res.status(201).json(users);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
       }
 
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });

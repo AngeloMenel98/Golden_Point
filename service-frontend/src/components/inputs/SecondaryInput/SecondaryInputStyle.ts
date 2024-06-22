@@ -3,7 +3,7 @@ import { black, darkGray, darkGreen, red, white } from "../../../utils/colors";
 
 export const InputContainer = styled.div`
   display: flex;
-  flex-direction: column; /* Hacer que el contenido se muestre en columnas */
+  flex-direction: column;
 `;
 
 export const Label = styled.label<{
@@ -17,24 +17,25 @@ export const Label = styled.label<{
 export const InputFieldWithIcon = styled.div`
   position: relative;
   display: flex;
-  width: 100%;
   align-items: center;
 `;
 
 export const InputField = styled.input<{
-  hasIcon: boolean;
-  width: number;
+  hasIconInside: boolean;
   hasError: boolean;
+  isSmall: boolean | undefined;
+  isBig: boolean | undefined;
 }>`
-  width: ${({ width }) => `${width}px`};
-  padding: 8px;
+  width: ${({ isSmall, isBig }) =>
+    isSmall ? "2rem" : isBig ? "16rem" : "10rem"};
+  padding: 0.5rem;
   border: 2px solid ${({ hasError }) => (hasError ? red : darkGreen)};
   border-radius: 6px;
   font-size: 1rem;
   color: ${black};
   background-color: ${white};
   transition: box-shadow 0.3s ease;
-  padding-left: ${({ hasIcon }) => (hasIcon ? "35px" : "8px")};
+  padding-left: ${({ hasIconInside }) => (hasIconInside ? "35px" : "8px")};
 
   &::placeholder {
     color: ${darkGray};
@@ -47,6 +48,10 @@ export const InputField = styled.input<{
 
   &:focus {
     outline: none;
+  }
+
+  @media screen and (max-width: 480px) {
+    width: 8rem;
   }
 `;
 

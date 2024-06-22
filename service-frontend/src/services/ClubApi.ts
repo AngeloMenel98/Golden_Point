@@ -1,7 +1,8 @@
 import GeneralAPI from "./GeneralApi";
+import { isAxiosError } from "../errors/AxiosError";
 
 export interface ClubCredentials {
-  userId: string;
+  userId?: string;
   clubName: string;
   address: string;
   availableFrom: string;
@@ -15,7 +16,8 @@ class ClubAPI extends GeneralAPI {
       const res = await this.api.get(`/club/clubs`);
       return res.data;
     } catch (e) {
-      throw e;
+      console.log(e);
+      //isAxiosError(e);
     }
   }
 
@@ -24,7 +26,7 @@ class ClubAPI extends GeneralAPI {
       const res = await this.api.post("/club/create", club);
       return res.data;
     } catch (e) {
-      throw e;
+      return isAxiosError(e);
     }
   }
 }

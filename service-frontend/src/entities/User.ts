@@ -28,7 +28,7 @@ export class User {
     return this.id;
   }
 
-  get username(): string {
+  get UserName(): string {
     return this.userName;
   }
 

@@ -1,27 +1,30 @@
 import styled from "styled-components";
 
 interface StyledCardProps {
-  borderColor: string;
-  bgColor: string;
-  boxColor: string;
-  width: number;
-  maxHeight: number;
+  borderCol: string;
+  backgroundCol: string;
+  boxCol: string;
+  mWidth: number;
+  mHeight: number;
 }
 
 export const CardContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  flex: 1;
 `;
 
 export const StyledCard = styled.div<StyledCardProps>`
-  width: ${({ width }) => `${width}px`};
-  padding: 20px;
-  border: 3px solid ${(props) => props.borderColor};
-  border-radius: 5px;
-  box-shadow: 0 0 15px ${(props) => props.boxColor};
-  background-color: ${(props) => props.bgColor};
+  flex: 1;
 
-  max-height: ${(props) => props.maxHeight}px; // Aplicar la altura máxima
+  max-width: ${({ mWidth }) => `${mWidth}px`};
+  max-height: ${({ mHeight }) => `${mHeight}px`};
+  padding: 1rem;
+  border: 3px solid ${(props) => props.borderCol};
+  border-radius: 5px;
+  box-shadow: 0 0 15px ${(props) => props.boxCol};
+  background-color: ${(props) => props.backgroundCol};
   overflow-y: auto;
 `;

@@ -1,15 +1,24 @@
 import styled from "styled-components";
-import { black, darkGray, darkGreen, white } from "../../../utils/colors";
+import {
+  black,
+  darkGray,
+  darkGreen,
+  lightRed,
+  red,
+  white,
+} from "../../../utils/colors";
 
 export const InputContainer = styled.div`
   margin-bottom: 20px;
 `;
 
-export const Label = styled.span`
+export const Label = styled.label<{
+  hasError: boolean;
+}>`
   font-weight: bold;
   display: block;
   margin-bottom: 5px;
-  color: ${darkGreen};
+  color: ${({ hasError }) => (hasError ? red : darkGreen)};
 `;
 
 export const InputFieldWithIcon = styled.div`
@@ -19,10 +28,10 @@ export const InputFieldWithIcon = styled.div`
   align-items: center;
 `;
 
-export const InputField = styled.input<{ hasIcon: boolean }>`
+export const InputField = styled.input<{ hasIcon: boolean; hasError: boolean }>`
   width: 100%;
   padding: 8px;
-  border: 2px solid ${darkGreen};
+  border: 2px solid ${({ hasError }) => (hasError ? red : darkGreen)};
   border-radius: 6px;
   font-size: 1rem;
   color: ${black};
@@ -36,7 +45,7 @@ export const InputField = styled.input<{ hasIcon: boolean }>`
   }
 
   &:hover {
-    box-shadow: 0 0 20px ${darkGreen};
+    box-shadow: 0 0 20px ${({ hasError }) => (hasError ? lightRed : darkGreen)};
   }
 
   &:focus {
@@ -49,4 +58,11 @@ export const IconContainer = styled.div`
   left: 10px;
   top: 55%;
   transform: translateY(-50%);
+`;
+
+export const ErrorMessage = styled.p`
+  color: ${red};
+  font-size: 0.8rem;
+  margin-top: 0.01rem;
+  margin-bottom: 0.01rem;
 `;

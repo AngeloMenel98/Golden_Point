@@ -15,7 +15,6 @@ interface PlusIconProps {
 }
 
 const IconSVG = styled.svg<IconProps>`
-  padding-top: 1rem;
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
 `;
 

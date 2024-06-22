@@ -9,7 +9,7 @@ import {
   TeamRepository,
   TournamentRepository,
 } from "../repository";
-import { ClubData, CourtData, TeamData } from "../utils/interfaces";
+import { ClubData, CourtData, TeamData, TourData } from "../utils/interfaces";
 import {
   shuffleArray,
   sortTeamsPerCategoryByPoints,
@@ -31,6 +31,14 @@ export class TournamentService {
     tourId: string,
     categoryData: Category[]
   ) {
+    if (newTournament.master <= 0) {
+      throw new ServiceCodeError(codeErrors.TOURN_1);
+    }
+
+    if (categoryData.length == 0) {
+      throw new ServiceCodeError(codeErrors.TOURN_2);
+    }
+
     const existingTour = await this.tourService.findById(tourId);
 
     const existingCats = await this.categoryService.findCategories(
@@ -264,5 +272,14 @@ export class TournamentService {
       }
     }
     return matches;
+  }
+
+  async getAll(tourId: string) {
+    const tournaments: TourData[] = await TournamentRepository.getAll(tourId);
+    if (tournaments.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Torneo"));
+    }
+
+    return tournaments;
   }
 }

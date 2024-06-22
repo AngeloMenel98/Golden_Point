@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserAPI, { Credentials } from "../../services/UserApi";
@@ -17,6 +16,8 @@ import {
 } from "./LoginStyles";
 import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
 import EnterIcon from "../../icons/EnterIcon/EnterIcon";
+import { Errors } from "../../errors/Errors";
+import { white } from "../../utils/colors";
 
 const userAPI = new UserAPI();
 
@@ -26,7 +27,7 @@ const Login: React.FC = () => {
     password: "",
   });
 
-  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const navigate = useNavigate();
 
@@ -35,33 +36,23 @@ const Login: React.FC = () => {
   };
 
   const handleClick = async () => {
-    try {
-      const token = await userAPI.login(credentials);
-
-      localStorage.setItem("token", token);
-
-      navigate("/tour");
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        if (e.response?.data?.error && e.response.data.error.length > 0) {
-          const errorMessage: string = e.response.data.error[0].msg;
-          setError(errorMessage);
-        } else {
-          setError("An unexpected error occurred.");
-        }
-      }
+    const token = await userAPI.login(credentials);
+    if (token.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...token.fieldErrors,
+      }));
+      return;
     }
+
+    localStorage.setItem("token", token);
+
+    navigate("/");
   };
 
   return (
     <MainContainer>
-      <BannerSection>
-        <p>
-          Lorem Ipsum es simplemente el texto de relleno de las imprentas y
-          archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de
-          las industrias desde el año 1500, cuando un impresor.
-        </p>
-      </BannerSection>
+      <BannerSection />
       <LoginSection>
         <LoginFormContainer>
           <GPLogo width={200} height={100} />
@@ -78,6 +69,7 @@ const Login: React.FC = () => {
             value={credentials.username}
             maxLength={20}
             onChange={handleChange}
+            error={fieldErrors.username}
           />
           <PrimaryInput
             label="Contraseña"
@@ -86,6 +78,7 @@ const Login: React.FC = () => {
             value={credentials.password}
             maxLength={20}
             onChange={handleChange}
+            error={fieldErrors.password}
           />
 
           <ForgotPasswordContainer>
@@ -96,14 +89,7 @@ const Login: React.FC = () => {
           <PrimaryButton
             text="Iniciar Sesión"
             onClick={handleClick}
-            errorMessage={error}
-            icon={
-              <EnterIcon
-                width={30}
-                height={30}
-                style={{ marginLeft: "20px" }}
-              />
-            }
+            icon={<EnterIcon width={30} height={30} color={white} />}
           />
         </LoginFormContainer>
       </LoginSection>

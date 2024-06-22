@@ -4,6 +4,7 @@ import { TournamentService } from "../services";
 import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
+import { TourData } from "../utils/interfaces";
 
 export class TournamentController {
   private tournService: TournamentService;
@@ -20,12 +21,12 @@ export class TournamentController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           error: errors.array().map((error) => ({
-            message: error.msg,
+            msg: error.msg,
           })),
         });
       }
 
-      const { tourId, userId, title, master, categoryData } = req.body;
+      const { tourId, userId, title, master, categories } = req.body;
 
       const existingUser = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(existingUser);
@@ -38,7 +39,7 @@ export class TournamentController {
       const tournament = await this.tournService.create(
         newTourn,
         tourId,
-        categoryData
+        categories
       );
 
       const response = {
@@ -69,7 +70,7 @@ export class TournamentController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           error: errors.array().map((error) => ({
-            message: error.msg,
+            msg: error.msg,
           })),
         });
       }
@@ -108,7 +109,7 @@ export class TournamentController {
       if (!errors.isEmpty()) {
         return res.status(400).json({
           error: errors.array().map((error) => ({
-            message: error.msg,
+            msg: error.msg,
           })),
         });
       }
@@ -143,6 +144,57 @@ export class TournamentController {
       }
 
       res.status(500).json({ error: "Error interno del servidor" });
+    }
+  }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const tourId = req.params.tourId;
+
+      const tours: TourData[] = await this.tournService.getAll(tourId);
+
+      const response = {};
+
+      tours.forEach((tour) => {
+        const tournamentId = tour.tournamentid;
+        const tournamentName = tour.tournamentname;
+        const genderCategory = tour.gender_category.split("-");
+        const gender = genderCategory[0];
+        const category = genderCategory[1];
+
+        if (!response.hasOwnProperty(tournamentId)) {
+          response[tournamentId] = {
+            tournamentName: tournamentName,
+            teamsCount: tour.teamscount,
+            master: tour.master,
+            categories: [],
+          };
+        }
+
+        response[tournamentId].categories.push({
+          gender: gender,
+          category: category,
+        });
+      });
+
+      res.status(201).json(response);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
 }

@@ -39,9 +39,9 @@ export const TourRepository = AppDataSource.getRepository(Tour).extend({
         .select([
           "t.id AS tourId",
           "t.title AS tourTitle",
-          "t.tourCode",
+          "t.tourCode AS tourCode",
           '(SELECT COUNT(DISTINCT tuu."userId") FROM tour_users_user tuu WHERE tuu."tourId" = t."id") AS userCount',
-          "(SELECT COUNT(DISTINCT tt.id) FROM tournament tt WHERE tt.tourId = t.id) AS tournamentCount",
+          '(SELECT COUNT(DISTINCT tt.id) FROM tournament tt WHERE tt.tourId = t.id AND tt."isDeleted" = false) AS tournamentCount',
           '(SELECT u.username FROM tour_users_user tuu2 LEFT JOIN "user" u ON tuu2."userId" = u."id" WHERE tuu2."tourId" = t."id" LIMIT 1) AS firstUserName',
         ])
         .leftJoin("tournament", "tt", "tt.tourId = t.id")

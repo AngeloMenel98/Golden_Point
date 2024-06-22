@@ -3,8 +3,7 @@ import MenuIcon from "../../icons/MenuIcon/MenuIcon";
 import { darkGreen, white } from "../../utils/colors";
 import GPLogo from "../../icons/GPLogo/GPLogo";
 import {
-  IconsContainer,
-  LogoContainer,
+  DataContainer,
   MenuDropdown,
   NavbarContainer,
   IconButton,
@@ -12,9 +11,11 @@ import {
   DropDownButton,
 } from "./NavBarStyle";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logOutUser } from "../../reduxSlices/user/userSlice";
 
 interface NavBarProps {
-  userName: string;
+  userName: string | undefined;
 }
 
 const NavBar: React.FC<NavBarProps> = ({ userName }) => {
@@ -23,12 +24,15 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
 
   const navigate = useNavigate();
 
+  const dispatch = useDispatch();
+
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
   const handleLogOut = () => {
     localStorage.removeItem("token");
+    dispatch(logOutUser());
 
     navigate("/");
   };
@@ -36,10 +40,8 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
   return (
     <>
       <NavbarContainer>
-        <LogoContainer>
-          <GPLogo width={100} height={50} />
-        </LogoContainer>
-        <IconsContainer>
+        <GPLogo width={100} height={50} />
+        <DataContainer>
           <Username>{userName}</Username>
           <IconButton
             onMouseEnter={() => setIsHovered(true)}
@@ -52,13 +54,10 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
               color={isHovered ? darkGreen : white}
             />
           </IconButton>
-        </IconsContainer>
+        </DataContainer>
       </NavbarContainer>
       {menuOpen && (
-        <MenuDropdown>
-          {/* Aquí puedes agregar los elementos del menú */}
-          <div>Elemento 1</div>
-          <div>Elemento 2</div>
+        <MenuDropdown id="MenuDropdown">
           <DropDownButton onClick={handleLogOut}>Log Out</DropDownButton>
         </MenuDropdown>
       )}
