@@ -8,7 +8,7 @@ align-items: center;
 position: absolute;
 
 padding: 0.5rem;
-margin-top: 0.5rem;
+margin-top: 4rem;
 background-color: ${white};
 border-radius: 0.5rem;
 box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;

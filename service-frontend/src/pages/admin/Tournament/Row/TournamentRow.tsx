@@ -23,8 +23,6 @@ interface TournamentRowProps {
 
 const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
   ({ tournData, onOpen }, ref) => {
-    const [isShown, setIsShown] = useState(false);
-
     const navigate = useNavigate();
 
     const handleTourClick = () => {
@@ -32,11 +30,7 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
     };
 
     return (
-      <TourRowContainer
-        onMouseEnter={() => setIsShown(true)}
-        onMouseLeave={() => setIsShown(false)}
-        ref={ref}
-      >
+      <TourRowContainer ref={ref}>
         <LeftContainer>
           <MemberContainer>
             <TourName onClick={handleTourClick}>{tournData.Title}</TourName>

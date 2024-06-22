@@ -95,6 +95,7 @@ export const UserContainer = styled.div`
   color: ${darkGreen};
   font-weight: 900;
 `;
+
 export const TournamentContainer = styled.div`
   display: flex;
   align-items: center;
@@ -119,6 +120,7 @@ export const TourName = styled.button`
     color: ${mint};
   }
 `;
+
 export const CreatedBy = styled.span`
   padding: 0rem 1rem;
   font-weight: 900;

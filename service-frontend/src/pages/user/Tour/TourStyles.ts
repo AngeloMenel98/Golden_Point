@@ -8,34 +8,28 @@ export const MainContainer = styled.div`
   flex-direction: column;
 `;
 
-export const NavBarContainer = styled.div`
-  flex: 1;
-`;
-
 export const TourSection = styled.div`
   flex: 10;
   background-color: ${white};
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
 export const ButtonInputContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-`;
-
-export const ButtonContainer = styled.div`
-  padding-top: 1rem;
-  padding-left: 3rem;
-  padding-right: 17rem;
+  justify-content: space-between;
+  width: 100%;
 `;
 
 export const InputContainer = styled.div`
-  padding-top: 1rem;
-  padding-left: 35rem;
-  padding-right: 5rem;
+  padding: 0.5rem;
+`;
+export const ButtonContainer = styled.div`
+  padding: 0.5rem;
 `;
 export const H2 = styled.h2`
   color: ${darkGreen};
-  padding: 0.01rem 3rem;
+  padding: 0.01rem 0.5rem;
 `;

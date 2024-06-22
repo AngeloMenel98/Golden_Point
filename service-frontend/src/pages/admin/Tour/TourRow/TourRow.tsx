@@ -25,17 +25,6 @@ interface TourRowProps {
 }
 
 const TourRow: React.FC<TourRowProps> = ({ tourData, onDelete }) => {
-  /*const user = useSelector((state: RootState) => state.user.user);
-
-  const handleDeleteTour = async () => {
-    const deleteTour: DeletedTour = {
-      tourId: tourData.Id,
-      userId: user?.Id,
-    };
-
-    const tourRes = await tourApi.deleteTour(deleteTour);
-  };*/
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

@@ -12,7 +12,6 @@ import {
   H2,
   InputContainer,
   MainContainer,
-  NavBarContainer,
   TourSection,
 } from "./TourStyles";
 import { darkGreen, pastelGreen } from "../../../utils/colors";
@@ -79,9 +78,7 @@ const ToursUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBarContainer>
-        <NavBar userName={user?.UserName} />
-      </NavBarContainer>
+      <NavBar userName={user?.UserName} />
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>
@@ -104,6 +101,7 @@ const ToursUser: React.FC = () => {
               value={tourTitle}
               placeholder="Buscar Tour"
               icon={<SearchIcon width={20} height={17} color={darkGreen} />}
+              isBig={true}
               onChange={handleChange}
             />
           </InputContainer>

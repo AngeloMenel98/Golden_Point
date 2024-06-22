@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { darkGreen } from "../../../utils/colors";
+import { darkGreen, pastelGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 import RankingIcon from "../../../icons/RankingIcon/RankingIcon";
 
@@ -17,10 +17,11 @@ import {
   H2,
   HeaderButtons,
   InputContainer,
-  NavBarContainer,
   SpaceContainer,
   TournamentSection,
 } from "./TournamentStyle";
+import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
+import UsersModal from "./Modal/UsersModal/UsersModal";
 
 export interface CreationData {
   tournamentName: string;
@@ -34,6 +35,15 @@ const TournamentUser: React.FC = () => {
   const tourData = useSelector((state: RootState) => state.tour.tour);
 
   const [tournamentTitle, setTournTitle] = useState("");
+  const [isUserOpen, setUserOpen] = useState(false);
+
+  const usersOpenModal = () => {
+    setUserOpen(true);
+  };
+
+  const usersCloseModal = () => {
+    setUserOpen(false);
+  };
 
   const { tournaments, tournAPI, errorTournament } =
     useGetTournaments(tourData);
@@ -44,15 +54,26 @@ const TournamentUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBarContainer>
-        <NavBar userName={user?.UserName} />
-      </NavBarContainer>
+      <NavBar userName={user?.UserName} />
       <TournamentSection>
         <SpaceContainer>
           <H2>{tourData?.TourTitle}</H2>
           <HeaderButtons>
-            <SecondaryButton text="Usuarios" />
+            <SecondaryButton
+              icon={
+                <UsersIcon
+                  width={23}
+                  height={23}
+                  color={pastelGreen}
+                  onClick={usersOpenModal}
+                />
+              }
+              onClick={usersOpenModal}
+            />
           </HeaderButtons>
+          {isUserOpen && (
+            <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
+          )}
           <HeaderButtons>
             <SecondaryButton text="Torneos" />
           </HeaderButtons>
@@ -64,7 +85,7 @@ const TournamentUser: React.FC = () => {
           </HeaderButtons>
         </SpaceContainer>
         <SpaceContainer>
-          <InputContainer>
+          <InputContainer id="input">
             <SecondaryInput
               id="searchTournament"
               type="text"
@@ -78,7 +99,6 @@ const TournamentUser: React.FC = () => {
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
-          tournApi={tournAPI}
           error={errorTournament}
         />
       </TournamentSection>

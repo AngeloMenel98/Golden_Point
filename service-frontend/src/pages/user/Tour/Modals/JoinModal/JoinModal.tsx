@@ -33,7 +33,7 @@ const JoinModal: React.FC<JoinModalProps> = ({
           maxLength={20}
           placeholder="Código"
           onChange={onJoinCode}
-          error={error?.tourCode}
+          error={error?.tourCode || error?.userJoined}
         />
       </Container>
       <Container>
