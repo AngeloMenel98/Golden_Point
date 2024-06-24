@@ -13,15 +13,12 @@ import {
   Wrapper,
   ButtonWrapper,
 } from "./MatchStyle";
-import { black, darkGray, mint, pastelGreen } from "../../utils/colors";
+import { black, pastelGreen } from "../../utils/colors";
 import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
-import SearchIcon from "../../icons/SearchIcon/SearchIcon";
 import EditIcon from "../../icons/EditIcon/EditIcon";
 
 interface MatchProps {
-  /*text?: string;
-  icon?: ReactNode;
-  isDangerousAction?: boolean;*/
+  //matches: MatchDTO[];
   onClick?: () => void;
 }
 
