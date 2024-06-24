@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import {
   TourRowContainer,
   LeftContainer,
@@ -25,15 +25,17 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
   ({ tournData, onOpen }, ref) => {
     const navigate = useNavigate();
 
-    const handleTourClick = () => {
-      navigate("/matches");
+    const handleSelectTournament = (tournamentId: string) => {
+      navigate(`/matches?tournamentId=${tournamentId}`);
     };
 
     return (
       <TourRowContainer ref={ref}>
         <LeftContainer>
           <MemberContainer>
-            <TourName onClick={handleTourClick}>{tournData.Title}</TourName>
+            <TourName onClick={() => handleSelectTournament(tournData.Id)}>
+              {tournData.Title}
+            </TourName>
           </MemberContainer>
         </LeftContainer>
         <RightContainer>

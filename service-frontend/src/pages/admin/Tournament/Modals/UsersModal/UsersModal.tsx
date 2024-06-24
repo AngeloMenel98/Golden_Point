@@ -7,12 +7,12 @@ import UsersCard from "../../Cards/UsersCard/UsersCard";
 import {
   Container,
   HeaderContainer,
-  PlayersContainer,
   ModalContent,
   ModalWrapper,
   ButtonsContainer,
   H3Styled,
   H4Styled,
+  PlayersContainer,
 } from "./UsersModalStyle";
 import useGetUsers from "../../../../../hooks/useGetUsers";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";

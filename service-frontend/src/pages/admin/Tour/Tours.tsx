@@ -5,7 +5,7 @@ import NavBar from "../../../components/navbar/NavBar";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
-import TourCard from "./TourCard/TourCard";
+import TourCard from "./Cards/TourCard";
 import TourModal from "./Modals/TourModal";
 
 import {
