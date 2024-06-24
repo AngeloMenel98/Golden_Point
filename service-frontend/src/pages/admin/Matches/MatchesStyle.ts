@@ -25,7 +25,7 @@ export const HeaderContainer = styled.div`
 export const SpaceContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 100%;
 `;
 

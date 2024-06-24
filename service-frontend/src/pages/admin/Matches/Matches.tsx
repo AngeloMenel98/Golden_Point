@@ -8,6 +8,7 @@ import {
   TournamentSection,
   HeaderContainer,
   HeaderButtons,
+  ButtonContainer,
 } from "./MatchesStyle";
 
 import NavBar from "../../../components/navbar/NavBar";
@@ -17,6 +18,8 @@ import { Errors } from "../../../errors/Errors";
 import { useLocation } from "react-router-dom";
 import DropDown from "../../../components/dropdown/DropDown/DropDown";
 import MatchCard from "./Cards/MatchCard/MatchCard";
+import useGetTeams from "../../../hooks/useGetTeams";
+import { TeamDTO } from "../../../entities/dtos/TeamDTO";
 
 const Matches: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -24,9 +27,14 @@ const Matches: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const tournamentId = params.get("tournamentId");
+  let teams: TeamDTO[] = [];
 
-  //const tournamentCats = useGetCategories(tournamentId);
-  const cats = ["Masculino-Septima", "Masculino-Octava"];
+  if (tournamentId != undefined) {
+    const { allTeams } = useGetTeams(tournamentId);
+    teams = allTeams;
+  }
+
+  const cats = Array.from(new Set(teams.map((t) => t.Category)));
   const stages = [
     "Grupo A",
     "Grupo B",
@@ -37,17 +45,24 @@ const Matches: React.FC = () => {
     "Final",
   ];
 
+  teams;
+
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const handleChange = () => {};
+
+  console.log(teams.map((t) => t.TeamName));
 
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
         <HeaderContainer>
-          <H2>Torneo Xs</H2>
-          <HeaderButtons>
+          <H2>{teams.map((t) => t.TeamName)}</H2>
+          <HeaderButtons></HeaderButtons>
+        </HeaderContainer>
+        <SpaceContainer>
+          <ButtonContainer>
             <DropDown
               buttonText="Categoria"
               items={cats}
@@ -56,8 +71,8 @@ const Matches: React.FC = () => {
               onChange={handleChange}
               amountChars={20}
             />
-          </HeaderButtons>
-          <HeaderButtons>
+          </ButtonContainer>
+          <ButtonContainer>
             <DropDown
               buttonText="Instancia"
               items={stages}
@@ -66,10 +81,10 @@ const Matches: React.FC = () => {
               onChange={handleChange}
               amountChars={20}
             />
-          </HeaderButtons>
-        </HeaderContainer>
+          </ButtonContainer>
+        </SpaceContainer>
         <SpaceContainer>
-          <MatchCard error={""} />
+          <MatchCard error={""} teamsName={teams.map((t) => t.TeamName)} />
         </SpaceContainer>
       </TournamentSection>
     </MainContainer>

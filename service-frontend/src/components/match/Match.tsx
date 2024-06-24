@@ -18,11 +18,11 @@ import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
 import EditIcon from "../../icons/EditIcon/EditIcon";
 
 interface MatchProps {
-  //matches: MatchDTO[];
+  teamsName: string[];
   onClick?: () => void;
 }
 
-const Match: React.FC<MatchProps> = ({ onClick }) => {
+const Match: React.FC<MatchProps> = ({ teamsName, onClick }) => {
   return (
     <Wrapper>
       <Container mWidth={30} mHeight={10}>
@@ -31,12 +31,12 @@ const Match: React.FC<MatchProps> = ({ onClick }) => {
         </Column>
         <Column2x>
           <Box>
-            <MatchText>Vietto</MatchText>
-            <MatchText>Penaloza</MatchText>
+            <MatchText>s</MatchText>
+            <MatchText>ss</MatchText>
           </Box>
           <HorizontalLine thickness="0.1rem" color={black} />
           <Box>
-            <MatchText>Menel</MatchText>
+            <MatchText>{teamsName[0].split("-")}</MatchText>
             <MatchText>Piranni</MatchText>
           </Box>
         </Column2x>

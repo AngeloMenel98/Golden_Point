@@ -8,10 +8,11 @@ import Match from "../../../../../components/match/Match";
 import EditMatch from "../../Modals/EditMatch/EditMatch";
 
 interface MatchCardProps {
+  teamsName: string[];
   error: string;
 }
 
-const TourCard: React.FC<MatchCardProps> = ({ error }) => {
+const MatchCard: React.FC<MatchCardProps> = ({ teamsName, error }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const [isMatchOpen, setIsMatchOpen] = useState(false);
 
@@ -36,7 +37,7 @@ const TourCard: React.FC<MatchCardProps> = ({ error }) => {
         mHeight={1000}
         error={error}
       >
-        <Match onClick={openMatchModal} />
+        <Match onClick={openMatchModal} teamsName={teamsName} />
       </Card>
 
       {isMatchOpen ? (
@@ -53,4 +54,4 @@ const TourCard: React.FC<MatchCardProps> = ({ error }) => {
   );
 };
 
-export default TourCard;
+export default MatchCard;
