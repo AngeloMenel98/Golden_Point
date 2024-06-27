@@ -3,6 +3,9 @@ export class MatchDTO {
   private amountTourPoints: number = 0;
   private amountTourCoins: number = 0;
   private matchDate: string = "";
+  private clubName: string = "";
+  private court: string = "";
+  private groupName: string = "";
 
   //Setters
   set Id(value: string) {
@@ -21,6 +24,16 @@ export class MatchDTO {
     this.matchDate = value;
   }
 
+  set ClubName(value: string) {
+    this.clubName = value;
+  }
+  set Court(value: string) {
+    this.court = value;
+  }
+  set GroupName(value: string) {
+    this.groupName = value;
+  }
+
   //Getters
   get Id(): string {
     return this.id;
@@ -36,5 +49,16 @@ export class MatchDTO {
 
   get MatchDate(): string {
     return this.matchDate;
+  }
+
+  get ClubName(): string {
+    return this.clubName;
+  }
+  get Court(): string {
+    return this.court;
+  }
+
+  get GroupName(): string {
+    return this.groupName;
   }
 }

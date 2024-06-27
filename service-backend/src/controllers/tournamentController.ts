@@ -131,7 +131,16 @@ export class TournamentController {
         tourn
       );
 
-      res.status(200).json(matches);
+      const response = matches.map((match) => ({
+        id: match.id,
+        amountTourPoints: match.amountTourPoints,
+        amountTourCoins: match.amountTourCoins,
+        matchDate: match.matchDate,
+        court: match.court.courtNumber,
+        clubName: match.
+      }));
+
+      res.status(200).json(response);
     } catch (e) {
       console.error(e);
 

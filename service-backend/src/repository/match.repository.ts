@@ -1,5 +1,5 @@
 import { AppDataSource } from "../data-source";
-import { Court, Match, Team, TeamMatch, Tournament } from "../entity";
+import { Category, Court, Match, Team, TeamMatch, Tournament } from "../entity";
 
 export const MatchRepository = AppDataSource.getRepository(Match).extend({
   async create(
