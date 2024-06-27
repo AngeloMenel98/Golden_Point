@@ -34,7 +34,8 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       )
       .innerJoin("court", "ct", 'ct."clubId" = cl.id')
       .innerJoin("calendar_club", "cc", 'cc.id = cl."calendarClubId"')
-      .innerJoin("tour", "t", 't.id = cl."tourId"')
+      .innerJoin("tour_clubs_club", "tclc", 'tclc."clubId" = cl.id')
+      .innerJoin("tour", "t", 't.id = tclc."tourId"')
       .innerJoin("tournament", "trn", 'trn."tourId" = t.id')
       .innerJoin(
         "tournament_categories_category",

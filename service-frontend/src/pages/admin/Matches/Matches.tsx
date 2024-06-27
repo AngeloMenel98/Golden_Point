@@ -45,21 +45,25 @@ const Matches: React.FC = () => {
     "Final",
   ];
 
-  teams;
-
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const handleChange = () => {};
 
-  console.log(teams.map((t) => t.TeamName));
+  const handleCategoryChange = (category: string[]) => {
+    setSelectedCategory(category);
+  };
+
+  const filteredTeams = teams.filter(
+    (team) => team.Category === selectedCategory[0]
+  );
 
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
         <HeaderContainer>
-          <H2>{teams.map((t) => t.TeamName)}</H2>
-          <HeaderButtons></HeaderButtons>
+          <H2>{tournamentId}</H2>
         </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>
@@ -68,7 +72,7 @@ const Matches: React.FC = () => {
               items={cats}
               width={225}
               error={fieldErrors.notFound}
-              onChange={handleChange}
+              onChange={handleCategoryChange}
               amountChars={20}
             />
           </ButtonContainer>
@@ -84,7 +88,10 @@ const Matches: React.FC = () => {
           </ButtonContainer>
         </SpaceContainer>
         <SpaceContainer>
-          <MatchCard error={""} teamsName={teams.map((t) => t.TeamName)} />
+          <MatchCard
+            error={""}
+            teamsName={filteredTeams.map((t) => t.TeamName)}
+          />
         </SpaceContainer>
       </TournamentSection>
     </MainContainer>

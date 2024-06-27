@@ -42,6 +42,15 @@ class TournamentAPI extends GeneralAPI {
       return isAxiosError(e);
     }
   }
+
+  async startTournament(startTournament: DeletedTournament) {
+    try {
+      const res = await this.api.post("/tournament/start", startTournament);
+      return res.data;
+    } catch (e) {
+      return isAxiosError(e);
+    }
+  }
 }
 
 export default TournamentAPI;

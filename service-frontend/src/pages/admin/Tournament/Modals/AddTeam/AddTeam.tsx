@@ -84,6 +84,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
     const res = await teamApi.addTeam(team);
 
     if (res != null) {
+      tournament.TeamsCount += 1;
       onClose();
     } else {
       alert("Error");
@@ -112,7 +113,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
             onChange={(selectedItems: string[]) => {
               setDropDownData({ ...dropDownData, maleCat: selectedItems });
             }}
-            error={undefined}
+            error={""}
           />
           <DropDown
             buttonText="Femenino"
@@ -124,7 +125,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
                 femaleCat: selectedItems,
               });
             }}
-            error={undefined}
+            error={""}
           />
         </SpaceContainer>
 

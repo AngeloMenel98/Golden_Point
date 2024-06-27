@@ -7,6 +7,11 @@ import OptsModal from "../../Modals/OptionsModal/OptionsModal";
 import ManagerModal from "../../Modals/ManagerModal/ManagerModal";
 import DeleteTeam from "../../Modals/DeleteTeam/DeleteTeam";
 import { CardContainer } from "./TournamentCardStyle";
+import TournamentAPI, {
+  DeletedTournament,
+} from "../../../../../services/TournamentApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../reduxSlices/store";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
@@ -14,11 +19,14 @@ interface TournamentCardProps {
   error: string;
 }
 
+const tournamentAPI = new TournamentAPI();
+
 const TournamentCard: React.FC<TournamentCardProps> = ({
   tournaments,
   tournamentTitle,
   error,
 }) => {
+  const user = useSelector((state: RootState) => state.user.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -67,6 +75,14 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
     setIsDeleteOpen(false);
   };
 
+  const startTournament = async () => {
+    const start: DeletedTournament = {
+      tournamentId: tournSelected.Id,
+      userId: user?.Id,
+    };
+    const res = await tournamentAPI.startTournament(start);
+  };
+
   return (
     <CardContainer>
       <Card
@@ -93,6 +109,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
           width={180}
           onAddTeam={managerModalOpen}
           onDeleteTeam={deleteTeamOpen}
+          onStartTournament={startTournament}
           onClose={handleCloseModal}
           position={modalPosition}
         />

@@ -4,6 +4,7 @@ export class TeamDTO {
   private usersId: string = "";
   private teamName: string = "";
   private category: string = "";
+  private tournamentName: string = "";
 
   //Setters
   set TeamId(value: string) {
@@ -26,6 +27,10 @@ export class TeamDTO {
     this.category = value;
   }
 
+  set TournamentName(value: string) {
+    this.tournamentName = value;
+  }
+
   //Getters
   get TeamId(): string {
     return this.teamId;
@@ -42,7 +47,12 @@ export class TeamDTO {
   get TeamName(): string {
     return this.teamName;
   }
+
   get Category(): string {
     return this.category;
+  }
+
+  get TournamentName(): string {
+    return this.tournamentName;
   }
 }

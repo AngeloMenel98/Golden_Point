@@ -9,13 +9,14 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .addSelect('tm."category"', "category")
       .addSelect("t.id", "tourId")
       .addSelect("tm.id", "teamId")
+      .addSelect("trn.title", "tournamentTitle")
       .innerJoin("team_users_user", "tuu", 'tuu."teamId" = tm.id ')
       .innerJoin("user", "u", 'u.id = tuu."userId"')
       .innerJoin("tour_users_user", "tuu2", 'tuu2."userId" = u.id ')
       .innerJoin("tour", "t", 't.id = tuu2."tourId" ')
       .innerJoin("tournament", "trn", 'trn.id = tm."tournamentId"')
       .where("trn.id = :tournamentId", { tournamentId })
-      .groupBy('tm."category",tm."teamName",t."id", tm.id')
+      .groupBy('tm."category",tm."teamName",t."id", tm.id, trn.title')
       .getRawMany();
   },
 

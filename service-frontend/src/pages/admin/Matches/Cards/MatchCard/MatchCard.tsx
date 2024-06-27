@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../../reduxSlices/store";
+import { useState } from "react";
 import { CardContainer } from "./MatchCardStyle";
 import Card from "../../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
@@ -13,7 +11,6 @@ interface MatchCardProps {
 }
 
 const MatchCard: React.FC<MatchCardProps> = ({ teamsName, error }) => {
-  const user = useSelector((state: RootState) => state.user.user);
   const [isMatchOpen, setIsMatchOpen] = useState(false);
 
   const openMatchModal = () => {
@@ -40,15 +37,13 @@ const MatchCard: React.FC<MatchCardProps> = ({ teamsName, error }) => {
         <Match onClick={openMatchModal} teamsName={teamsName} />
       </Card>
 
-      {isMatchOpen ? (
+      {isMatchOpen && (
         <EditMatch
           dateMatch="sss"
           courtMatch="0"
           editMatchData={editMatchData}
           onClose={closeMatchModal}
         />
-      ) : (
-        <></>
       )}
     </CardContainer>
   );

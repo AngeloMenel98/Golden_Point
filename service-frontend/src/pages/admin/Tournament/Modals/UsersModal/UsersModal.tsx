@@ -12,7 +12,7 @@ import {
   ButtonsContainer,
   H3Styled,
   H4Styled,
-  PlayersContainer,
+  UserContainer,
 } from "./UsersModalStyle";
 import useGetUsers from "../../../../../hooks/useGetUsers";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
@@ -65,7 +65,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
           <H3Styled>Usuarios</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
         </HeaderContainer>
-        <PlayersContainer>
+        <UserContainer>
           <SecondaryInput
             id="searchUser"
             type="text"
@@ -79,7 +79,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
           ) : (
             <></>
           )}
-        </PlayersContainer>
+        </UserContainer>
         <Container>
           <UsersCard
             name={fullName}

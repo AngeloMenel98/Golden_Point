@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../../../../icons/SearchIcon/SearchIcon";

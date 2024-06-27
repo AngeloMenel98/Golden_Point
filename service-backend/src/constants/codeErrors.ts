@@ -10,6 +10,7 @@ const codeErrors = {
 
   TOURN_1: `Master obligatorio`,
   TOURN_2: `Al menos se necesita una categoría`,
+  TOURN_3: `Numero de equipo no suficientes`,
 
   TEAM_1: `La cantidad de jugadores por equipo son 2.`,
 

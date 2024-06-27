@@ -29,10 +29,6 @@ export const SpaceContainer = styled.div`
   width: 100%;
 `;
 
-export const InputContainer = styled.div`
-  padding: 0.5rem;
-`;
-
 export const ButtonContainer = styled.div`
   padding: 0.5rem;
 `;

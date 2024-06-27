@@ -150,7 +150,9 @@ export class TournamentService {
       const numTeams = teams.length;
 
       //FIXME: Think a way to throw this error
-      if (numTeams < 3) continue;
+      if (numTeams < 3 || numTeams % 3 !== 0) {
+        throw new ServiceCodeError(codeErrors.TOURN_3);
+      }
 
       const numGroups = numTeams / 3;
       for (let i = 0; i < numGroups; i++) {
@@ -201,6 +203,7 @@ export class TournamentService {
         groupDTOs.push(groupDTO);
       }
     }
+
     return this.createGroupsMatches(groupDTOs, tournament);
   }
 

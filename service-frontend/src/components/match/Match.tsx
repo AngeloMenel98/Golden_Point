@@ -22,23 +22,36 @@ interface MatchProps {
   onClick?: () => void;
 }
 
+interface MatchBoxProps {
+  teamName: string;
+}
+
+const MatchBox: React.FC<MatchBoxProps> = ({ teamName }) => {
+  const [var1, var2] = teamName.split("-");
+
+  return (
+    <Box>
+      <MatchText>{var1}</MatchText>
+      <MatchText>{var2}</MatchText>
+    </Box>
+  );
+};
+
 const Match: React.FC<MatchProps> = ({ teamsName, onClick }) => {
   return (
     <Wrapper>
-      <Container mWidth={30} mHeight={10}>
+      <Container mWidth={40} mHeight={10}>
         <Column>
           <MatchText>1</MatchText>
         </Column>
         <Column2x>
-          <Box>
-            <MatchText>s</MatchText>
-            <MatchText>ss</MatchText>
-          </Box>
-          <HorizontalLine thickness="0.1rem" color={black} />
-          <Box>
-            <MatchText>{teamsName[0].split("-")}</MatchText>
-            <MatchText>Piranni</MatchText>
-          </Box>
+          {teamsName != null && teamsName.length >= 2 && (
+            <>
+              <MatchBox teamName={teamsName[0]} />
+              <HorizontalLine thickness="0.1rem" color={black} />
+              <MatchBox teamName={teamsName[1]} />
+            </>
+          )}
         </Column2x>
         <Column2x>
           <Box2>
