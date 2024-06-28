@@ -6,6 +6,7 @@ export class MatchDTO {
   private clubName: string = "";
   private court: string = "";
   private groupName: string = "";
+  private teamsName: string[] = [];
 
   //Setters
   set Id(value: string) {
@@ -32,6 +33,9 @@ export class MatchDTO {
   }
   set GroupName(value: string) {
     this.groupName = value;
+  }
+  set TeamsName(value: string[]) {
+    this.teamsName = value;
   }
 
   //Getters
@@ -60,5 +64,8 @@ export class MatchDTO {
 
   get GroupName(): string {
     return this.groupName;
+  }
+  get TeamsName(): string[] {
+    return this.teamsName;
   }
 }

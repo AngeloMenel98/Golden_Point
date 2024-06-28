@@ -8,3 +8,7 @@ export const CardContainer = styled.div`
   width: 100%;
   padding-top: 3rem;
 `;
+
+export const MatchContainer = styled.div`
+  padding: 0.5rem;
+`;

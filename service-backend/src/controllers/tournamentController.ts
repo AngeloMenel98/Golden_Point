@@ -131,13 +131,14 @@ export class TournamentController {
         tourn
       );
 
+      //FIXME: Need clubName
       const response = matches.map((match) => ({
         id: match.id,
         amountTourPoints: match.amountTourPoints,
         amountTourCoins: match.amountTourCoins,
         matchDate: match.matchDate,
         court: match.court.courtNumber,
-        clubName: match.
+        groupName: match.groupStage.groupStage,
       }));
 
       res.status(200).json(response);

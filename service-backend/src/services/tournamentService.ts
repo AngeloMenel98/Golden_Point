@@ -203,7 +203,6 @@ export class TournamentService {
       }
     }
 
-    console.log(groupDTOs);
     return this.createGroupsMatches(groupDTOs, tournament);
   }
 
@@ -266,7 +265,8 @@ export class TournamentService {
               match,
               [teams[j], teams[k]],
               tournament,
-              courtId
+              courtId,
+              grDTO.groupName
             );
             matches.push(m);
             matchIndex++;

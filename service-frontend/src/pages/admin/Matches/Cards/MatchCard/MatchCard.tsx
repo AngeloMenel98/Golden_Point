@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { CardContainer } from "./MatchCardStyle";
+import { CardContainer, MatchContainer } from "./MatchCardStyle";
 import Card from "../../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import Match from "../../../../../components/match/Match";
 import EditMatch from "../../Modals/EditMatch/EditMatch";
+import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
 
 interface MatchCardProps {
-  teamsName: string[];
+  matches: MatchDTO[];
   error: string;
 }
 
-const MatchCard: React.FC<MatchCardProps> = ({ teamsName, error }) => {
+const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
   const [isMatchOpen, setIsMatchOpen] = useState(false);
 
   const openMatchModal = () => {
@@ -18,10 +19,6 @@ const MatchCard: React.FC<MatchCardProps> = ({ teamsName, error }) => {
   };
   const closeMatchModal = () => {
     setIsMatchOpen(false);
-  };
-
-  const editMatchData = () => {
-    console.log("Hola");
   };
 
   return (
@@ -34,16 +31,19 @@ const MatchCard: React.FC<MatchCardProps> = ({ teamsName, error }) => {
         mHeight={1000}
         error={error}
       >
-        <Match onClick={openMatchModal} teamsName={teamsName} />
+        {matches.map((match) => (
+          <MatchContainer>
+            <Match
+              key={match.Id}
+              onClick={() => openMatchModal()}
+              match={match}
+            />
+          </MatchContainer>
+        ))}
       </Card>
 
       {isMatchOpen && (
-        <EditMatch
-          dateMatch="sss"
-          courtMatch="0"
-          editMatchData={editMatchData}
-          onClose={closeMatchModal}
-        />
+        <EditMatch dateMatch="sss" courtMatch="0" onClose={closeMatchModal} />
       )}
     </CardContainer>
   );

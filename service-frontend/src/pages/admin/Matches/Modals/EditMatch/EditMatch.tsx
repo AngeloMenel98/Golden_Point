@@ -21,7 +21,6 @@ import PlusIcon from "../../../../../icons/PlusIcon/PlusIcon";
 interface EditMatchProps {
   dateMatch: string;
   courtMatch: string;
-  editMatchData: () => void;
   onClose: () => void;
 }
 
@@ -39,7 +38,6 @@ interface MatchData {
 const EditMatch: React.FC<EditMatchProps> = ({
   dateMatch,
   courtMatch,
-  editMatchData,
   onClose,
 }) => {
   const [matchData, setMatchData] = useState<MatchData>({
@@ -55,6 +53,14 @@ const EditMatch: React.FC<EditMatchProps> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMatchData({ ...matchData, [e.target.id]: e.target.value });
+  };
+
+  const handleEdit = () => {
+    console.log("Editar");
+  };
+
+  const editMatchData = () => {
+    console.log("Hola");
   };
 
   return (
@@ -159,7 +165,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
         <FooterContainer>
           <ButtonSection></ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Editar" />
+            <SecondaryButton text="Editar" onClick={handleEdit} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

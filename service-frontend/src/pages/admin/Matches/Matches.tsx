@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -7,7 +7,6 @@ import {
   SpaceContainer,
   TournamentSection,
   HeaderContainer,
-  HeaderButtons,
   ButtonContainer,
 } from "./MatchesStyle";
 
@@ -18,8 +17,8 @@ import { Errors } from "../../../errors/Errors";
 import { useLocation } from "react-router-dom";
 import DropDown from "../../../components/dropdown/DropDown/DropDown";
 import MatchCard from "./Cards/MatchCard/MatchCard";
-import useGetTeams from "../../../hooks/useGetTeams";
-import { TeamDTO } from "../../../entities/dtos/TeamDTO";
+import useGetMatches from "../../../hooks/useGetMatches";
+import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 
 const Matches: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -27,35 +26,43 @@ const Matches: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const tournamentId = params.get("tournamentId");
-  let teams: TeamDTO[] = [];
+  let allMatches: MatchDTO[] = [];
 
-  if (tournamentId != undefined) {
-    const { allTeams } = useGetTeams(tournamentId);
-    teams = allTeams;
-  }
-
-  const cats = Array.from(new Set(teams.map((t) => t.Category)));
+  const cats = ["Masculino-Septima", "Masculino-Sexta"];
   const stages = [
-    "Grupo A",
-    "Grupo B",
-    "Grupo C",
-    "Grupo D",
+    "Grupo 1",
+    "Grupo 2",
+    "Grupo 3",
+    "Grupo 4",
     "Cuartos de Final",
     "Semi-Final",
     "Final",
   ];
 
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([
+    "Masculino-Septima",
+  ]);
+  const [selectedGroup, setSelectedGroup] = useState<string[]>(["Grupo 1"]);
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const handleChange = () => {};
+  const { matches } = useGetMatches(
+    tournamentId,
+    selectedGroup[0],
+    selectedCategory[0]
+  );
 
-  const handleCategoryChange = (category: string[]) => {
+  allMatches = matches;
+
+  const handleChangeGroup = (group: string[]) => {
+    setSelectedGroup(group);
+  };
+
+  const handleChangeCat = (category: string[]) => {
     setSelectedCategory(category);
   };
 
-  const filteredTeams = teams.filter(
-    (team) => team.Category === selectedCategory[0]
+  const filteredMatches = allMatches.filter(
+    (m) => m.GroupName === selectedGroup[0]
   );
 
   return (
@@ -72,7 +79,7 @@ const Matches: React.FC = () => {
               items={cats}
               width={225}
               error={fieldErrors.notFound}
-              onChange={handleCategoryChange}
+              onChange={handleChangeCat}
               amountChars={20}
             />
           </ButtonContainer>
@@ -82,16 +89,13 @@ const Matches: React.FC = () => {
               items={stages}
               width={150}
               error={fieldErrors.notFound}
-              onChange={handleChange}
+              onChange={handleChangeGroup}
               amountChars={20}
             />
           </ButtonContainer>
         </SpaceContainer>
         <SpaceContainer>
-          <MatchCard
-            error={""}
-            teamsName={filteredTeams.map((t) => t.TeamName)}
-          />
+          <MatchCard error={""} matches={filteredMatches} />
         </SpaceContainer>
       </TournamentSection>
     </MainContainer>

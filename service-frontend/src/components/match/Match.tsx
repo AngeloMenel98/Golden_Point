@@ -16,9 +16,11 @@ import {
 import { black, pastelGreen } from "../../utils/colors";
 import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
 import EditIcon from "../../icons/EditIcon/EditIcon";
+import { MatchDTO } from "../../entities/dtos/MatchDTO";
+import { formatDateTime } from "../../utils/transformDate";
 
 interface MatchProps {
-  teamsName: string[];
+  match: MatchDTO;
   onClick?: () => void;
 }
 
@@ -37,7 +39,7 @@ const MatchBox: React.FC<MatchBoxProps> = ({ teamName }) => {
   );
 };
 
-const Match: React.FC<MatchProps> = ({ teamsName, onClick }) => {
+const Match: React.FC<MatchProps> = ({ match, onClick }) => {
   return (
     <Wrapper>
       <Container mWidth={40} mHeight={10}>
@@ -45,11 +47,11 @@ const Match: React.FC<MatchProps> = ({ teamsName, onClick }) => {
           <MatchText>1</MatchText>
         </Column>
         <Column2x>
-          {teamsName != null && teamsName.length >= 2 && (
+          {match.TeamsName != null && match.TeamsName.length >= 2 && (
             <>
-              <MatchBox teamName={teamsName[0]} />
+              <MatchBox teamName={match.TeamsName[0]} />
               <HorizontalLine thickness="0.1rem" color={black} />
-              <MatchBox teamName={teamsName[1]} />
+              <MatchBox teamName={match.TeamsName[1]} />
             </>
           )}
         </Column2x>
@@ -86,21 +88,21 @@ const Match: React.FC<MatchProps> = ({ teamsName, onClick }) => {
           </Box2>
         </Column2x>
         <Column4>
-          <Column4Text>Date: 01-07-2024 09:00</Column4Text>
+          <Column4Text>Date: {formatDateTime(match.MatchDate)}</Column4Text>
           <VerticalLine
             thickness="1px"
             length="1px"
             color="transparent"
             margin="5px 0"
           />
-          <Column4Text>Club: Padel Zone</Column4Text>
+          <Column4Text>Club: {match.ClubName}</Column4Text>
           <VerticalLine
             thickness="1px"
             length="1px"
             color="transparent"
             margin="5px 0"
           />
-          <Column4Text>Court: 1</Column4Text>
+          <Column4Text>Court: {match.Court}</Column4Text>
         </Column4>
       </Container>
       <ButtonWrapper>
