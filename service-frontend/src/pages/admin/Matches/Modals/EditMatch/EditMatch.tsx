@@ -17,44 +17,19 @@ import {
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
 
 import PlusIcon from "../../../../../icons/PlusIcon/PlusIcon";
+import { MatchData } from "../../Cards/MatchCard/MatchCard";
 
 interface EditMatchProps {
-  dateMatch: string;
-  courtMatch: string;
+  editMatch: MatchData;
+  onEditMatch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
 }
 
-interface MatchData {
-  date: string;
-  court: string;
-  set11: string;
-  set21: string;
-  set31: string;
-  set12: string;
-  set22: string;
-  set32: string;
-}
-
 const EditMatch: React.FC<EditMatchProps> = ({
-  dateMatch,
-  courtMatch,
+  editMatch,
+  onEditMatch,
   onClose,
 }) => {
-  const [matchData, setMatchData] = useState<MatchData>({
-    date: dateMatch,
-    court: courtMatch,
-    set11: "",
-    set21: "",
-    set31: "",
-    set12: "",
-    set22: "",
-    set32: "",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMatchData({ ...matchData, [e.target.id]: e.target.value });
-  };
-
   const handleEdit = () => {
     console.log("Editar");
   };
@@ -63,6 +38,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
     console.log("Hola");
   };
 
+  console.log(editMatch);
   return (
     <ModalWrapper>
       <ModalContent width={50} height={50}>
@@ -75,17 +51,17 @@ const EditMatch: React.FC<EditMatchProps> = ({
             id="date"
             type="text"
             label="Fecha"
-            value={matchData.date}
+            value={editMatch.date}
             isBig={true}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
           <SecondaryInput
             id="court"
             type="text"
             label="Cancha"
-            value={matchData.court}
+            value={editMatch.court}
             isSmall={true}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
           <PlusIcon
             width={25}
@@ -104,61 +80,61 @@ const EditMatch: React.FC<EditMatchProps> = ({
         </DataContainer>
         <DataContainer>
           <TeamContainer>
-            <Span>Vietto - Parisini</Span>
+            <Span>{editMatch.teamsName[0]}</Span>
           </TeamContainer>
 
           <SecondaryInput
             id="set11"
             type="text"
-            value={matchData.set11}
+            value={editMatch.set11}
             isSmall={true}
             maxLength={1}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
           <SecondaryInput
             id="set21"
             type="text"
-            value={matchData.set21}
+            value={editMatch.set21}
             isSmall={true}
             maxLength={1}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
           <SecondaryInput
             id="set31"
             type="text"
-            value={matchData.set31}
+            value={editMatch.set31}
             isSmall={true}
             maxLength={1}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
         </DataContainer>
         <DataContainer>
           <TeamContainer>
-            <Span>Vietto - Parisini</Span>
+            <Span>{editMatch.teamsName[1]}</Span>
           </TeamContainer>
           <SecondaryInput
             id="set12"
             type="text"
-            value={matchData.set12}
+            value={editMatch.set12}
             isSmall={true}
             maxLength={1}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
           <SecondaryInput
             id="set22"
             type="text"
-            value={matchData.set22}
+            value={editMatch.set22}
             isSmall={true}
             maxLength={1}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
           <SecondaryInput
             id="set32"
             type="text"
-            value={matchData.set32}
+            value={editMatch.set32}
             isSmall={true}
             maxLength={1}
-            onChange={handleChange}
+            onChange={onEditMatch}
           />
         </DataContainer>
 

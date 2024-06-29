@@ -11,7 +11,6 @@ export const isAxiosError = (e: unknown) => {
       const errorMessages: ErrorMsg[] = e.response.data.error;
 
       const fieldErrors: Errors = {};
-
       errorMessages.forEach((error) => {
         const fieldName = errorMappings[error.msg];
 
@@ -21,6 +20,7 @@ export const isAxiosError = (e: unknown) => {
           fieldErrors.general = error.msg;
         }
       });
+
       return { fieldErrors };
     }
   }

@@ -10,15 +10,12 @@ export interface MatchAtts {
 class MatchAPI extends GeneralAPI {
   async getMatches(matchAtts: MatchAtts) {
     try {
-      console.log(
-        `/matches/${matchAtts.tournId}/${matchAtts.category}/${matchAtts.grpStage}`
-      );
       const res = await this.api.get(
         `/matches/${matchAtts.tournId}/${matchAtts.category}/${matchAtts.grpStage}`
       );
       return res.data;
     } catch (e) {
-      isAxiosError(e);
+      return isAxiosError(e);
     }
   }
 }

@@ -8,17 +8,43 @@ import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
 
 interface MatchCardProps {
   matches: MatchDTO[];
-  error: string;
+  error?: string;
+}
+
+export interface MatchData {
+  date: string;
+  teamsName: string[];
+  court: string;
+  set11: string;
+  set21: string;
+  set31: string;
+  set12: string;
+  set22: string;
+  set32: string;
 }
 
 const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
   const [isMatchOpen, setIsMatchOpen] = useState(false);
+  const [editMatch, setEditMatch] = useState<MatchData>({
+    date: "",
+    teamsName: [],
+    court: "",
+    set11: "",
+    set21: "",
+    set31: "",
+    set12: "",
+    set22: "",
+    set32: "",
+  });
 
   const openMatchModal = () => {
     setIsMatchOpen(true);
   };
   const closeMatchModal = () => {
     setIsMatchOpen(false);
+  };
+  const handleChangeMatch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditMatch({ ...editMatch, [e.target.id]: e.target.value });
   };
 
   return (
@@ -35,15 +61,21 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
           <MatchContainer>
             <Match
               key={match.Id}
-              onClick={() => openMatchModal()}
+              onClick={openMatchModal}
               match={match}
+              editMatch={editMatch}
+              onEditMatch={setEditMatch}
             />
           </MatchContainer>
         ))}
       </Card>
 
       {isMatchOpen && (
-        <EditMatch dateMatch="sss" courtMatch="0" onClose={closeMatchModal} />
+        <EditMatch
+          editMatch={editMatch}
+          onEditMatch={handleChangeMatch}
+          onClose={closeMatchModal}
+        />
       )}
     </CardContainer>
   );

@@ -26,7 +26,6 @@ const Matches: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const tournamentId = params.get("tournamentId");
-  let allMatches: MatchDTO[] = [];
 
   const cats = ["Masculino-Septima", "Masculino-Sexta"];
   const stages = [
@@ -39,19 +38,23 @@ const Matches: React.FC = () => {
     "Final",
   ];
 
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([
-    "Masculino-Septima",
-  ]);
-  const [selectedGroup, setSelectedGroup] = useState<string[]>(["Grupo 1"]);
-  const [fieldErrors, setFieldErrors] = useState<Errors>({});
+  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+  const [selectedGroup, setSelectedGroup] = useState<string[]>([]);
+  const [allMatches, setAllMatches] = useState<MatchDTO[]>([]);
 
-  const { matches } = useGetMatches(
+  const { matches, errors, refetch } = useGetMatches(
     tournamentId,
     selectedGroup[0],
     selectedCategory[0]
   );
 
-  allMatches = matches;
+  useEffect(() => {
+    refetch(); // Llama a la función para actualizar los datos
+  }, [selectedGroup, selectedCategory, refetch]);
+
+  useEffect(() => {
+    setAllMatches(matches);
+  }, [matches]);
 
   const handleChangeGroup = (group: string[]) => {
     setSelectedGroup(group);
@@ -62,7 +65,8 @@ const Matches: React.FC = () => {
   };
 
   const filteredMatches = allMatches.filter(
-    (m) => m.GroupName === selectedGroup[0]
+    (m) =>
+      m.GroupName === selectedGroup[0] && m.CategoryTeam == selectedCategory[0]
   );
 
   return (
@@ -78,7 +82,7 @@ const Matches: React.FC = () => {
               buttonText="Categoria"
               items={cats}
               width={225}
-              error={fieldErrors.notFound}
+              error={""}
               onChange={handleChangeCat}
               amountChars={20}
             />
@@ -88,14 +92,14 @@ const Matches: React.FC = () => {
               buttonText="Instancia"
               items={stages}
               width={150}
-              error={fieldErrors.notFound}
+              error={""}
               onChange={handleChangeGroup}
               amountChars={20}
             />
           </ButtonContainer>
         </SpaceContainer>
         <SpaceContainer>
-          <MatchCard error={""} matches={filteredMatches} />
+          <MatchCard error={errors.notFound} matches={filteredMatches} />
         </SpaceContainer>
       </TournamentSection>
     </MainContainer>

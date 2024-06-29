@@ -51,14 +51,17 @@ export class MatchService {
   }
 
   async getMatches(tournamentId: string, category: string, groupStage: string) {
-    const matches = await MatchRepository.getMatches(
+    const matches: unknown[] = await MatchRepository.getMatches(
       tournamentId,
       category,
       groupStage
     );
 
+    if (matches.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Partido"));
+    }
     if (!matches) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Match"));
+      throw new ServiceCodeError(codeErrors.GEN_1("Tournament"));
     }
 
     return matches;

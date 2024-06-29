@@ -45,12 +45,14 @@ services:
     #  - db_password
 
   frontend:
-    build: ./service-frontend
+    build:
+      context: ./service-frontend
+      dockerfile: ./Dockerfile
     container_name: frontend_app
-    depends_on: 
+    depends_on:
       - backend
     ports:
-      - '3000:3000'
+      - "3000:3000"
 
 volumes:
   sql-data:

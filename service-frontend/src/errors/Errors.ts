@@ -26,6 +26,8 @@ export interface Errors {
 
   //Team
 
+  //Match
+
   general?: string;
   notFound?: string;
 }
@@ -50,6 +52,9 @@ export const ErrorsRes = {
   userAlreadyJoined: "El Usuario ya esta unido al Tour.",
 
   //Team
+
+  //Match
+  notFoundMatchReq: "No se encontro ningún Partido.",
 
   //Register
   usernameRequired: "Nombre de Usuario es obligatorio",
@@ -82,6 +87,9 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   [ErrorsRes.userAlreadyJoined]: "userJoined",
 
   //Team
+
+  //Match
+  [ErrorsRes.notFoundMatchReq]: "notFound",
 
   //Register
   [ErrorsRes.usernameRequired]: "username",

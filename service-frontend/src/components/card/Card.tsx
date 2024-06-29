@@ -21,6 +21,7 @@ const Card: React.FC<CardProps> = ({
   mHeight,
   error,
 }) => {
+  console.log(error);
   return (
     <CardContainer>
       <StyledCard

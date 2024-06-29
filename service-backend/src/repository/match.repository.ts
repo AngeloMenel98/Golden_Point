@@ -56,10 +56,11 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     const subquery = AppDataSource.createQueryBuilder()
       .select("tm.matchId", "matchId")
       .addSelect(`STRING_AGG(distinct t.teamName, ', ') AS "teamsNames"`)
+      .addSelect('t.category as "categoryTeam"')
       .from("team_match", "tm")
       .innerJoin("team", "t", 't.id = tm."teamId"')
       .where("t.category = :category", { category })
-      .groupBy("tm.matchId");
+      .groupBy("tm.matchId, t.category");
 
     const matches = await this.createQueryBuilder("m")
       .select([
@@ -68,6 +69,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         "m.amountTourCoins AS tourCoins",
         "gs.groupStage as groupStage",
         'teams_agg."teamsNames" AS teamsName',
+        'teams_agg."categoryTeam" as categoryTeam',
         "c.courtNumber AS court",
         "cl.clubName AS clubName",
       ])

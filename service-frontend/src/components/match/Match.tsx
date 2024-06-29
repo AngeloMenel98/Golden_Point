@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SetStateAction } from "react";
 import {
   Container,
   Column,
@@ -18,10 +18,13 @@ import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
 import EditIcon from "../../icons/EditIcon/EditIcon";
 import { MatchDTO } from "../../entities/dtos/MatchDTO";
 import { formatDateTime } from "../../utils/transformDate";
+import { MatchData } from "../../pages/admin/Matches/Cards/MatchCard/MatchCard";
 
 interface MatchProps {
   match: MatchDTO;
-  onClick?: () => void;
+  editMatch: MatchData;
+  onEditMatch: (s: SetStateAction<MatchData>) => void;
+  onClick: () => void;
 }
 
 interface MatchBoxProps {
@@ -39,7 +42,21 @@ const MatchBox: React.FC<MatchBoxProps> = ({ teamName }) => {
   );
 };
 
-const Match: React.FC<MatchProps> = ({ match, onClick }) => {
+const Match: React.FC<MatchProps> = ({
+  match,
+  editMatch,
+  onClick,
+  onEditMatch,
+}) => {
+  const handleEdit = () => {
+    onEditMatch((prevEditMatch) => ({
+      ...prevEditMatch,
+      date: formatDateTime(match.MatchDate),
+      teamsName: match.TeamsName,
+      court: match.Court,
+    }));
+    onClick();
+  };
   return (
     <Wrapper>
       <Container mWidth={40} mHeight={10}>
@@ -57,9 +74,9 @@ const Match: React.FC<MatchProps> = ({ match, onClick }) => {
         </Column2x>
         <Column2x>
           <Box2>
-            <MatchText>5</MatchText>
-            <MatchText>6</MatchText>
-            <MatchText>1</MatchText>
+            <MatchText>{editMatch.set11}</MatchText>
+            <MatchText>{editMatch.set21}</MatchText>
+            <MatchText>{editMatch.set31}</MatchText>
           </Box2>
           <Box2>
             <HorizontalLine
@@ -82,9 +99,9 @@ const Match: React.FC<MatchProps> = ({ match, onClick }) => {
             />
           </Box2>
           <Box2>
-            <MatchText>6</MatchText>
-            <MatchText>4</MatchText>
-            <MatchText>6</MatchText>
+            <MatchText>{editMatch.set12}</MatchText>
+            <MatchText>{editMatch.set22}</MatchText>
+            <MatchText>{editMatch.set32}</MatchText>
           </Box2>
         </Column2x>
         <Column4>
@@ -115,7 +132,7 @@ const Match: React.FC<MatchProps> = ({ match, onClick }) => {
               onClick={onClick}
             />
           }
-          onClick={onClick}
+          onClick={handleEdit}
         />
       </ButtonWrapper>
     </Wrapper>
