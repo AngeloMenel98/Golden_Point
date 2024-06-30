@@ -6,7 +6,7 @@ export const CardContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding-top: 3rem;
+  padding-top: 1.5rem;
 `;
 
 export const MatchContainer = styled.div`

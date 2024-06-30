@@ -18,6 +18,9 @@ import SecondaryButton from "../../../../../components/buttons/SecondaryButton/S
 
 import PlusIcon from "../../../../../icons/PlusIcon/PlusIcon";
 import { MatchData } from "../../Cards/MatchCard/MatchCard";
+import SetAPI, { SetAtts } from "../../../../../services/SetApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../../reduxSlices/store";
 
 interface EditMatchProps {
   editMatch: MatchData;
@@ -25,20 +28,47 @@ interface EditMatchProps {
   onClose: () => void;
 }
 
+const setAPI: SetAPI = new SetAPI();
+
 const EditMatch: React.FC<EditMatchProps> = ({
   editMatch,
   onEditMatch,
   onClose,
 }) => {
-  const handleEdit = () => {
-    console.log("Editar");
+  const user = useSelector((state: RootState) => state.user.user);
+
+  const handleSets = async () => {
+    let setT1 = [];
+    let setT2 = [];
+
+    if (editMatch.set31 == "" && editMatch.set32 == "") {
+      setT1 = [editMatch.set11, editMatch.set12];
+      setT2 = [editMatch.set21, editMatch.set22];
+    } else {
+      setT1 = [editMatch.set11, editMatch.set12, editMatch.set31];
+      setT2 = [editMatch.set12, editMatch.set22, editMatch.set32];
+    }
+
+    const newSets: SetAtts = {
+      userId: user?.Id,
+      setsTeam1: setT1,
+      setsTeam2: setT2,
+      teamsId: [
+        "9070ed24-ecf1-4edf-852a-b3ee7bbe59ee",
+        "ad516334-7aae-4aff-8b3b-ba86c77c8f5c",
+      ], // IDs de los equipos
+      matchId: editMatch.matchId,
+    };
+
+    const res = await setAPI.addSets(newSets);
+
+    console.log(res);
   };
 
   const editMatchData = () => {
     console.log("Hola");
   };
 
-  console.log(editMatch);
   return (
     <ModalWrapper>
       <ModalContent width={50} height={50}>
@@ -75,6 +105,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
           <SetContainer>
             <Span>Set 1</Span>
           </SetContainer>
+
           <Span>Set 2</Span>
           <Span>Set 3</Span>
         </DataContainer>
@@ -141,7 +172,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
         <FooterContainer>
           <ButtonSection></ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Editar" onClick={handleEdit} />
+            <SecondaryButton text="Editar" onClick={handleSets} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

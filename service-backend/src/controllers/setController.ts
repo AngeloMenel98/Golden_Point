@@ -1,16 +1,18 @@
 import { Request, Response } from "express";
 import { Set } from "../entity";
-import { SetService } from "../services";
+import { SetService, TeamMatchService } from "../services";
 import { validationResult } from "express-validator";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
 
 export class SetController {
   private setService: SetService;
+  private teamMatchService: TeamMatchService;
   private manager: Manager;
 
   constructor() {
     this.setService = new SetService();
+    this.teamMatchService = new TeamMatchService();
     this.manager = Manager.getInstance();
   }
 
@@ -25,24 +27,34 @@ export class SetController {
         });
       }
 
-      const { userId, gamesTeam1, gamesTeam2, matchId } = req.body;
+      const { userId, setsTeam1, setsTeam2, matchId, teamsId } = req.body;
 
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
 
-      const newSet = new Set();
-      newSet.gamesTeam1 = gamesTeam1;
-      newSet.gamesTeam2 = gamesTeam2;
+      const setsArray: Set[] = setsTeam1.map((setTeam1, index) => {
+        const set = new Set();
+        set.gamesTeam1 = setTeam1;
+        set.gamesTeam2 = setsTeam2[index];
+        return set;
+      });
 
-      const set = await this.setService.create(newSet, matchId);
+      const { winner, setsSaved } = await this.setService.create(
+        setsArray,
+        matchId
+      );
+
+      this.teamMatchService.addWinner(teamsId, winner, matchId);
 
       const response = {
-        id: set.id,
-        gTeams1: set.gamesTeam1,
-        gTeams2: set.gamesTeam2,
-        matchId: set.match.id,
+        winner,
+        sets: setsSaved.map((s) => ({
+          id: s.id,
+          gTeams1: s.gamesTeam1,
+          gTeams2: s.gamesTeam2,
+          matchId: s.match.id,
+        })),
       };
-
       res.status(201).json(response);
     } catch (e) {
       console.error("Error creating set:", e);

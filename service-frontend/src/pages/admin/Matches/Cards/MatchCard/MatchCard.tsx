@@ -12,6 +12,8 @@ interface MatchCardProps {
 }
 
 export interface MatchData {
+  matchId: string;
+  teamsId: string[];
   date: string;
   teamsName: string[];
   court: string;
@@ -26,6 +28,8 @@ export interface MatchData {
 const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
   const [isMatchOpen, setIsMatchOpen] = useState(false);
   const [editMatch, setEditMatch] = useState<MatchData>({
+    matchId: "",
+    teamsId: [],
     date: "",
     teamsName: [],
     court: "",
@@ -54,7 +58,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
         borderCol={darkGreen}
         boxCol={pastelGreen}
         mWidth={1200}
-        mHeight={1000}
+        mHeight={450}
         error={error}
       >
         {matches.map((match) => (

@@ -34,6 +34,7 @@ export default function useGetMatches(
       const match = new MatchDTO();
       const teamsName: string[] = m.teamsname.split(", ");
 
+      match.Id = m.matchid;
       match.MatchDate = m.matchdate;
       match.AmountTourCoins = m.tourcoins;
       match.GroupName = m.groupstage;

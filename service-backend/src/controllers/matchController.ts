@@ -29,6 +29,7 @@ export class MatchController {
         category,
         groupStage
       );
+
       res.status(201).json(response);
     } catch (e) {
       console.error("Error getting matches:", e);

@@ -64,6 +64,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
 
     const matches = await this.createQueryBuilder("m")
       .select([
+        "m.id as matchId",
         "m.matchDate as matchDate",
         "m.amountTourPoints AS tourPoints",
         "m.amountTourCoins AS tourCoins",

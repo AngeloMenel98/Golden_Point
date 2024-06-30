@@ -16,7 +16,10 @@ const codeErrors = {
 
   MATCH_1: `Cantidad de equipos incorrectos.`,
 
+  SET_0: `Cantidad de Sets insuficientes.`,
   SET_1: (value: any) => `El partido ya tiene ${value} sets.`,
+  SET_2: `Uno de los equipos debe ganar ambos sets.`,
+  SET_3: `Uno de los equipos debe ganar al menos 2 de los 3 sets.`,
 };
 
 export default codeErrors;

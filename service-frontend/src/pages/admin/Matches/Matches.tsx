@@ -49,7 +49,7 @@ const Matches: React.FC = () => {
   );
 
   useEffect(() => {
-    refetch(); // Llama a la función para actualizar los datos
+    refetch();
   }, [selectedGroup, selectedCategory, refetch]);
 
   useEffect(() => {

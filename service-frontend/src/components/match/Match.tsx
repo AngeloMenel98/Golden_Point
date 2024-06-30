@@ -51,12 +51,14 @@ const Match: React.FC<MatchProps> = ({
   const handleEdit = () => {
     onEditMatch((prevEditMatch) => ({
       ...prevEditMatch,
+      matchId: match.Id,
       date: formatDateTime(match.MatchDate),
       teamsName: match.TeamsName,
       court: match.Court,
     }));
     onClick();
   };
+
   return (
     <Wrapper>
       <Container mWidth={40} mHeight={10}>
