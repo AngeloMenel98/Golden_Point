@@ -1,4 +1,3 @@
-import { useState } from "react";
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import { pastelGreen, red } from "../../../../../utils/colors";
@@ -24,6 +23,7 @@ import { RootState } from "../../../../../reduxSlices/store";
 
 interface EditMatchProps {
   editMatch: MatchData;
+  teamsId: string[];
   onEditMatch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
 }
@@ -32,6 +32,7 @@ const setAPI: SetAPI = new SetAPI();
 
 const EditMatch: React.FC<EditMatchProps> = ({
   editMatch,
+  teamsId,
   onEditMatch,
   onClose,
 }) => {
@@ -42,10 +43,10 @@ const EditMatch: React.FC<EditMatchProps> = ({
     let setT2 = [];
 
     if (editMatch.set31 == "" && editMatch.set32 == "") {
-      setT1 = [editMatch.set11, editMatch.set12];
-      setT2 = [editMatch.set21, editMatch.set22];
+      setT1 = [editMatch.set11, editMatch.set21];
+      setT2 = [editMatch.set12, editMatch.set22];
     } else {
-      setT1 = [editMatch.set11, editMatch.set12, editMatch.set31];
+      setT1 = [editMatch.set11, editMatch.set21, editMatch.set31];
       setT2 = [editMatch.set12, editMatch.set22, editMatch.set32];
     }
 
@@ -53,16 +54,15 @@ const EditMatch: React.FC<EditMatchProps> = ({
       userId: user?.Id,
       setsTeam1: setT1,
       setsTeam2: setT2,
-      teamsId: [
-        "9070ed24-ecf1-4edf-852a-b3ee7bbe59ee",
-        "ad516334-7aae-4aff-8b3b-ba86c77c8f5c",
-      ], // IDs de los equipos
+      teamsId: teamsId.map((t) => t), // IDs de los equipos
       matchId: editMatch.matchId,
     };
 
     const res = await setAPI.addSets(newSets);
 
-    console.log(res);
+    if (res != null) {
+      onClose();
+    }
   };
 
   const editMatchData = () => {

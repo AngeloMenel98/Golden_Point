@@ -4,8 +4,12 @@ import { TeamDTO } from "../entities/dtos/TeamDTO";
 
 const teamApi = new TeamAPI();
 
-export default function useGetTeams(tournamentId: string) {
+export default function useGetTeams(tournamentId: string | null) {
   const [allTeams, setAllTeams] = useState<TeamDTO[]>([]);
+
+  if (tournamentId == null) {
+    return { allTeams, teamApi };
+  }
 
   const getTeams = async () => {
     const teamArray: TeamDTO[] = [];

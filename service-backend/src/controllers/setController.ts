@@ -38,7 +38,6 @@ export class SetController {
         set.gamesTeam2 = setsTeam2[index];
         return set;
       });
-
       const { winner, setsSaved } = await this.setService.create(
         setsArray,
         matchId

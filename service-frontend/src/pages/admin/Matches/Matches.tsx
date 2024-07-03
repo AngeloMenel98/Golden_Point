@@ -8,22 +8,27 @@ import {
   TournamentSection,
   HeaderContainer,
   ButtonContainer,
+  HeaderButtons,
 } from "./MatchesStyle";
 
 import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
-import { Errors } from "../../../errors/Errors";
 import { useLocation } from "react-router-dom";
 import DropDown from "../../../components/dropdown/DropDown/DropDown";
 import MatchCard from "./Cards/MatchCard/MatchCard";
 import useGetMatches from "../../../hooks/useGetMatches";
 import { MatchDTO } from "../../../entities/dtos/MatchDTO";
+import useGetTeams from "../../../hooks/useGetTeams";
+import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
+import { useNavigate } from "react-router-dom";
+import PositionCard from "./Cards/PositionCard/PosCard";
 
 const Matches: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   const tournamentId = params.get("tournamentId");
 
@@ -47,6 +52,7 @@ const Matches: React.FC = () => {
     selectedGroup[0],
     selectedCategory[0]
   );
+  const { allTeams } = useGetTeams(tournamentId);
 
   useEffect(() => {
     refetch();
@@ -64,6 +70,10 @@ const Matches: React.FC = () => {
     setSelectedCategory(category);
   };
 
+  const returnToTournaments = () => {
+    navigate("/tournaments");
+  };
+
   const filteredMatches = allMatches.filter(
     (m) =>
       m.GroupName === selectedGroup[0] && m.CategoryTeam == selectedCategory[0]
@@ -74,7 +84,10 @@ const Matches: React.FC = () => {
       <NavBar userName={user?.UserName} />
       <TournamentSection>
         <HeaderContainer>
-          <H2>{tournamentId}</H2>
+          <H2>Hola</H2>
+          <HeaderButtons>
+            <SecondaryButton text="Torneos" onClick={returnToTournaments} />
+          </HeaderButtons>
         </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>
@@ -99,7 +112,12 @@ const Matches: React.FC = () => {
           </ButtonContainer>
         </SpaceContainer>
         <SpaceContainer>
-          <MatchCard error={errors.notFound} matches={filteredMatches} />
+          <MatchCard
+            error={errors.notFound}
+            matches={filteredMatches}
+            teams={allTeams}
+          />
+          <PositionCard teams={allTeams} />
         </SpaceContainer>
       </TournamentSection>
     </MainContainer>

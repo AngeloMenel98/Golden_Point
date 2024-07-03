@@ -5,9 +5,11 @@ import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import Match from "../../../../../components/match/Match";
 import EditMatch from "../../Modals/EditMatch/EditMatch";
 import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
+import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 
 interface MatchCardProps {
   matches: MatchDTO[];
+  teams: TeamDTO[];
   error?: string;
 }
 
@@ -25,7 +27,7 @@ export interface MatchData {
   set32: string;
 }
 
-const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
+const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
   const [isMatchOpen, setIsMatchOpen] = useState(false);
   const [editMatch, setEditMatch] = useState<MatchData>({
     matchId: "",
@@ -58,7 +60,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
         borderCol={darkGreen}
         boxCol={pastelGreen}
         mWidth={1200}
-        mHeight={450}
+        mHeight={350}
         error={error}
       >
         {matches.map((match) => (
@@ -67,6 +69,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
               key={match.Id}
               onClick={openMatchModal}
               match={match}
+              teams={teams}
               editMatch={editMatch}
               onEditMatch={setEditMatch}
             />
@@ -77,6 +80,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, error }) => {
       {isMatchOpen && (
         <EditMatch
           editMatch={editMatch}
+          teamsId={editMatch.teamsId}
           onEditMatch={handleChangeMatch}
           onClose={closeMatchModal}
         />

@@ -51,8 +51,71 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       return savedMatch;
     });
   },
-
   async getMatches(tournamentId: string, category: string, groupStage: string) {
+    // Subquery for team aggregation
+    const teamSubquery = AppDataSource.createQueryBuilder()
+      .select("tm.matchId as matchId")
+      .addSelect("STRING_AGG(DISTINCT t.teamName, ', ') AS teamNames")
+      .from("team_match", "tm")
+      .innerJoin("team", "t", 't.id = tm."teamId"')
+      .where("t.category = :category", { category })
+      .groupBy("tm.matchId");
+
+    // Subquery for set aggregation
+    const setSubquery = AppDataSource.createQueryBuilder()
+      .select("s.matchId as matchId")
+      .addSelect(
+        "STRING_AGG(COALESCE(s.gamesTeam1) || '-' || COALESCE(s.gamesTeam2), ', ') AS games"
+      )
+      .from("set", "s")
+      .groupBy("s.matchId");
+
+    // Main query
+    const matches = await this.createQueryBuilder("m")
+      .select([
+        "m.id AS id",
+        "m.matchDate AS matchDate",
+        "m.amountTourPoints AS amountTourPoints",
+        "m.amountTourCoins AS amountTourCoins",
+        "gs.groupStage AS groupStage",
+        "teams_agg.teamNames AS teamsName",
+        "t.category AS category",
+        "c.courtNumber AS courtNumber",
+        "cl.clubName AS clubName",
+        "set_agg.games AS games",
+      ])
+      .innerJoin("group_stage", "gs", "gs.id = m.groupStageId")
+      .innerJoin("tournament", "trn", "trn.id = m.tournamentId")
+      .innerJoin(
+        "(" + teamSubquery.getQuery() + ")",
+        "teams_agg",
+        "teams_agg.matchId = m.id"
+      )
+      .innerJoin("team_match", "tm", "tm.matchId = m.id")
+      .innerJoin("team", "t", "t.id = tm.teamId")
+      .innerJoin("court", "c", "c.id = m.courtId")
+      .innerJoin("club", "cl", "cl.id = c.clubId")
+      .leftJoin(
+        "(" + setSubquery.getQuery() + ")",
+        "set_agg",
+        "set_agg.matchId = m.id"
+      )
+      .setParameters({
+        ...teamSubquery.getParameters(),
+        ...setSubquery.getParameters(),
+      })
+      .where("trn.id = :tournamentId", { tournamentId })
+      .andWhere("gs.groupStage = :groupStage", { groupStage })
+      .groupBy(
+        "m.id, m.matchDate, m.amountTourPoints, m.amountTourCoins, gs.groupStage, c.courtNumber, cl.clubName, t.category, teams_agg.teamNames, set_agg.games"
+      )
+      .orderBy("m.matchDate")
+      .getRawMany();
+
+    return matches;
+  },
+
+  /* async getMatches(tournamentId: string, category: string, groupStage: string) {
     const subquery = AppDataSource.createQueryBuilder()
       .select("tm.matchId", "matchId")
       .addSelect(`STRING_AGG(distinct t.teamName, ', ') AS "teamsNames"`)
@@ -73,6 +136,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         'teams_agg."categoryTeam" as categoryTeam',
         "c.courtNumber AS court",
         "cl.clubName AS clubName",
+        'STRING_AGG(distinct COALESCE(set_agg."gamesTeam1") || "-" || COALESCE(set_agg."gamesTeam2"), ", ") AS games',
       ])
       .innerJoin("group_stage", "gs", "gs.id = m.groupStageId")
       .innerJoin("tournament", "trn", "trn.id = m.tournamentId")
@@ -90,5 +154,5 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .getRawMany();
 
     return matches;
-  },
+  },*/
 });

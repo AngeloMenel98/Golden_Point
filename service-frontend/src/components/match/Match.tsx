@@ -1,7 +1,6 @@
 import React, { SetStateAction } from "react";
 import {
   Container,
-  Column,
   Column2x,
   Box,
   MatchText,
@@ -19,9 +18,12 @@ import EditIcon from "../../icons/EditIcon/EditIcon";
 import { MatchDTO } from "../../entities/dtos/MatchDTO";
 import { formatDateTime } from "../../utils/transformDate";
 import { MatchData } from "../../pages/admin/Matches/Cards/MatchCard/MatchCard";
+import { TeamDTO } from "../../entities/dtos/TeamDTO";
+import { formatGames } from "../../utils/formatGames";
 
 interface MatchProps {
   match: MatchDTO;
+  teams: TeamDTO[];
   editMatch: MatchData;
   onEditMatch: (s: SetStateAction<MatchData>) => void;
   onClick: () => void;
@@ -44,17 +46,31 @@ const MatchBox: React.FC<MatchBoxProps> = ({ teamName }) => {
 
 const Match: React.FC<MatchProps> = ({
   match,
+  teams,
   editMatch,
   onClick,
   onEditMatch,
 }) => {
+  const filteredTeams = teams.filter((team) =>
+    match.TeamsName.includes(team.TeamName)
+  );
+
+  const games = formatGames(match.Games);
+
   const handleEdit = () => {
     onEditMatch((prevEditMatch) => ({
       ...prevEditMatch,
       matchId: match.Id,
+      teamsId: filteredTeams.map((t) => t.TeamId),
       date: formatDateTime(match.MatchDate),
       teamsName: match.TeamsName,
       court: match.Court,
+      set11: games[0]?.toString(),
+      set21: games[2]?.toString(),
+      set31: games[4]?.toString(),
+      set12: games[1]?.toString(),
+      set22: games[3]?.toString(),
+      set32: games[5]?.toString(),
     }));
     onClick();
   };
@@ -62,9 +78,6 @@ const Match: React.FC<MatchProps> = ({
   return (
     <Wrapper>
       <Container mWidth={40} mHeight={10}>
-        <Column>
-          <MatchText>1</MatchText>
-        </Column>
         <Column2x>
           {match.TeamsName != null && match.TeamsName.length >= 2 && (
             <>
@@ -76,9 +89,9 @@ const Match: React.FC<MatchProps> = ({
         </Column2x>
         <Column2x>
           <Box2>
-            <MatchText>{editMatch.set11}</MatchText>
-            <MatchText>{editMatch.set21}</MatchText>
-            <MatchText>{editMatch.set31}</MatchText>
+            <MatchText>{games[0]?.toString()}</MatchText>
+            <MatchText>{games[2]?.toString()}</MatchText>
+            <MatchText>{games[4]?.toString()}</MatchText>
           </Box2>
           <Box2>
             <HorizontalLine
@@ -101,9 +114,9 @@ const Match: React.FC<MatchProps> = ({
             />
           </Box2>
           <Box2>
-            <MatchText>{editMatch.set12}</MatchText>
-            <MatchText>{editMatch.set22}</MatchText>
-            <MatchText>{editMatch.set32}</MatchText>
+            <MatchText>{games[1]?.toString()}</MatchText>
+            <MatchText>{games[3]?.toString()}</MatchText>
+            <MatchText>{games[5]?.toString()}</MatchText>
           </Box2>
         </Column2x>
         <Column4>

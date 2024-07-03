@@ -34,14 +34,16 @@ export default function useGetMatches(
       const match = new MatchDTO();
       const teamsName: string[] = m.teamsname.split(", ");
 
-      match.Id = m.matchid;
+      match.Id = m.id;
       match.MatchDate = m.matchdate;
-      match.AmountTourCoins = m.tourcoins;
+      match.AmountTourCoins = m.amounttourcoins;
+      match.AmountTourPoints = m.amounttourpoints;
       match.GroupName = m.groupstage;
       match.TeamsName = teamsName;
-      match.Court = m.court;
+      match.Court = m.courtnumber;
       match.ClubName = m.clubname;
-      match.CategoryTeam = m.categoryteam;
+      match.CategoryTeam = m.category;
+      match.Games = m.games;
 
       matchesArr.push(match);
     });

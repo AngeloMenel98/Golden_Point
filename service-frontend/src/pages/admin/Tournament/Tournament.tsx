@@ -144,9 +144,6 @@ const Tournament: React.FC = () => {
           )}
 
           <HeaderButtons>
-            <SecondaryButton text="Torneos" />
-          </HeaderButtons>
-          <HeaderButtons>
             <SecondaryButton
               text="Rankings"
               icon={<RankingIcon width={23} height={18} color={pastelGreen} />}
