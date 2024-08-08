@@ -8,8 +8,9 @@ import Tournament from "../pages/admin/Tournament/Tournament";
 import { RootState } from "../reduxSlices/store";
 import { useSelector } from "react-redux";
 import useSetUser from "../hooks/useSetUser";
-import TournamentUser from "../pages/user/Tournament/Tournament";
 import Matches from "../pages/admin/Matches/Matches";
+import MatchesUser from "../pages/user/Matches/Matches";
+import TournamentUser from "../pages/user/Tournament/Tournament";
 
 const AppRoutes: React.FC = () => {
   useSetUser();
@@ -26,7 +27,10 @@ const AppRoutes: React.FC = () => {
         path="/tournaments"
         element={isAdmin ? <Tournament /> : <TournamentUser />}
       />
-      <Route path="/matches" element={isAdmin ? <Matches /> : <></>} />
+      <Route
+        path="/matches"
+        element={isAdmin ? <Matches /> : <MatchesUser />}
+      />
     </Routes>
   );
 };

@@ -27,24 +27,24 @@ const PositionCard: React.FC<PosCardProps> = ({ teams }) => {
         backgroundCol={white}
         borderCol={darkGreen}
         boxCol={pastelGreen}
-        mWidth={500}
-        mHeight={350}
+        mWidth={400}
+        mHeight={250}
       >
         <Container mHeight={200} mWidth={50}>
           <Column2x>
             <Box2>
-              <h3 style={{ color: "black" }}>1°</h3>
+              <h4 style={{ color: "black" }}>1°</h4>
             </Box2>
             <Box2>
-              <h3 style={{ color: "black" }}>2°</h3>
+              <h4 style={{ color: "black" }}>2°</h4>
             </Box2>
             <Box2>
-              <h3 style={{ color: "black" }}>3°</h3>
+              <h4 style={{ color: "black" }}>3°</h4>
             </Box2>
           </Column2x>
           <Column2x>
             <Box2>
-              <h3 style={{ color: "black" }}>Test Team</h3>
+              <h4 style={{ color: "black" }}>teams</h4>
             </Box2>
             <Box2>
               <h3 style={{ color: "black" }}>Test Team 2</h3>

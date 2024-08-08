@@ -22,9 +22,8 @@ import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import { useNavigate } from "react-router-dom";
-import PositionCard from "./Cards/PositionCard/PosCard";
 
-const Matches: React.FC = () => {
+const MatchesUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const location = useLocation();
@@ -123,4 +122,4 @@ const Matches: React.FC = () => {
   );
 };
 
-export default Matches;
+export default MatchesUser;

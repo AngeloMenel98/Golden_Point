@@ -28,6 +28,7 @@ import { TournCredentials } from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "../../user/Tournament/Modal/UsersModal/UsersModal";
+import { useNavigate } from "react-router-dom";
 
 export interface CreationData {
   tournamentName: string;
@@ -40,6 +41,7 @@ const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tourData = useSelector((state: RootState) => state.tour.tour);
 
+  const navigate = useNavigate();
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [isUserOpen, setUserOpen] = useState(false);
   const [tournamentTitle, setTournTitle] = useState("");
@@ -119,6 +121,10 @@ const Tournament: React.FC = () => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
+  const returnToTours = () => {
+    navigate("/");
+  };
+
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
@@ -138,7 +144,9 @@ const Tournament: React.FC = () => {
               onClick={usersOpenModal}
             />
           </HeaderButtons>
-
+          <HeaderButtons>
+            <SecondaryButton text="Tours" onClick={returnToTours} />
+          </HeaderButtons>
           {isUserOpen && (
             <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
           )}

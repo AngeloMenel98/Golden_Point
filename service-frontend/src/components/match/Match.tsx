@@ -24,7 +24,6 @@ import { formatGames } from "../../utils/formatGames";
 interface MatchProps {
   match: MatchDTO;
   teams: TeamDTO[];
-  editMatch: MatchData;
   onEditMatch: (s: SetStateAction<MatchData>) => void;
   onClick: () => void;
 }
@@ -47,7 +46,6 @@ const MatchBox: React.FC<MatchBoxProps> = ({ teamName }) => {
 const Match: React.FC<MatchProps> = ({
   match,
   teams,
-  editMatch,
   onClick,
   onEditMatch,
 }) => {

@@ -3,7 +3,6 @@ import { CardContainer, MatchContainer } from "./MatchCardStyle";
 import Card from "../../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import Match from "../../../../../components/match/Match";
-import EditMatch from "../../Modals/EditMatch/EditMatch";
 import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 
@@ -46,12 +45,6 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
   const openMatchModal = () => {
     setIsMatchOpen(true);
   };
-  const closeMatchModal = () => {
-    setIsMatchOpen(false);
-  };
-  const handleChangeMatch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditMatch({ ...editMatch, [e.target.id]: e.target.value });
-  };
 
   return (
     <CardContainer>
@@ -75,15 +68,6 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
           </MatchContainer>
         ))}
       </Card>
-
-      {isMatchOpen && (
-        <EditMatch
-          editMatch={editMatch}
-          teamsId={editMatch.teamsId}
-          onEditMatch={handleChangeMatch}
-          onClose={closeMatchModal}
-        />
-      )}
     </CardContainer>
   );
 };

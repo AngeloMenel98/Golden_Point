@@ -22,6 +22,7 @@ import {
 } from "./TournamentStyle";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "./Modal/UsersModal/UsersModal";
+import { useNavigate } from "react-router-dom";
 
 export interface CreationData {
   tournamentName: string;
@@ -33,6 +34,8 @@ export interface CreationData {
 const TournamentUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tourData = useSelector((state: RootState) => state.tour.tour);
+
+  const navigate = useNavigate();
 
   const [tournamentTitle, setTournTitle] = useState("");
   const [isUserOpen, setUserOpen] = useState(false);
@@ -50,6 +53,10 @@ const TournamentUser: React.FC = () => {
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
+  };
+
+  const returnToTours = () => {
+    navigate("/");
   };
 
   return (
@@ -71,12 +78,12 @@ const TournamentUser: React.FC = () => {
               onClick={usersOpenModal}
             />
           </HeaderButtons>
+          <HeaderButtons>
+            <SecondaryButton text="Tours" onClick={returnToTours} />
+          </HeaderButtons>
           {isUserOpen && (
             <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
           )}
-          <HeaderButtons>
-            <SecondaryButton text="Torneos" />
-          </HeaderButtons>
           <HeaderButtons>
             <SecondaryButton
               text="Rankings"
