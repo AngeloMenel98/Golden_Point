@@ -23,7 +23,7 @@ import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryI
 import { RootState } from "../../../reduxSlices/store";
 import TournamentModal from "./Modals/CreateTournament/TournamentModal";
 import useGetTournaments from "../../../hooks/useGetTournaments";
-import { Category } from "../../../entities/dtos/TournamentDTO";
+import { Category, TournamentDTO } from "../../../entities/dtos/TournamentDTO";
 import { TournCredentials } from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
@@ -55,7 +55,7 @@ const Tournament: React.FC = () => {
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const { tournaments, tournAPI, errorTournament } =
+  const { tournaments, tournAPI, errorTournament, addTournToState } =
     useGetTournaments(tourData);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +113,13 @@ const Tournament: React.FC = () => {
         ...res.fieldErrors,
       }));
     } else {
+      const newTourn: TournamentDTO = new TournamentDTO();
+      newTourn.Id = res.id;
+      newTourn.Title = res.title;
+      newTourn.Master = res.master;
+      newTourn.TeamsCount = 0;
+      newTourn.Categories = categories;
+      addTournToState(newTourn);
       createCloseModal();
     }
   };

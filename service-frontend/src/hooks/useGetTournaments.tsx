@@ -19,11 +19,16 @@ export default function useGetTournaments(tour: TourDTO | null) {
 
   const [errorTournament, setError] = useState<string>("");
 
+  const addTournToState = (newTourn: TournamentDTO) => {
+    setTournaments((prevTourns) => [...prevTourns, newTourn]);
+  };
+
   if (!tour) {
     return {
       tournaments,
       tournAPI,
       errorTournament,
+      addTournToState,
     };
   }
 
@@ -54,6 +59,7 @@ export default function useGetTournaments(tour: TourDTO | null) {
         tournaments,
         tournAPI,
         errorTournament,
+        addTournToState,
       };
     }
   };
@@ -62,5 +68,5 @@ export default function useGetTournaments(tour: TourDTO | null) {
     getTournaments();
   }, []);
 
-  return { tournaments, tournAPI, errorTournament };
+  return { tournaments, tournAPI, errorTournament, addTournToState };
 }

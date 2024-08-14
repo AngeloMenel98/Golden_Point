@@ -21,7 +21,6 @@ import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 
 import { RootState } from "../../../reduxSlices/store";
 import useGetTours from "../../../hooks/useGetTours";
-import { TourDTO } from "../../../entities/dtos/TourDTO";
 
 export interface CreationData {
   tourName: string;
@@ -38,7 +37,7 @@ const Tours: React.FC = () => {
   const [tourTitle, setTourTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { tours, tourAPI, error } = useGetTours(user);
+  const { tours, tourAPI, error, addTourToState } = useGetTours(user);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -74,7 +73,11 @@ const Tours: React.FC = () => {
           </InputContainer>
         </ButtonInputContainer>
         {isModalOpen && (
-          <TourModal tourApi={tourAPI} onClose={handleCloseModal} />
+          <TourModal
+            tourApi={tourAPI}
+            onClose={handleCloseModal}
+            addTour={addTourToState}
+          />
         )}
         <H2>Todos los Tours</H2>
         <TourCard

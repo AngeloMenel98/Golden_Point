@@ -4,7 +4,7 @@ import ClubAPI from "../services/ClubApi";
 
 const clubAPI = new ClubAPI();
 
-export default function useGetTours() {
+export default function useGetClubs() {
   const [allClubs, setAllClubs] = useState<ClubDTO[]>([]);
 
   const getClubs = async () => {
@@ -27,9 +27,13 @@ export default function useGetTours() {
     setAllClubs(clubArray);
   };
 
+  const addClubToState = (newClub: ClubDTO) => {
+    setAllClubs((prevClubs) => [...prevClubs, newClub]);
+  };
+
   useEffect(() => {
     getClubs();
   }, []);
 
-  return allClubs;
+  return { allClubs, addClubToState };
 }

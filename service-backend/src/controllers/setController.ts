@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Set } from "../entity";
-import { SetService, TeamMatchService } from "../services";
+import { SetService, TeamMatchService, TeamService } from "../services";
 import { validationResult } from "express-validator";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
@@ -43,7 +43,8 @@ export class SetController {
         matchId
       );
 
-      this.teamMatchService.addWinner(teamsId, winner, matchId);
+      const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
+      this.teamMatchService.addWinner(teamId, matchId);
 
       const response = {
         winner,
@@ -56,7 +57,7 @@ export class SetController {
       };
       res.status(201).json(response);
     } catch (e) {
-      console.error("Error creating set:", e);
+      console.error("Error creating sets:", e);
 
       if (isServiceCodeError(e)) {
         return res.status(400).json({ error: [{ msg: e.message }] });
