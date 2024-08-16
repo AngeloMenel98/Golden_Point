@@ -25,6 +25,7 @@ import JoinIcon from "../../../icons/JoinIcon/JoinIcon";
 import JoinModal from "./Modals/JoinModal/JoinModal";
 import { JoinCredentials } from "../../../services/TourApi";
 import { Errors } from "../../../errors/Errors";
+import { TourDTO } from "../../../entities/dtos/TourDTO";
 
 export interface CreationData {
   tourName: string;
@@ -43,7 +44,7 @@ const ToursUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
-  const { tours, tourAPI, error } = useGetTours(user);
+  const { tours, tourAPI, error, addTourToState } = useGetTours(user);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -65,6 +66,16 @@ const ToursUser: React.FC = () => {
         ...prevErrors,
         ...res.fieldErrors,
       }));
+    } else {
+      const newTour: TourDTO = new TourDTO();
+      newTour.Id = res.id;
+      newTour.TourTitle = res.title;
+      newTour.TourCode = res.tourCode;
+      newTour.UserCount = 1;
+      newTour.TournamentCount = 0;
+      newTour.UserOwner = user?.UserName || "";
+      addTourToState(newTour);
+      handleCloseModal();
     }
   };
 

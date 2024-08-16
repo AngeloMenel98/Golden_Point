@@ -22,7 +22,8 @@ import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import { useNavigate } from "react-router-dom";
-import PositionCard from "./Cards/PositionCard/PosCard";
+import TournamentAPI from "../../../services/TournamentApi";
+import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
 
 const Matches: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -30,9 +31,9 @@ const Matches: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
-  const tournamentId = params.get("tournamentId");
+  const tournamentId = params.get("tournamentId") || "";
 
-  const cats = ["Masculino-Septima", "Masculino-Sexta"];
+  const cats = useGetCatsByTournId(tournamentId);
   const stages = [
     "Grupo 1",
     "Grupo 2",

@@ -59,11 +59,12 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .getOne();
   },
 
-  async findUserInTour(userId: string) {
+  async findUserInTour(userId: string, tourCode: string) {
     return this.createQueryBuilder("u")
       .innerJoin("tour_users_user", "tuu", 'u.id = tuu."userId"')
       .innerJoin("tour", "t", 't.id = tuu."tourId"')
       .where("u.id = :userId", { userId })
+      .andWhere("t.tourCode = :tourCode", { tourCode })
       .getOne();
   },
 

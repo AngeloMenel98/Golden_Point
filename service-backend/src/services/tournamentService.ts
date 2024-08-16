@@ -285,4 +285,12 @@ export class TournamentService {
 
     return tournaments;
   }
+
+  async getCategoriesByTournId(tournId: string) {
+    const categories = await TournamentRepository.getCategoryByTournId(tournId);
+    if (categories.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Categorias"));
+    }
+    return categories;
+  }
 }

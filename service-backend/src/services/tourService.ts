@@ -25,7 +25,7 @@ export class TourService {
       throw new ServiceCodeError(codeErrors.TOUR_1);
     }
 
-    const userInTour = await UserRepository.findUserInTour(user.id);
+    const userInTour = await UserRepository.findUserInTour(user.id, tourCode);
 
     if (userInTour) {
       throw new ServiceCodeError(codeErrors.TOUR_2(user.username));

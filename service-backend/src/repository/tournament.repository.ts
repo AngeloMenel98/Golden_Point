@@ -38,4 +38,17 @@ export const TournamentRepository = AppDataSource.getRepository(
       .groupBy("t.id, t.title, t.master, c.gender, c.category")
       .getRawMany();
   },
+
+  async getCategoryByTournId(tournId: string) {
+    return this.createQueryBuilder("t")
+      .select(['c."gender" || \'-\' || c."category" AS "categories"'])
+      .innerJoin(
+        "tournament_categories_category",
+        "tcc",
+        't.id = tcc."tournamentId"'
+      )
+      .innerJoin("category", "c", 'c.id = tcc."categoryId"')
+      .where("t.id = :tournId", { tournId })
+      .getRawMany();
+  },
 });
