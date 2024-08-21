@@ -23,7 +23,6 @@ import { RootState } from "../../../../../reduxSlices/store";
 
 interface EditMatchProps {
   editMatch: MatchData;
-  teamsId: string[];
   onEditMatch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
 }
@@ -32,7 +31,6 @@ const setAPI: SetAPI = new SetAPI();
 
 const EditMatch: React.FC<EditMatchProps> = ({
   editMatch,
-  teamsId,
   onEditMatch,
   onClose,
 }) => {
@@ -41,8 +39,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
   const handleSets = async () => {
     let setT1 = [];
     let setT2 = [];
-
-    if (editMatch.set31 == "" && editMatch.set32 == "") {
+    if (editMatch.set31 == null && editMatch.set32 == null) {
       setT1 = [editMatch.set11, editMatch.set21];
       setT2 = [editMatch.set12, editMatch.set22];
     } else {
@@ -54,7 +51,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
       userId: user?.Id,
       setsTeam1: setT1,
       setsTeam2: setT2,
-      teamsId: teamsId.map((t) => t), // IDs de los equipos
+      teamsId: editMatch.teamsId.map((t) => t),
       matchId: editMatch.matchId,
     };
 
@@ -68,7 +65,6 @@ const EditMatch: React.FC<EditMatchProps> = ({
   const editMatchData = () => {
     console.log("Hola");
   };
-
   return (
     <ModalWrapper>
       <ModalContent width={50} height={50}>

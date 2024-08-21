@@ -19,7 +19,6 @@ export default function useGetTeams(tournamentId: string | null) {
       const team = new TeamDTO();
 
       team.TeamId = t.teamId;
-      team.TourId = t.tourId;
       team.UsersId = t.usersId;
       team.TeamName = t.teamName;
       team.Category = t.category;

@@ -7,7 +7,6 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .select('STRING_AGG(DISTINCT u."id"::TEXT, \', \') AS "usersId"')
       .addSelect('tm."teamName"', "teamName")
       .addSelect('tm."category"', "category")
-      .addSelect("t.id", "tourId")
       .addSelect("tm.id", "teamId")
       .addSelect("trn.title", "tournamentTitle")
       .innerJoin("team_users_user", "tuu", 'tuu."teamId" = tm.id ')
@@ -16,7 +15,7 @@ export const TeamRepository = AppDataSource.getRepository(Team).extend({
       .innerJoin("tour", "t", 't.id = tuu2."tourId" ')
       .innerJoin("tournament", "trn", 'trn.id = tm."tournamentId"')
       .where("trn.id = :tournamentId", { tournamentId })
-      .groupBy('tm."category",tm."teamName",t."id", tm.id, trn.title')
+      .groupBy('tm."category",tm."teamName", tm.id, trn.title')
       .getRawMany();
   },
 

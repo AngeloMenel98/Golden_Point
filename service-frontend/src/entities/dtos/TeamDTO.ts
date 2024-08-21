@@ -1,6 +1,5 @@
 export class TeamDTO {
   private teamId: string = "";
-  private tourId: string = "";
   private usersId: string = "";
   private teamName: string = "";
   private category: string = "";
@@ -9,10 +8,6 @@ export class TeamDTO {
   //Setters
   set TeamId(value: string) {
     this.teamId = value;
-  }
-
-  set TourId(value: string) {
-    this.tourId = value;
   }
 
   set UsersId(value: string) {
@@ -34,10 +29,6 @@ export class TeamDTO {
   //Getters
   get TeamId(): string {
     return this.teamId;
-  }
-
-  get TourId(): string {
-    return this.tourId;
   }
 
   get UsersId(): string {

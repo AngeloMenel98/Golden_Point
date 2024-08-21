@@ -22,7 +22,6 @@ import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import { useNavigate } from "react-router-dom";
-import TournamentAPI from "../../../services/TournamentApi";
 import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
 
 const Matches: React.FC = () => {

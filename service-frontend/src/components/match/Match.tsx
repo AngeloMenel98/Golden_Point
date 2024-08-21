@@ -61,7 +61,7 @@ const Match: React.FC<MatchProps> = ({
       matchId: match.Id,
       teamsId: filteredTeams.map((t) => t.TeamId),
       date: formatDateTime(match.MatchDate),
-      teamsName: match.TeamsName,
+      teamsName: filteredTeams.map((t) => t.TeamName),
       court: match.Court,
       set11: games[0]?.toString(),
       set21: games[2]?.toString(),
@@ -79,9 +79,9 @@ const Match: React.FC<MatchProps> = ({
         <Column2x>
           {match.TeamsName != null && match.TeamsName.length >= 2 && (
             <>
-              <MatchBox teamName={match.TeamsName[0]} />
+              <MatchBox teamName={filteredTeams[0].TeamName} />
               <HorizontalLine thickness="0.1rem" color={black} />
-              <MatchBox teamName={match.TeamsName[1]} />
+              <MatchBox teamName={filteredTeams[1].TeamName} />
             </>
           )}
         </Column2x>
@@ -118,7 +118,7 @@ const Match: React.FC<MatchProps> = ({
           </Box2>
         </Column2x>
         <Column4>
-          <Column4Text>Date: {formatDateTime(match.MatchDate)}</Column4Text>
+          <Column4Text>Fecha: {formatDateTime(match.MatchDate)}</Column4Text>
           <VerticalLine
             thickness="1px"
             length="1px"
@@ -132,7 +132,7 @@ const Match: React.FC<MatchProps> = ({
             color="transparent"
             margin="5px 0"
           />
-          <Column4Text>Court: {match.Court}</Column4Text>
+          <Column4Text>Cancha: {match.Court}</Column4Text>
         </Column4>
       </Container>
       <ButtonWrapper>

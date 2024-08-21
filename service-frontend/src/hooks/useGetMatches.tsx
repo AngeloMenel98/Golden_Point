@@ -14,7 +14,7 @@ export default function useGetMatches(
 
   const [errors, setErrors] = useState<Errors>({});
 
-  const getTeams = useCallback(async () => {
+  const getMatches = useCallback(async () => {
     if (tournamentId == null) return;
 
     const matchesArr: MatchDTO[] = [];
@@ -52,8 +52,8 @@ export default function useGetMatches(
   }, [tournamentId, groupStage, category]);
 
   useEffect(() => {
-    getTeams();
-  }, [getTeams]);
+    getMatches();
+  }, [getMatches]);
 
-  return { matches, errors, refetch: getTeams };
+  return { matches, errors, refetch: getMatches };
 }

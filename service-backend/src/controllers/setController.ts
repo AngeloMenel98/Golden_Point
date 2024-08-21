@@ -44,6 +44,7 @@ export class SetController {
       );
 
       const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
+
       this.teamMatchService.addWinner(teamId, matchId);
 
       const response = {

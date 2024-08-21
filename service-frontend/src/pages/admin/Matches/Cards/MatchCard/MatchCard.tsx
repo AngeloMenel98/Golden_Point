@@ -79,7 +79,6 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
       {isMatchOpen && (
         <EditMatch
           editMatch={editMatch}
-          teamsId={editMatch.teamsId}
           onEditMatch={handleChangeMatch}
           onClose={closeMatchModal}
         />
