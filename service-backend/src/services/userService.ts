@@ -118,4 +118,13 @@ export class UserService {
     }
     return users;
   }
+
+  async getRanking(tourId: string, category: string) {
+    const users: unknown[] = await UserRepository.getRanking(tourId, category);
+
+    if (users.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Usuarios"));
+    }
+    return users;
+  }
 }

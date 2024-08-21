@@ -269,6 +269,34 @@ export class UserController {
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
+
+  async getRanking(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const tourId = req.params.tourId;
+      const category = req.params.category;
+
+      const users = await this.userService.getRanking(tourId, category);
+
+      res.status(201).json(users);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
 }
 
 export default new UserController();

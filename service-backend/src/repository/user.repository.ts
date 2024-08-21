@@ -103,4 +103,28 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .where("t.id = :tourId", { tourId })
       .getRawMany();
   },
+
+  async getRanking(tourId: string, category: string) {
+    return this.createQueryBuilder("u")
+      .select([
+        "u.id AS id",
+        "pd.lastName AS lastName",
+        "pd.firstName AS firstName",
+        "SUM(m.amountTourPoints) AS totalPoints",
+      ])
+      .innerJoin("personal_data", "pd", "pd.userId = u.id")
+      .innerJoin("team_users_user", "tuu", "tuu.userId = u.id")
+      .innerJoin("team", "t", "t.id = tuu.teamId")
+      .innerJoin("team_match", "tm", "tm.teamId = t.id")
+      .innerJoin("match", "m", "m.id = tm.matchId")
+      .innerJoin("tournament", "trn", "trn.id = t.tournamentId")
+      .innerJoin("tour_users_user", "ttt", "ttt.userId = u.id")
+      .innerJoin("tour", "t2", "t2.id = ttt.tourId")
+      .where("tm.isWinner = :isWinner", { isWinner: true })
+      .andWhere("t2.id = :tourId", { tourId })
+      .andWhere("t.category = :category", { category })
+      .groupBy("u.id, pd.lastName, pd.firstName")
+      .orderBy("totalPoints", "DESC")
+      .getRawMany();
+  },
 });
