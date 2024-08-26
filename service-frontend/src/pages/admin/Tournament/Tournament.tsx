@@ -132,6 +132,10 @@ const Tournament: React.FC = () => {
     navigate("/");
   };
 
+  const openRankings = () => {
+    navigate("/ranking");
+  };
+
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
@@ -161,6 +165,7 @@ const Tournament: React.FC = () => {
             <SecondaryButton
               text="Rankings"
               icon={<RankingIcon width={23} height={18} color={pastelGreen} />}
+              onClick={openRankings}
             />
           </HeaderButtons>
         </HeaderContainer>

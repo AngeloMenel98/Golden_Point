@@ -11,6 +11,7 @@ import useSetUser from "../hooks/useSetUser";
 import Matches from "../pages/admin/Matches/Matches";
 import MatchesUser from "../pages/user/Matches/Matches";
 import TournamentUser from "../pages/user/Tournament/Tournament";
+import Rankings from "../pages/admin/Ranking/Ranking";
 
 const AppRoutes: React.FC = () => {
   useSetUser();
@@ -31,6 +32,7 @@ const AppRoutes: React.FC = () => {
         path="/matches"
         element={isAdmin ? <Matches /> : <MatchesUser />}
       />
+      <Route path="/ranking" element={<Rankings />} />
     </Routes>
   );
 };
