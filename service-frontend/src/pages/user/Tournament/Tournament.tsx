@@ -48,8 +48,7 @@ const TournamentUser: React.FC = () => {
     setUserOpen(false);
   };
 
-  const { tournaments, tournAPI, errorTournament } =
-    useGetTournaments(tourData);
+  const { tournaments, errorTournament } = useGetTournaments(tourData);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -57,6 +56,10 @@ const TournamentUser: React.FC = () => {
 
   const returnToTours = () => {
     navigate("/");
+  };
+
+  const openRankings = () => {
+    navigate("/ranking");
   };
 
   return (
@@ -88,6 +91,7 @@ const TournamentUser: React.FC = () => {
             <SecondaryButton
               text="Rankings"
               icon={<RankingIcon width={20} height={18} color={darkGreen} />}
+              onClick={openRankings}
             />
           </HeaderButtons>
         </SpaceContainer>

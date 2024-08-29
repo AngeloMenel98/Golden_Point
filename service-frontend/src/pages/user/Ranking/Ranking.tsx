@@ -21,7 +21,6 @@ import UserAPI from "../../../services/UserApi";
 import { Errors } from "../../../errors/Errors";
 import { darkGreen, pastelGreen } from "../../../utils/colors";
 import UsersTable from "../../../components/userTable/UserTable";
-import useGetCats from "../../../hooks/useGetCatsByTournId";
 
 const userAPI = new UserAPI();
 
@@ -79,7 +78,7 @@ const Rankings: React.FC = () => {
         <SpaceContainer>
           <DropDown
             buttonText="Categoria"
-            items={["Masculino - Sexta"]}
+            items={["Masculino-Septima", "Masculino-Sexta"]}
             width={225}
             error={""}
             onChange={handleChangeCat}
