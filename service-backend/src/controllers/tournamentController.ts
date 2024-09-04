@@ -156,6 +156,8 @@ export class TournamentController {
     }
   }
 
+  //async getWinningTeams(req: Request, res: Response) {}
+
   async getAll(req: Request, res: Response) {
     try {
       const errors = validationResult(req);

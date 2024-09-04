@@ -10,6 +10,7 @@ import {
   ButtonContainer,
   ButtonInputContainer,
   H2,
+  H4,
   InputContainer,
   MainContainer,
   TourSection,
@@ -26,6 +27,7 @@ import JoinModal from "./Modals/JoinModal/JoinModal";
 import { JoinCredentials } from "../../../services/TourApi";
 import { Errors } from "../../../errors/Errors";
 import { TourDTO } from "../../../entities/dtos/TourDTO";
+import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
 
 export interface CreationData {
   tourName: string;
@@ -105,6 +107,10 @@ const ToursUser: React.FC = () => {
               onClick={handleOpenModal}
             />
           </ButtonContainer>
+          <ButtonInputContainer>
+            <ArrowLeftIcon width={21} height={16} color={darkGreen} />
+            <H4>Unite a un Tour</H4>
+          </ButtonInputContainer>
           <InputContainer>
             <SecondaryInput
               id="searchTour"
@@ -128,7 +134,7 @@ const ToursUser: React.FC = () => {
             error={fieldErrors}
           />
         )}
-        <H2>Todos los Tours</H2>
+        <H2>Lista de Tours</H2>
         <TourCard
           tours={tours}
           tourApi={tourAPI}

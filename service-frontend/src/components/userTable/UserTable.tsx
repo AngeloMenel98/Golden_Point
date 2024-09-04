@@ -1,11 +1,11 @@
-import React from "react";
 import styled from "styled-components";
+import { darkGreen, pastelGreen } from "../../utils/colors";
 
-// Contenedor para la tabla con altura máxima
 const TableContainer = styled.div`
-  max-height: 350px; /* Ajusta esta altura según tus necesidades */
+  max-height: 350px;
   overflow-y: auto;
-  border: 1px solid black; /* Agrega un borde si lo deseas */
+  border: 2px solid black;
+  border-radius: 10px; /* Aquí defines el redondeo */
 `;
 
 const StyledTable = styled.table`
@@ -16,14 +16,16 @@ const StyledTable = styled.table`
 const StyledTh = styled.th`
   border: 1px solid black;
   padding: 8px;
-  color: black;
-  background-color: #f2f2f2;
+  color: ${darkGreen};
+  background-color: ${pastelGreen};
+  text-align: center;
 `;
 
 const StyledTd = styled.td`
   border: 1px solid black;
   padding: 8px;
   color: black;
+  text-align: center;
 `;
 
 const UsersTable = ({ users }: { users: any[] }) => {

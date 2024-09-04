@@ -95,7 +95,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
     <ModalWrapper>
       <ModalContent width={40}>
         <HeaderContainer>
-          <H3Styled>Usuarios</H3Styled>
+          <H3Styled>Crear Equipo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
         </HeaderContainer>
         <SecondaryInput

@@ -62,7 +62,11 @@ const UsersModal: React.FC<UsersModalProps> = ({
     <ModalWrapper>
       <ModalContent width={40}>
         <HeaderContainer>
-          <H3Styled>Usuarios</H3Styled>
+          {isAddTeam ? (
+            <H3Styled>Selecciona usuarios para un equipo</H3Styled>
+          ) : (
+            <H3Styled>Usuarios</H3Styled>
+          )}
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
         </HeaderContainer>
         <UserContainer>

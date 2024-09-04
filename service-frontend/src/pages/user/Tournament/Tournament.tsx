@@ -67,7 +67,7 @@ const TournamentUser: React.FC = () => {
       <NavBar userName={user?.UserName} />
       <TournamentSection>
         <SpaceContainer>
-          <H2>{tourData?.TourTitle}</H2>
+          <H2>Tour: {tourData?.TourTitle}</H2>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -107,6 +107,7 @@ const TournamentUser: React.FC = () => {
             />
           </InputContainer>
         </SpaceContainer>
+        <H2>Lista de Torneos</H2>
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}

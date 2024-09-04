@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { Set } from "../entity";
-import { SetService, TeamMatchService, TeamService } from "../services";
+import {
+  SetService,
+  TeamMatchService,
+  TeamService,
+  TournamentService,
+} from "../services";
 import { validationResult } from "express-validator";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
@@ -8,11 +13,13 @@ import { Manager } from "../helpers/manager";
 export class SetController {
   private setService: SetService;
   private teamMatchService: TeamMatchService;
+  private tournamentService: TournamentService;
   private manager: Manager;
 
   constructor() {
     this.setService = new SetService();
     this.teamMatchService = new TeamMatchService();
+    this.tournamentService = new TournamentService();
     this.manager = Manager.getInstance();
   }
 
@@ -27,10 +34,12 @@ export class SetController {
         });
       }
 
-      const { userId, setsTeam1, setsTeam2, matchId, teamsId } = req.body;
+      const { userId, setsTeam1, setsTeam2, matchId, teamsId, tournamentId } =
+        req.body;
 
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
+      const tournament = await this.tournamentService.findById(tournamentId);
 
       const setsArray: Set[] = setsTeam1.map((setTeam1, index) => {
         const set = new Set();
@@ -45,7 +54,38 @@ export class SetController {
 
       const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
 
-      this.teamMatchService.addWinner(teamId, matchId);
+      await this.teamMatchService.addWinner(teamId, matchId);
+      const groups = await this.tournamentService.getWinningTeams(
+        tournamentId,
+        ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"]
+      );
+
+      console.log("Groups:", groups);
+      if (groups !== -1) {
+        // Crear los partidos de la siguiente fase (Cuartos de Final)
+        const ms = await this.tournamentService.createNextMatches(
+          groups,
+          tournament
+        );
+        console.log(ms);
+      }
+
+      const quarters = await this.tournamentService.getWinningTeams(
+        tournamentId,
+        ["Cuartos de Final"]
+      );
+
+      if (quarters !== -1) {
+        await this.tournamentService.createNextMatches(quarters, tournament);
+      }
+
+      const semis = await this.tournamentService.getWinningTeams(tournamentId, [
+        "Semi-Final",
+      ]);
+
+      if (semis !== -1) {
+        await this.tournamentService.createNextMatches(semis, tournament);
+      }
 
       const response = {
         winner,

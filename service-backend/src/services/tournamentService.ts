@@ -162,31 +162,6 @@ export class TournamentService {
         const courtIndex = i % courtData.length;
 
         const hoursForGroup = courtData[courtIndex].allHours.slice(0, 3);
-        /*let currentDate: Date = null;
-
-        let allHours = courtData[courtIndex].allHours;
-
-        let firstDate: Date = allHours[0];
-
-        allHours.forEach((hour) => {
-          if (
-            (!currentDate ||
-              hour.toDateString() == currentDate.toDateString()) &&
-            hoursForGroup.length < 3 &&
-            firstDate.toDateString() == currentDate.toDateString()
-          ) {
-            console.log(firstDate);
-            shuffleArray(allHours);
-            hoursForGroup.push(hour);
-
-            courtData[courtIndex].allHours = courtData[
-              courtIndex
-            ].allHours.filter((item) => item !== hour);
-
-            allHours = allHours.filter((item) => item !== hour);
-            currentDate = hour;
-          }
-        });*/
 
         courtData[courtIndex].allHours =
           courtData[courtIndex].allHours.slice(3);
@@ -204,6 +179,15 @@ export class TournamentService {
     }
 
     return this.createGroupsMatches(groupDTOs, tournament);
+  }
+
+  async getWinningTeams(tournamentId: string, groupStage: string[]) {
+    const tt = await TournamentRepository.getWinningTeams(
+      tournamentId,
+      groupStage
+    );
+
+    return tt;
   }
 
   async findById(tournamentId: string) {
@@ -274,6 +258,55 @@ export class TournamentService {
         }
       }
     }
+    return matches;
+  }
+
+  async createNextMatches(teams: any[], tournament: Tournament) {
+    const matches: Match[] = [];
+
+    console.log("Teams:", teams);
+
+    const teamsByGroup = teams.reduce((acc, team) => {
+      if (!acc[team.groupStageId]) {
+        acc[team.groupStageId] = [];
+      }
+      acc[team.groupStageId].push(team);
+      return acc;
+    }, {});
+
+    for (const group in teamsByGroup) {
+      teamsByGroup[group].sort((a, b) => {
+        // Ordenar por matchesWon, y en caso de empate por gamesDiff
+        if (b.matchesWon === a.matchesWon) {
+          return b.gamesDiff - a.gamesDiff;
+        }
+        return b.matchesWon - a.matchesWon;
+      });
+    }
+
+    const matchups = [
+      [teamsByGroup["Grupo 1"][0], teamsByGroup["Grupo 2"][1]],
+      [teamsByGroup["Grupo 2"][0], teamsByGroup["Grupo 1"][1]],
+      [teamsByGroup["Grupo 3"][0], teamsByGroup["Grupo 4"][1]],
+      [teamsByGroup["Grupo 4"][0], teamsByGroup["Grupo 3"][1]],
+    ];
+    //FIXME: Get matchDate and courtId correction
+    for (const [team1, team2] of matchups) {
+      const match = new Match();
+      match.amountTourCoins = 70;
+      match.amountTourPoints = 50;
+      match.matchDate = "2024-09-02 9:00";
+
+      const m = await this.matchService.create(
+        match,
+        [team1, team2],
+        tournament,
+        "35573b77-2f32-41df-b237-8e799d0ba8c9",
+        "Cuartos de Final"
+      );
+      matches.push(m);
+    }
+
     return matches;
   }
 
