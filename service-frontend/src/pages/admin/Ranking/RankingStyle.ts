@@ -41,7 +41,7 @@ export const TableContainer = styled.div`
   width: 100%;
 `;
 
-export const H2 = styled.h2`
+export const H3 = styled.h3`
   color: ${darkGreen};
   padding: 0.01rem 0.5rem;
 `;

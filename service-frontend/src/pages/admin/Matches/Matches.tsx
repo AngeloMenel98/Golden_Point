@@ -2,33 +2,30 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
-  H2,
+  H4,
   MainContainer,
   SpaceContainer,
   TournamentSection,
   HeaderContainer,
   ButtonContainer,
-  HeaderButtons,
 } from "./MatchesStyle";
 
 import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import DropDown from "../../../components/dropdown/DropDown/DropDown";
 import MatchCard from "./Cards/MatchCard/MatchCard";
 import useGetMatches from "../../../hooks/useGetMatches";
 import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
-import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
-import { useNavigate } from "react-router-dom";
 import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
+import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 
 const Matches: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const location = useLocation();
-  const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   const tournamentId = params.get("tournamentId") || "";
 
@@ -70,24 +67,23 @@ const Matches: React.FC = () => {
     setSelectedCategory(category);
   };
 
-  const returnToTournaments = () => {
-    navigate("/tournaments");
-  };
-
   const filteredMatches = allMatches.filter(
     (m) =>
       m.GroupName === selectedGroup[0] && m.CategoryTeam == selectedCategory[0]
   );
+
+  const breadcrumbPath = [
+    { name: "Tours", link: "/" },
+    { name: "Tournaments", link: "/tournaments" },
+    { name: "Matches", link: `/matches?tournamentId=${tournamentId}` },
+  ];
 
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
         <HeaderContainer>
-          <H2>Partidos</H2>
-          <HeaderButtons>
-            <SecondaryButton text="Torneos" onClick={returnToTournaments} />
-          </HeaderButtons>
+          <Breadcrumb path={breadcrumbPath} />
         </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>

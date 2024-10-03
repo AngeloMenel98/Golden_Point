@@ -20,6 +20,7 @@ export const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  padding-left: 0.5rem;
 `;
 
 export const SpaceContainer = styled.div`
@@ -37,7 +38,7 @@ export const HeaderButtons = styled.div`
   padding-left: 0.5rem;
 `;
 
-export const H2 = styled.h2`
+export const H4 = styled.h4`
   color: ${darkGreen};
 
   padding: 0.01rem 0.5rem;

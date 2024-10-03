@@ -5,8 +5,7 @@ import {
   MainContainer,
   RankingSection,
   HeaderContainer,
-  H2,
-  HeaderButtons,
+  H3,
   SpaceContainer,
   TableContainer,
 } from "./RankingStyle";
@@ -22,6 +21,7 @@ import { Errors } from "../../../errors/Errors";
 import { darkGreen, pastelGreen } from "../../../utils/colors";
 import UsersTable from "../../../components/userTable/UserTable";
 import useGetCats from "../../../hooks/useGetCatsByTournId";
+import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 
 const userAPI = new UserAPI();
 
@@ -65,17 +65,19 @@ const Rankings: React.FC = () => {
     }
   };
 
+  const breadcrumbPath = [
+    { name: "Tours", link: "/" },
+    { name: "Tournaments", link: "/tournaments" },
+    { name: "Rankings", link: "/ranking" },
+  ];
+
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <RankingSection>
-        <HeaderContainer>
-          <H2>Ranking</H2>
-          <HeaderButtons>
-            <SecondaryButton text="Torneos" onClick={returnToTournaments} />
-          </HeaderButtons>
-          <HeaderButtons></HeaderButtons>
-        </HeaderContainer>
+        <SpaceContainer>
+          <Breadcrumb path={breadcrumbPath} />
+        </SpaceContainer>
         <SpaceContainer>
           <DropDown
             buttonText="Categoria"

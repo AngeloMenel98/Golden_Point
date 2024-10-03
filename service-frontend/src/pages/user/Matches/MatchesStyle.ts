@@ -20,6 +20,7 @@ export const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  padding-left: 0.5rem;
 `;
 
 export const SpaceContainer = styled.div`

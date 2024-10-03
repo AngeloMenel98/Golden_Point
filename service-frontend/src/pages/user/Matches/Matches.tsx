@@ -22,6 +22,7 @@ import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 
 const MatchesUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -78,15 +79,18 @@ const MatchesUser: React.FC = () => {
       m.GroupName === selectedGroup[0] && m.CategoryTeam == selectedCategory[0]
   );
 
+  const breadcrumbPath = [
+    { name: "Tours", link: "/" },
+    { name: "Tournaments", link: "/tournaments" },
+    { name: "Matches", link: `/matches?tournamentId=${tournamentId}` },
+  ];
+
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
         <HeaderContainer>
-          <H2>Partidos</H2>
-          <HeaderButtons>
-            <SecondaryButton text="Torneos" onClick={returnToTournaments} />
-          </HeaderButtons>
+          <Breadcrumb path={breadcrumbPath} />
         </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>

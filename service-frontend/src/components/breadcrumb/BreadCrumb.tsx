@@ -1,11 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { darkGreen, pastelGreen } from "../../utils/colors";
 
-interface BreadcrumbProps {
-  path: Array<{ name: string; link: string }>;
-}
+// Styled component para el Link con hover
+const StyledLink = styled(Link)`
+  font-weight: bold;
+  color: ${pastelGreen};
 
-const Breadcrumb: React.FC<BreadcrumbProps> = ({ path }) => {
+  &:hover {
+    color: ${darkGreen};
+  }
+`;
+
+const Breadcrumb: React.FC<{ path: Array<{ name: string; link: string }> }> = ({
+  path,
+}) => {
   return (
     <nav>
       <ul style={{ listStyle: "none", display: "flex", padding: 0 }}>
@@ -13,11 +23,16 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ path }) => {
           <li key={index} style={{ marginRight: "8px" }}>
             {index < path.length - 1 ? (
               <>
-                <Link to={crumb.link}>{crumb.name}</Link>
-                <span> &gt; </span>
+                <StyledLink to={crumb.link}>{crumb.name}</StyledLink>
+                <span style={{ fontWeight: "bold", color: darkGreen }}>
+                  {" "}
+                  &gt;{" "}
+                </span>
               </>
             ) : (
-              <span>{crumb.name}</span>
+              <span style={{ fontWeight: "bold", color: pastelGreen }}>
+                {crumb.name}
+              </span>
             )}
           </li>
         ))}

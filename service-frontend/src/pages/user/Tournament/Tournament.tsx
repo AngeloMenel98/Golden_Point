@@ -14,7 +14,8 @@ import { RootState } from "../../../reduxSlices/store";
 import useGetTournaments from "../../../hooks/useGetTournaments";
 import { MainContainer } from "../Tour/TourStyles";
 import {
-  H2,
+  BreadCrumbContainer,
+  H3,
   HeaderButtons,
   InputContainer,
   SpaceContainer,
@@ -23,6 +24,7 @@ import {
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "./Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 
 export interface CreationData {
   tournamentName: string;
@@ -54,20 +56,24 @@ const TournamentUser: React.FC = () => {
     setTournTitle(e.target.value);
   };
 
-  const returnToTours = () => {
-    navigate("/");
-  };
-
   const openRankings = () => {
     navigate("/ranking");
   };
+
+  const breadcrumbPath = [
+    { name: "Tours", link: "/" },
+    { name: "Tournaments", link: "/tournaments" },
+  ];
 
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
+        <BreadCrumbContainer>
+          <Breadcrumb path={breadcrumbPath} />
+        </BreadCrumbContainer>
         <SpaceContainer>
-          <H2>Tour: {tourData?.TourTitle}</H2>
+          <H3>Tour: {tourData?.TourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -80,9 +86,6 @@ const TournamentUser: React.FC = () => {
               }
               onClick={usersOpenModal}
             />
-          </HeaderButtons>
-          <HeaderButtons>
-            <SecondaryButton text="Tours" onClick={returnToTours} />
           </HeaderButtons>
           {isUserOpen && (
             <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
@@ -107,7 +110,7 @@ const TournamentUser: React.FC = () => {
             />
           </InputContainer>
         </SpaceContainer>
-        <H2>Lista de Torneos</H2>
+        <H3>Lista de Torneos</H3>
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}

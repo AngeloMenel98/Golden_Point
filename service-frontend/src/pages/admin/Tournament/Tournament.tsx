@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
-  H2,
+  H3,
   MainContainer,
   SpaceContainer,
   TournamentSection,
@@ -10,6 +10,7 @@ import {
   HeaderButtons,
   InputContainer,
   ButtonContainer,
+  BreadCrumbContainer,
 } from "./TournamentStyle";
 import { darkGreen, pastelGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
@@ -29,6 +30,7 @@ import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "../../user/Tournament/Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 
 export interface CreationData {
   tournamentName: string;
@@ -128,23 +130,24 @@ const Tournament: React.FC = () => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
-  const returnToTours = () => {
-    navigate("/");
-  };
-
   const openRankings = () => {
     navigate("/ranking");
   };
+
+  const breadcrumbPath = [
+    { name: "Tours", link: "/" },
+    { name: "Tournaments", link: "/tournaments" },
+  ];
 
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
+        <BreadCrumbContainer>
+          <Breadcrumb path={breadcrumbPath} />
+        </BreadCrumbContainer>
         <HeaderContainer>
-          <HeaderButtons>
-            <SecondaryButton text="Tours" onClick={returnToTours} />
-          </HeaderButtons>
-          <H2>Tour: {tourData?.TourTitle}</H2>
+          <H3>Tour: {tourData?.TourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -196,7 +199,7 @@ const Tournament: React.FC = () => {
             />
           </InputContainer>
         </SpaceContainer>
-        <H2>Lista de Torneos</H2>
+        <H3>Lista de Torneos</H3>
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
