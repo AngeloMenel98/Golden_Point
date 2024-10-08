@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
-  H4,
   MainContainer,
   SpaceContainer,
   TournamentSection,
@@ -13,7 +12,7 @@ import {
 import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import DropDown from "../../../components/dropdown/DropDown/DropDown";
 import MatchCard from "./Cards/MatchCard/MatchCard";
 import useGetMatches from "../../../hooks/useGetMatches";
@@ -55,6 +54,10 @@ const Matches: React.FC = () => {
     refetch();
   }, [selectedGroup, selectedCategory, refetch]);
 
+  const reloadMatches = () => {
+    refetch(); // Función para recargar partidos
+  };
+
   useEffect(() => {
     setAllMatches(matches);
   }, [matches]);
@@ -74,8 +77,8 @@ const Matches: React.FC = () => {
 
   const breadcrumbPath = [
     { name: "Tours", link: "/" },
-    { name: "Tournaments", link: "/tournaments" },
-    { name: "Matches", link: `/matches?tournamentId=${tournamentId}` },
+    { name: "Torneos", link: "/tournaments" },
+    { name: "Partidos", link: `/matches?tournamentId=${tournamentId}` },
   ];
 
   return (
@@ -112,6 +115,7 @@ const Matches: React.FC = () => {
             error={errors.notFound}
             matches={filteredMatches}
             teams={allTeams}
+            reloadMatches={reloadMatches}
           />
         </SpaceContainer>
       </TournamentSection>

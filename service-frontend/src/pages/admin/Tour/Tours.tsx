@@ -79,7 +79,7 @@ const Tours: React.FC = () => {
             addTour={addTourToState}
           />
         )}
-        <H2>Todos los Tours</H2>
+        <H2>Lista de Tours</H2>
         <TourCard
           tours={tours}
           tourApi={tourAPI}

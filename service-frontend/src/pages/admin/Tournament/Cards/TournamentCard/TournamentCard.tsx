@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import Card from "../../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import TournamentRow from "../../Row/TournamentRow";
@@ -17,6 +17,7 @@ interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
   error: string;
+  setShFooter: Dispatch<SetStateAction<boolean>>;
 }
 
 const tournamentAPI = new TournamentAPI();
@@ -25,6 +26,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   tournaments,
   tournamentTitle,
   error,
+  setShFooter,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,6 +37,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   );
 
   const [modalPosition, setModalPosition] = useState({ top: 0, right: 0 });
+
   const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const filteredTourns = tournaments.filter((tourn) =>
@@ -81,6 +84,11 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
       userId: user?.Id,
     };
     const res = await tournamentAPI.startTournament(start);
+
+    if (!res.fieldErrors) {
+      setShFooter(true);
+      handleCloseModal();
+    }
   };
 
   return (

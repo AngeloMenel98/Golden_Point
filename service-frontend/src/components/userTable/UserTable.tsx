@@ -34,10 +34,10 @@ const UsersTable = ({ users }: { users: any[] }) => {
       <StyledTable>
         <thead>
           <tr>
-            <StyledTh>Rank</StyledTh>
-            <StyledTh>Last Name</StyledTh>
-            <StyledTh>First Name</StyledTh>
-            <StyledTh>Total Points</StyledTh>
+            <StyledTh>Posición</StyledTh>
+            <StyledTh>Apellido</StyledTh>
+            <StyledTh>Nombre</StyledTh>
+            <StyledTh>Puntos Totales</StyledTh>
           </tr>
         </thead>
         <tbody>

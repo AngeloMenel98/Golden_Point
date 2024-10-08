@@ -11,6 +11,7 @@ interface MatchCardProps {
   matches: MatchDTO[];
   teams: TeamDTO[];
   error?: string;
+  reloadMatches: () => void;
 }
 
 export interface MatchData {
@@ -27,7 +28,12 @@ export interface MatchData {
   set32: string;
 }
 
-const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
+const MatchCard: React.FC<MatchCardProps> = ({
+  matches,
+  teams,
+  error,
+  reloadMatches,
+}) => {
   const [isMatchOpen, setIsMatchOpen] = useState(false);
   const [editMatch, setEditMatch] = useState<MatchData>({
     matchId: "",
@@ -81,6 +87,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
           editMatch={editMatch}
           onEditMatch={handleChangeMatch}
           onClose={closeMatchModal}
+          reloadMatches={reloadMatches}
         />
       )}
     </CardContainer>

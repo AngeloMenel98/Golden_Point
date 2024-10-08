@@ -25,6 +25,7 @@ interface EditMatchProps {
   editMatch: MatchData;
   onEditMatch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
+  reloadMatches: () => void;
 }
 
 const setAPI: SetAPI = new SetAPI();
@@ -33,6 +34,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
   editMatch,
   onEditMatch,
   onClose,
+  reloadMatches,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -59,6 +61,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
 
     if (res != null) {
       onClose();
+      reloadMatches();
     }
   };
 
@@ -168,7 +171,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
         <FooterContainer>
           <ButtonSection></ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Editar" onClick={handleSets} />
+            <SecondaryButton text="Agregar" onClick={handleSets} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

@@ -31,6 +31,7 @@ import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "../../user/Tournament/Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
+import Footer from "../../../components/footer/footer";
 
 export interface CreationData {
   tournamentName: string;
@@ -136,8 +137,10 @@ const Tournament: React.FC = () => {
 
   const breadcrumbPath = [
     { name: "Tours", link: "/" },
-    { name: "Tournaments", link: "/tournaments" },
+    { name: "Torneos", link: "/tournaments" },
   ];
+
+  const [showFooter, setShowFooter] = useState(false);
 
   return (
     <MainContainer>
@@ -204,8 +207,16 @@ const Tournament: React.FC = () => {
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
           error={errorTournament}
+          setShFooter={setShowFooter}
         />
       </TournamentSection>
+
+      {showFooter && (
+        <Footer
+          message="El torneo fue iniciado correctamente"
+          isSuccess={true}
+        />
+      )}
     </MainContainer>
   );
 };

@@ -78,7 +78,13 @@ const Rankings: React.FC = () => {
         <SpaceContainer>
           <DropDown
             buttonText="Categoria"
-            items={["Masculino-Septima", "Masculino-Sexta"]}
+            items={[
+              "Masculino-Sexta",
+              "Masculino-Septima",
+              "Masculino-Quinta",
+              "Femenino-Sexta",
+              "Femenino-Septima",
+            ]}
             width={225}
             error={""}
             onChange={handleChangeCat}

@@ -81,8 +81,8 @@ const MatchesUser: React.FC = () => {
 
   const breadcrumbPath = [
     { name: "Tours", link: "/" },
-    { name: "Tournaments", link: "/tournaments" },
-    { name: "Matches", link: `/matches?tournamentId=${tournamentId}` },
+    { name: "Torneos", link: "/tournaments" },
+    { name: "Partidos", link: `/matches?tournamentId=${tournamentId}` },
   ];
 
   return (
