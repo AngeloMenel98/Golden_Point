@@ -10,7 +10,7 @@ import {
   MasterContainer,
   TextSpan,
 } from "./TournamentRowStyle";
-import { mint } from "../../../../utils/colors";
+import { darkGreen, mint } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
@@ -29,20 +29,25 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
       navigate(`/matches?tournamentId=${tournamentId}`);
     };
 
+    console.log(tournData);
+
     return (
-      <TourRowContainer ref={ref}>
+      <TourRowContainer ref={ref} hasStarted={tournData.HasStarted}>
         <LeftContainer>
           <MemberContainer>
-            <TourName onClick={() => handleSelectTournament(tournData.Id)}>
+            <TourName
+              onClick={() => handleSelectTournament(tournData.Id)}
+              hasStarted={tournData.HasStarted}
+            >
               {tournData.Title}
             </TourName>
           </MemberContainer>
         </LeftContainer>
         <RightContainer>
-          <MasterContainer>
+          <MasterContainer hasStarted={tournData.HasStarted}>
             Master: <TextSpan>{tournData.Master}</TextSpan>
           </MasterContainer>
-          <TeamsContainer>
+          <TeamsContainer hasStarted={tournData.HasStarted}>
             Equipos:
             <TextSpan>
               {tournData.TeamsCount}/{tournData.Categories.length * 12}

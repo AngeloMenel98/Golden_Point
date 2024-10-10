@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Tour from "../pages/admin/Tour/Tours";
@@ -14,7 +14,9 @@ import TournamentUser from "../pages/user/Tournament/Tournament";
 import Rankings from "../pages/admin/Ranking/Ranking";
 
 const AppRoutes: React.FC = () => {
-  useSetUser();
+  const location = useLocation();
+  const newUser = location.state?.newUser;
+
   const user = useSelector((state: RootState) => state.user.user);
   const isAdmin = user && user.Role == "admin";
 

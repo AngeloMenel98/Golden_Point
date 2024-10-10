@@ -9,6 +9,7 @@ export class TournamentDTO {
   private teamsCount: number = 0;
   private master: number = 0;
   private categories: Category[] = [];
+  private hasStarted: boolean = false;
 
   //Setters
   set Id(value: string) {
@@ -31,6 +32,10 @@ export class TournamentDTO {
     this.categories = value;
   }
 
+  set HasStarted(value: boolean) {
+    this.hasStarted = value;
+  }
+
   //Getters
   get Id(): string {
     return this.id;
@@ -50,5 +55,9 @@ export class TournamentDTO {
 
   get Categories(): Category[] {
     return this.categories;
+  }
+
+  get HasStarted(): boolean {
+    return this.hasStarted;
   }
 }

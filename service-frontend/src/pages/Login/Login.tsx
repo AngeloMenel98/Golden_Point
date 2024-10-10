@@ -12,12 +12,12 @@ import {
   LabelH2,
   LabelH5,
   StyledLink,
-  ForgotPasswordContainer,
 } from "./LoginStyles";
 import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
 import EnterIcon from "../../icons/EnterIcon/EnterIcon";
 import { Errors } from "../../errors/Errors";
 import { white } from "../../utils/colors";
+import useSetUser from "../../hooks/useSetUser";
 
 const userAPI = new UserAPI();
 
@@ -35,6 +35,8 @@ const Login: React.FC = () => {
     setCredentials({ ...credentials, [e.target.id]: e.target.value });
   };
 
+  const setUser = useSetUser();
+
   const handleClick = async () => {
     const token = await userAPI.login(credentials);
     if (token.fieldErrors) {
@@ -47,7 +49,9 @@ const Login: React.FC = () => {
 
     localStorage.setItem("token", token);
 
-    navigate("/");
+    const newUser = setUser;
+
+    navigate("/", { state: { newUser } });
   };
 
   return (
@@ -81,11 +85,11 @@ const Login: React.FC = () => {
             error={fieldErrors.password}
           />
 
-          <ForgotPasswordContainer>
+          {/*<ForgotPasswordContainer>
             <StyledLink to="/forgot-password">
               ¿Has olvidado tu contraseña?
             </StyledLink>
-          </ForgotPasswordContainer>
+          </ForgotPasswordContainer>*/}
           <PrimaryButton
             text="Iniciar Sesión"
             onClick={handleClick}

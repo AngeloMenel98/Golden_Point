@@ -35,6 +35,7 @@ export class TournamentController {
       newTourn.title = title;
       newTourn.master = master;
       newTourn.isDeleted = false;
+      newTourn.hasStarted = false;
 
       const tournament = await this.tournService.create(
         newTourn,
@@ -188,6 +189,7 @@ export class TournamentController {
             teamsCount: tour.teamscount,
             master: tour.master,
             categories: [],
+            hasStarted: tour.hasstarted,
           };
         }
 

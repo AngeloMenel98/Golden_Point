@@ -24,6 +24,7 @@ export const TournamentRepository = AppDataSource.getRepository(
         "count(distinct tm.id) as teamsCount",
         "t.master as master",
         'STRING_AGG(DISTINCT CONCAT(c."gender", \'-\', c."category")::TEXT, \', \') AS "gender_category"',
+        "t.hasStarted as hasStarted",
       ])
       .innerJoin("tour", "tr", 'tr.id = t."tourId"')
       .innerJoin(
@@ -36,6 +37,7 @@ export const TournamentRepository = AppDataSource.getRepository(
       .where("tr.id = :tourId", { tourId })
       .andWhere('t."isDeleted" = false')
       .groupBy("t.id, t.title, t.master, c.gender, c.category")
+      .orderBy("t.hasStarted", "DESC")
       .getRawMany();
   },
 
@@ -144,5 +146,13 @@ export const TournamentRepository = AppDataSource.getRepository(
 
     console.log("Wining:", winningTeams);
     return winningTeams;
+  },
+
+  async updateHasStarted(tournamentId: string, hasStarted: boolean) {
+    return this.createQueryBuilder()
+      .update(Tournament)
+      .set({ hasStarted })
+      .where("id = :tournamentId", { tournamentId })
+      .execute();
   },
 });

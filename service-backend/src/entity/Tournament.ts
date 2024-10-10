@@ -26,6 +26,9 @@ export class Tournament {
   @Column()
   isDeleted: boolean;
 
+  @Column()
+  hasStarted: boolean;
+
   @ManyToOne(() => Tour, (tour) => tour.tournaments)
   tour: Tour;
 

@@ -258,6 +258,7 @@ export class TournamentService {
         }
       }
     }
+    await TournamentRepository.updateHasStarted(tournament.id, true);
     return matches;
   }
 
@@ -312,6 +313,7 @@ export class TournamentService {
 
   async getAll(tourId: string) {
     const tournaments: TourData[] = await TournamentRepository.getAll(tourId);
+
     if (tournaments.length == 0) {
       throw new ServiceCodeError(codeErrors.GEN_2("Torneo"));
     }

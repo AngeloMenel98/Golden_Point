@@ -27,4 +27,5 @@ export interface TourData {
   teamscount: string;
   master: number;
   gender_category: string;
+  hasstarted: boolean;
 }
