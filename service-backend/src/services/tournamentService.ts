@@ -14,6 +14,8 @@ import {
   shuffleArray,
   sortTeamsPerCategoryByPoints,
 } from "../utils/functionHelpers";
+import { Stats } from "fs";
+import { Status } from "../entity/Tournament";
 
 export class TournamentService {
   private tourService: TourService;
@@ -258,7 +260,7 @@ export class TournamentService {
         }
       }
     }
-    await TournamentRepository.updateHasStarted(tournament.id, true);
+    await TournamentRepository.updateStatus(tournament.id, Status.IN_PROGRESS);
     return matches;
   }
 

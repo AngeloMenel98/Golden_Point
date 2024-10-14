@@ -1,23 +1,12 @@
 import styled from "styled-components";
-import {
-  black,
-  darkGreen,
-  lightRed,
-  mint,
-  pastelGreen,
-  red,
-} from "../../../../utils/colors";
+import { black, darkGreen, mint, pastelGreen } from "../../../../utils/colors";
 
-interface Props {
-  hasStarted: boolean;
-}
-
-export const TourRowContainer = styled.div<Props>`
+export const TourRowContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   height: 3rem;
-  background: ${({ hasStarted }) => (hasStarted ? pastelGreen : lightRed)};
+  background: ${pastelGreen};
   margin-bottom: 0.5rem;
   box-sizing: border-box;
   border-radius: 6px;
@@ -81,22 +70,34 @@ export const FullRightContainer = styled.div`
   }
 `;
 
-export const MasterContainer = styled.div<Props>`
+export const MasterContainer = styled.div`
   display: flex;
   flex-direction: row;
 
-  color: ${({ hasStarted }) => (hasStarted ? darkGreen : red)};
+  color: ${darkGreen};
   font-weight: 900;
 
   padding: 0.5rem 0.5rem;
 `;
 
-export const TeamsContainer = styled.div<Props>`
+export const TeamsContainer = styled.div`
   display: flex;
   flex-direction: row;
 
   padding: 0.5rem 0.5rem;
-  color: ${({ hasStarted }) => (hasStarted ? darkGreen : red)};
+  color: ${darkGreen};
+  font-weight: 900;
+`;
+
+export const StartContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0.5rem 0.5rem;
+  color: ${darkGreen};
   font-weight: 900;
 `;
 
@@ -109,8 +110,8 @@ export const TournamentContainer = styled.div`
   font-weight: 900;
 `;
 
-export const TourName = styled.button<Props>`
-  color: ${({ hasStarted }) => (hasStarted ? darkGreen : red)};
+export const TourName = styled.button`
+  color: ${darkGreen};
   cursor: pointer;
   line-height: 16px;
   font-weight: 900;

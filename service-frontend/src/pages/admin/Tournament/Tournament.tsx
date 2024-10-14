@@ -202,6 +202,7 @@ const Tournament: React.FC = () => {
             />
           </InputContainer>
         </SpaceContainer>
+
         <H3>Lista de Torneos</H3>
         <TournamentCard
           tournaments={tournaments}

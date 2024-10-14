@@ -99,7 +99,7 @@ const TournamentUser: React.FC = () => {
           </HeaderButtons>
         </SpaceContainer>
         <SpaceContainer>
-          <InputContainer id="input">
+          <InputContainer>
             <SecondaryInput
               id="searchTournament"
               type="text"

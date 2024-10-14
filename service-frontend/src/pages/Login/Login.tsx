@@ -50,7 +50,6 @@ const Login: React.FC = () => {
     localStorage.setItem("token", token);
 
     const newUser = setUser;
-
     navigate("/", { state: { newUser } });
   };
 

@@ -26,19 +26,22 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
     };
 
     return (
-      <TourRowContainer ref={ref}>
+      <TourRowContainer ref={ref} hasStarted={tournData.HasStarted}>
         <LeftContainer>
           <MemberContainer>
-            <TourName onClick={() => handleSelectTournament(tournData.Id)}>
+            <TourName
+              onClick={() => handleSelectTournament(tournData.Id)}
+              hasStarted={tournData.HasStarted}
+            >
               {tournData.Title}
             </TourName>
           </MemberContainer>
         </LeftContainer>
         <FullRightContainer>
-          <MasterContainer>
+          <MasterContainer hasStarted={tournData.HasStarted}>
             Master: <TextSpan>{tournData.Master}</TextSpan>
           </MasterContainer>
-          <TeamsContainer>
+          <TeamsContainer hasStarted={tournData.HasStarted}>
             Equipos:
             <TextSpan>
               {tournData.TeamsCount}/{tournData.Categories.length * 12}

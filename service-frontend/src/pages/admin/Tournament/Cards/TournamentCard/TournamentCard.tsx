@@ -87,8 +87,11 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
 
     if (!res.fieldErrors) {
       setShFooter(true);
-      handleCloseModal();
+    } else {
+      alert("Error al iniciar torneo");
     }
+
+    handleCloseModal();
   };
 
   return (

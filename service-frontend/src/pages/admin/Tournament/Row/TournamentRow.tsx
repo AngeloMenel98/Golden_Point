@@ -9,12 +9,14 @@ import {
   TourName,
   MasterContainer,
   TextSpan,
+  StartContainer,
 } from "./TournamentRowStyle";
-import { darkGreen, mint } from "../../../../utils/colors";
+import { mint } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
 import { useNavigate } from "react-router-dom";
+import CalCheckIcon from "../../../../icons/CalendarCheckIcon/CalendarCheckIcon";
 
 interface TournamentRowProps {
   tournData: TournamentDTO;
@@ -29,30 +31,31 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
       navigate(`/matches?tournamentId=${tournamentId}`);
     };
 
-    console.log(tournData);
-
     return (
-      <TourRowContainer ref={ref} hasStarted={tournData.HasStarted}>
+      <TourRowContainer ref={ref}>
         <LeftContainer>
           <MemberContainer>
-            <TourName
-              onClick={() => handleSelectTournament(tournData.Id)}
-              hasStarted={tournData.HasStarted}
-            >
+            <TourName onClick={() => handleSelectTournament(tournData.Id)}>
               {tournData.Title}
             </TourName>
           </MemberContainer>
         </LeftContainer>
         <RightContainer>
-          <MasterContainer hasStarted={tournData.HasStarted}>
+          <MasterContainer>
             Master: <TextSpan>{tournData.Master}</TextSpan>
           </MasterContainer>
-          <TeamsContainer hasStarted={tournData.HasStarted}>
+          <TeamsContainer>
             Equipos:
             <TextSpan>
               {tournData.TeamsCount}/{tournData.Categories.length * 12}
             </TextSpan>
           </TeamsContainer>
+          <StartContainer>
+            Estado:
+            <TextSpan>
+              <CalCheckIcon width={15} height={18} status={tournData.Status} />
+            </TextSpan>
+          </StartContainer>
         </RightContainer>
         <FullRightContainer>
           <SecondaryButton

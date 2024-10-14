@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
-  H2,
   MainContainer,
   SpaceContainer,
   TournamentSection,
   HeaderContainer,
   ButtonContainer,
-  HeaderButtons,
 } from "./MatchesStyle";
 
 import NavBar from "../../../components/navbar/NavBar";
@@ -20,19 +18,17 @@ import MatchCard from "./Cards/MatchCard/MatchCard";
 import useGetMatches from "../../../hooks/useGetMatches";
 import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
-import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
-import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
+import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
 
 const MatchesUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const location = useLocation();
-  const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
   const tournamentId = params.get("tournamentId");
 
-  const cats = ["Masculino-Septima", "Masculino-Sexta"];
+  const cats = useGetCatsByTournId(tournamentId);
   const stages = [
     "Grupo 1",
     "Grupo 2",
@@ -68,10 +64,6 @@ const MatchesUser: React.FC = () => {
 
   const handleChangeCat = (category: string[]) => {
     setSelectedCategory(category);
-  };
-
-  const returnToTournaments = () => {
-    navigate("/tournaments");
   };
 
   const filteredMatches = allMatches.filter(

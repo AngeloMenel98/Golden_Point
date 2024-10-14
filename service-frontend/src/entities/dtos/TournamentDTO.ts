@@ -9,7 +9,7 @@ export class TournamentDTO {
   private teamsCount: number = 0;
   private master: number = 0;
   private categories: Category[] = [];
-  private hasStarted: boolean = false;
+  private status: string = "";
 
   //Setters
   set Id(value: string) {
@@ -32,8 +32,8 @@ export class TournamentDTO {
     this.categories = value;
   }
 
-  set HasStarted(value: boolean) {
-    this.hasStarted = value;
+  set Status(value: string) {
+    this.status = value;
   }
 
   //Getters
@@ -57,7 +57,7 @@ export class TournamentDTO {
     return this.categories;
   }
 
-  get HasStarted(): boolean {
-    return this.hasStarted;
+  get Status(): string {
+    return this.status;
   }
 }

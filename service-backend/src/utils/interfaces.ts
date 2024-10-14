@@ -1,3 +1,5 @@
+import { Status } from "../entity/Tournament";
+
 export interface ClubData {
   clubName: string;
   master: number;
@@ -27,5 +29,5 @@ export interface TourData {
   teamscount: string;
   master: number;
   gender_category: string;
-  hasstarted: boolean;
+  status: Status;
 }

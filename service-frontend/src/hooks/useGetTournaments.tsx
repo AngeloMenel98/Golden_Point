@@ -11,7 +11,7 @@ interface TournamentResponse {
     teamsCount: string;
     master: number;
     categories: Category[];
-    hasStarted: boolean;
+    status: string;
   };
 }
 
@@ -49,7 +49,7 @@ export default function useGetTournaments(tour: TourDTO | null) {
         newTourn.TeamsCount = parseInt(tournamentData.teamsCount, 10);
         newTourn.Master = tournamentData.master;
         newTourn.Categories = tournamentData.categories;
-        newTourn.HasStarted = tournamentData.hasStarted;
+        newTourn.Status = tournamentData.status;
 
         tournArray.push(newTourn);
       }

@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
 import { TourData } from "../utils/interfaces";
+import { Status } from "../entity/Tournament";
 
 export class TournamentController {
   private tournService: TournamentService;
@@ -35,7 +36,7 @@ export class TournamentController {
       newTourn.title = title;
       newTourn.master = master;
       newTourn.isDeleted = false;
-      newTourn.hasStarted = false;
+      newTourn.status = Status.PENDING;
 
       const tournament = await this.tournService.create(
         newTourn,
@@ -47,6 +48,7 @@ export class TournamentController {
         id: tournament.id,
         title: tournament.title,
         master: tournament.master,
+        status: tournament.status,
         categories: tournament.categories.map((c) => c.id),
       };
       res.status(201).json(response);
@@ -189,7 +191,7 @@ export class TournamentController {
             teamsCount: tour.teamscount,
             master: tour.master,
             categories: [],
-            hasStarted: tour.hasstarted,
+            status: tour.status,
           };
         }
 
