@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 import configureRoutes from "./routes/index";
 import { AppDataSource } from "./data-source";
 
-const envFilePath = path.join(__dirname, "..", ".env.dev");
+const envFilePath = path.join(__dirname, "..", ".env");
 
 dotenv.config({ path: envFilePath });
 
