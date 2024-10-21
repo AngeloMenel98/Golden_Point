@@ -46,7 +46,9 @@ const Login: React.FC = () => {
 
     localStorage.setItem("token", token);
 
-    navigate("/", { state: { token } });
+    window.location.reload();
+
+    //navigate("/", { state: { token } });
   };
 
   return (

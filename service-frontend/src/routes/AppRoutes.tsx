@@ -18,10 +18,22 @@ import useSetUser from "../hooks/useSetUser";
 interface DecodedToken {
   id: string;
   username: string;
+  iat: number;
   email: string;
   isSingle: boolean;
   role: string; // Cambia esto según la estructura de tu token
 }
+/*email: "colo@g.com"
+​
+iat: 1729545006
+​
+&&id: "e94ea2c9-6d2b-4b85-82c7-84f6f187854a"
+​
+&&isSingle: true
+​
+&&role: "admin"
+​
+username: "Colo" */
 
 const AppRoutes: React.FC = () => {
   const location = useLocation();
@@ -30,7 +42,6 @@ const AppRoutes: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.user.user);
   /*const [usertt, setUsertt] = useState<DecodedToken | null>(null);
-
 
   useEffect(() => {
     // Obtener token del estado (navegación) o de localStorage
@@ -41,15 +52,17 @@ const AppRoutes: React.FC = () => {
     if (token) {
       try {
         const decodedToken = jwtDecode<DecodedToken>(token);
+
         setUsertt(decodedToken);
+
+        console.log(usertt);
       } catch (error) {
         console.error("Error al decodificar el token", error);
       }
     }
   }, [location.state]);*/
 
-  const isAdmin = user && user.Role == "admin";
-  //(usertt && usertt?.role == "admin") ||
+  const isAdmin = user && user.Role == "admin"; //|| (usertt && usertt?.role == "admin");
 
   return (
     <div>
