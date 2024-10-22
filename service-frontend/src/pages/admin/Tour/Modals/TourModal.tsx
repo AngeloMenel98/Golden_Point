@@ -37,13 +37,14 @@ import { TourDTO } from "../../../../entities/dtos/TourDTO";
 interface TourModalProps {
   tourApi: TourAPI;
   onClose: () => void;
+  addTour: (newTour: TourDTO) => void;
 }
 
 const clubAPI = new ClubAPI();
 
-const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose }) => {
+const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
   const user = useSelector((state: RootState) => state.user.user);
-  const allClubs = useGetClubs();
+  const { allClubs, addClubToState } = useGetClubs();
 
   const [data, setData] = useState<CreationData>({
     tourName: "",
@@ -83,6 +84,16 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose }) => {
         ...prevErrors,
         ...res.fieldErrors,
       }));
+    } else {
+      const newClub: ClubDTO = new ClubDTO();
+      newClub.Id = res.id;
+      newClub.ClubName = res.clubName;
+      newClub.Address = res.address;
+      newClub.AvFrom = data.avFrom;
+      newClub.AvTo = data.avTo;
+      newClub.CourtCount = Number(data.courts);
+
+      addClubToState(newClub);
     }
   };
 
@@ -102,6 +113,14 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose }) => {
         ...res.fieldErrors,
       }));
     } else {
+      const newTour: TourDTO = new TourDTO();
+      newTour.Id = res.id;
+      newTour.TourTitle = res.title;
+      newTour.TourCode = res.tourCode;
+      newTour.UserCount = 1;
+      newTour.TournamentCount = 0;
+      newTour.UserOwner = user?.UserName || "";
+      addTour(newTour);
       onClose();
     }
   };
@@ -207,7 +226,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose }) => {
           borderCol={darkGreen}
           boxCol={black}
           mWidth={1000}
-          mHeight={800}
+          mHeight={150}
           error={fieldErrors.notFound}
         >
           {filteredClubs.map((club, index) => (

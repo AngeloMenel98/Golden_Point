@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import NavBar from "../../../components/navbar/NavBar";
 import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 
-import TourCard from "./TourCard/TourCard";
+import TourCard from "./Cards/TourCard";
 import TourModal from "./Modals/TourModal";
 
 import {
@@ -21,7 +21,6 @@ import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 
 import { RootState } from "../../../reduxSlices/store";
 import useGetTours from "../../../hooks/useGetTours";
-import { TourDTO } from "../../../entities/dtos/TourDTO";
 
 export interface CreationData {
   tourName: string;
@@ -38,7 +37,7 @@ const Tours: React.FC = () => {
   const [tourTitle, setTourTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { tours, tourAPI, error } = useGetTours(user);
+  const { tours, tourAPI, error, addTourToState } = useGetTours(user);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -74,9 +73,13 @@ const Tours: React.FC = () => {
           </InputContainer>
         </ButtonInputContainer>
         {isModalOpen && (
-          <TourModal tourApi={tourAPI} onClose={handleCloseModal} />
+          <TourModal
+            tourApi={tourAPI}
+            onClose={handleCloseModal}
+            addTour={addTourToState}
+          />
         )}
-        <H2>Todos los Tours</H2>
+        <H2>Lista de Tours</H2>
         <TourCard
           tours={tours}
           tourApi={tourAPI}

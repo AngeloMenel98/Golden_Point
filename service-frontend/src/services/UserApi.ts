@@ -44,6 +44,15 @@ class UserAPI extends GeneralAPI {
       return isAxiosError(e);
     }
   }
+
+  async getRanking(tourId: string | undefined, category: string) {
+    try {
+      const res = await this.api.get(`/user/${tourId}/${category}`);
+      return res.data;
+    } catch (e) {
+      return isAxiosError(e);
+    }
+  }
 }
 
 export default UserAPI;

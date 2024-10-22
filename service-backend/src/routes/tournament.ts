@@ -63,6 +63,11 @@ router.post(
 );
 
 router.get(
+  "/tournament/cats/:tournId",
+  tournController.getCatByTournId.bind(tournController)
+);
+
+router.get(
   "/tournament/tourns/:tourId",
   tournController.getAll.bind(tournController)
 );

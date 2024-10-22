@@ -11,6 +11,7 @@ interface TournamentResponse {
     teamsCount: string;
     master: number;
     categories: Category[];
+    status: string;
   };
 }
 
@@ -19,11 +20,16 @@ export default function useGetTournaments(tour: TourDTO | null) {
 
   const [errorTournament, setError] = useState<string>("");
 
+  const addTournToState = (newTourn: TournamentDTO) => {
+    setTournaments((prevTourns) => [...prevTourns, newTourn]);
+  };
+
   if (!tour) {
     return {
       tournaments,
       tournAPI,
       errorTournament,
+      addTournToState,
     };
   }
 
@@ -43,6 +49,7 @@ export default function useGetTournaments(tour: TourDTO | null) {
         newTourn.TeamsCount = parseInt(tournamentData.teamsCount, 10);
         newTourn.Master = tournamentData.master;
         newTourn.Categories = tournamentData.categories;
+        newTourn.Status = tournamentData.status;
 
         tournArray.push(newTourn);
       }
@@ -50,11 +57,11 @@ export default function useGetTournaments(tour: TourDTO | null) {
       setTournaments(tournArray);
     } else {
       setError(tournRes.fieldErrors.notFound);
-      console.log("Tournament:", tournaments);
       return {
         tournaments,
         tournAPI,
         errorTournament,
+        addTournToState,
       };
     }
   };
@@ -63,5 +70,5 @@ export default function useGetTournaments(tour: TourDTO | null) {
     getTournaments();
   }, []);
 
-  return { tournaments, tournAPI, errorTournament };
+  return { tournaments, tournAPI, errorTournament, addTournToState };
 }

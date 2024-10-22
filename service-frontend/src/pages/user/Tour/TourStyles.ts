@@ -19,7 +19,7 @@ export const TourSection = styled.div`
 export const ButtonInputContainer = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   width: 100%;
 `;
 
@@ -30,6 +30,11 @@ export const ButtonContainer = styled.div`
   padding: 0.5rem;
 `;
 export const H2 = styled.h2`
+  color: ${darkGreen};
+  padding: 0.01rem 0.5rem;
+`;
+
+export const H4 = styled.h4`
   color: ${darkGreen};
   padding: 0.01rem 0.5rem;
 `;

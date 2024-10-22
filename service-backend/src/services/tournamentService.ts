@@ -14,6 +14,8 @@ import {
   shuffleArray,
   sortTeamsPerCategoryByPoints,
 } from "../utils/functionHelpers";
+import { Stats } from "fs";
+import { Status } from "../entity/Tournament";
 
 export class TournamentService {
   private tourService: TourService;
@@ -149,8 +151,9 @@ export class TournamentService {
       const teams = sortedTeams[category];
       const numTeams = teams.length;
 
-      //FIXME: Think a way to throw this error
-      if (numTeams < 3) continue;
+      if (numTeams < 3 || numTeams % 3 !== 0) {
+        throw new ServiceCodeError(codeErrors.TOURN_3);
+      }
 
       const numGroups = numTeams / 3;
       for (let i = 0; i < numGroups; i++) {
@@ -161,31 +164,6 @@ export class TournamentService {
         const courtIndex = i % courtData.length;
 
         const hoursForGroup = courtData[courtIndex].allHours.slice(0, 3);
-        /*let currentDate: Date = null;
-
-        let allHours = courtData[courtIndex].allHours;
-
-        let firstDate: Date = allHours[0];
-
-        allHours.forEach((hour) => {
-          if (
-            (!currentDate ||
-              hour.toDateString() == currentDate.toDateString()) &&
-            hoursForGroup.length < 3 &&
-            firstDate.toDateString() == currentDate.toDateString()
-          ) {
-            console.log(firstDate);
-            shuffleArray(allHours);
-            hoursForGroup.push(hour);
-
-            courtData[courtIndex].allHours = courtData[
-              courtIndex
-            ].allHours.filter((item) => item !== hour);
-
-            allHours = allHours.filter((item) => item !== hour);
-            currentDate = hour;
-          }
-        });*/
 
         courtData[courtIndex].allHours =
           courtData[courtIndex].allHours.slice(3);
@@ -195,13 +173,23 @@ export class TournamentService {
           [courtData[courtIndex].courtId],
           hoursForGroup,
           20,
-          50
+          50,
+          "Grupo " + (i + 1)
         );
-
         groupDTOs.push(groupDTO);
       }
     }
+
     return this.createGroupsMatches(groupDTOs, tournament);
+  }
+
+  async getWinningTeams(tournamentId: string, groupStage: string[]) {
+    const tt = await TournamentRepository.getWinningTeams(
+      tournamentId,
+      groupStage
+    );
+
+    return tt;
   }
 
   async findById(tournamentId: string) {
@@ -263,7 +251,8 @@ export class TournamentService {
               match,
               [teams[j], teams[k]],
               tournament,
-              courtId
+              courtId,
+              grDTO.groupName
             );
             matches.push(m);
             matchIndex++;
@@ -271,15 +260,74 @@ export class TournamentService {
         }
       }
     }
+    await TournamentRepository.updateStatus(tournament.id, Status.IN_PROGRESS);
+    return matches;
+  }
+
+  async createNextMatches(teams: any[], tournament: Tournament) {
+    const matches: Match[] = [];
+
+    console.log("Teams:", teams);
+
+    const teamsByGroup = teams.reduce((acc, team) => {
+      if (!acc[team.groupStageId]) {
+        acc[team.groupStageId] = [];
+      }
+      acc[team.groupStageId].push(team);
+      return acc;
+    }, {});
+
+    for (const group in teamsByGroup) {
+      teamsByGroup[group].sort((a, b) => {
+        // Ordenar por matchesWon, y en caso de empate por gamesDiff
+        if (b.matchesWon === a.matchesWon) {
+          return b.gamesDiff - a.gamesDiff;
+        }
+        return b.matchesWon - a.matchesWon;
+      });
+    }
+
+    const matchups = [
+      [teamsByGroup["Grupo 1"][0], teamsByGroup["Grupo 2"][1]],
+      [teamsByGroup["Grupo 2"][0], teamsByGroup["Grupo 1"][1]],
+      [teamsByGroup["Grupo 3"][0], teamsByGroup["Grupo 4"][1]],
+      [teamsByGroup["Grupo 4"][0], teamsByGroup["Grupo 3"][1]],
+    ];
+    //FIXME: Get matchDate and courtId correction
+    for (const [team1, team2] of matchups) {
+      const match = new Match();
+      match.amountTourCoins = 70;
+      match.amountTourPoints = 50;
+      match.matchDate = "2024-09-02 9:00";
+
+      const m = await this.matchService.create(
+        match,
+        [team1, team2],
+        tournament,
+        "35573b77-2f32-41df-b237-8e799d0ba8c9",
+        "Cuartos de Final"
+      );
+      matches.push(m);
+    }
+
     return matches;
   }
 
   async getAll(tourId: string) {
     const tournaments: TourData[] = await TournamentRepository.getAll(tourId);
+
     if (tournaments.length == 0) {
       throw new ServiceCodeError(codeErrors.GEN_2("Torneo"));
     }
 
     return tournaments;
+  }
+
+  async getCategoriesByTournId(tournId: string) {
+    const categories = await TournamentRepository.getCategoryByTournId(tournId);
+    if (categories.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Categorias"));
+    }
+    return categories;
   }
 }

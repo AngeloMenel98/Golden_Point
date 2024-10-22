@@ -29,7 +29,7 @@ export class TeamService {
     });
     teamName = namesAndInitials.join("-");
 
-    return await TeamRepository.save({
+    return TeamRepository.save({
       ...newTeam,
       teamName: teamName,
       users: users.map((user) => user.user),

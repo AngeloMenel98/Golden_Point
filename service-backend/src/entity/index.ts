@@ -13,6 +13,7 @@ import { TourCoin } from "./TourCoin";
 import { Notification } from "./Notification";
 import { Reward } from "./Reward";
 import { TeamMatch } from "./TeamMatch";
+import { GroupStage } from "./GroupStage";
 
 export {
   User,
@@ -30,4 +31,5 @@ export {
   Notification,
   Reward,
   TeamMatch,
+  GroupStage,
 };

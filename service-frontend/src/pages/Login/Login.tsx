@@ -12,7 +12,6 @@ import {
   LabelH2,
   LabelH5,
   StyledLink,
-  ForgotPasswordContainer,
 } from "./LoginStyles";
 import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
 import EnterIcon from "../../icons/EnterIcon/EnterIcon";
@@ -47,7 +46,9 @@ const Login: React.FC = () => {
 
     localStorage.setItem("token", token);
 
-    navigate("/");
+    window.location.reload();
+
+    //navigate("/", { state: { token } });
   };
 
   return (
@@ -81,11 +82,11 @@ const Login: React.FC = () => {
             error={fieldErrors.password}
           />
 
-          <ForgotPasswordContainer>
+          {/*<ForgotPasswordContainer>
             <StyledLink to="/forgot-password">
               ¿Has olvidado tu contraseña?
             </StyledLink>
-          </ForgotPasswordContainer>
+          </ForgotPasswordContainer>*/}
           <PrimaryButton
             text="Iniciar Sesión"
             onClick={handleClick}

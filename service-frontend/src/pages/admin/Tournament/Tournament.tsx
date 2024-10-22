@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
-  H2,
+  H3,
   MainContainer,
   SpaceContainer,
   TournamentSection,
@@ -10,6 +10,7 @@ import {
   HeaderButtons,
   InputContainer,
   ButtonContainer,
+  BreadCrumbContainer,
 } from "./TournamentStyle";
 import { darkGreen, pastelGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
@@ -23,11 +24,14 @@ import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryI
 import { RootState } from "../../../reduxSlices/store";
 import TournamentModal from "./Modals/CreateTournament/TournamentModal";
 import useGetTournaments from "../../../hooks/useGetTournaments";
-import { Category } from "../../../entities/dtos/TournamentDTO";
+import { Category, TournamentDTO } from "../../../entities/dtos/TournamentDTO";
 import { TournCredentials } from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "../../user/Tournament/Modal/UsersModal/UsersModal";
+import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
+import Footer from "../../../components/footer/footer";
 
 export interface CreationData {
   tournamentName: string;
@@ -40,6 +44,7 @@ const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tourData = useSelector((state: RootState) => state.tour.tour);
 
+  const navigate = useNavigate();
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [isUserOpen, setUserOpen] = useState(false);
   const [tournamentTitle, setTournTitle] = useState("");
@@ -53,7 +58,7 @@ const Tournament: React.FC = () => {
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const { tournaments, tournAPI, errorTournament } =
+  const { tournaments, tournAPI, errorTournament, addTournToState } =
     useGetTournaments(tourData);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -111,6 +116,13 @@ const Tournament: React.FC = () => {
         ...res.fieldErrors,
       }));
     } else {
+      const newTourn: TournamentDTO = new TournamentDTO();
+      newTourn.Id = res.id;
+      newTourn.Title = res.title;
+      newTourn.Master = res.master;
+      newTourn.TeamsCount = 0;
+      newTourn.Categories = categories;
+      addTournToState(newTourn);
       createCloseModal();
     }
   };
@@ -119,12 +131,26 @@ const Tournament: React.FC = () => {
     setData({ ...data, [e.target.id]: e.target.value });
   };
 
+  const openRankings = () => {
+    navigate("/ranking");
+  };
+
+  const breadcrumbPath = [
+    { name: "Tours", link: "/" },
+    { name: "Torneos", link: "/tournaments" },
+  ];
+
+  const [showFooter, setShowFooter] = useState(false);
+
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
+        <BreadCrumbContainer>
+          <Breadcrumb path={breadcrumbPath} />
+        </BreadCrumbContainer>
         <HeaderContainer>
-          <H2>{tourData?.TourTitle}</H2>
+          <H3>Tour: {tourData?.TourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -138,18 +164,14 @@ const Tournament: React.FC = () => {
               onClick={usersOpenModal}
             />
           </HeaderButtons>
-
           {isUserOpen && (
             <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
           )}
-
-          <HeaderButtons>
-            <SecondaryButton text="Torneos" />
-          </HeaderButtons>
           <HeaderButtons>
             <SecondaryButton
               text="Rankings"
               icon={<RankingIcon width={23} height={18} color={pastelGreen} />}
+              onClick={openRankings}
             />
           </HeaderButtons>
         </HeaderContainer>
@@ -180,12 +202,22 @@ const Tournament: React.FC = () => {
             />
           </InputContainer>
         </SpaceContainer>
+
+        <H3>Lista de Torneos</H3>
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}
           error={errorTournament}
+          setShFooter={setShowFooter}
         />
       </TournamentSection>
+
+      {showFooter && (
+        <Footer
+          message="El torneo fue iniciado correctamente"
+          isSuccess={true}
+        />
+      )}
     </MainContainer>
   );
 };

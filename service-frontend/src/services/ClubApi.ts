@@ -16,8 +16,7 @@ class ClubAPI extends GeneralAPI {
       const res = await this.api.get(`/club/clubs`);
       return res.data;
     } catch (e) {
-      console.log(e);
-      //isAxiosError(e);
+      isAxiosError(e);
     }
   }
 

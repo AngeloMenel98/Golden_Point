@@ -1,6 +1,6 @@
 import { MatchRepository } from "../repository";
 import { Match, Team, Tournament } from "../entity";
-import { TeamService, TournamentService, CourtService } from ".";
+import { TeamService, CourtService } from ".";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
 
@@ -17,7 +17,8 @@ export class MatchService {
     newMatch: Match,
     teamIds: string[],
     tournament: Tournament,
-    courtId: string
+    courtId: string,
+    groupStage: string
   ) {
     const teams: Team[] = await Promise.all(
       teamIds.map((teamId) => this.teamService.findById(teamId))
@@ -28,7 +29,13 @@ export class MatchService {
       throw new ServiceCodeError(codeErrors.MATCH_1);
     }
 
-    return MatchRepository.create(newMatch, teams, tournament, court);
+    return MatchRepository.create(
+      newMatch,
+      teams,
+      tournament,
+      court,
+      groupStage
+    );
   }
 
   async findById(matchId: string) {
@@ -41,5 +48,22 @@ export class MatchService {
     }
 
     return existingMatch;
+  }
+
+  async getMatches(tournamentId: string, category: string, groupStage: string) {
+    const matches: unknown[] = await MatchRepository.getMatches(
+      tournamentId,
+      category,
+      groupStage
+    );
+
+    if (matches.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Partido"));
+    }
+    if (!matches) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Tournament"));
+    }
+
+    return matches;
   }
 }

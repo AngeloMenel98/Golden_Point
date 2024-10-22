@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import {
   TourRowContainer,
   LeftContainer,
@@ -9,12 +9,14 @@ import {
   TourName,
   MasterContainer,
   TextSpan,
+  StartContainer,
 } from "./TournamentRowStyle";
 import { mint } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
 import { useNavigate } from "react-router-dom";
+import CalCheckIcon from "../../../../icons/CalendarCheckIcon/CalendarCheckIcon";
 
 interface TournamentRowProps {
   tournData: TournamentDTO;
@@ -25,15 +27,17 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
   ({ tournData, onOpen }, ref) => {
     const navigate = useNavigate();
 
-    const handleTourClick = () => {
-      navigate("/matches");
+    const handleSelectTournament = (tournamentId: string) => {
+      navigate(`/matches?tournamentId=${tournamentId}`);
     };
 
     return (
       <TourRowContainer ref={ref}>
         <LeftContainer>
           <MemberContainer>
-            <TourName onClick={handleTourClick}>{tournData.Title}</TourName>
+            <TourName onClick={() => handleSelectTournament(tournData.Id)}>
+              {tournData.Title}
+            </TourName>
           </MemberContainer>
         </LeftContainer>
         <RightContainer>
@@ -46,6 +50,12 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
               {tournData.TeamsCount}/{tournData.Categories.length * 12}
             </TextSpan>
           </TeamsContainer>
+          <StartContainer>
+            Estado:
+            <TextSpan>
+              <CalCheckIcon width={15} height={18} status={tournData.Status} />
+            </TextSpan>
+          </StartContainer>
         </RightContainer>
         <FullRightContainer>
           <SecondaryButton

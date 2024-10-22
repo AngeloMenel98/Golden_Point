@@ -10,6 +10,7 @@ import {
   ButtonContainer,
   ButtonInputContainer,
   H2,
+  H4,
   InputContainer,
   MainContainer,
   TourSection,
@@ -25,6 +26,8 @@ import JoinIcon from "../../../icons/JoinIcon/JoinIcon";
 import JoinModal from "./Modals/JoinModal/JoinModal";
 import { JoinCredentials } from "../../../services/TourApi";
 import { Errors } from "../../../errors/Errors";
+import { TourDTO } from "../../../entities/dtos/TourDTO";
+import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
 
 export interface CreationData {
   tourName: string;
@@ -43,7 +46,7 @@ const ToursUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
-  const { tours, tourAPI, error } = useGetTours(user);
+  const { tours, tourAPI, error, addTourToState } = useGetTours(user);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -65,6 +68,16 @@ const ToursUser: React.FC = () => {
         ...prevErrors,
         ...res.fieldErrors,
       }));
+    } else {
+      const newTour: TourDTO = new TourDTO();
+      newTour.Id = res.id;
+      newTour.TourTitle = res.title;
+      newTour.TourCode = res.tourCode;
+      newTour.UserCount = 1;
+      newTour.TournamentCount = 0;
+      newTour.UserOwner = user?.UserName || "";
+      addTourToState(newTour);
+      handleCloseModal();
     }
   };
 
@@ -94,6 +107,10 @@ const ToursUser: React.FC = () => {
               onClick={handleOpenModal}
             />
           </ButtonContainer>
+          <ButtonInputContainer>
+            <ArrowLeftIcon width={21} height={16} color={darkGreen} />
+            <H4>Unite a un Tour</H4>
+          </ButtonInputContainer>
           <InputContainer>
             <SecondaryInput
               id="searchTour"
@@ -117,7 +134,7 @@ const ToursUser: React.FC = () => {
             error={fieldErrors}
           />
         )}
-        <H2>Todos los Tours</H2>
+        <H2>Lista de Tours</H2>
         <TourCard
           tours={tours}
           tourApi={tourAPI}

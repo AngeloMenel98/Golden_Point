@@ -4,12 +4,14 @@ import PrimaryButton from "../../../../../components/buttons/PrimaryButton/Prima
 import AddIcon from "../../../../../icons/AddIcon/AddIcon";
 import TrashIcon from "../../../../../icons/TrashIcon/TrashIcon";
 import { pastelGreen, red } from "../../../../../utils/colors";
+import CheckIcon from "../../../../../icons/CheckIcon/CheckIcon";
 
 interface OptsModalProps {
   open: boolean;
   width: number;
   onAddTeam: () => void;
   onDeleteTeam: () => void;
+  onStartTournament: () => void;
   onClose: () => void;
   position: { top: number; right: number };
 }
@@ -19,6 +21,7 @@ const OptsModal: React.FC<OptsModalProps> = ({
   width,
   onAddTeam,
   onDeleteTeam,
+  onStartTournament,
   onClose,
   position,
 }) => {
@@ -43,6 +46,14 @@ const OptsModal: React.FC<OptsModalProps> = ({
             <TrashIcon width={17} height={17} color={red} />
           </MyIcon>
           Quitar Equipos
+        </MyButton>
+      </Container>
+      <Container>
+        <MyButton hasIcon={true} onClick={onStartTournament}>
+          <MyIcon>
+            <CheckIcon width={17} height={17} color={pastelGreen} />
+          </MyIcon>
+          Iniciar Torneo
         </MyButton>
       </Container>
       <Container>

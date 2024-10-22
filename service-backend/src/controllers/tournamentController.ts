@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 import { Manager } from "../helpers/manager";
 import { TourData } from "../utils/interfaces";
+import { Status } from "../entity/Tournament";
 
 export class TournamentController {
   private tournService: TournamentService;
@@ -35,6 +36,7 @@ export class TournamentController {
       newTourn.title = title;
       newTourn.master = master;
       newTourn.isDeleted = false;
+      newTourn.status = Status.PENDING;
 
       const tournament = await this.tournService.create(
         newTourn,
@@ -46,6 +48,7 @@ export class TournamentController {
         id: tournament.id,
         title: tournament.title,
         master: tournament.master,
+        status: tournament.status,
         categories: tournament.categories.map((c) => c.id),
       };
       res.status(201).json(response);
@@ -131,7 +134,16 @@ export class TournamentController {
         tourn
       );
 
-      res.status(200).json(matches);
+      const response = matches.map((match) => ({
+        id: match.id,
+        amountTourPoints: match.amountTourPoints,
+        amountTourCoins: match.amountTourCoins,
+        matchDate: match.matchDate,
+        court: match.court.courtNumber,
+        groupName: match.groupStage.groupStage,
+      }));
+
+      res.status(200).json(response);
     } catch (e) {
       console.error(e);
 
@@ -146,6 +158,8 @@ export class TournamentController {
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }
+
+  //async getWinningTeams(req: Request, res: Response) {}
 
   async getAll(req: Request, res: Response) {
     try {
@@ -177,6 +191,7 @@ export class TournamentController {
             teamsCount: tour.teamscount,
             master: tour.master,
             categories: [],
+            status: tour.status,
           };
         }
 
@@ -187,6 +202,35 @@ export class TournamentController {
       });
 
       res.status(201).json(response);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
+
+  async getCatByTournId(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const tournId = req.params.tournId;
+
+      const cats = await this.tournService.getCategoriesByTournId(tournId);
+
+      const response = cats.map((cat) => cat.categories);
+
+      res.status(200).json(response);
     } catch (e) {
       console.error(e);
 

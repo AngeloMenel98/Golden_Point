@@ -14,7 +14,8 @@ import { RootState } from "../../../reduxSlices/store";
 import useGetTournaments from "../../../hooks/useGetTournaments";
 import { MainContainer } from "../Tour/TourStyles";
 import {
-  H2,
+  BreadCrumbContainer,
+  H3,
   HeaderButtons,
   InputContainer,
   SpaceContainer,
@@ -22,6 +23,8 @@ import {
 } from "./TournamentStyle";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "./Modal/UsersModal/UsersModal";
+import { useNavigate } from "react-router-dom";
+import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 
 export interface CreationData {
   tournamentName: string;
@@ -34,6 +37,8 @@ const TournamentUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tourData = useSelector((state: RootState) => state.tour.tour);
 
+  const navigate = useNavigate();
+
   const [tournamentTitle, setTournTitle] = useState("");
   const [isUserOpen, setUserOpen] = useState(false);
 
@@ -45,19 +50,30 @@ const TournamentUser: React.FC = () => {
     setUserOpen(false);
   };
 
-  const { tournaments, tournAPI, errorTournament } =
-    useGetTournaments(tourData);
+  const { tournaments, errorTournament } = useGetTournaments(tourData);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
   };
 
+  const openRankings = () => {
+    navigate("/ranking");
+  };
+
+  const breadcrumbPath = [
+    { name: "Tours", link: "/" },
+    { name: "Torneos", link: "/tournaments" },
+  ];
+
   return (
     <MainContainer>
       <NavBar userName={user?.UserName} />
       <TournamentSection>
+        <BreadCrumbContainer>
+          <Breadcrumb path={breadcrumbPath} />
+        </BreadCrumbContainer>
         <SpaceContainer>
-          <H2>{tourData?.TourTitle}</H2>
+          <H3>Tour: {tourData?.TourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -75,17 +91,15 @@ const TournamentUser: React.FC = () => {
             <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
           )}
           <HeaderButtons>
-            <SecondaryButton text="Torneos" />
-          </HeaderButtons>
-          <HeaderButtons>
             <SecondaryButton
               text="Rankings"
               icon={<RankingIcon width={20} height={18} color={darkGreen} />}
+              onClick={openRankings}
             />
           </HeaderButtons>
         </SpaceContainer>
         <SpaceContainer>
-          <InputContainer id="input">
+          <InputContainer>
             <SecondaryInput
               id="searchTournament"
               type="text"
@@ -96,6 +110,7 @@ const TournamentUser: React.FC = () => {
             />
           </InputContainer>
         </SpaceContainer>
+        <H3>Lista de Torneos</H3>
         <TournamentCard
           tournaments={tournaments}
           tournamentTitle={tournamentTitle}

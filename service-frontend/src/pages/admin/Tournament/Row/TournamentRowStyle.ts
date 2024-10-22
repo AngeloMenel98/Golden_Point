@@ -89,6 +89,18 @@ export const TeamsContainer = styled.div`
   font-weight: 900;
 `;
 
+export const StartContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0.5rem 0.5rem;
+  color: ${darkGreen};
+  font-weight: 900;
+`;
+
 export const TournamentContainer = styled.div`
   display: flex;
   align-items: center;

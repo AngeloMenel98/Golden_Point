@@ -10,12 +10,16 @@ const codeErrors = {
 
   TOURN_1: `Master obligatorio`,
   TOURN_2: `Al menos se necesita una categoría`,
+  TOURN_3: `Numero de equipo no suficientes`,
 
   TEAM_1: `La cantidad de jugadores por equipo son 2.`,
 
   MATCH_1: `Cantidad de equipos incorrectos.`,
 
+  SET_0: `Cantidad de Sets insuficientes.`,
   SET_1: (value: any) => `El partido ya tiene ${value} sets.`,
+  SET_2: `Uno de los equipos debe ganar ambos sets.`,
+  SET_3: `Uno de los equipos debe ganar al menos 2 de los 3 sets.`,
 };
 
 export default codeErrors;

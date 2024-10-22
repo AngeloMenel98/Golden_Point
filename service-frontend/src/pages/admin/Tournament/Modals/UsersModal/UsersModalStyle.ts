@@ -38,7 +38,7 @@ export const HeaderContainer = styled.div`
   padding: 0.5rem;
 `;
 
-export const PlayersContainer = styled.div`
+export const UserContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;

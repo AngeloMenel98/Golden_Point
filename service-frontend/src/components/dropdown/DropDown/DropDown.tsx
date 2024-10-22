@@ -16,6 +16,7 @@ interface DropDownProps<T extends string | number | boolean> {
   width: number;
   error: string | undefined;
   onChange: (selectedItems: T[]) => void;
+  amountChars?: number;
 }
 
 const DropDown = <T extends string | number | boolean>({
@@ -23,6 +24,7 @@ const DropDown = <T extends string | number | boolean>({
   items,
   width,
   error,
+  amountChars,
   onChange,
 }: DropDownProps<T>) => {
   const [open, setOpen] = useState(false);
@@ -44,9 +46,11 @@ const DropDown = <T extends string | number | boolean>({
     });
   };
 
+  const chars: number = amountChars || 12;
+
   const truncateItems =
-    selectedItems.join(", ").length > 12
-      ? selectedItems.join(", ").slice(0, 12) + "..."
+    selectedItems.join(", ").length > chars
+      ? selectedItems.join(", ").slice(0, chars) + "..."
       : selectedItems.join(", ");
 
   return (

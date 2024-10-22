@@ -11,6 +11,13 @@ import { Tour } from "./Tour";
 import { Category } from "./Category";
 import { Match } from "./Match";
 import { Team } from "./Team";
+import { IsEnum } from "class-validator";
+
+export enum Status {
+  FINISH = "finish",
+  IN_PROGRESS = "inProgress",
+  PENDING = "pending",
+}
 
 @Entity()
 export class Tournament {
@@ -25,6 +32,13 @@ export class Tournament {
 
   @Column()
   isDeleted: boolean;
+
+  @Column({
+    type: "enum",
+    enum: Status,
+  })
+  @IsEnum(Status)
+  status: Status;
 
   @ManyToOne(() => Tour, (tour) => tour.tournaments)
   tour: Tour;

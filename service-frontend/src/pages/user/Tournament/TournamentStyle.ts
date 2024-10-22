@@ -22,6 +22,13 @@ export const SpaceContainer = styled.div`
   justify-content: space-between;
 `;
 
+export const BreadCrumbContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding-left: 0.5rem;
+`;
+
 export const TourNameContainer = styled.div`
   padding: 11rem;
 `;
@@ -36,7 +43,7 @@ export const HeaderButtons = styled.div`
   padding-left: 0.5rem;
 `;
 
-export const H2 = styled.h2`
+export const H3 = styled.h3`
   color: ${darkGreen};
 
   padding: 0.01rem 0.5rem;

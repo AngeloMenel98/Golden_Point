@@ -10,13 +10,19 @@ export default function useGetTours(user: User | null) {
 
   const [error, setError] = useState<string>("");
 
+  const addTourToState = (newTour: TourDTO) => {
+    setTours((prevTours) => [...prevTours, newTour]);
+  };
+
   if (!user) {
     return {
       tours,
       tourAPI,
       error,
+      addTourToState,
     };
   }
+
   const getTours = async () => {
     const tourArray: TourDTO[] = [];
 
@@ -29,6 +35,7 @@ export default function useGetTours(user: User | null) {
         tours,
         tourAPI,
         error,
+        addTourToState,
       };
     }
 
@@ -52,5 +59,5 @@ export default function useGetTours(user: User | null) {
     getTours();
   }, []);
 
-  return { tours, tourAPI, error };
+  return { tours, tourAPI, error, addTourToState };
 }

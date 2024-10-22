@@ -10,6 +10,7 @@ import { Team } from "./Team";
 import { Set } from "./Set";
 import { Court } from "./Court";
 import { TeamMatch } from "./TeamMatch";
+import { GroupStage } from "./GroupStage";
 
 @Entity()
 export class Match {
@@ -36,4 +37,7 @@ export class Match {
 
   @OneToMany(() => Set, (set) => set.match)
   sets: Set[];
+
+  @ManyToOne(() => GroupStage, (groupStage) => groupStage.matches)
+  groupStage: GroupStage;
 }
