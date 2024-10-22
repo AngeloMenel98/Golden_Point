@@ -24,8 +24,8 @@ import { formatGames } from "../../utils/formatGames";
 interface MatchProps {
   match: MatchDTO;
   teams: TeamDTO[];
-  onEditMatch: (s: SetStateAction<MatchData>) => void;
-  onClick: () => void;
+  onEditMatch?: (s: SetStateAction<MatchData>) => void;
+  onClick?: () => void;
 }
 
 interface MatchBoxProps {
@@ -56,21 +56,23 @@ const Match: React.FC<MatchProps> = ({
   const games = formatGames(match.Games);
 
   const handleEdit = () => {
-    onEditMatch((prevEditMatch) => ({
-      ...prevEditMatch,
-      matchId: match.Id,
-      teamsId: filteredTeams.map((t) => t.TeamId),
-      date: formatDateTime(match.MatchDate),
-      teamsName: filteredTeams.map((t) => t.TeamName),
-      court: match.Court,
-      set11: games[0]?.toString(),
-      set21: games[2]?.toString(),
-      set31: games[4]?.toString(),
-      set12: games[1]?.toString(),
-      set22: games[3]?.toString(),
-      set32: games[5]?.toString(),
-    }));
-    onClick();
+    if (onEditMatch && onClick) {
+      onEditMatch((prevEditMatch) => ({
+        ...prevEditMatch,
+        matchId: match.Id,
+        teamsId: filteredTeams.map((t) => t.TeamId),
+        date: formatDateTime(match.MatchDate),
+        teamsName: filteredTeams.map((t) => t.TeamName),
+        court: match.Court,
+        set11: games[0]?.toString(),
+        set21: games[2]?.toString(),
+        set31: games[4]?.toString(),
+        set12: games[1]?.toString(),
+        set22: games[3]?.toString(),
+        set32: games[5]?.toString(),
+      }));
+      onClick();
+    }
   };
 
   return (
@@ -135,19 +137,23 @@ const Match: React.FC<MatchProps> = ({
           <Column4Text>Cancha: {match.Court}</Column4Text>
         </Column4>
       </Container>
-      <ButtonWrapper>
-        <SecondaryButton
-          icon={
-            <EditIcon
-              width={17}
-              height={17}
-              color={pastelGreen}
-              onClick={onClick}
+      {onClick && (
+        <>
+          <ButtonWrapper>
+            <SecondaryButton
+              icon={
+                <EditIcon
+                  width={17}
+                  height={17}
+                  color={pastelGreen}
+                  onClick={onClick}
+                />
+              }
+              onClick={handleEdit}
             />
-          }
-          onClick={handleEdit}
-        />
-      </ButtonWrapper>
+          </ButtonWrapper>
+        </>
+      )}
     </Wrapper>
   );
 };

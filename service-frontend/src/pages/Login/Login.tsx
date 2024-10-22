@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import UserAPI, { Credentials } from "../../services/UserApi";
 import GPLogo from "../../icons/GPLogo/GPLogo";
 import PrimaryButton from "../../components/buttons/PrimaryButton/PrimaryButton";
@@ -28,27 +27,25 @@ const Login: React.FC = () => {
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const navigate = useNavigate();
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCredentials({ ...credentials, [e.target.id]: e.target.value });
   };
 
   const handleClick = async () => {
     const token = await userAPI.login(credentials);
+
     if (token.fieldErrors) {
       setFieldErrors((prevErrors: any) => ({
         ...prevErrors,
         ...token.fieldErrors,
       }));
+
       return;
     }
 
     localStorage.setItem("token", token);
 
     window.location.reload();
-
-    //navigate("/", { state: { token } });
   };
 
   return (

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import bannerImg from "./GP_WallPaper.jpg";
+import bannerImg from "../../assets/GP_WallPaper.jpg";
 import { h3 } from "../../utils/fontSizes";
 import { pastelGreen, darkGreen, mint } from "../../utils/colors";
 import { Link } from "react-router-dom";

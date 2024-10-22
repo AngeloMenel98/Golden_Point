@@ -58,13 +58,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
       >
         {matches.map((match) => (
           <MatchContainer>
-            <Match
-              key={match.Id}
-              onClick={openMatchModal}
-              match={match}
-              teams={teams}
-              onEditMatch={setEditMatch}
-            />
+            <Match key={match.Id} match={match} teams={teams} />
           </MatchContainer>
         ))}
       </Card>

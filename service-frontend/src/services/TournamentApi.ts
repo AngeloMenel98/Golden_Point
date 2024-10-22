@@ -60,6 +60,15 @@ class TournamentAPI extends GeneralAPI {
       return isAxiosError(e);
     }
   }
+
+  async getMyTournaments(userId: string) {
+    try {
+      const res = await this.api.get(`/tournament/${userId}`);
+      return res.data;
+    } catch (e) {
+      return isAxiosError(e);
+    }
+  }
 }
 
 export default TournamentAPI;

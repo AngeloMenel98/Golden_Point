@@ -16,7 +16,7 @@ import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
 import { useNavigate } from "react-router-dom";
-import CalCheckIcon from "../../../../icons/CalendarCheckIcon/CalendarCheckIcon";
+import { getTournamentStatus } from "../../../../utils/status";
 
 interface TournamentRowProps {
   tournData: TournamentDTO;
@@ -52,9 +52,7 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
           </TeamsContainer>
           <StartContainer>
             Estado:
-            <TextSpan>
-              <CalCheckIcon width={15} height={18} status={tournData.Status} />
-            </TextSpan>
+            <TextSpan>{getTournamentStatus(tournData.Status)}</TextSpan>
           </StartContainer>
         </RightContainer>
         <FullRightContainer>

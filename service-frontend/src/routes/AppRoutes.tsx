@@ -23,17 +23,6 @@ interface DecodedToken {
   isSingle: boolean;
   role: string; // Cambia esto según la estructura de tu token
 }
-/*email: "colo@g.com"
-​
-iat: 1729545006
-​
-&&id: "e94ea2c9-6d2b-4b85-82c7-84f6f187854a"
-​
-&&isSingle: true
-​
-&&role: "admin"
-​
-username: "Colo" */
 
 const AppRoutes: React.FC = () => {
   const location = useLocation();
