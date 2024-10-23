@@ -18,6 +18,8 @@ import { red } from "../../../../utils/colors";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setTour } from "../../../../reduxSlices/tour/tourSlice";
+import { useState } from "react";
+import ConfirmModal from "../../../../components/confirmation/Confirm";
 
 interface TourRowProps {
   tourData: TourDTO;
@@ -28,9 +30,19 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, onDelete }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
+
   const handleTourClick = () => {
     dispatch(setTour(tourData));
     navigate("/tournaments");
+  };
+
+  const openModal = () => {
+    setIsDeleteOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsDeleteOpen(false);
   };
 
   return (
@@ -42,7 +54,6 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, onDelete }) => {
         <CreatedBy>
           Creado por: <TextSpan>{tourData.UserOwner}</TextSpan>
         </CreatedBy>
-
         <CodeContainer>
           Código del Tour: <CopyableText text={tourData.TourCode} />
         </CodeContainer>
@@ -57,8 +68,12 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, onDelete }) => {
       </MiddleContainer>
 
       <RightContainer>
-        <TrashIcon width={20} height={20} color={red} onClick={onDelete} />
+        <TrashIcon width={20} height={20} color={red} onClick={openModal} />
       </RightContainer>
+
+      {isDeleteOpen && (
+        <ConfirmModal text={"Tour"} onClose={closeModal} onDelete={onDelete} />
+      )}
     </TourRowContainer>
   );
 };

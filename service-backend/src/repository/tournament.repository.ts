@@ -152,7 +152,7 @@ export const TournamentRepository = AppDataSource.getRepository(
   async updateStatus(tournamentId: string, status: string) {
     return this.createQueryBuilder()
       .update(Tournament)
-      .set({ status }) // Actualiza el campo status con el valor proporcionado
+      .set({ status })
       .where("id = :tournamentId", { tournamentId })
       .execute();
   },

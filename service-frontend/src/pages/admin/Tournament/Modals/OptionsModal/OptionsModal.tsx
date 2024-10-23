@@ -13,6 +13,7 @@ interface OptsModalProps {
   onDeleteTeam: () => void;
   onStartTournament: () => void;
   onClose: () => void;
+  isActive: string;
   position: { top: number; right: number };
 }
 
@@ -23,6 +24,7 @@ const OptsModal: React.FC<OptsModalProps> = ({
   onDeleteTeam,
   onStartTournament,
   onClose,
+  isActive,
   position,
 }) => {
   return (
@@ -49,7 +51,11 @@ const OptsModal: React.FC<OptsModalProps> = ({
         </MyButton>
       </Container>
       <Container>
-        <MyButton hasIcon={true} onClick={onStartTournament}>
+        <MyButton
+          hasIcon={true}
+          onClick={onStartTournament}
+          disabled={isActive === "inProgress"}
+        >
           <MyIcon>
             <CheckIcon width={17} height={17} color={pastelGreen} />
           </MyIcon>

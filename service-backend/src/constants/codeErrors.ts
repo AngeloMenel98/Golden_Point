@@ -15,6 +15,9 @@ const codeErrors = {
   TEAM_1: `La cantidad de jugadores por equipo son 2.`,
 
   MATCH_1: `Cantidad de equipos incorrectos.`,
+  MATCH_2: `El partido no se pudo actualizar.`,
+
+  COURT_1: `Número de cancha no existe.`,
 
   SET_0: `Cantidad de Sets insuficientes.`,
   SET_1: (value: any) => `El partido ya tiene ${value} sets.`,

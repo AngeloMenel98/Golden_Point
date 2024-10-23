@@ -1,5 +1,5 @@
-import { MatchRepository } from "../repository";
-import { Match, Team, Tournament } from "../entity";
+import { CourtRepository, MatchRepository } from "../repository";
+import { Court, Match, Team, Tournament } from "../entity";
 import { TeamService, CourtService } from ".";
 import { ServiceCodeError } from "../errors/errorsClass";
 import codeErrors from "../constants/codeErrors";
@@ -61,9 +61,31 @@ export class MatchService {
       throw new ServiceCodeError(codeErrors.GEN_2("Partido"));
     }
     if (!matches) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Tournament"));
+      throw new ServiceCodeError(codeErrors.GEN_1("Torneo"));
     }
 
     return matches;
+  }
+
+  async updateMatch(
+    matchId: string,
+    matchDate: string,
+    courtNumber: string,
+    clubId: string
+  ) {
+    const court = await CourtRepository.getCourtByClubId(clubId, courtNumber);
+
+    console.log(court);
+    if (!court) {
+      throw new ServiceCodeError(codeErrors.COURT_1);
+    }
+
+    const match = await MatchRepository.updateMatch(matchId, matchDate, court);
+
+    if (!match) {
+      throw new ServiceCodeError(codeErrors.MATCH_2);
+    }
+
+    return match;
   }
 }

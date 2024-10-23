@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import {
+  darkGray,
   darkGreen,
+  lightGray,
   lightRed,
   pastelGreen,
   red,
@@ -75,5 +77,13 @@ export const MyButton = styled.button<{
 
   &:active {
     outline: none;
+  }
+
+  &:disabled {
+    background-color: ${lightGray};
+    color: ${darkGray};
+    cursor: not-allowed;
+    opacity: 0.8;
+    pointer-events: none;
   }
 `;
