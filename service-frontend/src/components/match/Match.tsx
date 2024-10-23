@@ -60,6 +60,7 @@ const Match: React.FC<MatchProps> = ({
       onEditMatch((prevEditMatch) => ({
         ...prevEditMatch,
         matchId: match.Id,
+        clubId: match.ClubId,
         teamsId: filteredTeams.map((t) => t.TeamId),
         date: formatDateTime(match.MatchDate),
         teamsName: filteredTeams.map((t) => t.TeamName),

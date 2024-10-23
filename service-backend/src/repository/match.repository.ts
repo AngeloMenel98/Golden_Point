@@ -81,7 +81,8 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         "teams_agg.teamNames AS teamsName",
         "t.category AS category",
         "c.courtNumber AS courtNumber",
-        "cl.clubName AS clubName",
+        "cl.id AS clubId",
+        'cl."clubName" AS clubName',
         "set_agg.games AS games",
       ])
       .innerJoin("group_stage", "gs", "gs.id = m.groupStageId")
@@ -107,7 +108,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .where("trn.id = :tournamentId", { tournamentId })
       .andWhere("gs.groupStage = :groupStage", { groupStage })
       .groupBy(
-        "m.id, m.matchDate, m.amountTourPoints, m.amountTourCoins, gs.groupStage, c.courtNumber, cl.clubName, t.category, teams_agg.teamNames, set_agg.games"
+        'm.id, m.matchDate, m.amountTourPoints, m.amountTourCoins, gs.groupStage, c.courtNumber, cl.id ,cl."clubName", t.category, teams_agg.teamNames, set_agg.games'
       )
       .orderBy("m.matchDate")
       .getRawMany();

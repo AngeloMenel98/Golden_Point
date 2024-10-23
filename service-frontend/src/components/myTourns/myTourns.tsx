@@ -41,7 +41,6 @@ const StyledLink = styled(Link)`
 `;
 
 const MyTournsTable = ({ tourns }: { tourns: MyTournDTO[] }) => {
-  console.log(tourns);
   return (
     <TableContainer>
       <StyledTable>
