@@ -32,6 +32,14 @@ export const SpaceContainer = styled.div`
   justify-content: flex-start;
   width: 100%;
   padding-left: 1rem;
+
+  @media (max-width: 1200px) {
+    padding-bottom: 0.5rem;
+  }
+
+  @media (max-width: 800px) {
+    padding-bottom: 1rem;
+  }
 `;
 
 export const TableContainer = styled.div`
@@ -39,6 +47,14 @@ export const TableContainer = styled.div`
   align-items: center;
   justify-content: space-evenly;
   width: 100%;
+
+  @media (max-width: 1200px) {
+    padding-top: 0.5rem;
+  }
+
+  @media (max-width: 800px) {
+    padding-top: 1rem;
+  }
 `;
 
 export const H3 = styled.h3`

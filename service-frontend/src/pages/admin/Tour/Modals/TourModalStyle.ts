@@ -39,7 +39,7 @@ export const ClubContainer = styled.div`
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  padding: 1rem 0rem;
+  padding: 0.5rem 0rem;
 
   margin: 0.5rem 0rem;
   border: 2px solid ${darkGreen};

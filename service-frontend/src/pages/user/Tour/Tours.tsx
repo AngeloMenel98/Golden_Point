@@ -30,7 +30,6 @@ import { Errors } from "../../../errors/Errors";
 import { TourDTO } from "../../../entities/dtos/TourDTO";
 import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
 import useGetMyTourns from "../../../hooks/useGetMyTourns";
-import MyTournsTable from "../../../components/myTourns/myTourns";
 import MyTournsCards from "../../../components/myTourns/myTournsCard";
 
 export interface CreationData {

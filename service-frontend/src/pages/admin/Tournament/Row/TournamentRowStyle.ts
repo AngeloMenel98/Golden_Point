@@ -17,8 +17,8 @@ export const TourRowContainer = styled.div`
     box-shadow: 0 0 15px ${black};
   }
 
-  @media screen and (max-width: 480px) {
-    height: 5rem;
+  @media screen and (max-width: 800px) {
+    height: 8rem;
     justify-content: center;
   }
 `;
@@ -39,7 +39,7 @@ export const LeftContainer = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 800px) {
     flex-direction: column;
   }
 `;
@@ -50,7 +50,7 @@ export const RightContainer = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 800px) {
     flex-direction: column;
     justify-content: center;
     padding: 0;
@@ -129,4 +129,13 @@ export const TourName = styled.button`
 export const TextSpan = styled.span`
   padding: 0rem 1rem;
   font-weight: 450;
+`;
+
+export const IconContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
 `;

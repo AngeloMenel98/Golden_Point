@@ -34,9 +34,9 @@ class TournamentAPI extends GeneralAPI {
     }
   }
 
-  async deleteTournament(deletedTour: DeletedTournament) {
+  async deleteTournament(deletedTournament: DeletedTournament) {
     try {
-      const res = await this.api.post("/tournament/delete", deletedTour);
+      const res = await this.api.post("/tournament/delete", deletedTournament);
       return res.data;
     } catch (e) {
       return isAxiosError(e);

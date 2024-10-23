@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import {
   TourRowContainer,
   LeftContainer,
@@ -10,25 +10,39 @@ import {
   MasterContainer,
   TextSpan,
   StartContainer,
+  IconContainer,
 } from "./TournamentRowStyle";
-import { mint } from "../../../../utils/colors";
+import { mint, red } from "../../../../utils/colors";
 import { TournamentDTO } from "../../../../entities/dtos/TournamentDTO";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
 import OptsIcon from "../../../../icons/OptionsIcon/OptsIcon";
 import { useNavigate } from "react-router-dom";
 import { getTournamentStatus } from "../../../../utils/status";
+import TrashIcon from "../../../../icons/TrashIcon/TrashIcon";
+import ConfirmModal from "../../../../components/confirmation/Confirm";
 
 interface TournamentRowProps {
   tournData: TournamentDTO;
   onOpen: (tournament: TournamentDTO) => void;
+  onDelete: () => void;
 }
 
 const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
-  ({ tournData, onOpen }, ref) => {
+  ({ tournData, onOpen, onDelete }, ref) => {
     const navigate = useNavigate();
+
+    const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
     const handleSelectTournament = (tournamentId: string) => {
       navigate(`/matches?tournamentId=${tournamentId}`);
+    };
+
+    const openModal = () => {
+      setIsDeleteOpen(true);
+    };
+
+    const closeModal = () => {
+      setIsDeleteOpen(false);
     };
 
     return (
@@ -56,6 +70,9 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
           </StartContainer>
         </RightContainer>
         <FullRightContainer>
+          <IconContainer>
+            <TrashIcon width={20} height={20} color={red} onClick={openModal} />
+          </IconContainer>
           <SecondaryButton
             icon={
               <OptsIcon
@@ -68,6 +85,14 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
             onClick={() => onOpen(tournData)}
           />
         </FullRightContainer>
+
+        {isDeleteOpen && (
+          <ConfirmModal
+            text={"Torneo"}
+            onClose={closeModal}
+            onDelete={onDelete}
+          />
+        )}
       </TourRowContainer>
     );
   }

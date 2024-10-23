@@ -17,8 +17,8 @@ export const TourRowContainer = styled.div`
     box-shadow: 0 0 15px ${black};
   }
 
-  @media screen and (max-width: 480px) {
-    height: 5rem;
+  @media screen and (max-width: 900px) {
+    height: 7rem;
     justify-content: center;
   }
 `;
@@ -39,7 +39,7 @@ export const LeftContainer = styled.div`
   justify-content: space-between;
   align-items: center;
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 900px) {
     flex-direction: column;
   }
 `;
@@ -51,7 +51,7 @@ export const FullRightContainer = styled.div`
   align-items: center;
   padding-right: 1rem;
 
-  @media screen and (max-width: 480px) {
+  @media screen and (max-width: 900px) {
     flex-direction: column;
     justify-content: center;
   }

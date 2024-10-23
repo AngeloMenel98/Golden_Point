@@ -20,7 +20,7 @@ interface UsersModalProps {
 }
 
 const UsersModal: React.FC<UsersModalProps> = ({ tourId, onClose }) => {
-  const { users, userAPI, errorUsers } = useGetUsers(tourId);
+  const { users, errorUsers } = useGetUsers(tourId);
 
   const [fullName, setFullName] = useState<string>("");
   const [playerId, setPlayerId] = useState<string>("");
