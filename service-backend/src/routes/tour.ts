@@ -55,5 +55,6 @@ router.post(
 );
 
 router.get("/tour/tours/:userId", tourController.getAll.bind(tourController));
+router.get("/tour/:tourId", tourController.getTourById.bind(tourController));
 
 export default router;

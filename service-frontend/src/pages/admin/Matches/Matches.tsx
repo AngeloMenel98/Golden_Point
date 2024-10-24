@@ -48,6 +48,7 @@ const Matches: React.FC = () => {
     selectedGroup[0],
     selectedCategory[0]
   );
+
   const { allTeams } = useGetTeams(tournamentId);
 
   useEffect(() => {

@@ -226,7 +226,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
           borderCol={darkGreen}
           boxCol={black}
           mWidth={1000}
-          mHeight={150}
+          mHeight={110}
           error={fieldErrors.notFound}
         >
           {filteredClubs.map((club, index) => (

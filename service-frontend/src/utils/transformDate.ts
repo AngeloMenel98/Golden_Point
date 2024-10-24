@@ -8,3 +8,13 @@ export function formatDateTime(dateTimeString: string) {
 
   return `${formattedDatePart} ${formattedTimePart}`;
 }
+
+export function parseDateTime(formattedDateTime: string) {
+  let [datePart, timePart] = formattedDateTime.split(" ");
+
+  let [day, month, year] = datePart.split("-");
+  let formattedDatePart = `${year}-${month}-${day}`;
+  let formattedTimePart = `${timePart}:00.000Z`;
+
+  return `${formattedDatePart}T${formattedTimePart}`;
+}

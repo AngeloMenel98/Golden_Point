@@ -29,6 +29,11 @@ export const InputContainer = styled.div`
 export const ButtonContainer = styled.div`
   padding: 0.5rem;
 `;
+
+export const TableContainer = styled.div`
+  padding: 1rem;
+`;
+
 export const H2 = styled.h2`
   color: ${darkGreen};
   padding: 0.01rem 0.5rem;

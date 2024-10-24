@@ -81,7 +81,8 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         "teams_agg.teamNames AS teamsName",
         "t.category AS category",
         "c.courtNumber AS courtNumber",
-        "cl.clubName AS clubName",
+        "cl.id AS clubId",
+        'cl."clubName" AS clubName',
         "set_agg.games AS games",
       ])
       .innerJoin("group_stage", "gs", "gs.id = m.groupStageId")
@@ -107,7 +108,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .where("trn.id = :tournamentId", { tournamentId })
       .andWhere("gs.groupStage = :groupStage", { groupStage })
       .groupBy(
-        "m.id, m.matchDate, m.amountTourPoints, m.amountTourCoins, gs.groupStage, c.courtNumber, cl.clubName, t.category, teams_agg.teamNames, set_agg.games"
+        'm.id, m.matchDate, m.amountTourPoints, m.amountTourCoins, gs.groupStage, c.courtNumber, cl.id ,cl."clubName", t.category, teams_agg.teamNames, set_agg.games'
       )
       .orderBy("m.matchDate")
       .getRawMany();
@@ -115,44 +116,11 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     return matches;
   },
 
-  /* async getMatches(tournamentId: string, category: string, groupStage: string) {
-    const subquery = AppDataSource.createQueryBuilder()
-      .select("tm.matchId", "matchId")
-      .addSelect(`STRING_AGG(distinct t.teamName, ', ') AS "teamsNames"`)
-      .addSelect('t.category as "categoryTeam"')
-      .from("team_match", "tm")
-      .innerJoin("team", "t", 't.id = tm."teamId"')
-      .where("t.category = :category", { category })
-      .groupBy("tm.matchId, t.category");
-
-    const matches = await this.createQueryBuilder("m")
-      .select([
-        "m.id as matchId",
-        "m.matchDate as matchDate",
-        "m.amountTourPoints AS tourPoints",
-        "m.amountTourCoins AS tourCoins",
-        "gs.groupStage as groupStage",
-        'teams_agg."teamsNames" AS teamsName',
-        'teams_agg."categoryTeam" as categoryTeam',
-        "c.courtNumber AS court",
-        "cl.clubName AS clubName",
-        'STRING_AGG(distinct COALESCE(set_agg."gamesTeam1") || "-" || COALESCE(set_agg."gamesTeam2"), ", ") AS games',
-      ])
-      .innerJoin("group_stage", "gs", "gs.id = m.groupStageId")
-      .innerJoin("tournament", "trn", "trn.id = m.tournamentId")
-      .innerJoin("court", "c", "c.id = m.courtId")
-      .innerJoin("club", "cl", "cl.id = c.clubId")
-      .leftJoin(
-        "(" + subquery.getQuery() + ")",
-        "teams_agg",
-        'teams_agg."matchId" = m.id'
-      )
-      .setParameters(subquery.getParameters())
-      .where("trn.id = :tournamentId", { tournamentId })
-      .andWhere("gs.groupStage = :groupStage", { groupStage })
-      .orderBy("m.matchDate")
-      .getRawMany();
-
-    return matches;
-  },*/
+  async updateMatch(matchId: string, matchDate: string, court: Court) {
+    return this.createQueryBuilder()
+      .update(Match) // Asegúrate de usar la entidad correcta
+      .set({ matchDate, court }) // Actualizas la relación pasando el id de la cancha
+      .where("id = :matchId", { matchId })
+      .execute();
+  },
 });

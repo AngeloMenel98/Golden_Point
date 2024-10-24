@@ -14,6 +14,7 @@ import {
   InputContainer,
   MainContainer,
   TourSection,
+  TableContainer,
 } from "./TourStyles";
 import { darkGreen, pastelGreen } from "../../../utils/colors";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
@@ -28,6 +29,8 @@ import { JoinCredentials } from "../../../services/TourApi";
 import { Errors } from "../../../errors/Errors";
 import { TourDTO } from "../../../entities/dtos/TourDTO";
 import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
+import useGetMyTourns from "../../../hooks/useGetMyTourns";
+import MyTournsCards from "../../../components/myTourns/myTournsCard";
 
 export interface CreationData {
   tourName: string;
@@ -39,7 +42,7 @@ export interface CreationData {
 }
 
 const ToursUser: React.FC = () => {
-  const user = useSelector((state: RootState) => state.user.user);
+  const user = useSelector((state: RootState) => state.user?.user);
 
   const [tourTitle, setTourTitle] = useState<string>("");
   const [code, setCode] = useState<string>("");
@@ -47,6 +50,7 @@ const ToursUser: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
   const { tours, tourAPI, error, addTourToState } = useGetTours(user);
+  const { tournaments, loading } = useGetMyTourns(user?.Id);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -141,6 +145,14 @@ const ToursUser: React.FC = () => {
           tourTitle={tourTitle}
           error={error}
         />
+        {!loading && (
+          <>
+            <H2>Mis Partidos</H2>
+            <TableContainer>
+              <MyTournsCards tourns={tournaments} />
+            </TableContainer>
+          </>
+        )}
       </TourSection>
     </MainContainer>
   );

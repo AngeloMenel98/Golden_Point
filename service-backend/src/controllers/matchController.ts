@@ -41,6 +41,38 @@ export class MatchController {
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
+
+  async updateMatch(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const { matchId, matchDate, courtNumber, clubId } = req.body;
+
+      const response = await this.matchService.updateMatch(
+        matchId,
+        matchDate,
+        courtNumber,
+        clubId
+      );
+
+      res.status(201).json(response);
+    } catch (e) {
+      console.error("Error updating match:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
 }
 
 export default new MatchController();

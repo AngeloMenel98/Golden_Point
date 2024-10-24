@@ -71,4 +71,9 @@ router.get(
   "/tournament/tourns/:tourId",
   tournController.getAll.bind(tournController)
 );
+
+router.get(
+  "/tournament/:userId",
+  tournController.getMyTournaments.bind(tournController)
+);
 export default router;

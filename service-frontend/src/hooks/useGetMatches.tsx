@@ -41,6 +41,7 @@ export default function useGetMatches(
       match.GroupName = m.groupstage;
       match.TeamsName = teamsName;
       match.Court = m.courtnumber;
+      match.ClubId = m.clubid;
       match.ClubName = m.clubname;
       match.CategoryTeam = m.category;
       match.Games = m.games;

@@ -152,8 +152,41 @@ export const TournamentRepository = AppDataSource.getRepository(
   async updateStatus(tournamentId: string, status: string) {
     return this.createQueryBuilder()
       .update(Tournament)
-      .set({ status }) // Actualiza el campo status con el valor proporcionado
+      .set({ status })
       .where("id = :tournamentId", { tournamentId })
       .execute();
+  },
+
+  async getMyTournaments(userId: string) {
+    return (
+      this.createQueryBuilder("t")
+        .select([
+          "t.id as tournamentId",
+          "t.title as tournamentName",
+          "tm.category as teamCategory",
+          "m.matchDate as matchDate",
+          "tm.teamName as teamName",
+          "opp_tm.teamName as oppTeamName",
+          "gs.groupStage as groupStage",
+        ])
+        .innerJoin("team", "tm", 't.id = tm."tournamentId"')
+        .innerJoin("team_users_user", "tuu", 'tuu."teamId" = tm.id')
+        .innerJoin("user", "u", 'tuu."userId" = u.id')
+        .innerJoin("team_match", "tm2", 'tm2."teamId" = tm.id')
+        .innerJoin("match", "m", 'tm2."matchId" = m.id')
+        .innerJoin("group_stage", "gs", 'gs.id = m."groupStageId"')
+        // Join para obtener el equipo oponente
+        .innerJoin(
+          "team_match",
+          "opp_tm2",
+          'opp_tm2."matchId" = m.id AND opp_tm2."teamId" != tm.id'
+        )
+        .innerJoin("team", "opp_tm", 'opp_tm2."teamId" = opp_tm.id')
+        .where("u.id = :userId", {
+          userId,
+        })
+        .andWhere("t.status = :status", { status: "inProgress" })
+        .getRawMany()
+    );
   },
 });

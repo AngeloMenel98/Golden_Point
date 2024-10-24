@@ -3,6 +3,7 @@ export class MatchDTO {
   private amountTourPoints: number = 0;
   private amountTourCoins: number = 0;
   private matchDate: string = "";
+  private clubId: string = "";
   private clubName: string = "";
   private court: string = "";
   private groupName: string = "";
@@ -25,6 +26,10 @@ export class MatchDTO {
 
   set MatchDate(value: string) {
     this.matchDate = value;
+  }
+
+  set ClubId(value: string) {
+    this.clubId = value;
   }
 
   set ClubName(value: string) {
@@ -61,6 +66,10 @@ export class MatchDTO {
 
   get MatchDate(): string {
     return this.matchDate;
+  }
+
+  get ClubId(): string {
+    return this.clubId;
   }
 
   get ClubName(): string {

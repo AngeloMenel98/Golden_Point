@@ -20,6 +20,10 @@ import { MatchData } from "../../Cards/MatchCard/MatchCard";
 import SetAPI, { SetAtts } from "../../../../../services/SetApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
+import MatchAPI, { MatchCred } from "../../../../../services/MatchApi";
+import { useState } from "react";
+import { Errors } from "../../../../../errors/Errors";
+import { parseDateTime } from "../../../../../utils/transformDate";
 
 interface EditMatchProps {
   editMatch: MatchData;
@@ -29,6 +33,7 @@ interface EditMatchProps {
 }
 
 const setAPI: SetAPI = new SetAPI();
+const matchAPI: MatchAPI = new MatchAPI();
 
 const EditMatch: React.FC<EditMatchProps> = ({
   editMatch,
@@ -37,6 +42,8 @@ const EditMatch: React.FC<EditMatchProps> = ({
   reloadMatches,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
+
+  const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const handleSets = async () => {
     let setT1 = [];
@@ -65,9 +72,27 @@ const EditMatch: React.FC<EditMatchProps> = ({
     }
   };
 
-  const editMatchData = () => {
-    console.log("Hola");
+  const editMatchData = async () => {
+    setFieldErrors({});
+    const updateMatch: MatchCred = {
+      matchId: editMatch.matchId,
+      clubId: editMatch.clubId,
+      matchDate: parseDateTime(editMatch.date),
+      courtNumber: editMatch.court,
+    };
+
+    const res = await matchAPI.updateMatch(updateMatch);
+
+    if (res.fieldErrors) {
+      setFieldErrors((prevErrors: any) => ({
+        ...prevErrors,
+        ...res.fieldErrors,
+      }));
+    } else {
+      onClose();
+    }
   };
+
   return (
     <ModalWrapper>
       <ModalContent width={50} height={50}>
@@ -90,6 +115,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
             label="Cancha"
             value={editMatch.court}
             isSmall={true}
+            error={fieldErrors.general}
             onChange={onEditMatch}
           />
           <PlusIcon

@@ -65,6 +65,10 @@ export const ErrorsRes = {
   lastNameRequired: "Apellido es obligatorio",
   phoneNumberRequired: "Número de Teléfono es obligatorio",
   locationRequired: "Ciudad es obligatorio",
+
+  //Login
+  usernameLogRequired: "Nombre de Usuario no existe.",
+  passwordLogRequired: "Contraseña es incorrecta.",
 };
 
 export const errorMappings: { [key: string]: keyof Errors } = {
@@ -100,4 +104,8 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   [ErrorsRes.lastNameRequired]: "lastName",
   [ErrorsRes.phoneNumberRequired]: "phoneNumber",
   [ErrorsRes.locationRequired]: "location",
+
+  //Login
+  [ErrorsRes.usernameLogRequired]: "username",
+  [ErrorsRes.passwordLogRequired]: "password",
 };

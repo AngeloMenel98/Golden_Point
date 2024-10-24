@@ -4,6 +4,7 @@ import { Button, Container } from "./SecondaryButtonStyle";
 interface ButtonProps {
   text?: string;
   icon?: ReactNode;
+  disabled?: boolean;
   isDangerousAction?: boolean;
   onClick?: () => void;
 }
@@ -11,6 +12,7 @@ interface ButtonProps {
 const SecondaryButton: React.FC<ButtonProps> = ({
   text,
   icon,
+  disabled,
   isDangerousAction,
   onClick,
 }) => {
@@ -20,6 +22,7 @@ const SecondaryButton: React.FC<ButtonProps> = ({
         onClick={onClick}
         isDangerous={isDangerousAction}
         hasIcon={!!icon}
+        disabled={disabled}
       >
         {text && text}
         {icon && icon}

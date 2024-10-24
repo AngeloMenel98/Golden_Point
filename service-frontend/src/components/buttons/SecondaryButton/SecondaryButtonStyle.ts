@@ -44,13 +44,13 @@ export const Button = styled.button<{
     outline: none;
   }
 
-  /*&:disabled {
+  &:disabled {
     background: ${lightGray};
     color: ${darkGray};
     border: 1px solid ${lightGray};
     cursor: default;
     &:hover {
-      opacity: 1;
+      opacity: 0.5;
     }
-  }*/
+  }
 `;

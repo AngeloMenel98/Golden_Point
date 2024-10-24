@@ -178,6 +178,32 @@ export class TourController {
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
+
+  async getTourById(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const tourId = req.params.tourId;
+      const existingTour = await this.tourService.findById(tourId);
+
+      res.status(201).json(existingTour);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
 }
 
 export default new TourController();

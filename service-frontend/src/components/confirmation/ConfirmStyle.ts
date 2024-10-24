@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { black, darkGreen, grayModal, white } from "../../../../utils/colors";
+import { black, darkGreen, grayModal, white } from "../../utils/colors";
 
 export const ModalWrapper = styled.div`
   position: fixed;
@@ -11,12 +11,6 @@ export const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
   background-color: ${grayModal};
-`;
-
-export const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 export const ModalContent = styled.div<{ width: number }>`
@@ -34,39 +28,24 @@ export const ModalContent = styled.div<{ width: number }>`
   max-width: ${(props) => props.width}rem;
 `;
 
-export const ClubContainer = styled.div`
+export const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+`;
+
+export const Container = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  padding: 0.5rem 0rem;
+  padding: 1rem 0rem;
 
   margin: 0.5rem 0rem;
-  border: 2px solid ${darkGreen};
-  border-radius: 10px;
 
   @media screen and (max-width: 900px) {
     padding: 0.5rem;
   }
-`;
-
-export const LeftContainer = styled.div`
-  padding: 0rem 1rem;
-
-  @media screen and (max-width: 900px) {
-    padding: 0.5rem;
-  }
-`;
-export const RightContainer = styled.div`
-  padding: 0rem 1rem;
-
-  @media screen and (max-width: 900px) {
-    padding: 0.5rem;
-  }
-`;
-
-export const FullRightContainer = styled.div`
-  padding: 0rem 1rem;
 `;
 
 export const FooterContainer = styled.div`
@@ -81,6 +60,10 @@ export const ButtonSection = styled.div`
 `;
 
 export const H3Styled = styled.h3`
+  color: ${darkGreen};
+  margin: 0;
+`;
+export const H4Styled = styled.h4`
   color: ${darkGreen};
   margin: 0;
 `;

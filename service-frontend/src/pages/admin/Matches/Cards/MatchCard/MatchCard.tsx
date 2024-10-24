@@ -16,6 +16,7 @@ interface MatchCardProps {
 
 export interface MatchData {
   matchId: string;
+  clubId: string;
   teamsId: string[];
   date: string;
   teamsName: string[];
@@ -37,6 +38,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
   const [isMatchOpen, setIsMatchOpen] = useState(false);
   const [editMatch, setEditMatch] = useState<MatchData>({
     matchId: "",
+    clubId: "",
     teamsId: [],
     date: "",
     teamsName: [],

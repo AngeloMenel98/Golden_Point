@@ -18,7 +18,7 @@ export const ClubRowContainer = styled.div`
   }
 
   @media screen and (max-width: 900px) {
-    height: 8rem;
+    height: 7rem;
   }
 `;
 
@@ -34,7 +34,7 @@ export const MemberData = styled.div`
 
 export const ClubContainer = styled(MemberData)`
   @media screen and (max-width: 900px) {
-    padding: 0rem;
+    padding: 0.5rem;
   }
 `;
 

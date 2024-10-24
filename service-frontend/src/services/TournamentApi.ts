@@ -34,9 +34,9 @@ class TournamentAPI extends GeneralAPI {
     }
   }
 
-  async deleteTournament(deletedTour: DeletedTournament) {
+  async deleteTournament(deletedTournament: DeletedTournament) {
     try {
-      const res = await this.api.post("/tournament/delete", deletedTour);
+      const res = await this.api.post("/tournament/delete", deletedTournament);
       return res.data;
     } catch (e) {
       return isAxiosError(e);
@@ -55,6 +55,15 @@ class TournamentAPI extends GeneralAPI {
   async getCatsByTournId(tournId: string) {
     try {
       const res = await this.api.get(`/tournament/cats/${tournId}`);
+      return res.data;
+    } catch (e) {
+      return isAxiosError(e);
+    }
+  }
+
+  async getMyTournaments(userId: string) {
+    try {
+      const res = await this.api.get(`/tournament/${userId}`);
       return res.data;
     } catch (e) {
       return isAxiosError(e);

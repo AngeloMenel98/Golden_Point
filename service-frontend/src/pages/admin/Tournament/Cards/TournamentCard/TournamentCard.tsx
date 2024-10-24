@@ -122,6 +122,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
           onDeleteTeam={deleteTeamOpen}
           onStartTournament={startTournament}
           onClose={handleCloseModal}
+          isActive={tournSelected.Status}
           position={modalPosition}
         />
       )}
