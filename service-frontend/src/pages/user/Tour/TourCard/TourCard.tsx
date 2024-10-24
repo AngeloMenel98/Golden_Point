@@ -1,4 +1,5 @@
 import Card from "../../../../components/card/Card";
+import BouncingCircles from "../../../../components/spinner/spinner";
 import { TourDTO } from "../../../../entities/dtos/TourDTO";
 import TourAPI from "../../../../services/TourApi";
 import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
@@ -30,8 +31,8 @@ const TourCard: React.FC<TourCardProps> = ({
         boxCol={pastelGreen}
         mWidth={1200}
         mHeight={500}
-        error={error}
       >
+        {error && <BouncingCircles text="nuevos Tours" />}
         {filteredTours.map((tour, index) => (
           <TourRow key={index} tourData={tour} tourApi={tourApi} />
         ))}

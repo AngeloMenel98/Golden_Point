@@ -5,7 +5,7 @@ import {
   pastelGreen,
   red,
   white,
-} from "../../../utils/colors";
+} from "../../../../utils/colors";
 
 export const ButtonContainer = styled.div`
   display: flex;

@@ -12,9 +12,10 @@ import {
   DataContainer,
 } from "./TournamentModalStyle";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
-import DropDown from "../../../../../components/dropdown/DropDown/DropDown";
+import DropDown from "../../../../../components/dropdown/DropDownMultiple/DropDown/DropDown";
 import { CreationData } from "../../Tournament";
 import { Errors } from "../../../../../errors/Errors";
+import DropDownUnique from "../../../../../components/dropdown/DropDownSingle/DropDown/DropDown";
 
 interface TournamentModalProps {
   data: CreationData;
@@ -25,7 +26,7 @@ interface TournamentModalProps {
 }
 
 interface DropDownData {
-  master: number[];
+  master: number;
   maleCat: string[];
   femaleCat: string[];
 }
@@ -42,13 +43,13 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
   const masters = [1000, 1500];
 
   const [dropDownData, setDropDownData] = useState<DropDownData>({
-    master: [],
+    master: 0,
     maleCat: [],
     femaleCat: [],
   });
 
   useEffect(() => {
-    data.master = dropDownData.master[0];
+    data.master = dropDownData.master;
     data.maleCat = dropDownData.maleCat;
     data.femaleCat = dropDownData.femaleCat;
   }, [dropDownData]);
@@ -70,11 +71,11 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             onChange={onChangeData}
             error={errors.tournamentName}
           />
-          <DropDown
+          <DropDownUnique
             buttonText="Master"
             items={masters}
             width={100}
-            onChange={(selectedItem: number[]) => {
+            onChange={(selectedItem: number) => {
               setDropDownData({ ...dropDownData, master: selectedItem });
             }}
             error={errors.master}

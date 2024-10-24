@@ -25,7 +25,7 @@ import SecondaryButton from "../../../components/buttons/SecondaryButton/Seconda
 
 import JoinIcon from "../../../icons/JoinIcon/JoinIcon";
 import JoinModal from "./Modals/JoinModal/JoinModal";
-import { JoinCredentials } from "../../../services/TourApi";
+import TourAPI, { JoinCredentials } from "../../../services/TourApi";
 import { Errors } from "../../../errors/Errors";
 import { TourDTO } from "../../../entities/dtos/TourDTO";
 import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
@@ -41,6 +41,8 @@ export interface CreationData {
   avTo: string;
 }
 
+const tourAPI = new TourAPI();
+
 const ToursUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user?.user);
 
@@ -49,7 +51,7 @@ const ToursUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
-  const { tours, tourAPI, error, addTourToState } = useGetTours(user);
+  const { tours, error, hasFetched, refetch } = useGetTours(user);
   const { tournaments, loading } = useGetMyTourns(user?.Id);
 
   const handleOpenModal = () => {
@@ -80,8 +82,10 @@ const ToursUser: React.FC = () => {
       newTour.UserCount = 1;
       newTour.TournamentCount = 0;
       newTour.UserOwner = user?.UserName || "";
-      addTourToState(newTour);
+
       handleCloseModal();
+
+      refetch();
     }
   };
 
@@ -139,12 +143,15 @@ const ToursUser: React.FC = () => {
           />
         )}
         <H2>Lista de Tours</H2>
-        <TourCard
-          tours={tours}
-          tourApi={tourAPI}
-          tourTitle={tourTitle}
-          error={error}
-        />
+        {hasFetched && (
+          <TourCard
+            tours={tours}
+            tourApi={tourAPI}
+            tourTitle={tourTitle}
+            error={error}
+          />
+        )}
+
         {!loading && (
           <>
             <H2>Mis Partidos</H2>

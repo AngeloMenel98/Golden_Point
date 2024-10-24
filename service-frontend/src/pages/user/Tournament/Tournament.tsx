@@ -25,6 +25,8 @@ import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "./Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
+import TournamentAPI from "../../../services/TournamentApi";
+import BouncingCircles from "../../../components/spinner/spinner";
 
 export interface CreationData {
   tournamentName: string;
@@ -32,6 +34,8 @@ export interface CreationData {
   maleCat: string[];
   femaleCat: string[];
 }
+
+const tournApi = new TournamentAPI();
 
 const TournamentUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -50,7 +54,7 @@ const TournamentUser: React.FC = () => {
     setUserOpen(false);
   };
 
-  const { tournaments, errorTournament } = useGetTournaments(tourData);
+  const { tournaments, errors, hasFetched } = useGetTournaments(tourData);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -111,11 +115,13 @@ const TournamentUser: React.FC = () => {
           </InputContainer>
         </SpaceContainer>
         <H3>Lista de Torneos</H3>
-        <TournamentCard
-          tournaments={tournaments}
-          tournamentTitle={tournamentTitle}
-          error={errorTournament}
-        />
+        {hasFetched && (
+          <TournamentCard
+            tournaments={tournaments}
+            tournamentTitle={tournamentTitle}
+            error={errors.notFound}
+          />
+        )}
       </TournamentSection>
     </MainContainer>
   );

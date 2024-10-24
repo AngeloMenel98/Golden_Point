@@ -7,20 +7,23 @@ import {
   H4Styled,
   ModalContent,
   ModalWrapper,
+  NameSpan,
 } from "./ConfirmStyle";
 
 interface Props {
-  text: string;
+  name: string;
   onClose: () => void;
   onDelete: () => void;
 }
 
-const ConfirmModal: React.FC<Props> = ({ text, onClose, onDelete }) => {
+const ConfirmModal: React.FC<Props> = ({ name, onClose, onDelete }) => {
   return (
     <ModalWrapper>
-      <ModalContent width={15}>
+      <ModalContent width={20}>
         <Container>
-          <H4Styled>¿Desea eliminar el {text}?</H4Styled>
+          <H4Styled>
+            ¿Desea eliminar a <NameSpan>{name}</NameSpan>?
+          </H4Styled>
         </Container>
         <FooterContainer>
           <ButtonSection>
@@ -31,7 +34,7 @@ const ConfirmModal: React.FC<Props> = ({ text, onClose, onDelete }) => {
             />
           </ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Eliminar" onClick={onDelete} />
+            <SecondaryButton text="Confirmar" onClick={onDelete} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

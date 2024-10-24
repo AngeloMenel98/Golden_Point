@@ -72,7 +72,11 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, onDelete }) => {
       </RightContainer>
 
       {isDeleteOpen && (
-        <ConfirmModal text={"Tour"} onClose={closeModal} onDelete={onDelete} />
+        <ConfirmModal
+          name={tourData.TourTitle}
+          onClose={closeModal}
+          onDelete={onDelete}
+        />
       )}
     </TourRowContainer>
   );

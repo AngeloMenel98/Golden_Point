@@ -13,13 +13,14 @@ import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
 import { useLocation } from "react-router-dom";
-import DropDown from "../../../components/dropdown/DropDown/DropDown";
 import MatchCard from "./Cards/MatchCard/MatchCard";
 import useGetMatches from "../../../hooks/useGetMatches";
 import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
 import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
+import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
+import BouncingCircles from "../../../components/spinner/spinner";
 
 const Matches: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -39,14 +40,14 @@ const Matches: React.FC = () => {
     "Final",
   ];
 
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
   const [allMatches, setAllMatches] = useState<MatchDTO[]>([]);
 
-  const { matches, errors, refetch } = useGetMatches(
+  const { matches, errors, isLoading, hasFetched, refetch } = useGetMatches(
     tournamentId,
-    selectedGroup[0],
-    selectedCategory[0]
+    selectedGroup,
+    selectedCategory
   );
 
   const { allTeams } = useGetTeams(tournamentId);
@@ -56,24 +57,23 @@ const Matches: React.FC = () => {
   }, [selectedGroup, selectedCategory, refetch]);
 
   const reloadMatches = () => {
-    refetch(); // Función para recargar partidos
+    refetch();
   };
 
   useEffect(() => {
     setAllMatches(matches);
   }, [matches]);
 
-  const handleChangeGroup = (group: string[]) => {
+  const handleChangeGroup = (group: string) => {
     setSelectedGroup(group);
   };
 
-  const handleChangeCat = (category: string[]) => {
+  const handleChangeCat = (category: string) => {
     setSelectedCategory(category);
   };
 
   const filteredMatches = allMatches.filter(
-    (m) =>
-      m.GroupName === selectedGroup[0] && m.CategoryTeam == selectedCategory[0]
+    (m) => m.GroupName === selectedGroup && m.CategoryTeam == selectedCategory
   );
 
   const breadcrumbPath = [
@@ -91,34 +91,39 @@ const Matches: React.FC = () => {
         </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>
-            <DropDown
+            <DropDownUnique
               buttonText="Categoria"
               items={cats}
               width={225}
               error={""}
               onChange={handleChangeCat}
-              amountChars={20}
             />
           </ButtonContainer>
           <ButtonContainer>
-            <DropDown
+            <DropDownUnique
               buttonText="Instancia"
               items={stages}
               width={150}
               error={""}
               onChange={handleChangeGroup}
-              amountChars={20}
             />
           </ButtonContainer>
         </SpaceContainer>
-        <SpaceContainer>
-          <MatchCard
-            error={errors.notFound}
-            matches={filteredMatches}
-            teams={allTeams}
-            reloadMatches={reloadMatches}
-          />
-        </SpaceContainer>
+        {hasFetched && (
+          <SpaceContainer>
+            <MatchCard
+              error={errors.notFound}
+              matches={filteredMatches}
+              teams={allTeams}
+              reloadMatches={reloadMatches}
+            />
+          </SpaceContainer>
+        )}
+        {isLoading && (
+          <SpaceContainer>
+            <BouncingCircles text="categoria e instancia" />
+          </SpaceContainer>
+        )}
       </TournamentSection>
     </MainContainer>
   );

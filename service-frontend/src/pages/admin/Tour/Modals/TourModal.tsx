@@ -37,12 +37,12 @@ import { TourDTO } from "../../../../entities/dtos/TourDTO";
 interface TourModalProps {
   tourApi: TourAPI;
   onClose: () => void;
-  addTour: (newTour: TourDTO) => void;
+  refetch: () => void;
 }
 
 const clubAPI = new ClubAPI();
 
-const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
+const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const { allClubs, addClubToState } = useGetClubs();
 
@@ -120,8 +120,8 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
       newTour.UserCount = 1;
       newTour.TournamentCount = 0;
       newTour.UserOwner = user?.UserName || "";
-      addTour(newTour);
       onClose();
+      refetch();
     }
   };
 
@@ -227,7 +227,6 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
           boxCol={black}
           mWidth={1000}
           mHeight={110}
-          error={fieldErrors.notFound}
         >
           {filteredClubs.map((club, index) => (
             <ClubRow

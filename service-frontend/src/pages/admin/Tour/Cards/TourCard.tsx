@@ -7,12 +7,14 @@ import TourRow from "../Rows/TourRow";
 import { CardContainer } from "./TourCardStyle";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
+import BouncingCircles from "../../../../components/spinner/spinner";
 
 interface TourCardProps {
   tours: TourDTO[];
   tourApi: TourAPI;
   tourTitle: string;
   error: string;
+  refetch: () => void;
 }
 
 const TourCard: React.FC<TourCardProps> = ({
@@ -20,6 +22,7 @@ const TourCard: React.FC<TourCardProps> = ({
   tourApi,
   tourTitle,
   error,
+  refetch,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const [tours, setTours] = useState<TourDTO[]>(initialTours);
@@ -41,6 +44,7 @@ const TourCard: React.FC<TourCardProps> = ({
     const tourRes = await tourApi.deleteTour(deleteTour);
     if (tourRes != null) {
       setTours(tours.filter((tour) => tour.Id !== tt.Id));
+      refetch();
     } else {
       console.error("Failed to delete tour");
     }
@@ -54,8 +58,8 @@ const TourCard: React.FC<TourCardProps> = ({
         boxCol={pastelGreen}
         mWidth={1200}
         mHeight={1000}
-        error={error}
       >
+        {error && <BouncingCircles text="la creación de un Tour" />}
         {filteredTours.map((tour) => (
           <TourRow
             key={tour.Id}

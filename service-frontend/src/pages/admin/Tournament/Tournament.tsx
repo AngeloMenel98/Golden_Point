@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -25,13 +25,16 @@ import { RootState } from "../../../reduxSlices/store";
 import TournamentModal from "./Modals/CreateTournament/TournamentModal";
 import useGetTournaments from "../../../hooks/useGetTournaments";
 import { Category, TournamentDTO } from "../../../entities/dtos/TournamentDTO";
-import { TournCredentials } from "../../../services/TournamentApi";
+import TournamentAPI, {
+  TournCredentials,
+} from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "../../user/Tournament/Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import Footer from "../../../components/footer/footer";
+import BouncingCircles from "../../../components/spinner/spinner";
 
 export interface CreationData {
   tournamentName: string;
@@ -39,6 +42,8 @@ export interface CreationData {
   maleCat: string[];
   femaleCat: string[];
 }
+
+const tournApi = new TournamentAPI();
 
 const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -58,8 +63,12 @@ const Tournament: React.FC = () => {
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const { tournaments, tournAPI, errorTournament, addTournToState } =
+  const { tournaments, errors, isLoading, refetch, hasFetched } =
     useGetTournaments(tourData);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -108,7 +117,7 @@ const Tournament: React.FC = () => {
       categories: categories,
     };
 
-    const res = await tournAPI.addTournament(tournament);
+    const res = await tournApi.addTournament(tournament);
 
     if (res.fieldErrors) {
       setFieldErrors((prevErrors: any) => ({
@@ -122,8 +131,9 @@ const Tournament: React.FC = () => {
       newTourn.Master = res.master;
       newTourn.TeamsCount = 0;
       newTourn.Categories = categories;
-      addTournToState(newTourn);
+
       createCloseModal();
+      refetch();
     }
   };
 
@@ -179,7 +189,7 @@ const Tournament: React.FC = () => {
             />
           </HeaderButtons>
           <HeaderButtons>
-            <SecondaryButton text="Clubs" onClick={openClubs} disabled={true} />
+            <SecondaryButton text="Clubs" onClick={openClubs} />
           </HeaderButtons>
         </HeaderContainer>
         <SpaceContainer>
@@ -211,12 +221,19 @@ const Tournament: React.FC = () => {
         </SpaceContainer>
 
         <H3>Lista de Torneos</H3>
-        <TournamentCard
-          tournaments={tournaments}
-          tournamentTitle={tournamentTitle}
-          error={errorTournament}
-          setShFooter={setShowFooter}
-        />
+        {hasFetched && (
+          <TournamentCard
+            tournaments={tournaments}
+            tournamentTitle={tournamentTitle}
+            error={errors.notFound}
+            setShFooter={setShowFooter}
+          />
+        )}
+        {isLoading && (
+          <SpaceContainer>
+            <BouncingCircles text="torneos" />
+          </SpaceContainer>
+        )}
       </TournamentSection>
 
       {showFooter && (

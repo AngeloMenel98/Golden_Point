@@ -12,7 +12,7 @@ import {
   DataContainer,
 } from "./TournamentModalStyle";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
-import DropDown from "../../../../components/dropdown/DropDown/DropDown";
+import DropDown from "../../../../components/dropdown/DropDownMultiple/DropDown/DropDown";
 import { CreationData } from "../Tournament";
 import { Errors } from "../../../../errors/Errors";
 

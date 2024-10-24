@@ -88,7 +88,7 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
 
         {isDeleteOpen && (
           <ConfirmModal
-            text={"Torneo"}
+            name={tournData.Title}
             onClose={closeModal}
             onDelete={onDelete}
           />

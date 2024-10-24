@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
   MainContainer,
   RankingSection,
-  HeaderContainer,
-  H3,
   SpaceContainer,
   TableContainer,
 } from "./RankingStyle";
@@ -13,15 +11,11 @@ import {
 import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
-import DropDown from "../../../components/dropdown/DropDown/DropDown";
-import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
-import { useNavigate } from "react-router-dom";
 import UserAPI from "../../../services/UserApi";
 import { Errors } from "../../../errors/Errors";
-import { darkGreen, pastelGreen } from "../../../utils/colors";
 import UsersTable from "../../../components/userTable/UserTable";
-import useGetCats from "../../../hooks/useGetCatsByTournId";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
+import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
 
 const userAPI = new UserAPI();
 
@@ -36,21 +30,15 @@ const Rankings: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tour = useSelector((state: RootState) => state.tour.tour);
 
-  const navigate = useNavigate();
-
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [users, setUsers] = useState<UserRanking[]>([]);
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const returnToTournaments = () => {
-    navigate("/tournaments");
-  };
-
-  const handleChangeCat = async (category: string[]) => {
+  const handleChangeCat = async (category: string) => {
     setSelectedCategory(category);
 
-    await getRanking(category[0]);
+    await getRanking(category);
   };
 
   const getRanking = async (category: string) => {
@@ -79,7 +67,7 @@ const Rankings: React.FC = () => {
           <Breadcrumb path={breadcrumbPath} />
         </SpaceContainer>
         <SpaceContainer>
-          <DropDown
+          <DropDownUnique
             buttonText="Categoria"
             items={[
               "Masculino-Sexta",
@@ -91,7 +79,6 @@ const Rankings: React.FC = () => {
             width={225}
             error={""}
             onChange={handleChangeCat}
-            amountChars={20}
           />
         </SpaceContainer>
         <TableContainer>

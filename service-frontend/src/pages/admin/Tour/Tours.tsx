@@ -21,6 +21,7 @@ import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 
 import { RootState } from "../../../reduxSlices/store";
 import useGetTours from "../../../hooks/useGetTours";
+import TourAPI from "../../../services/TourApi";
 
 export interface CreationData {
   tourName: string;
@@ -31,13 +32,15 @@ export interface CreationData {
   avTo: string;
 }
 
+const tourAPI = new TourAPI();
+
 const Tours: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const [tourTitle, setTourTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { tours, tourAPI, error, addTourToState } = useGetTours(user);
+  const { tours, error, hasFetched, refetch } = useGetTours(user);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -76,16 +79,19 @@ const Tours: React.FC = () => {
           <TourModal
             tourApi={tourAPI}
             onClose={handleCloseModal}
-            addTour={addTourToState}
+            refetch={refetch}
           />
         )}
         <H2>Lista de Tours</H2>
-        <TourCard
-          tours={tours}
-          tourApi={tourAPI}
-          tourTitle={tourTitle}
-          error={error}
-        />
+        {hasFetched && (
+          <TourCard
+            tours={tours}
+            tourApi={tourAPI}
+            tourTitle={tourTitle}
+            error={error}
+            refetch={refetch}
+          />
+        )}
       </TourSection>
     </MainContainer>
   );

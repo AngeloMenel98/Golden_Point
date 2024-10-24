@@ -13,6 +13,7 @@ import TournamentUser from "../pages/user/Tournament/Tournament";
 import Rankings from "../pages/admin/Ranking/Ranking";
 
 import useSetUser from "../hooks/useSetUser";
+import Clubs from "../pages/admin/Clubs/Clubs";
 
 const AppRoutes: React.FC = () => {
   useSetUser();
@@ -36,6 +37,7 @@ const AppRoutes: React.FC = () => {
           element={isAdmin ? <Matches /> : <MatchesUser />}
         />
         <Route path="/ranking" element={<Rankings />} />
+        <Route path="/clubs" element={isAdmin ?? <Clubs />} />
       </Routes>
     </div>
   );

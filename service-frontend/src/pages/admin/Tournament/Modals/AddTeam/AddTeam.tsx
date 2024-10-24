@@ -12,7 +12,7 @@ import {
 } from "./AddTeamStyle";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
-import DropDown from "../../../../../components/dropdown/DropDown/DropDown";
+import DropDown from "../../../../../components/dropdown/DropDownMultiple/DropDown/DropDown";
 import TeamAPI, { TeamCredentials } from "../../../../../services/TeamApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";

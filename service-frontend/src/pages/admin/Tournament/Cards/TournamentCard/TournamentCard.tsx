@@ -12,11 +12,12 @@ import TournamentAPI, {
 } from "../../../../../services/TournamentApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
+import BouncingCircles from "../../../../../components/spinner/spinner";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
-  error: string;
+  error: string | undefined;
   setShFooter: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -94,6 +95,8 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
     handleCloseModal();
   };
 
+  const onDelete = async () => {};
+
   return (
     <CardContainer>
       <Card
@@ -102,14 +105,15 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         boxCol={pastelGreen}
         mWidth={1200}
         mHeight={1000}
-        error={error}
       >
+        {error && <BouncingCircles text="la creación de un Torneo" />}
         {filteredTourns.map((tourn, index) => (
           <TournamentRow
             key={index}
             ref={(el) => (rowRefs.current[index] = el)}
             tournData={tourn}
             onOpen={() => handleOpenModal(index, tourn)}
+            onDelete={onDelete}
           />
         ))}
       </Card>
