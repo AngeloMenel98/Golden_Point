@@ -16,6 +16,7 @@ import CopyableText from "../../../../components/copyableText/CopyableText";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setTour } from "../../../../reduxSlices/tour/tourSlice";
+import { TourData } from "../../../../utils/interfaces";
 
 interface TourRowProps {
   tourData: TourDTO;
@@ -26,7 +27,17 @@ const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
   const dispatch = useDispatch();
 
   const handleTourClick = () => {
-    dispatch(setTour(tourData));
+    const tourAsInterface: TourData = {
+      id: tourData.Id,
+      tourTitle: tourData.TourTitle,
+      tourCode: tourData.TourCode,
+      userCount: tourData.UserCount,
+      tournamentCount: tourData.TournamentCount,
+      userOwner: tourData.UserOwner,
+    };
+
+    localStorage.setItem("selectedTour", JSON.stringify(tourAsInterface));
+    dispatch(setTour(tourAsInterface));
     navigate("/tournaments");
   };
 

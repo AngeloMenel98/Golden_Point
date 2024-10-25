@@ -25,12 +25,12 @@ const TourCard: React.FC<TourCardProps> = ({ tours, tourTitle, error }) => {
         mWidth={1200}
         mHeight={500}
       >
-        {error && <BouncingCircles text="la creación de Tours" />}
+        {(filteredTours.length === 0 || error) && (
+          <BouncingCircles text="nuevos Tours" />
+        )}
         {filteredTours.map((tour, index) => (
           <TourRow key={index} tourData={tour} />
         ))}
-
-        {filteredTours.length === 0 && <BouncingCircles text="nuevos Tours" />}
       </Card>
     </CardContainer>
   );

@@ -31,6 +31,7 @@ import { TourDTO } from "../../../entities/dtos/TourDTO";
 import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
 import useGetMyTourns from "../../../hooks/useGetMyTourns";
 import MyTournsCards from "../../../components/myTourns/myTournsCard";
+import BouncingCircles from "../../../components/spinner/spinner";
 
 const tourAPI = new TourAPI();
 
@@ -43,7 +44,7 @@ const ToursUser: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
   const { tours, error, hasFetched, refetch } = useGetTours(user);
-  const { tournaments, loading } = useGetMyTourns(user?.id);
+  const { tournaments, loading, fetchTourns } = useGetMyTourns(user?.id);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -138,11 +139,19 @@ const ToursUser: React.FC = () => {
           <TourCard tours={tours} tourTitle={tourTitle} error={error} />
         )}
 
-        {!loading && (
+        {fetchTourns && (
           <>
             <H2>Mis Partidos</H2>
             <TableContainer>
               <MyTournsCards tourns={tournaments} />
+            </TableContainer>
+          </>
+        )}
+        {loading && (
+          <>
+            <H2>Mis Partidos</H2>
+            <TableContainer>
+              <BouncingCircles text="tus Partidos" />
             </TableContainer>
           </>
         )}

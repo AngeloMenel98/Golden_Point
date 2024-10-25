@@ -66,7 +66,7 @@ const TournamentUser: React.FC = () => {
           <Breadcrumb path={breadcrumbPath} />
         </BreadCrumbContainer>
         <SpaceContainer>
-          <H3>Tour: {tourData?.TourTitle}</H3>
+          <H3>Tour: {tourData?.tourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -82,7 +82,7 @@ const TournamentUser: React.FC = () => {
           </HeaderButtons>
           {isUserOpen && (
             <UsersModal
-              tourId={tourData?.Id}
+              tourId={tourData?.id}
               onClose={usersCloseModal}
               isAddTeam={false}
             />

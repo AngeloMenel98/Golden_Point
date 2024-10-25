@@ -23,7 +23,7 @@ const Rankings: React.FC = () => {
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const { users, isLoading, hasFetched, fieldErrors, refetch } = useGetRankings(
-    tour?.Id,
+    tour?.id,
     selectedCategory
   );
   const handleChangeCat = async (category: string) => {
@@ -55,7 +55,7 @@ const Rankings: React.FC = () => {
               "Femenino-Septima",
             ]}
             width={225}
-            error={fieldErrors.notFound}
+            error={fieldErrors?.notFound}
             onChange={handleChangeCat}
           />
         </SpaceContainer>

@@ -1,5 +1,5 @@
 import React from "react";
-import { UsersContainer } from "./TeamCardStyle";
+import { UsersContainer } from "./TeamsCardStyle";
 import Card from "../../../../../components/card/Card";
 import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 

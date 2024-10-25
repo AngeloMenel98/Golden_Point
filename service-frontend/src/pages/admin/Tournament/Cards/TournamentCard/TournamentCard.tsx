@@ -86,7 +86,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   const startTournament = async () => {
     const start: DeletedTournament = {
       tournamentId: tournSelected.Id,
-      userId: user?.Id,
+      userId: user?.id,
     };
     const res = await tournamentAPI.startTournament(start);
 
@@ -103,7 +103,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   const onDelete = async (tourn: TournamentDTO) => {
     const deleteTourn: DeletedTournament = {
       tournamentId: tourn.Id,
-      userId: user?.Id,
+      userId: user?.id,
     };
     const res = await tournamentAPI.deleteTournament(deleteTourn);
 
@@ -124,7 +124,9 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         mWidth={1200}
         mHeight={1000}
       >
-        {error && <BouncingCircles text="la creación de un Torneo" />}
+        {(filteredTourns.length === 0 || error) && (
+          <BouncingCircles text="la creación de un Torneo" />
+        )}
         {filteredTourns.map((tourn, index) => (
           <TournamentRow
             key={index}
@@ -134,9 +136,6 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
             onDelete={() => onDelete(tourn)}
           />
         ))}
-        {filteredTourns.length === 0 && (
-          <BouncingCircles text="nuevos Torneos" />
-        )}
       </Card>
 
       {isModalOpen && (

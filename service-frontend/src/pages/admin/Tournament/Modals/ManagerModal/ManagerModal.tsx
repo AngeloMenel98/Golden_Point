@@ -33,7 +33,7 @@ const ManagerModal: React.FC<ManagerProps> = ({ tournament, onClose }) => {
   return (
     <>
       <UsersModal
-        tourId={tour?.Id}
+        tourId={tour?.id}
         onClose={onClose}
         isAddTeam={true}
         onNext={onNext}

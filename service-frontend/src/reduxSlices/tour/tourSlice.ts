@@ -1,8 +1,8 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { TourDTO } from "../../entities/dtos/TourDTO";
+import { TourData } from "../../utils/interfaces";
 
 interface TourState {
-  tour: TourDTO | null;
+  tour: TourData | null;
 }
 
 const initialState: TourState = {
@@ -13,7 +13,7 @@ const tourSlice = createSlice({
   name: "tour",
   initialState,
   reducers: {
-    setTour: (state, action: PayloadAction<TourDTO>) => {
+    setTour: (state, action: PayloadAction<TourData>) => {
       state.tour = action.payload;
     },
   },

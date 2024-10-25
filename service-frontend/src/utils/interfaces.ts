@@ -6,6 +6,15 @@ export interface UserData {
   role: string;
 }
 
+export interface TourData {
+  id: string;
+  tourTitle: string;
+  tourCode: string;
+  userCount: number;
+  tournamentCount: number;
+  userOwner: string;
+}
+
 export interface CreationTour {
   tourName: string;
   clubName: string;

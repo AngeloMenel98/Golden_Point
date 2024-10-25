@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { Category, TournamentDTO } from "../entities/dtos/TournamentDTO";
 import TournamentAPI from "../services/TournamentApi";
-import { TourDTO } from "../entities/dtos/TourDTO";
 import { Errors } from "../errors/Errors";
+import { TourData } from "../utils/interfaces";
 
 const tournAPI = new TournamentAPI();
 
@@ -16,7 +16,7 @@ interface TournamentResponse {
   };
 }
 
-export default function useGetTournaments(tour: TourDTO | null) {
+export default function useGetTournaments(tour: TourData | null) {
   const [tournaments, setTournaments] = useState<TournamentDTO[]>([]);
   const [errors, setErrors] = useState<Errors>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -31,7 +31,7 @@ export default function useGetTournaments(tour: TourDTO | null) {
 
     try {
       const tournArray: TournamentDTO[] = [];
-      const tournRes = await tournAPI.getTournaments(tour.Id);
+      const tournRes = await tournAPI.getTournaments(tour.id);
       let tournData: TournamentResponse = {};
 
       if (!tournRes.fieldErrors?.notFound) {

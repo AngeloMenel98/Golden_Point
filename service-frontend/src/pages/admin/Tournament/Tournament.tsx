@@ -105,7 +105,7 @@ const Tournament: React.FC = () => {
 
     const tournament: TournCredentials = {
       userId: user?.id,
-      tourId: tourData?.Id,
+      tourId: tourData?.id,
       title: data.tournamentName,
       master: data.master,
       categories: categories,
@@ -151,7 +151,7 @@ const Tournament: React.FC = () => {
           <Breadcrumb path={breadcrumbPath} />
         </BreadCrumbContainer>
         <HeaderContainer>
-          <H3>Tour: {tourData?.TourTitle}</H3>
+          <H3>Tour: {tourData?.tourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -167,7 +167,7 @@ const Tournament: React.FC = () => {
           </HeaderButtons>
           {isUserOpen && (
             <UsersModal
-              tourId={tourData?.Id}
+              tourId={tourData?.id}
               onClose={usersCloseModal}
               isAddTeam={false}
             />

@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 import { setTour } from "../../../../reduxSlices/tour/tourSlice";
 import { useState } from "react";
 import ConfirmModal from "../../../../components/confirmation/Confirm";
+import { TourData } from "../../../../utils/interfaces";
 
 interface TourRowProps {
   tourData: TourDTO;
@@ -33,7 +34,18 @@ const TourRow: React.FC<TourRowProps> = ({ tourData, onDelete }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState<boolean>(false);
 
   const handleTourClick = () => {
-    dispatch(setTour(tourData));
+    const tourAsInterface: TourData = {
+      id: tourData.Id,
+      tourTitle: tourData.TourTitle,
+      tourCode: tourData.TourCode,
+      userCount: tourData.UserCount,
+      tournamentCount: tourData.TournamentCount,
+      userOwner: tourData.UserOwner,
+    };
+
+    localStorage.setItem("selectedTour", JSON.stringify(tourAsInterface));
+    dispatch(setTour(tourAsInterface));
+
     navigate("/tournaments");
   };
 
