@@ -56,6 +56,9 @@ export const ErrorsRes = {
   //Match
   notFoundMatchReq: "No se encontro ningún Partido.",
 
+  //Ranking
+  notFoundRankReq: "No se encontro ningún Usuario.",
+
   //Register
   usernameRequired: "Nombre de Usuario es obligatorio",
   passwordRequired: "Contraseña es obligatorio",
@@ -90,7 +93,8 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   [ErrorsRes.tourCodeExistReq]: "tourCode",
   [ErrorsRes.userAlreadyJoined]: "userJoined",
 
-  //Team
+  //Ranking
+  [ErrorsRes.notFoundRankReq]: "notFound",
 
   //Match
   [ErrorsRes.notFoundMatchReq]: "notFound",

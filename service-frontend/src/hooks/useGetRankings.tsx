@@ -16,24 +16,26 @@ export default function useGetRankings(
   category: string
 ) {
   const [users, setUsers] = useState<UserRanking[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasFetched, setHasFetched] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
-  console.log(fieldErrors);
 
   const getRanking = useCallback(async () => {
     if (!tourId || !category) return;
 
-    setIsLoading(true);
     setFieldErrors({});
 
     try {
       const res = await userAPI.getRanking(tourId, category);
+
       if (res.fieldErrors) {
         setFieldErrors((prevErrors) => ({
           ...prevErrors,
           ...res.fieldErrors,
         }));
+
+        setHasFetched(false);
+        return;
       } else {
         setUsers(res);
       }

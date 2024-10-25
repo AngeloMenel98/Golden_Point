@@ -3,21 +3,10 @@ import validationMsg from "../constants/validationMessages";
 import { userController } from "../controllers";
 import { Router } from "express";
 
-/**
- * Creacion de Router: creaamos una instancia de Router de Express.
- */
 const router = Router();
 
 const PASSWORD_LENGTH = 8;
 
-/**
- * Ruta de login
- 
- * Definimos una ruta POST con el path '/login' que manejará las solicitudes de inicio de sesión de usuarios. 
-
- * userController.logIn.bind(userController): especificamos el controlador y el método que se ejecutarán cuando 
-   se reciba una solicitud en esta ruta. En este caso, llama al método logIn del controlador UserController.
-*/
 router.post(
   "/login",
   [

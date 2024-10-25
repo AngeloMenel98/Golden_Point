@@ -28,6 +28,11 @@ const StyledTd = styled.td`
   text-align: center;
 `;
 
+export const H3 = styled.h3`
+  color: ${darkGreen};
+  padding: 0.01rem 0.5rem;
+`;
+
 const UsersTable = ({ users }: { users: any[] }) => {
   return (
     <TableContainer>

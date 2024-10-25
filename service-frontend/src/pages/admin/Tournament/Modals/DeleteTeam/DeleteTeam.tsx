@@ -18,14 +18,15 @@ import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 import { DeletedTeam } from "../../../../../services/TeamApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
+import { TournamentDTO } from "../../../../../entities/dtos/TournamentDTO";
 
 interface DeleteTeamProps {
-  tournamentId: string;
+  tournament: TournamentDTO;
   onClose: () => void;
 }
 
-const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournamentId, onClose }) => {
-  const { allTeams, teamApi } = useGetTeams(tournamentId);
+const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournament, onClose }) => {
+  const { allTeams, teamApi } = useGetTeams(tournament.Id);
 
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -56,6 +57,7 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournamentId, onClose }) => {
     const res = await teamApi.deleteTournament(deletedTeams);
 
     if (res >= 1) {
+      tournament.TeamsCount -= 1;
       onClose();
     } else {
       alert("Error");

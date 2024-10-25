@@ -12,7 +12,6 @@ import {
 } from "./AddTeamStyle";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
-import DropDown from "../../../../../components/dropdown/DropDownMultiple/DropDown/DropDown";
 import TeamAPI, { TeamCredentials } from "../../../../../services/TeamApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
@@ -21,6 +20,7 @@ import {
   TournamentDTO,
 } from "../../../../../entities/dtos/TournamentDTO";
 import useSeparateCats from "../../../../../hooks/useSeparateCats";
+import DropDownUnique from "../../../../../components/dropdown/DropDownSingle/DropDown/DropDown";
 
 interface AddTeamProps {
   players: UserDTO[];
@@ -29,8 +29,8 @@ interface AddTeamProps {
 }
 
 interface DropDownData {
-  maleCat: string[];
-  femaleCat: string[];
+  maleCat: string;
+  femaleCat: string;
 }
 
 const teamApi = new TeamAPI();
@@ -46,8 +46,8 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
   const { maleCat, femaleCat } = useSeparateCats(tournament.Categories);
 
   const [dropDownData, setDropDownData] = useState<DropDownData>({
-    maleCat: [],
-    femaleCat: [],
+    maleCat: "",
+    femaleCat: "",
   });
 
   useEffect(() => {
@@ -59,25 +59,29 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
   };
 
   const addTeam = async () => {
-    const categories: Category[] = [];
-    dropDownData.maleCat.forEach((category) => {
-      categories.push({
-        gender: "Masculino",
-        category: category,
-      });
-    });
+    let selectedCategory: Category | null = null;
 
-    dropDownData.femaleCat.forEach((category) => {
-      categories.push({
+    if (dropDownData.maleCat) {
+      selectedCategory = {
+        gender: "Masculino",
+        category: dropDownData.maleCat,
+      };
+    } else if (dropDownData.femaleCat) {
+      selectedCategory = {
         gender: "Femenino",
-        category: category,
-      });
-    });
+        category: dropDownData.femaleCat,
+      };
+    }
+
+    if (!selectedCategory) {
+      alert("No category selected");
+      return;
+    }
 
     const team: TeamCredentials = {
       adminUserId: user?.Id,
       tournamentId: tournament.Id,
-      category: categories[0].gender + "-" + categories[0].category,
+      category: selectedCategory.gender + "-" + selectedCategory.category,
       usersId: players.map((p) => p.Id),
     };
 
@@ -106,20 +110,20 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
           onChange={handleChange}
         />
         <SpaceContainer>
-          <DropDown
+          <DropDownUnique
             buttonText="Masculino"
             items={maleCat}
             width={150}
-            onChange={(selectedItems: string[]) => {
+            onChange={(selectedItems: string) => {
               setDropDownData({ ...dropDownData, maleCat: selectedItems });
             }}
             error={""}
           />
-          <DropDown
+          <DropDownUnique
             buttonText="Femenino"
             items={femaleCat}
             width={150}
-            onChange={(selectedItems: string[]) => {
+            onChange={(selectedItems: string) => {
               setDropDownData({
                 ...dropDownData,
                 femaleCat: selectedItems,

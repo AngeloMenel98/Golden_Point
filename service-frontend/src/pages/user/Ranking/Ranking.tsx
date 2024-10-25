@@ -11,12 +11,11 @@ import {
 import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
-import UserAPI from "../../../services/UserApi";
-import { Errors } from "../../../errors/Errors";
 import UsersTable from "../../../components/userTable/UserTable";
 import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetRankings from "../../../hooks/useGetRankings";
+import BouncingCircles from "../../../components/spinner/spinner";
 
 const Rankings: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -63,6 +62,12 @@ const Rankings: React.FC = () => {
         {hasFetched && (
           <TableContainer>
             <UsersTable users={users} />
+          </TableContainer>
+        )}
+
+        {isLoading && (
+          <TableContainer>
+            <BouncingCircles text="categoría" />
           </TableContainer>
         )}
       </RankingSection>

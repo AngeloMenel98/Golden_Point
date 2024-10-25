@@ -123,7 +123,7 @@ export class UserService {
     const users: unknown[] = await UserRepository.getRanking(tourId, category);
 
     if (users.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Usuarios"));
+      throw new ServiceCodeError(codeErrors.GEN_2("Usuario"));
     }
     return users;
   }

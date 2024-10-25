@@ -87,6 +87,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
     const res = await tournamentAPI.startTournament(start);
 
     if (!res.fieldErrors) {
+      tournSelected.Status = "inProgress";
       setShFooter(true);
     } else {
       alert("Error al iniciar torneo");
@@ -139,7 +140,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
       )}
 
       {isDeleteOpen && (
-        <DeleteTeam onClose={deleteTeamClose} tournamentId={tournSelected.Id} />
+        <DeleteTeam onClose={deleteTeamClose} tournament={tournSelected} />
       )}
     </CardContainer>
   );
