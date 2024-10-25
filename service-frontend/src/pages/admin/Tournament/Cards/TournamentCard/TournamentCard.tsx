@@ -18,18 +18,22 @@ interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
   error: string | undefined;
+  refetch: () => void;
   setShFooter: Dispatch<SetStateAction<boolean>>;
 }
 
 const tournamentAPI = new TournamentAPI();
 
 const TournamentCard: React.FC<TournamentCardProps> = ({
-  tournaments,
+  tournaments: initialTourns,
   tournamentTitle,
   error,
+  refetch,
   setShFooter,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
+
+  const [tourns, setTourns] = useState<TournamentDTO[]>(initialTourns);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -41,7 +45,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
 
   const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
 
-  const filteredTourns = tournaments.filter((tourn) =>
+  const filteredTourns = tourns.filter((tourn) =>
     tourn.Title.toLowerCase().includes(tournamentTitle.toLowerCase())
   );
 
@@ -96,7 +100,20 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
     handleCloseModal();
   };
 
-  const onDelete = async () => {};
+  const onDelete = async (tourn: TournamentDTO) => {
+    const deleteTourn: DeletedTournament = {
+      tournamentId: tourn.Id,
+      userId: user?.Id,
+    };
+    const res = await tournamentAPI.deleteTournament(deleteTourn);
+
+    if (!res.fieldErrors) {
+      setTourns((prevTourns) => prevTourns.filter((t) => t.Id !== tourn.Id));
+      refetch();
+    } else {
+      alert("Error al eliminar torneo");
+    }
+  };
 
   return (
     <CardContainer>
@@ -114,7 +131,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
             ref={(el) => (rowRefs.current[index] = el)}
             tournData={tourn}
             onOpen={() => handleOpenModal(index, tourn)}
-            onDelete={onDelete}
+            onDelete={() => onDelete(tourn)}
           />
         ))}
       </Card>

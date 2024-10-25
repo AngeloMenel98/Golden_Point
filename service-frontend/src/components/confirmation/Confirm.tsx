@@ -17,6 +17,10 @@ interface Props {
 }
 
 const ConfirmModal: React.FC<Props> = ({ name, onClose, onDelete }) => {
+  const handleConfirmDelete = () => {
+    onDelete();
+    onClose();
+  };
   return (
     <ModalWrapper>
       <ModalContent width={20}>
@@ -34,7 +38,7 @@ const ConfirmModal: React.FC<Props> = ({ name, onClose, onDelete }) => {
             />
           </ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Confirmar" onClick={onDelete} />
+            <SecondaryButton text="Confirmar" onClick={handleConfirmDelete} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

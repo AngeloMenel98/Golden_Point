@@ -25,8 +25,6 @@ import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
 import UsersModal from "./Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
-import TournamentAPI from "../../../services/TournamentApi";
-import BouncingCircles from "../../../components/spinner/spinner";
 
 export interface CreationData {
   tournamentName: string;
@@ -34,8 +32,6 @@ export interface CreationData {
   maleCat: string[];
   femaleCat: string[];
 }
-
-const tournApi = new TournamentAPI();
 
 const TournamentUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);

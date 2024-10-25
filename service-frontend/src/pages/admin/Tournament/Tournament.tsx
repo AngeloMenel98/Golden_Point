@@ -226,6 +226,7 @@ const Tournament: React.FC = () => {
             tournaments={tournaments}
             tournamentTitle={tournamentTitle}
             error={errors.notFound}
+            refetch={refetch}
             setShFooter={setShowFooter}
           />
         )}

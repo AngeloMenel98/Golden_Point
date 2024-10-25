@@ -90,6 +90,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
       }));
     } else {
       onClose();
+      reloadMatches();
     }
   };
 
