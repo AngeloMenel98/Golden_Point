@@ -33,6 +33,9 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         {filteredTourns.map((tourn, index) => (
           <TournamentRow key={index} tournData={tourn} />
         ))}
+        {filteredTourns.length === 0 && (
+          <BouncingCircles text="nuevos Torneos" />
+        )}
       </Card>
     </CardContainer>
   );

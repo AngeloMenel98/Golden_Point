@@ -9,7 +9,7 @@ const tournAPI = new TournamentAPI();
 export default function useGetMyTourns(userId: string | undefined) {
   const [tournaments, setTournaments] = useState<MyTournDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorTourn, setError] = useState<Errors | null>(null);
+  const [errorTourn, setError] = useState<Errors | unknown>(null);
 
   const fetchTournaments = useCallback(async () => {
     setLoading(true);
@@ -32,7 +32,7 @@ export default function useGetMyTourns(userId: string | undefined) {
         setTournaments(tournamentData);
         setLoading(false);
       } catch (err) {
-        //setError(err);
+        setError(err);
       }
     }
   }, [userId]);

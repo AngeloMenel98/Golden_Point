@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   TourRowContainer,
   LeftContainer,
@@ -13,23 +12,16 @@ import {
 } from "./TourRowStyle";
 import { TourDTO } from "../../../../entities/dtos/TourDTO";
 import CopyableText from "../../../../components/copyableText/CopyableText";
-import TrashIcon from "../../../../icons/TrashIcon/TrashIcon";
-import { red } from "../../../../utils/colors";
-import TourAPI, { DeletedTour } from "../../../../services/TourApi";
+
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../reduxSlices/store";
 import { useDispatch } from "react-redux";
 import { setTour } from "../../../../reduxSlices/tour/tourSlice";
 
 interface TourRowProps {
   tourData: TourDTO;
-  tourApi: TourAPI;
 }
 
-const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
-  //const user = useSelector((state: RootState) => state.user.user);
-
+const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

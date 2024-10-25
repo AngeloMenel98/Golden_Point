@@ -57,7 +57,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
     }
 
     const newSets: SetAtts = {
-      userId: user?.Id,
+      userId: user?.id,
       setsTeam1: setT1,
       setsTeam2: setT2,
       teamsId: editMatch.teamsId.map((t) => t),

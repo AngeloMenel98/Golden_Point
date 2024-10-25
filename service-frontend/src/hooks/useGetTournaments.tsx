@@ -19,13 +19,14 @@ interface TournamentResponse {
 export default function useGetTournaments(tour: TourDTO | null) {
   const [tournaments, setTournaments] = useState<TournamentDTO[]>([]);
   const [errors, setErrors] = useState<Errors>({});
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [hasFetched, setHasFetched] = useState<boolean>(false);
 
   const getTournaments = useCallback(async () => {
     if (!tour) return;
 
     setIsLoading(true);
+    setHasFetched(false);
     setErrors({});
 
     try {
@@ -52,10 +53,6 @@ export default function useGetTournaments(tour: TourDTO | null) {
         }
 
         setTournaments(tournArray);
-
-        if (tournArray.length === 0) {
-          setErrors({ general: "No tournaments found for the selected tour." });
-        }
       } else {
         setErrors(tournRes.fieldErrors);
       }
@@ -66,7 +63,6 @@ export default function useGetTournaments(tour: TourDTO | null) {
       setErrors({
         general: "An unexpected error occurred while fetching tournaments.",
       });
-      setIsLoading(false);
     }
   }, [tour]);
 
@@ -78,7 +74,7 @@ export default function useGetTournaments(tour: TourDTO | null) {
     tournaments,
     errors,
     isLoading,
-    refetch: getTournaments,
     hasFetched,
+    refetch: getTournaments,
   };
 }

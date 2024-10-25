@@ -186,6 +186,7 @@ export const TournamentRepository = AppDataSource.getRepository(
           userId,
         })
         .andWhere("t.status = :status", { status: "inProgress" })
+        .andWhere("tm2.isWinner = :isWinner", { isWinner: false })
         .getRawMany()
     );
   },

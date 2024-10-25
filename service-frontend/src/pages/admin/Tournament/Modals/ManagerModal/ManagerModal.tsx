@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
-import UsersModal from "../UsersModal/UsersModal";
+import UsersModal from "../../../../../components/userModal/UsersModal";
 import { useState } from "react";
 import AddTeamModal from "../AddTeam/AddTeam";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";

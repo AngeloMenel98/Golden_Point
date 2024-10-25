@@ -17,10 +17,9 @@ import Clubs from "../pages/admin/Clubs/Clubs";
 
 const AppRoutes: React.FC = () => {
   useSetUser();
-
   const user = useSelector((state: RootState) => state.user.user);
 
-  const isAdmin = user && user.Role == "admin";
+  const isAdmin = user && user.role == "admin";
 
   return (
     <div>

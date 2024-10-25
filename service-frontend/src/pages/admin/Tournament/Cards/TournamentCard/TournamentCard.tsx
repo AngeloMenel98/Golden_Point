@@ -134,6 +134,9 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
             onDelete={() => onDelete(tourn)}
           />
         ))}
+        {filteredTourns.length === 0 && (
+          <BouncingCircles text="nuevos Torneos" />
+        )}
       </Card>
 
       {isModalOpen && (

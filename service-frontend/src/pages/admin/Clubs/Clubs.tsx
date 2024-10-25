@@ -23,7 +23,7 @@ const Clubs: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <ClubSection>
         <HeaderContainer>
           <Breadcrumb path={breadcrumbPath} />

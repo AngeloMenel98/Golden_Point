@@ -32,15 +32,6 @@ import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
 import useGetMyTourns from "../../../hooks/useGetMyTourns";
 import MyTournsCards from "../../../components/myTourns/myTournsCard";
 
-export interface CreationData {
-  tourName: string;
-  clubName: string;
-  address: string;
-  courts: string;
-  avFrom: string;
-  avTo: string;
-}
-
 const tourAPI = new TourAPI();
 
 const ToursUser: React.FC = () => {
@@ -52,7 +43,7 @@ const ToursUser: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
   const { tours, error, hasFetched, refetch } = useGetTours(user);
-  const { tournaments, loading } = useGetMyTourns(user?.Id);
+  const { tournaments, loading } = useGetMyTourns(user?.id);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -64,7 +55,7 @@ const ToursUser: React.FC = () => {
 
   const handleJoin = async () => {
     const joinCred: JoinCredentials = {
-      userId: user?.Id,
+      userId: user?.id,
       tourCode: code,
     };
     const res = await tourAPI.joinUser(joinCred);
@@ -81,7 +72,7 @@ const ToursUser: React.FC = () => {
       newTour.TourCode = res.tourCode;
       newTour.UserCount = 1;
       newTour.TournamentCount = 0;
-      newTour.UserOwner = user?.UserName || "";
+      newTour.UserOwner = user?.userName || "";
 
       handleCloseModal();
 
@@ -99,7 +90,7 @@ const ToursUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>
@@ -144,12 +135,7 @@ const ToursUser: React.FC = () => {
         )}
         <H2>Lista de Tours</H2>
         {hasFetched && (
-          <TourCard
-            tours={tours}
-            tourApi={tourAPI}
-            tourTitle={tourTitle}
-            error={error}
-          />
+          <TourCard tours={tours} tourTitle={tourTitle} error={error} />
         )}
 
         {!loading && (

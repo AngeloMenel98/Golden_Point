@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import { red } from "../../../../../utils/colors";
@@ -13,12 +13,13 @@ import {
 } from "./TournamentModalStyle";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
 import DropDown from "../../../../../components/dropdown/DropDownMultiple/DropDown/DropDown";
-import { CreationData } from "../../Tournament";
 import { Errors } from "../../../../../errors/Errors";
 import DropDownUnique from "../../../../../components/dropdown/DropDownSingle/DropDown/DropDown";
+import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
+import { CreationTournament } from "../../../../../utils/interfaces";
 
 interface TournamentModalProps {
-  data: CreationData;
+  data: CreationTournament;
   onChangeData: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
   onSaveTourn: () => void;
@@ -39,6 +40,8 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
   errors,
 }) => {
   const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
 
   const masters = [1000, 1500];
 
@@ -56,7 +59,7 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
 
   return (
     <ModalWrapper>
-      <ModalContent width={25}>
+      <ModalContent width={25} ref={modalRef}>
         <HeaderContainer>
           <H3Styled>Crear Torneo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />

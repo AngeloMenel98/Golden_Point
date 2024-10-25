@@ -40,7 +40,7 @@ const Rankings: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <RankingSection>
         <SpaceContainer>
           <Breadcrumb path={breadcrumbPath} />

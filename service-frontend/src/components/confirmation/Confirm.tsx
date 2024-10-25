@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
 
 import {
@@ -9,6 +10,7 @@ import {
   ModalWrapper,
   NameSpan,
 } from "./ConfirmStyle";
+import useClickOutside from "../../hooks/functionalities/useClickOutside";
 
 interface Props {
   name: string;
@@ -21,9 +23,11 @@ const ConfirmModal: React.FC<Props> = ({ name, onClose, onDelete }) => {
     onDelete();
     onClose();
   };
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
   return (
     <ModalWrapper>
-      <ModalContent width={20}>
+      <ModalContent width={20} ref={modalRef}>
         <Container>
           <H4Styled>
             ¿Desea eliminar a <NameSpan>{name}</NameSpan>?

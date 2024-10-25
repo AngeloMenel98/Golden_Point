@@ -79,7 +79,7 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
     }
 
     const team: TeamCredentials = {
-      adminUserId: user?.Id,
+      adminUserId: user?.id,
       tournamentId: tournament.Id,
       category: selectedCategory.gender + "-" + selectedCategory.category,
       usersId: players.map((p) => p.Id),

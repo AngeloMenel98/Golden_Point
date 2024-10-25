@@ -22,16 +22,9 @@ import {
   TournamentSection,
 } from "./TournamentStyle";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
-import UsersModal from "./Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
-
-export interface CreationData {
-  tournamentName: string;
-  master: number;
-  maleCat: string[];
-  femaleCat: string[];
-}
+import UsersModal from "../../../components/userModal/UsersModal";
 
 const TournamentUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -67,7 +60,7 @@ const TournamentUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <TournamentSection>
         <BreadCrumbContainer>
           <Breadcrumb path={breadcrumbPath} />
@@ -88,7 +81,11 @@ const TournamentUser: React.FC = () => {
             />
           </HeaderButtons>
           {isUserOpen && (
-            <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
+            <UsersModal
+              tourId={tourData?.Id}
+              onClose={usersCloseModal}
+              isAddTeam={false}
+            />
           )}
           <HeaderButtons>
             <SecondaryButton

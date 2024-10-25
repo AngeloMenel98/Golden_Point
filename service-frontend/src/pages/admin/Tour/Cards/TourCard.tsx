@@ -38,7 +38,7 @@ const TourCard: React.FC<TourCardProps> = ({
   const handleDeleteTour = async (tt: TourDTO) => {
     const deleteTour: DeletedTour = {
       tourId: tt.Id,
-      userId: user?.Id,
+      userId: user?.id,
     };
 
     const tourRes = await tourApi.deleteTour(deleteTour);
@@ -67,6 +67,7 @@ const TourCard: React.FC<TourCardProps> = ({
             onDelete={() => handleDeleteTour(tour)}
           />
         ))}
+        {filteredTours.length === 0 && <BouncingCircles text="nuevos Tours" />}
       </Card>
     </CardContainer>
   );

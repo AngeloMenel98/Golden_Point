@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../../../../icons/SearchIcon/SearchIcon";
@@ -19,6 +19,7 @@ import { DeletedTeam } from "../../../../../services/TeamApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
 import { TournamentDTO } from "../../../../../entities/dtos/TournamentDTO";
+import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
 
 interface DeleteTeamProps {
   tournament: TournamentDTO;
@@ -32,6 +33,9 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournament, onClose }) => {
 
   const [fullName, setFullName] = useState<string>("");
   const [teams, setTeams] = useState<TeamDTO[]>([]);
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
 
   const handleChange = (e: any) => {
     setFullName(e.target.value);
@@ -51,7 +55,7 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournament, onClose }) => {
 
     teams.forEach((t) => {
       deletedTeams.teamsId.push(t.TeamId);
-      deletedTeams.userId = user?.Id;
+      deletedTeams.userId = user?.id;
     });
 
     const res = await teamApi.deleteTournament(deletedTeams);
@@ -66,7 +70,7 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournament, onClose }) => {
 
   return (
     <ModalWrapper>
-      <ModalContent width={40}>
+      <ModalContent width={40} ref={modalRef}>
         <HeaderContainer>
           <H3Styled>Equipos</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />

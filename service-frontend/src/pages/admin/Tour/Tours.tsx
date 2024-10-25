@@ -23,15 +23,6 @@ import { RootState } from "../../../reduxSlices/store";
 import useGetTours from "../../../hooks/useGetTours";
 import TourAPI from "../../../services/TourApi";
 
-export interface CreationData {
-  tourName: string;
-  clubName: string;
-  address: string;
-  courts: string;
-  avFrom: string;
-  avTo: string;
-}
-
 const tourAPI = new TourAPI();
 
 const Tours: React.FC = () => {
@@ -56,7 +47,7 @@ const Tours: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>

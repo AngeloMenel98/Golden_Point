@@ -5,6 +5,7 @@ import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 import TeamsButton from "../../../../../components/buttons/TeamsButton/TeamsButton";
+import BouncingCircles from "../../../../../components/spinner/spinner";
 
 interface TeamsCardProps {
   name: string;
@@ -32,7 +33,6 @@ const TeamsCard: React.FC<TeamsCardProps> = ({
       boxCol={pastelGreen}
       mWidth={600}
       mHeight={400}
-      error={error}
     >
       <UsersContainer>
         {filteredTeams.map((team, index) => (
@@ -45,6 +45,9 @@ const TeamsCard: React.FC<TeamsCardProps> = ({
           />
         ))}
       </UsersContainer>
+      {filteredTeams.length === 0 && (
+        <BouncingCircles text="que se agregue el equipo" />
+      )}
     </Card>
   );
 };
