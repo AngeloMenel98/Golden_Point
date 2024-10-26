@@ -12,7 +12,7 @@ import MatchesUser from "../pages/user/Matches/Matches";
 import TournamentUser from "../pages/user/Tournament/Tournament";
 import Rankings from "../pages/admin/Ranking/Ranking";
 
-import useSetUser from "../hooks/useSetUser";
+import useSetUser from "../hooks/reduxHooks/useSetUser";
 import Clubs from "../pages/admin/Clubs/Clubs";
 
 const AppRoutes: React.FC = () => {

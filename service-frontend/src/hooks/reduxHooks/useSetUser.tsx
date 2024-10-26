@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { jwtDecode } from "jwt-decode";
-import { logInUser } from "../reduxSlices/user/userSlice";
-import { User } from "../entities/User";
+import { logInUser } from "../../reduxSlices/user/userSlice";
+import { User } from "../../entities/User";
 
 const getTokenFromLocalStorage = () => {
   return localStorage.getItem("token");

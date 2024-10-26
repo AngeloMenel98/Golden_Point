@@ -36,7 +36,7 @@ const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
       userOwner: tourData.UserOwner,
     };
 
-    localStorage.setItem("selectedTour", JSON.stringify(tourAsInterface));
+    localStorage.setItem("tourToken", JSON.stringify(tourAsInterface));
     dispatch(setTour(tourAsInterface));
     navigate("/tournaments");
   };

@@ -35,7 +35,7 @@ export interface Errors {
 export const ErrorsRes = {
   //Tournaments
   tournamentNameReq: "Nombre del Torneo es obligatorio",
-  masterReq: "Master es obligatorio",
+  masterReq: "Master obligatorio",
   categoriesReq: "Al menos se necesita una categoría",
   notFoundTournReq: "No se encontro ningún Torneo.",
 

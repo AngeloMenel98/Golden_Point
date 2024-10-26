@@ -41,7 +41,7 @@ const tournApi = new TournamentAPI();
 
 const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const tourData = useSelector((state: RootState) => state.tour.tour);
+  const tour = useSelector((state: RootState) => state.tour.tour);
 
   const navigate = useNavigate();
   const [isCreateOpen, setCreateOpen] = useState(false);
@@ -58,7 +58,7 @@ const Tournament: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
   const { tournaments, errors, isLoading, refetch, hasFetched } =
-    useGetTournaments(tourData);
+    useGetTournaments(tour);
 
   useEffect(() => {
     refetch();
@@ -105,7 +105,7 @@ const Tournament: React.FC = () => {
 
     const tournament: TournCredentials = {
       userId: user?.id,
-      tourId: tourData?.id,
+      tourId: tour?.id,
       title: data.tournamentName,
       master: data.master,
       categories: categories,
@@ -151,7 +151,7 @@ const Tournament: React.FC = () => {
           <Breadcrumb path={breadcrumbPath} />
         </BreadCrumbContainer>
         <HeaderContainer>
-          <H3>Tour: {tourData?.tourTitle}</H3>
+          <H3>Tour: {tour?.tourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -167,7 +167,7 @@ const Tournament: React.FC = () => {
           </HeaderButtons>
           {isUserOpen && (
             <UsersModal
-              tourId={tourData?.id}
+              tourId={tour?.id}
               onClose={usersCloseModal}
               isAddTeam={false}
             />

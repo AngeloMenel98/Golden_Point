@@ -28,7 +28,7 @@ import UsersModal from "../../../components/userModal/UsersModal";
 
 const TournamentUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const tourData = useSelector((state: RootState) => state.tour.tour);
+  const tour = useSelector((state: RootState) => state.tour.tour);
 
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ const TournamentUser: React.FC = () => {
     setUserOpen(false);
   };
 
-  const { tournaments, errors, hasFetched } = useGetTournaments(tourData);
+  const { tournaments, errors, hasFetched } = useGetTournaments(tour);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -66,7 +66,7 @@ const TournamentUser: React.FC = () => {
           <Breadcrumb path={breadcrumbPath} />
         </BreadCrumbContainer>
         <SpaceContainer>
-          <H3>Tour: {tourData?.tourTitle}</H3>
+          <H3>Tour: {tour?.tourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -82,7 +82,7 @@ const TournamentUser: React.FC = () => {
           </HeaderButtons>
           {isUserOpen && (
             <UsersModal
-              tourId={tourData?.id}
+              tourId={tour?.id}
               onClose={usersCloseModal}
               isAddTeam={false}
             />

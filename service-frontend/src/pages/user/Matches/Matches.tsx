@@ -108,7 +108,7 @@ const MatchesUser: React.FC = () => {
         {hasFetched && (
           <SpaceContainer>
             <MatchCard
-              error={errors.notFound}
+              error={errors?.notFound}
               matches={filteredMatches}
               teams={allTeams}
             />
