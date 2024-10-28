@@ -1,75 +1,77 @@
-import { TeamRepository } from '../repository';
-import { Team, User } from '../entity';
-import { UserService } from './userService';
-import { UserRole } from '../entity/User';
+import { TeamRepository, UserRepository } from "../repository";
+import { Team, Tournament } from "../entity";
+import { ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
+import { Manager } from "../helpers/manager";
 
 export class TeamService {
-    private userService: UserService;
+  constructor() {}
 
-    constructor() {
-        this.userService = new UserService();
+  async create(
+    newTeam: Team,
+    usersId: string[],
+    manager: Manager,
+    tournament: Tournament
+  ) {
+    const users = await Promise.all(
+      usersId.map((userId) => manager.checkUserWithData(userId))
+    );
+
+    if (users.length > 2) {
+      throw new ServiceCodeError(codeErrors.TEAM_1);
     }
 
-    async create(newTeam: Team, usersId: string[], adminUserId: string) {
-        try {
-            const adminUser = await this.userService.findById(adminUserId);
+    let teamName = "";
+    const namesAndInitials = users.map((user) => {
+      const firstName = user.perData.firstName.charAt(0);
+      const lastName = user.perData.lastName;
+      return `${lastName} ${firstName}.`;
+    });
+    teamName = namesAndInitials.join("-");
 
-            //FIXME: Find a way to get users info to link newTeam.users
-            const userProm = usersId.map((userId) =>
-                this.userService.findByIdWithPersonalData(userId)
-            );
-            const usersWithData = await Promise.all(userProm);
+    return TeamRepository.save({
+      ...newTeam,
+      teamName: teamName,
+      users: users.map((user) => user.user),
+      tournament,
+    });
+  }
 
-            if (usersWithData.length > 0 && adminUser.role == UserRole.ADMIN) {
-                const userPromises = usersId.map((userId) =>
-                    this.userService.findById(userId)
-                );
+  async getTeamWithUsers(teamId: string) {
+    const team = await TeamRepository.findOneBy({ id: teamId });
 
-                const users = await Promise.all(userPromises);
-
-                let teamName = '';
-                const lastNames = usersWithData.map(
-                    (user) => user.personalData.lastName
-                );
-                teamName = lastNames.join('-');
-
-                newTeam.teamName = teamName;
-                newTeam.users = users;
-
-                return await TeamRepository.save(newTeam);
-            }
-            console.log("Team couldn't be created");
-        } catch (err) {
-            console.error('Error al crear Team', err);
-        }
+    if (!team) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Team"));
     }
 
-    async getTeamWithUsers(
-        teamId: string
-    ): Promise<{ team: Team; users: User[] }> {
-        try {
-            const userByTeam = await TeamRepository.getUsersByTeamId(teamId);
-            const team = await TeamRepository.findOneBy({ id: teamId });
+    const usersByTeam = await UserRepository.getUsersByTeamId(teamId);
 
-            return { team, users: userByTeam };
-        } catch (e) {
-            console.error('Team ID is incorrect.', e);
-        }
+    return { team, users: usersByTeam };
+  }
+
+  async findById(teamId: string) {
+    const existingTeam = await TeamRepository.findOneBy({
+      id: teamId,
+    });
+
+    if (!existingTeam) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Team"));
     }
 
-    async findById(teamId: string): Promise<Team> {
-        try {
-            const existingTeam = await TeamRepository.findOneBy({
-                id: teamId,
-            });
+    return existingTeam;
+  }
 
-            if (existingTeam) {
-                return existingTeam;
-            }
-            console.error('Error finding user by ID', teamId);
-            return undefined;
-        } catch (err) {
-            console.error('Error finding user by ID', teamId);
-        }
+  async getTeams(tournamentId: string) {
+    const teams = await TeamRepository.getTeams(tournamentId);
+
+    if (!teams) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Teams"));
     }
+
+    return teams;
+  }
+
+  async delete(teamsId: string[]) {
+    return TeamRepository.delete(teamsId);
+  }
 }

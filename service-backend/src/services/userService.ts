@@ -1,117 +1,130 @@
-import { UserRepository } from '../repository';
-import { PersonalData, TourCoin, User } from '../entity';
-import { PerDataService } from './perDataService';
-import { TourCoinService } from './tourCoinService';
-import { createError } from '../helpers/errors';
+import { PerDataRepository, UserRepository } from "../repository";
+import { PersonalData, TourCoin, User } from "../entity";
+import valMessage from "../constants/validationMessages";
+
+import { UserServiceError, ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
+import { isNotUserAdmin } from "../helpers/validations";
 
 export class UserService {
-    private perDataService: PerDataService;
-    private tourCoinService: TourCoinService;
+  constructor() {}
 
-    constructor() {
-        this.perDataService = new PerDataService();
-        this.tourCoinService = new TourCoinService();
+  async logIn(username: string, password: string) {
+    const existingUser = await UserRepository.findOneBy({
+      username: username,
+    });
+
+    if (!existingUser) {
+      throw new UserServiceError(
+        valMessage.VALUE_NOT_EXIST("Nombre de Usuario"),
+        username
+      );
     }
 
-    async logIn(username: string, password: string) {
-        try {
-            const existingUser = await UserRepository.findOneBy({
-                username: username,
-            });
-
-            if (!existingUser) {
-                return { error: createError(404, 'Username does not exist') };
-            }
-
-            if (!existingUser.compareHashPass(password)) {
-                return { error: createError(404, 'Password is incorrect') };
-            }
-
-            return { user: existingUser };
-        } catch (e) {
-            return {
-                error: createError(500, 'Error finding user by username'),
-            };
-        }
+    if (!existingUser.compareHashPass(password)) {
+      throw new UserServiceError(
+        valMessage.VALUE_INCORRECT("Contraseña"),
+        password
+      );
     }
 
-    async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
-        try {
-            const savedUser = await UserRepository.save(user);
-            if (savedUser) {
-                this.perDataService.create(perData, savedUser);
-                this.tourCoinService.create(tourCoin, savedUser);
+    return existingUser;
+  }
 
-                return { user: savedUser };
-            }
-        } catch (e) {
-            return {
-                error: createError(500, 'Error creating User'),
-            };
-        }
+  async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
+    const username = await UserRepository.findByUsername(user.username);
+    if (username) {
+      throw new UserServiceError(
+        codeErrors.GEN_3("Nombre de Usuario"),
+        user.username
+      );
     }
 
-    async update(user: User, existingUser: User, perData: PersonalData) {
-        try {
-            const updatedUser = UserRepository.merge(existingUser, user);
-            this.perDataService.update(perData, updatedUser.id);
-            return { user: await UserRepository.save(updatedUser) };
-        } catch (e) {
-            console.error(e);
-            return { error: createError(500, 'Error updating User') };
-        }
+    const email = await UserRepository.findByEmail(user.email);
+    if (email) {
+      throw new UserServiceError(codeErrors.GEN_3("Email"), user.username);
     }
 
-    async delete(user: User) {
-        user.isDeleted = true;
-        return { user: await UserRepository.save(user) };
+    return UserRepository.create(user, perData, tourCoin);
+  }
+
+  async update(user: User, existingUser: User, perData: PersonalData) {
+    const existingPerData = await PerDataRepository.findByUserId(
+      existingUser.id
+    );
+
+    if (!existingPerData) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Personal Data"));
     }
 
-    async findByUsername(username: string) {
-        try {
-            const user = await UserRepository.findByUsername(username);
-            if (!user) {
-                return {
-                    error: createError(404, 'User does not exist by username'),
-                };
-            }
+    return UserRepository.update(existingUser, existingPerData, user, perData);
+  }
 
-            return { user: user };
-        } catch (e) {
-            console.error(e);
-            return { error: createError(500, 'Error in findByUsername') };
-        }
+  async delete(user: User) {
+    isNotUserAdmin(user);
+    user.isDeleted = true;
+    return UserRepository.save(user);
+  }
+
+  async findByUsername(username: string) {
+    const user = await UserRepository.findByUsername(username);
+
+    if (!user) {
+      throw new UserServiceError(
+        valMessage.VALUE_NOT_EXIST("Nombre de Usuario"),
+        username
+      );
     }
 
-    async findById(userId: string) {
-        try {
-            const existingUser = await UserRepository.findOneBy({
-                id: userId,
-            });
+    return user;
+  }
 
-            if (!existingUser) {
-                return { error: createError(404, 'User by ID not Found') };
-            }
-            return { user: existingUser };
-        } catch (e) {
-            console.error(e);
-            return { error: createError(500, 'Error in findById') };
-        }
+  async findById(userId: string) {
+    const existingUser = await UserRepository.findOneBy({
+      id: userId,
+    });
+
+    if (!existingUser) {
+      throw new UserServiceError(codeErrors.GEN_1("User"), userId);
+    }
+    return existingUser;
+  }
+
+  async findByIdWithPersonalData(userId: string) {
+    const userData = await UserRepository.findUserWithPerData(userId);
+
+    if (!userData) {
+      throw new UserServiceError(valMessage.VALUE_NOT_EXIST("User ID"), userId);
     }
 
-    async findByIdWithPersonalData(
-        userId: string
-    ): Promise<{ user: User; personalData: PersonalData }> {
-        try {
-            const userData = await UserRepository.findUserWithPerData(userId);
+    const user = {
+      id: userData.id,
+      username: userData.username,
+      email: userData.email,
+      password: userData.password,
+      isSingle: userData.isSingle,
+      isDeleted: userData.isDeleted,
+      role: userData.role,
+    };
 
-            if (userData) {
-                return userData;
-            } else {
-                console.error('Error finding user by ID', userId);
-            }
-        } catch (err) {
-            console.error('Error finding user by ID', userId);
-        }
+    return { user: user, perData: userData.personalData };
+  }
+
+  async getAll(tourId: string) {
+    const users: unknown[] = await UserRepository.getAll(tourId);
+
+    if (users.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Usuarios"));
     }
+    return users;
+  }
+
+  async getRanking(tourId: string, category: string) {
+    const users: unknown[] = await UserRepository.getRanking(tourId, category);
+
+    if (users.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Usuario"));
+    }
+    return users;
+  }
 }

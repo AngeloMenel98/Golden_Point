@@ -1,26 +1,34 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    ManyToMany,
-    JoinTable,
-} from 'typeorm';
-import { User } from './User';
-import { Match } from './Match';
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+  ManyToOne,
+} from "typeorm";
+import { User } from "./User";
+import { TeamMatch } from "./TeamMatch";
+import { Tournament } from "./Tournament";
 
 @Entity()
 export class Team {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
-    @Column({ length: 30 })
-    teamName: string;
+  @Column({ length: 50 })
+  teamName: string;
 
-    @ManyToMany(() => User, (user) => user.teams)
-    @JoinTable()
-    users: User[];
+  @Column({ length: 50 })
+  category: string;
 
-    @ManyToMany(() => Match, (match) => match.teams)
-    @JoinTable()
-    matches: Match[];
+  @ManyToMany(() => User, (user) => user.teams)
+  @JoinTable()
+  users: User[];
+
+  @OneToMany(() => TeamMatch, (teamMatch) => teamMatch.team)
+  teamMatches: TeamMatch[];
+
+  @ManyToOne(() => Tournament, (tournament) => tournament.teams)
+  tournament: Tournament;
 }

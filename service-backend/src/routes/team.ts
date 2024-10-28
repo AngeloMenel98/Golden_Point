@@ -1,56 +1,53 @@
-import { Request, Response, Router } from 'express';
-import { check, validationResult } from 'express-validator';
-import validationMsg from '../constants/validationMessages';
-import { teamController } from '../controllers';
+import { Router } from "express";
+import { check } from "express-validator";
+import validationMsg from "../constants/validationMessages";
+import { teamController } from "../controllers";
 
 const router = Router();
 
 router.post(
-    '/team/create',
-    [
-        check('adminUserId')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('adminUserId')),
-        check('usersId')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('usersId')),
-    ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { adminUserId, usersId } = req.body;
-            const { response, status } = await teamController.create(
-                adminUserId,
-                usersId
-            );
-            res.status(status).json(response);
-        } catch (err) {
-            console.error('Error creating team:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+  "/team/create",
+  [
+    check("adminUserId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("adminUserId")),
+    check("usersId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("usersId")),
+    check("tournamentId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("tournamentId")),
+    check("category")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Categoria")),
+  ],
+  teamController.create.bind(teamController)
 );
 
-router.get('/team/:id', async (req: Request, res: Response) => {
-    try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
+router.get("/team/:id", teamController.getTeam.bind(teamController));
 
-        const teamId = req.params.id;
-        const { response, status } = await teamController.getTeam(teamId);
-        res.status(status).json(response);
-    } catch (err) {
-        console.error('Error creating team:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+router.get(
+  "/teams/:tournamentId",
+  teamController.getTeams.bind(teamController)
+);
+
+router.post(
+  "/team/delete",
+  [
+    check("userId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+    check("teamsId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("teamsId")),
+  ],
+  teamController.delete.bind(teamController)
+);
 
 export default router;

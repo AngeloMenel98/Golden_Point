@@ -1,58 +1,90 @@
-import { MatchRepository } from '../repository';
-import { Match, Team } from '../entity';
-import { TeamService, TournamentService, CourtService } from '.';
+import { CourtRepository, MatchRepository } from "../repository";
+import { Court, Match, Team, Tournament } from "../entity";
+import { TeamService, CourtService } from ".";
+import { ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
 
 export class MatchService {
-    private teamService: TeamService;
-    private tournamentService: TournamentService;
-    private courtService: CourtService;
+  private teamService: TeamService;
+  private courtService: CourtService;
 
-    constructor() {
-        this.teamService = new TeamService();
-        this.tournamentService = new TournamentService();
-        this.courtService = new CourtService();
+  constructor() {
+    this.teamService = new TeamService();
+    this.courtService = new CourtService();
+  }
+
+  async create(
+    newMatch: Match,
+    teamIds: string[],
+    tournament: Tournament,
+    courtId: string,
+    groupStage: string
+  ) {
+    const teams: Team[] = await Promise.all(
+      teamIds.map((teamId) => this.teamService.findById(teamId))
+    );
+    const court = await this.courtService.findById(courtId);
+
+    if (teams.length != 2) {
+      throw new ServiceCodeError(codeErrors.MATCH_1);
     }
 
-    async create(
-        newMatch: Match,
-        teamIds: string[],
-        tournamentId: string,
-        courtId: string
-    ): Promise<Match> {
-        try {
-            const teams: Team[] = await Promise.all(
-                teamIds.map((teamId) => this.teamService.findById(teamId))
-            );
-            const tournament = await this.tournamentService.findById(
-                tournamentId
-            );
-            const court = await this.courtService.findById(courtId);
+    return MatchRepository.create(
+      newMatch,
+      teams,
+      tournament,
+      court,
+      groupStage
+    );
+  }
 
-            if (teams.length == 2 && tournament && court) {
-                newMatch.teams = teams;
-                newMatch.tournament = tournament;
-                newMatch.court = court;
+  async findById(matchId: string) {
+    const existingMatch = await MatchRepository.findOneBy({
+      id: matchId,
+    });
 
-                return MatchRepository.save(newMatch);
-            }
-            throw new Error('Invalid number of teams for a match');
-        } catch (e) {
-            console.error(e);
-            throw new Error('Error creating Match with Teams');
-        }
+    if (!existingMatch) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Match"));
     }
-    async findById(matchId: string): Promise<Match> {
-        try {
-            const existingMatch = await MatchRepository.findOneBy({
-                id: matchId,
-            });
 
-            if (existingMatch) {
-                return existingMatch;
-            }
-            console.error('Error finding Match by ID', matchId);
-        } catch (err) {
-            console.error('Error finding Match by ID', matchId);
-        }
+    return existingMatch;
+  }
+
+  async getMatches(tournamentId: string, category: string, groupStage: string) {
+    const matches: unknown[] = await MatchRepository.getMatches(
+      tournamentId,
+      category,
+      groupStage
+    );
+
+    if (matches.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Partido"));
     }
+    if (!matches) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Torneo"));
+    }
+
+    return matches;
+  }
+
+  async updateMatch(
+    matchId: string,
+    matchDate: string,
+    courtNumber: string,
+    clubId: string
+  ) {
+    const court = await CourtRepository.getCourtByClubId(clubId, courtNumber);
+
+    if (!court) {
+      throw new ServiceCodeError(codeErrors.COURT_1);
+    }
+
+    const match = await MatchRepository.updateMatch(matchId, matchDate, court);
+
+    if (!match) {
+      throw new ServiceCodeError(codeErrors.MATCH_2);
+    }
+
+    return match;
+  }
 }

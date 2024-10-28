@@ -1,122 +1,55 @@
-import { TourRepository } from '../repository';
-import { Tour } from '../entity';
-import { UserService } from '.';
-import { UserRole } from '../entity/User';
+import { TourRepository, UserRepository } from "../repository";
+import { Club, Tour } from "../entity";
+import { User } from "../entity/User";
+import { ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
 
 export class TourService {
-    private userService: UserService;
+  constructor() {}
 
-    constructor() {
-        this.userService = new UserService();
+  async create(newTour: Tour, user: User, clubs: Club[]) {
+    return TourRepository.create(newTour, user, clubs);
+  }
+
+  async delete(tour: Tour) {
+    tour.isDeleted = true;
+    return TourRepository.save(tour);
+  }
+
+  async joinUserToTour(user: User, tourCode: string) {
+    const existingTour = await TourRepository.findOneBy({
+      tourCode: tourCode,
+    });
+
+    if (!existingTour) {
+      throw new ServiceCodeError(codeErrors.TOUR_1);
     }
 
-    async create(
-        newTour: Tour,
-        userId: string
-    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
-        try {
-            const user = await this.userService.findById(userId);
+    const userInTour = await UserRepository.findUserInTour(user.id, tourCode);
 
-            if (user && user.role == UserRole.ADMIN) {
-                newTour.users = [user];
-                const savedTour = await TourRepository.save(newTour);
-                return { success: true, tour: savedTour };
-            }
-            return {
-                success: false,
-                message:
-                    'The Tour was not created beacuse the user is not SUPERADMIN or the ID does not exist',
-            };
-        } catch (e) {
-            console.error(e);
-            return {
-                success: false,
-                message: 'Error creating a Tour',
-            };
-        }
+    if (userInTour) {
+      throw new ServiceCodeError(codeErrors.TOUR_2(user.username));
     }
 
-    async delete(
-        tour: Tour
-    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
-        try {
-            tour.isDeleted = true;
-            const savedTour = await TourRepository.save(tour);
-            return { success: true, tour: savedTour };
-        } catch (e) {
-            console.error(e);
-            return {
-                success: false,
-                message: 'Error eliminating the Tour',
-            };
-        }
-    }
+    return TourRepository.joinUser(user, existingTour);
+  }
 
-    async joinUserToTour(
-        userId: string,
-        tourCode: string
-    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
-        try {
-            const existingTour = await TourRepository.findOneBy({
-                tourCode: tourCode,
-            });
-
-            const user = await this.userService.findById(userId);
-            if (existingTour && user) {
-                const usersInTour = await TourRepository.getUsersByTourId(
-                    existingTour.id
-                );
-                existingTour.users = [...usersInTour, user];
-                const savedTour = await TourRepository.save(existingTour);
-                return { success: true, tour: savedTour };
-            }
-            return { success: false, message: 'Error adding user to Tour' };
-        } catch (e) {
-            console.error(e);
-            return {
-                success: false,
-                message: 'Error adding User to Tour',
-            };
-        }
+  async findById(tourId: string) {
+    const existingTour = await TourRepository.findOneBy({
+      id: tourId,
+    });
+    if (!existingTour) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Tour"));
     }
+    return existingTour;
+  }
 
-    async findById(
-        tourId: string
-    ): Promise<{ success: boolean; tour?: Tour; message?: string }> {
-        try {
-            const existingTour = await TourRepository.findOneBy({
-                id: tourId,
-            });
-            if (existingTour) {
-                return { success: true, tour: existingTour };
-            }
-            return {
-                success: false,
-                message: 'Tour was not found by ID: ' + tourId,
-            };
-        } catch (e) {
-            console.error(e);
-            return {
-                success: false,
-                message: 'Error founding Tour',
-            };
-        }
-    }
+  async getAll(userId: string) {
+    const tours: unknown[] = await TourRepository.getAll(userId);
 
-    async getAll(): Promise<{
-        success: boolean;
-        tours?: Tour[];
-        message?: string;
-    }> {
-        try {
-            const existingTours = await TourRepository.getAll();
-            return { success: true, tours: existingTours };
-        } catch (e) {
-            console.error(e);
-            return {
-                success: false,
-                message: 'Error getting all Tours',
-            };
-        }
+    if (tours.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Tour"));
     }
+    return tours;
+  }
 }

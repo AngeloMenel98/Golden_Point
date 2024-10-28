@@ -1,49 +1,78 @@
-import { Match } from '../entity';
-import { MatchService } from '../services';
-import { validate } from 'class-validator';
+import { validationResult } from "express-validator";
+import { Match } from "../entity";
+import { MatchService } from "../services";
+import { Request, Response } from "express";
+import { isServiceCodeError } from "../errors/errors";
 
 export class MatchController {
-    private matchService: MatchService;
+  private matchService: MatchService;
 
-    constructor() {
-        this.matchService = new MatchService();
+  constructor() {
+    this.matchService = new MatchService();
+  }
+
+  async getMatches(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const { tournamentId, category, groupStage } = req.params;
+
+      const response = await this.matchService.getMatches(
+        tournamentId,
+        category,
+        groupStage
+      );
+
+      res.status(201).json(response);
+    } catch (e) {
+      console.error("Error getting matches:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
+  }
 
-    async create(
-        amountTourPoints: number,
-        amountTourCoins: number,
-        matchDate: string,
-        teamIds: string[],
-        tournamentId: string,
-        courtId: string
-    ) {
-        try {
-            const newMatch = new Match();
-            newMatch.amountTourCoins = amountTourCoins;
-            newMatch.amountTourPoints = amountTourPoints;
-            newMatch.matchDate = matchDate;
+  async updateMatch(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
 
-            const matchErrors = await validate(newMatch);
+      const { matchId, matchDate, courtNumber, clubId } = req.body;
 
-            if (matchErrors.length > 0) {
-                console.log('Validation failed. Errors:', matchErrors);
-                return { response: { error: 'Validation error' }, status: 400 };
-            }
-            const resp = await this.matchService.create(
-                newMatch,
-                teamIds,
-                tournamentId,
-                courtId
-            );
-            return { resp, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                resp: { error: 'Error creating new Match' },
-                status: 500,
-            };
-        }
+      const response = await this.matchService.updateMatch(
+        matchId,
+        matchDate,
+        courtNumber,
+        clubId
+      );
+
+      res.status(201).json(response);
+    } catch (e) {
+      console.error("Error updating match:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
+  }
 }
 
 export default new MatchController();

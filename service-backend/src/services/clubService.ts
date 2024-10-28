@@ -1,51 +1,45 @@
-import { ClubRepository } from '../repository';
-import { CalendarClub, Club, Court } from '../entity';
-import { UserRole } from '../entity/User';
-import { TourService, CalendarClubService, CourtService } from '.';
+import { ClubRepository } from "../repository";
+import { CalendarClub, Club, Court } from "../entity";
+import { TourService } from ".";
+import { ServiceCodeError } from "../errors/errorsClass";
+import codeErrors from "../constants/codeErrors";
 
 export class ClubService {
-    private tourService: TourService;
-    private calendarClubService: CalendarClubService;
-    private courtService: CourtService;
+  private tourService: TourService;
 
-    constructor() {
-        this.tourService = new TourService();
-        this.calendarClubService = new CalendarClubService();
-        this.courtService = new CourtService();
+  constructor() {
+    this.tourService = new TourService();
+  }
+
+  async create(newClub: Club, newCalClub: CalendarClub, courtsNumber: number) {
+    const newCourts: Court[] = [];
+    for (let i = 0; i < courtsNumber; i = i + 1) {
+      const newCourt = new Court();
+      newCourt.courtNumber = i + 1;
+
+      newCourts.push(newCourt);
     }
 
-    async create(
-        newClub: Club,
-        newCalClub: CalendarClub,
-        newCourts: Court[],
-        userRole: string,
-        tourId: string,
-        courtsNumber: number
-    ): Promise<Club> {
-        try {
-            const existingTour = await this.tourService.findById(tourId);
+    return ClubRepository.create(newClub, newCalClub, newCourts);
+  }
 
-            if (existingTour.success && userRole == UserRole.ADMIN) {
-                newClub.tour = existingTour.tour;
-                newClub.calendarClub = newCalClub;
+  async getAll() {
+    const existingClubs: unknown[] = await ClubRepository.getAll();
 
-                this.calendarClubService.create(newCalClub);
-                const savedClub = await ClubRepository.save(newClub);
-                this.courtService.create(newCourts, newClub, courtsNumber);
-
-                return savedClub;
-            }
-        } catch (e) {
-            console.error('Error creating club in Service', e);
-        }
+    if (existingClubs.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
     }
 
-    async getAll(): Promise<Club> {
-        try {
-            const existingTours = await ClubRepository.getAll();
-            return existingTours;
-        } catch (e) {
-            console.error(e);
-        }
+    return existingClubs;
+  }
+
+  async findById(clubId: string) {
+    const existingClub = await ClubRepository.findOneBy({
+      id: clubId,
+    });
+    if (!existingClub) {
+      throw new ServiceCodeError(codeErrors.GEN_1("Club"));
     }
+    return existingClub;
+  }
 }

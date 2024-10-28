@@ -1,50 +1,79 @@
-import { Request, Response, Router } from 'express';
-import { check, validationResult } from 'express-validator';
-import validationMsg from '../constants/validationMessages';
-import { tournController } from '../controllers';
+import { Router } from "express";
+import { check } from "express-validator";
+import validationMsg from "../constants/validationMessages";
+import { tournController } from "../controllers";
 
 const router = Router();
 
 router.post(
-    '/tournament/create',
-    [
-        check('title')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('title')),
-        check('tourId')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('tourId')),
-        check('master')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('master')),
-        check('categoryData')
-            .not()
-            .isEmpty()
-            .withMessage(validationMsg.VALUE_IS_REQUIRED('categoryData')),
-    ],
-    async (req: Request, res: Response) => {
-        try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({ errors: errors.array() });
-            }
-
-            const { tourId, title, master, categoryData } = req.body;
-            const { resp, status } = await tournController.create(
-                tourId,
-                title,
-                master,
-                categoryData
-            );
-            return res.status(status).json(resp);
-        } catch (err) {
-            console.error('Error registering tournament:', err);
-            res.status(500).json({ error: 'Internal Server Error' });
-        }
-    }
+  "/tournament/create",
+  [
+    check("title")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Nombre del Torneo")),
+    check("tourId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("tourId")),
+    check("userId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+    check("master")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Master")),
+    check("categories")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Categorias")),
+  ],
+  tournController.create.bind(tournController)
 );
 
+router.post(
+  "/tournament/delete",
+  [
+    check("tournamentId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("tournamentId")),
+    check("userId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+  ],
+  tournController.delete.bind(tournController)
+);
+
+router.post(
+  "/tournament/start",
+  [
+    check("tournamentId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("tournamentId")),
+    check("userId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+  ],
+  tournController.start.bind(tournController)
+);
+
+router.get(
+  "/tournament/cats/:tournId",
+  tournController.getCatByTournId.bind(tournController)
+);
+
+router.get(
+  "/tournament/tourns/:tourId",
+  tournController.getAll.bind(tournController)
+);
+
+router.get(
+  "/tournament/:userId",
+  tournController.getMyTournaments.bind(tournController)
+);
 export default router;

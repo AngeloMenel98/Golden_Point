@@ -1,18 +1,22 @@
-import express = require('express');
-import cors = require('cors');
-import * as dotenv from 'dotenv';
-import configureRoutes from './routes/index';
-import { AppDataSource } from './data-source';
+import express = require("express");
+import cors = require("cors");
+import path = require("path");
+import * as dotenv from "dotenv";
+import configureRoutes from "./routes/index";
+import { AppDataSource } from "./data-source";
 
-dotenv.config();
+const envFilePath = path.join(__dirname, "..", ".env.dev");
+
+dotenv.config({ path: envFilePath });
 
 AppDataSource.initialize()
-    .then(async () => {})
-    .catch((error) => console.log(error));
+  .then(async () => {})
+  .catch((error) => console.log(error));
 
 const app = express();
 
 const PORT = process.env.PORT;
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,5 +31,5 @@ app.use(cors());
 
 configureRoutes(app);
 app.listen(PORT, () => {
-    console.log(`Servidor iniciado en http://localhost:${PORT}`);
+  console.log(`Servidor iniciado en http://localhost:${PORT}`);
 });

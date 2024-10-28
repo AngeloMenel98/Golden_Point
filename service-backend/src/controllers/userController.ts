@@ -1,245 +1,302 @@
-import { PersonalData, TourCoin, User } from '../entity';
-import { UserService } from '../services';
-import { validate } from 'class-validator';
-import { UserRole } from '../entity/User';
-import * as jwt from 'jsonwebtoken';
+import { Request, Response } from "express";
+import * as jwt from "jsonwebtoken";
+import { validationResult } from "express-validator";
+
+import { PersonalData, TourCoin, User } from "../entity";
+import { UserService } from "../services";
+import { UserRole } from "../entity/User";
+import { isServiceCodeError, isUserServiceError } from "../errors/errors";
 
 export class UserController {
-    private userService: UserService;
+  private userService: UserService;
 
-    constructor() {
-        this.userService = new UserService();
+  constructor() {
+    this.userService = new UserService();
+  }
+
+  async logIn(req: Request, res: Response) {
+    try {
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          error: errs.array().map((e) => ({
+            msg: e.msg,
+          })),
+        });
+      }
+
+      const { username, password } = req.body;
+
+      const user = await this.userService.logIn(username, password);
+
+      const response = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        isSingle: user.isSingle,
+        role: user.role,
+      };
+
+      const secretKey = process.env.JWT_SECRET_KEY;
+      const token = jwt.sign(response, secretKey);
+
+      const tokenJSON = {
+        token: token,
+      };
+
+      res.status(201).json(tokenJSON);
+    } catch (e) {
+      console.error("Error Loggin In", e);
+
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
-    async logIn(username: string, password: string) {
-        try {
-            const resp = await this.userService.logIn(username, password);
+  }
 
-            if (resp.error) {
-                return {
-                    response: { error: resp.error.message },
-                    status: resp.error.status,
-                };
-            }
+  async create(req: Request, res: Response) {
+    try {
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          error: errs.array().map((e) => ({
+            msg: e.msg,
+          })),
+        });
+      }
 
-            const response = {
-                id: resp.user.id,
-                username: resp.user.username,
-                email: resp.user.email,
-                isSingle: resp.user.isSingle,
-            };
+      const {
+        username,
+        email,
+        password,
+        firstName,
+        lastName,
+        location,
+        phoneNumber,
+      } = req.body;
 
-            const secretKey = process.env.JWT_SECRET_KEY;
-            const token = jwt.sign(response, secretKey);
+      const newUser = new User();
+      newUser.username = username;
+      newUser.email = email;
+      newUser.hashPassword(password);
+      newUser.isSingle = true;
+      newUser.role = UserRole.USER;
 
-            return { response: { token }, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error loggin in' },
-                status: 500,
-            };
-        }
+      const newPerData = new PersonalData();
+      newPerData.firstName = firstName;
+      newPerData.lastName = lastName;
+      newPerData.location = location;
+      newPerData.phoneNumber = phoneNumber;
+
+      const newTourCoin = new TourCoin();
+      newTourCoin.coins = 0;
+
+      const user = await this.userService.create(
+        newUser,
+        newPerData,
+        newTourCoin
+      );
+
+      const response = {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        isSingle: user.isSingle,
+      };
+
+      res.status(201).json(response);
+    } catch (e: unknown) {
+      console.error("Error creating user:", e);
+
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ errors: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
+  }
 
-    async create(
-        username: string,
-        email: string,
-        password: string,
-        firstName: string,
-        lastName: string,
-        location: string,
-        phoneNumber: string
-    ) {
-        try {
-            const newUser = new User();
-            newUser.username = username;
-            newUser.email = email;
-            newUser.hashPassword(password);
-            newUser.isSingle = true;
-            newUser.role = UserRole.USER;
+  async update(req: Request, res: Response) {
+    try {
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
+          })),
+        });
+      }
 
-            const newPerData = new PersonalData();
-            newPerData.firstName = firstName;
-            newPerData.lastName = lastName;
-            newPerData.location = location;
-            newPerData.phoneNumber = phoneNumber;
+      const {
+        userId,
+        password,
+        isSingle,
+        firstName,
+        lastName,
+        phoneNumber,
+        location,
+      } = req.body;
 
-            const newTourCoin = new TourCoin();
-            newTourCoin.coins = 0;
+      const user = await this.userService.findById(userId);
 
-            const userErrors = await validate(newUser);
-            const perErrors = await validate(newPerData);
+      const updatedUser = new User();
+      updatedUser.username = user.username;
+      updatedUser.email = user.email;
+      updatedUser.hashPassword(password);
+      updatedUser.isSingle = isSingle;
+      updatedUser.role = UserRole.USER;
 
-            if (userErrors.length > 0 || perErrors.length > 0) {
-                console.log(
-                    'Validation failed. Errors:',
-                    userErrors,
-                    perErrors
-                );
-                return { response: { error: 'Validation error' }, status: 400 };
-            }
-            const resp = await this.userService.create(
-                newUser,
-                newPerData,
-                newTourCoin
-            );
+      const updatedPerData = new PersonalData();
+      updatedPerData.firstName = firstName;
+      updatedPerData.lastName = lastName;
+      updatedPerData.phoneNumber = phoneNumber;
+      updatedPerData.location = location;
 
-            if (resp.error) {
-                return {
-                    response: { error: resp.error.message },
-                    status: resp.error.status,
-                };
-            }
-            const response = {
-                id: resp.user.id,
-                username: resp.user.username,
-                email: resp.user.email,
-                isSingle: resp.user.isSingle,
-            };
+      const resUser = await this.userService.update(
+        updatedUser,
+        user,
+        updatedPerData
+      );
 
-            return { response, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error creating new User' },
-                status: 500,
-            };
-        }
+      const response = {
+        id: resUser.id,
+        username: resUser.username,
+        email: resUser.email,
+        isSingle: resUser.isSingle,
+      };
+
+      res.status(201).json(response);
+    } catch (e) {
+      console.error("Error updating user:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ errors: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
+  }
 
-    async update(
-        userId: string,
-        password: string,
-        isSingle: boolean,
-        firstName: string,
-        lastName: string,
-        phoneNumber: string,
-        location: string
-    ) {
-        try {
-            const resp = await this.userService.findById(userId);
+  async delete(req: Request, res: Response) {
+    try {
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
+          })),
+        });
+      }
 
-            if (resp.error) {
-                return {
-                    response: { error: resp.error.message },
-                    status: resp.error.status,
-                };
-            }
+      const { userId } = req.body;
+      const user = await this.userService.findById(userId);
 
-            if (resp.user) {
-                const updatedUser = new User();
-                updatedUser.username = resp.user.username;
-                updatedUser.email = resp.user.email;
-                updatedUser.hashPassword(password);
-                updatedUser.isSingle = isSingle;
-                updatedUser.role = UserRole.USER;
+      const resp = await this.userService.delete(user);
+      const response = {
+        id: resp.id,
+        username: resp.username,
+        email: resp.email,
+        isSingle: resp.isSingle,
+      };
+      res.status(201).json(response);
+    } catch (e) {
+      console.error(e);
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ errors: [{ msg: e.message }] });
+      }
 
-                const updatedPerData = new PersonalData();
-                updatedPerData.firstName = firstName;
-                updatedPerData.lastName = lastName;
-                updatedPerData.phoneNumber = phoneNumber;
-                updatedPerData.location = location;
-                updatedPerData.user = resp.user;
-
-                const userErrors = await validate(updatedUser);
-                const perDataErrors = await validate(updatedPerData);
-
-                if (userErrors.length > 0 || perDataErrors.length > 0) {
-                    console.log(
-                        'Validation failed. Errors:',
-                        userErrors,
-                        perDataErrors
-                    );
-                    return {
-                        response: { error: 'Validation error' },
-                        status: 400,
-                    };
-                }
-
-                const resUser = await this.userService.update(
-                    updatedUser,
-                    resp.user,
-                    updatedPerData
-                );
-
-                if (resUser.error) {
-                    return {
-                        response: { error: resp.error.message },
-                        status: resp.error.status,
-                    };
-                }
-
-                const response = {
-                    id: resUser.user.id,
-                    username: resUser.user.username,
-                    email: resUser.user.email,
-                    isSingle: resUser.user.isSingle,
-                };
-                return { response, status: 201 };
-            }
-            return {
-                response: { error: 'User not Found' },
-                status: 404,
-            };
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error updating User' },
-                status: 500,
-            };
-        }
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
+  }
 
-    async delete(userId: string) {
-        try {
-            let resp = await this.userService.findById(userId);
+  async findByUsername(req: Request, res: Response) {
+    try {
+      const errs = validationResult(req);
+      if (!errs.isEmpty()) {
+        return res.status(401).json({
+          errors: errs.array().map((e) => ({
+            msg: e.msg,
+          })),
+        });
+      }
 
-            if (resp.error) {
-            }
+      const { username } = req.params;
+      const resp = await this.userService.findByUsername(username);
 
-            resp = await this.userService.delete(resp.user);
-            const response = {
-                id: resp.user.id,
-                username: resp.user.username,
-                email: resp.user.email,
-                isSingle: resp.user.isSingle,
-            };
-            return { response, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error deleting User' },
-                status: 500,
-            };
-        }
+      const response = {
+        id: resp.id,
+        username: resp.username,
+        email: resp.email,
+        isSingle: resp.isSingle,
+      };
+      res.status(201).json(response);
+    } catch (e) {
+      console.error("Error finding username:", e);
+
+      if (isUserServiceError(e)) {
+        return res.status(400).json({ errors: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
+  }
 
-    async findByUsername(username: string) {
-        try {
-            const resp = await this.userService.findByUsername(username);
+  async getUsers(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
 
-            if (resp.error) {
-                return {
-                    response: { error: resp.error.message },
-                    status: resp.error.status,
-                };
-            }
+      const tourId = req.params.tourId;
 
-            const response = {
-                id: resp.user.id,
-                username: resp.user.username,
-                email: resp.user.email,
-                isSingle: resp.user.isSingle,
-            };
-            return { response, status: 201 };
-        } catch (e) {
-            console.error(e);
-            return {
-                response: { error: 'Error finding User by username' },
-                status: 500,
-            };
-        }
+      const users = await this.userService.getAll(tourId);
+
+      res.status(201).json(users);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
+  }
+
+  async getRanking(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const tourId = req.params.tourId;
+      const category = req.params.category;
+
+      const users = await this.userService.getRanking(tourId, category);
+
+      res.status(201).json(users);
+    } catch (e) {
+      console.error(e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
 }
 
 export default new UserController();
