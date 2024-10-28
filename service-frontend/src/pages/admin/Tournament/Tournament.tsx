@@ -132,10 +132,6 @@ const Tournament: React.FC = () => {
     navigate("/ranking");
   };
 
-  const openClubs = () => {
-    navigate("/clubs");
-  };
-
   const breadcrumbPath = [
     { name: "Tours", link: "/" },
     { name: "Torneos", link: "/tournaments" },
@@ -178,9 +174,6 @@ const Tournament: React.FC = () => {
               icon={<RankingIcon width={23} height={18} color={pastelGreen} />}
               onClick={openRankings}
             />
-          </HeaderButtons>
-          <HeaderButtons>
-            <SecondaryButton text="Clubs" onClick={openClubs} />
           </HeaderButtons>
         </HeaderContainer>
         <SpaceContainer>
