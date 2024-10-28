@@ -2,6 +2,8 @@ import SecondaryInput from "../../../../../components/inputs/SecondaryInput/Seco
 import { ModalWrapper, Container, ButtonContainer } from "./JoinModalStyle";
 import PrimaryButton from "../../../../../components/buttons/PrimaryButton/PrimaryButton";
 import { Errors } from "../../../../../errors/Errors";
+import { useRef } from "react";
+import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
 
 interface JoinModalProps {
   open: boolean;
@@ -22,8 +24,11 @@ const JoinModal: React.FC<JoinModalProps> = ({
   onClose,
   onJoinCode,
 }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
+
   return (
-    <ModalWrapper open={open} width={width}>
+    <ModalWrapper open={open} width={width} ref={modalRef}>
       <Container>
         <SecondaryInput
           id="code"
@@ -39,7 +44,7 @@ const JoinModal: React.FC<JoinModalProps> = ({
       <Container>
         <ButtonContainer>
           <PrimaryButton
-            text="Cancelar"
+            text="Cerrar"
             isDangerousAction={true}
             onClick={onClose}
           />

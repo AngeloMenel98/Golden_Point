@@ -13,20 +13,21 @@ import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
 import { useLocation } from "react-router-dom";
-import DropDown from "../../../components/dropdown/DropDown/DropDown";
 import MatchCard from "./Cards/MatchCard/MatchCard";
 import useGetMatches from "../../../hooks/useGetMatches";
 import { MatchDTO } from "../../../entities/dtos/MatchDTO";
 import useGetTeams from "../../../hooks/useGetTeams";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
+import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
+import BouncingCircles from "../../../components/spinner/spinner";
 
 const MatchesUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const tournamentId = params.get("tournamentId");
+  const tournamentId = params.get("tournamentId") || "";
 
   const cats = useGetCatsByTournId(tournamentId);
   const stages = [
@@ -39,15 +40,16 @@ const MatchesUser: React.FC = () => {
     "Final",
   ];
 
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [selectedGroup, setSelectedGroup] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [selectedGroup, setSelectedGroup] = useState<string>("");
   const [allMatches, setAllMatches] = useState<MatchDTO[]>([]);
 
-  const { matches, errors, refetch } = useGetMatches(
+  const { matches, errors, isLoading, hasFetched, refetch } = useGetMatches(
     tournamentId,
-    selectedGroup[0],
-    selectedCategory[0]
+    selectedGroup,
+    selectedCategory
   );
+
   const { allTeams } = useGetTeams(tournamentId);
 
   useEffect(() => {
@@ -58,17 +60,16 @@ const MatchesUser: React.FC = () => {
     setAllMatches(matches);
   }, [matches]);
 
-  const handleChangeGroup = (group: string[]) => {
+  const handleChangeGroup = (group: string) => {
     setSelectedGroup(group);
   };
 
-  const handleChangeCat = (category: string[]) => {
+  const handleChangeCat = (category: string) => {
     setSelectedCategory(category);
   };
 
   const filteredMatches = allMatches.filter(
-    (m) =>
-      m.GroupName === selectedGroup[0] && m.CategoryTeam == selectedCategory[0]
+    (m) => m.GroupName === selectedGroup && m.CategoryTeam == selectedCategory
   );
 
   const breadcrumbPath = [
@@ -79,40 +80,45 @@ const MatchesUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <TournamentSection>
         <HeaderContainer>
           <Breadcrumb path={breadcrumbPath} />
         </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>
-            <DropDown
+            <DropDownUnique
               buttonText="Categoria"
               items={cats}
               width={225}
               error={""}
               onChange={handleChangeCat}
-              amountChars={20}
             />
           </ButtonContainer>
           <ButtonContainer>
-            <DropDown
+            <DropDownUnique
               buttonText="Instancia"
               items={stages}
               width={150}
               error={""}
               onChange={handleChangeGroup}
-              amountChars={20}
             />
           </ButtonContainer>
         </SpaceContainer>
-        <SpaceContainer>
-          <MatchCard
-            error={errors.notFound}
-            matches={filteredMatches}
-            teams={allTeams}
-          />
-        </SpaceContainer>
+        {hasFetched && (
+          <SpaceContainer>
+            <MatchCard
+              error={errors?.notFound}
+              matches={filteredMatches}
+              teams={allTeams}
+            />
+          </SpaceContainer>
+        )}
+        {isLoading && (
+          <SpaceContainer>
+            <BouncingCircles text="categoria e instancia" />
+          </SpaceContainer>
+        )}
       </TournamentSection>
     </MainContainer>
   );

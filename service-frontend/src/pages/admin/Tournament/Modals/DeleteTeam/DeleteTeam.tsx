@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../../../../icons/SearchIcon/SearchIcon";
@@ -18,19 +18,24 @@ import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 import { DeletedTeam } from "../../../../../services/TeamApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
+import { TournamentDTO } from "../../../../../entities/dtos/TournamentDTO";
+import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
 
 interface DeleteTeamProps {
-  tournamentId: string;
+  tournament: TournamentDTO;
   onClose: () => void;
 }
 
-const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournamentId, onClose }) => {
-  const { allTeams, teamApi } = useGetTeams(tournamentId);
+const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournament, onClose }) => {
+  const { allTeams, teamApi } = useGetTeams(tournament.Id);
 
   const user = useSelector((state: RootState) => state.user.user);
 
   const [fullName, setFullName] = useState<string>("");
   const [teams, setTeams] = useState<TeamDTO[]>([]);
+
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
 
   const handleChange = (e: any) => {
     setFullName(e.target.value);
@@ -50,12 +55,13 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournamentId, onClose }) => {
 
     teams.forEach((t) => {
       deletedTeams.teamsId.push(t.TeamId);
-      deletedTeams.userId = user?.Id;
+      deletedTeams.userId = user?.id;
     });
 
     const res = await teamApi.deleteTournament(deletedTeams);
 
     if (res >= 1) {
+      tournament.TeamsCount -= 1;
       onClose();
     } else {
       alert("Error");
@@ -64,7 +70,7 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournamentId, onClose }) => {
 
   return (
     <ModalWrapper>
-      <ModalContent width={40}>
+      <ModalContent width={40} ref={modalRef}>
         <HeaderContainer>
           <H3Styled>Equipos</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />

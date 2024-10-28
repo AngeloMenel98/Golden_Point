@@ -31,7 +31,10 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
       <TourRowContainer ref={ref}>
         <LeftContainer>
           <MemberContainer>
-            <TourName onClick={() => handleSelectTournament(tournData.Id)}>
+            <TourName
+              onClick={() => handleSelectTournament(tournData.Id)}
+              disabled={tournData.Status == "pending"}
+            >
               {tournData.Title}
             </TourName>
           </MemberContainer>

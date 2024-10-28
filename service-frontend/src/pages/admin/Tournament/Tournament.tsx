@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -24,32 +24,31 @@ import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryI
 import { RootState } from "../../../reduxSlices/store";
 import TournamentModal from "./Modals/CreateTournament/TournamentModal";
 import useGetTournaments from "../../../hooks/useGetTournaments";
-import { Category, TournamentDTO } from "../../../entities/dtos/TournamentDTO";
-import { TournCredentials } from "../../../services/TournamentApi";
+import { Category } from "../../../entities/dtos/TournamentDTO";
+import TournamentAPI, {
+  TournCredentials,
+} from "../../../services/TournamentApi";
 import { Errors } from "../../../errors/Errors";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
-import UsersModal from "../../user/Tournament/Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import Footer from "../../../components/footer/footer";
+import BouncingCircles from "../../../components/spinner/spinner";
+import UsersModal from "../../../components/userModal/UsersModal";
+import { CreationTournament } from "../../../utils/interfaces";
 
-export interface CreationData {
-  tournamentName: string;
-  master: number;
-  maleCat: string[];
-  femaleCat: string[];
-}
+const tournApi = new TournamentAPI();
 
 const Tournament: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const tourData = useSelector((state: RootState) => state.tour.tour);
+  const tour = useSelector((state: RootState) => state.tour.tour);
 
   const navigate = useNavigate();
   const [isCreateOpen, setCreateOpen] = useState(false);
   const [isUserOpen, setUserOpen] = useState(false);
   const [tournamentTitle, setTournTitle] = useState("");
 
-  const [data, setData] = useState<CreationData>({
+  const [data, setData] = useState<CreationTournament>({
     tournamentName: "",
     master: 0,
     maleCat: [],
@@ -58,8 +57,12 @@ const Tournament: React.FC = () => {
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  const { tournaments, tournAPI, errorTournament, addTournToState } =
-    useGetTournaments(tourData);
+  const { tournaments, errors, isLoading, refetch, hasFetched } =
+    useGetTournaments(tour);
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -101,14 +104,14 @@ const Tournament: React.FC = () => {
     });
 
     const tournament: TournCredentials = {
-      userId: user?.Id,
-      tourId: tourData?.Id,
+      userId: user?.id,
+      tourId: tour?.id,
       title: data.tournamentName,
       master: data.master,
       categories: categories,
     };
 
-    const res = await tournAPI.addTournament(tournament);
+    const res = await tournApi.addTournament(tournament);
 
     if (res.fieldErrors) {
       setFieldErrors((prevErrors: any) => ({
@@ -116,14 +119,8 @@ const Tournament: React.FC = () => {
         ...res.fieldErrors,
       }));
     } else {
-      const newTourn: TournamentDTO = new TournamentDTO();
-      newTourn.Id = res.id;
-      newTourn.Title = res.title;
-      newTourn.Master = res.master;
-      newTourn.TeamsCount = 0;
-      newTourn.Categories = categories;
-      addTournToState(newTourn);
       createCloseModal();
+      refetch();
     }
   };
 
@@ -135,10 +132,6 @@ const Tournament: React.FC = () => {
     navigate("/ranking");
   };
 
-  const openClubs = () => {
-    navigate("/clubs");
-  };
-
   const breadcrumbPath = [
     { name: "Tours", link: "/" },
     { name: "Torneos", link: "/tournaments" },
@@ -148,13 +141,13 @@ const Tournament: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <TournamentSection>
         <BreadCrumbContainer>
           <Breadcrumb path={breadcrumbPath} />
         </BreadCrumbContainer>
         <HeaderContainer>
-          <H3>Tour: {tourData?.TourTitle}</H3>
+          <H3>Tour: {tour?.tourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -169,7 +162,11 @@ const Tournament: React.FC = () => {
             />
           </HeaderButtons>
           {isUserOpen && (
-            <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
+            <UsersModal
+              tourId={tour?.id}
+              onClose={usersCloseModal}
+              isAddTeam={false}
+            />
           )}
           <HeaderButtons>
             <SecondaryButton
@@ -177,9 +174,6 @@ const Tournament: React.FC = () => {
               icon={<RankingIcon width={23} height={18} color={pastelGreen} />}
               onClick={openRankings}
             />
-          </HeaderButtons>
-          <HeaderButtons>
-            <SecondaryButton text="Clubs" onClick={openClubs} disabled={true} />
           </HeaderButtons>
         </HeaderContainer>
         <SpaceContainer>
@@ -211,12 +205,20 @@ const Tournament: React.FC = () => {
         </SpaceContainer>
 
         <H3>Lista de Torneos</H3>
-        <TournamentCard
-          tournaments={tournaments}
-          tournamentTitle={tournamentTitle}
-          error={errorTournament}
-          setShFooter={setShowFooter}
-        />
+        {hasFetched && (
+          <TournamentCard
+            tournaments={tournaments}
+            tournamentTitle={tournamentTitle}
+            error={errors.notFound}
+            refetch={refetch}
+            setShFooter={setShowFooter}
+          />
+        )}
+        {isLoading && (
+          <SpaceContainer>
+            <BouncingCircles text="torneos" />
+          </SpaceContainer>
+        )}
       </TournamentSection>
 
       {showFooter && (

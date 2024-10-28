@@ -21,9 +21,10 @@ import SetAPI, { SetAtts } from "../../../../../services/SetApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
 import MatchAPI, { MatchCred } from "../../../../../services/MatchApi";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Errors } from "../../../../../errors/Errors";
 import { parseDateTime } from "../../../../../utils/transformDate";
+import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
 
 interface EditMatchProps {
   editMatch: MatchData;
@@ -44,6 +45,8 @@ const EditMatch: React.FC<EditMatchProps> = ({
   const user = useSelector((state: RootState) => state.user.user);
 
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
 
   const handleSets = async () => {
     let setT1 = [];
@@ -57,7 +60,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
     }
 
     const newSets: SetAtts = {
-      userId: user?.Id,
+      userId: user?.id,
       setsTeam1: setT1,
       setsTeam2: setT2,
       teamsId: editMatch.teamsId.map((t) => t),
@@ -90,12 +93,13 @@ const EditMatch: React.FC<EditMatchProps> = ({
       }));
     } else {
       onClose();
+      reloadMatches();
     }
   };
 
   return (
     <ModalWrapper>
-      <ModalContent width={50} height={50}>
+      <ModalContent width={50} height={50} ref={modalRef}>
         <HeaderContainer>
           <H3Styled>Editar Partido</H3Styled>
           <CrossIcon width={25} height={25} color={red} onClick={onClose} />

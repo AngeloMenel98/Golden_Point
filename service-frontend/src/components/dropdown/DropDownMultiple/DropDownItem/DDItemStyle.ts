@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { lightGreen } from "../../../utils/colors";
+import { lightGreen } from "../../../../utils/colors";
 
 export const Container = styled.div<{ width: number }>`
   display: flex;

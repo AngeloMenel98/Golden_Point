@@ -55,7 +55,7 @@ export class SetController {
       const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
 
       await this.teamMatchService.addWinner(teamId, matchId);
-      const groups = await this.tournamentService.getWinningTeams(
+      /*const groups = await this.tournamentService.getWinningTeams(
         tournamentId,
         ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"]
       );
@@ -85,7 +85,7 @@ export class SetController {
 
       if (semis !== -1) {
         await this.tournamentService.createNextMatches(semis, tournament);
-      }
+      }*/
 
       const response = {
         winner,

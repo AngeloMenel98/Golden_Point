@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
 
 import {
@@ -7,20 +8,30 @@ import {
   H4Styled,
   ModalContent,
   ModalWrapper,
+  NameSpan,
 } from "./ConfirmStyle";
+import useClickOutside from "../../hooks/functionalities/useClickOutside";
 
 interface Props {
-  text: string;
+  name: string;
   onClose: () => void;
   onDelete: () => void;
 }
 
-const ConfirmModal: React.FC<Props> = ({ text, onClose, onDelete }) => {
+const ConfirmModal: React.FC<Props> = ({ name, onClose, onDelete }) => {
+  const handleConfirmDelete = () => {
+    onDelete();
+    onClose();
+  };
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
   return (
     <ModalWrapper>
-      <ModalContent width={15}>
+      <ModalContent width={20} ref={modalRef}>
         <Container>
-          <H4Styled>¿Desea eliminar el {text}?</H4Styled>
+          <H4Styled>
+            ¿Desea eliminar a <NameSpan>{name}</NameSpan>?
+          </H4Styled>
         </Container>
         <FooterContainer>
           <ButtonSection>
@@ -31,7 +42,7 @@ const ConfirmModal: React.FC<Props> = ({ text, onClose, onDelete }) => {
             />
           </ButtonSection>
           <ButtonSection>
-            <SecondaryButton text="Eliminar" onClick={onDelete} />
+            <SecondaryButton text="Confirmar" onClick={handleConfirmDelete} />
           </ButtonSection>
         </FooterContainer>
       </ModalContent>

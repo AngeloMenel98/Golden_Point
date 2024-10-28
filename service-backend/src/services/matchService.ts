@@ -75,7 +75,6 @@ export class MatchService {
   ) {
     const court = await CourtRepository.getCourtByClubId(clubId, courtNumber);
 
-    console.log(court);
     if (!court) {
       throw new ServiceCodeError(codeErrors.COURT_1);
     }

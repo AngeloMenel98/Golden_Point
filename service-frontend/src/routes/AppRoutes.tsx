@@ -12,14 +12,14 @@ import MatchesUser from "../pages/user/Matches/Matches";
 import TournamentUser from "../pages/user/Tournament/Tournament";
 import Rankings from "../pages/admin/Ranking/Ranking";
 
-import useSetUser from "../hooks/useSetUser";
+import useSetUser from "../hooks/reduxHooks/useSetUser";
+import Clubs from "../pages/admin/Clubs/Clubs";
 
 const AppRoutes: React.FC = () => {
   useSetUser();
-
   const user = useSelector((state: RootState) => state.user.user);
 
-  const isAdmin = user && user.Role == "admin";
+  const isAdmin = user && user.role == "admin";
 
   return (
     <div>
@@ -36,6 +36,7 @@ const AppRoutes: React.FC = () => {
           element={isAdmin ? <Matches /> : <MatchesUser />}
         />
         <Route path="/ranking" element={<Rankings />} />
+        <Route path="/clubs" element={isAdmin ?? <Clubs />} />
       </Routes>
     </div>
   );

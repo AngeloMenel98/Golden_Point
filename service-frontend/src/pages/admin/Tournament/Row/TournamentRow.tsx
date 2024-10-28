@@ -24,7 +24,7 @@ import ConfirmModal from "../../../../components/confirmation/Confirm";
 interface TournamentRowProps {
   tournData: TournamentDTO;
   onOpen: (tournament: TournamentDTO) => void;
-  onDelete: () => void;
+  onDelete: (tourn: TournamentDTO) => void;
 }
 
 const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
@@ -88,9 +88,9 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
 
         {isDeleteOpen && (
           <ConfirmModal
-            text={"Torneo"}
+            name={tournData.Title}
             onClose={closeModal}
-            onDelete={onDelete}
+            onDelete={() => onDelete(tournData)}
           />
         )}
       </TourRowContainer>

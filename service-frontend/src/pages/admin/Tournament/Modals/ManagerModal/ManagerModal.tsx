@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
-import UsersModal from "../UsersModal/UsersModal";
+import UsersModal from "../../../../../components/userModal/UsersModal";
 import { useState } from "react";
 import AddTeamModal from "../AddTeam/AddTeam";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
@@ -33,7 +33,7 @@ const ManagerModal: React.FC<ManagerProps> = ({ tournament, onClose }) => {
   return (
     <>
       <UsersModal
-        tourId={tour?.Id}
+        tourId={tour?.id}
         onClose={onClose}
         isAddTeam={true}
         onNext={onNext}

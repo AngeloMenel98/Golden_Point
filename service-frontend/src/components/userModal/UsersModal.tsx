@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
-import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
-import SearchIcon from "../../../../../icons/SearchIcon/SearchIcon";
-import { darkGreen, red } from "../../../../../utils/colors";
-import UsersCard from "../../Cards/UsersCard/UsersCard";
+import { useEffect, useRef, useState } from "react";
+import SecondaryInput from "../inputs/SecondaryInput/SecondaryInput";
+import CrossIcon from "../../icons/CrossIcon/CrossIcon";
+import SearchIcon from "../../icons/SearchIcon/SearchIcon";
+import { darkGreen, red } from "../../utils/colors";
+import UsersCard from "../../pages/admin/Tournament/Cards/UsersCard/UsersCard";
 import {
   Container,
   HeaderContainer,
@@ -14,16 +14,17 @@ import {
   H4Styled,
   UserContainer,
 } from "./UsersModalStyle";
-import useGetUsers from "../../../../../hooks/useGetUsers";
-import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
-import { UserDTO } from "../../../../../entities/dtos/UserDTO";
+import useGetUsers from "../../hooks/useGetUsers";
+import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
+import { UserDTO } from "../../entities/dtos/UserDTO";
+import useClickOutside from "../../hooks/functionalities/useClickOutside";
 
 interface UsersModalProps {
   tourId: string | undefined;
   isAddTeam: boolean;
   onClose: () => void;
-  onNext: () => void;
-  onPlayersChange: (players: UserDTO[]) => void;
+  onNext?: () => void;
+  onPlayersChange?: (players: UserDTO[]) => void;
 }
 
 const UsersModal: React.FC<UsersModalProps> = ({
@@ -38,8 +39,13 @@ const UsersModal: React.FC<UsersModalProps> = ({
   const [fullName, setFullName] = useState<string>("");
   const [players, setPlayers] = useState<UserDTO[]>([]);
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
+
   useEffect(() => {
-    onPlayersChange(players);
+    if (onPlayersChange) {
+      onPlayersChange(players);
+    }
   }, [players, onPlayersChange]);
 
   const handleChange = (e: any) => {
@@ -60,7 +66,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
 
   return (
     <ModalWrapper>
-      <ModalContent width={40}>
+      <ModalContent width={40} ref={modalRef}>
         <HeaderContainer>
           {isAddTeam ? (
             <H3Styled>Selecciona usuarios para un equipo</H3Styled>
@@ -78,11 +84,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
             icon={<SearchIcon width={27} height={20} color={darkGreen} />}
             onChange={handleChange}
           />
-          {isAddTeam ? (
-            <H4Styled>Jugadores: {players.length}/2</H4Styled>
-          ) : (
-            <></>
-          )}
+          {isAddTeam && <H4Styled>Jugadores: {players.length}/2</H4Styled>}
         </UserContainer>
         <Container>
           <UsersCard
@@ -93,7 +95,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
             selectedPlayers={players}
           />
         </Container>
-        {isAddTeam ? (
+        {isAddTeam && (
           <Container>
             <ButtonsContainer>
               <SecondaryButton
@@ -104,8 +106,6 @@ const UsersModal: React.FC<UsersModalProps> = ({
               <SecondaryButton text="Siguiente" onClick={onNext} />
             </ButtonsContainer>
           </Container>
-        ) : (
-          <></>
         )}
       </ModalContent>
     </ModalWrapper>

@@ -69,7 +69,6 @@ const MatchCard: React.FC<MatchCardProps> = ({
         boxCol={pastelGreen}
         mWidth={1200}
         mHeight={350}
-        error={error}
       >
         {matches.map((match) => (
           <MatchContainer>

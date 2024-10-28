@@ -9,10 +9,12 @@ const tournAPI = new TournamentAPI();
 export default function useGetMyTourns(userId: string | undefined) {
   const [tournaments, setTournaments] = useState<MyTournDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [errorTourn, setError] = useState<Errors | null>(null);
+  const [fetchTourns, setFetchTourns] = useState<boolean>(false);
+  const [errorTourn, setError] = useState<Errors | unknown>(null);
 
   const fetchTournaments = useCallback(async () => {
     setLoading(true);
+    setFetchTourns(false);
     if (userId) {
       try {
         const response = await tournAPI.getMyTournaments(userId);
@@ -31,8 +33,10 @@ export default function useGetMyTourns(userId: string | undefined) {
 
         setTournaments(tournamentData);
         setLoading(false);
+        setFetchTourns(true);
       } catch (err) {
-        //setError(err);
+        setError(err);
+        setLoading(false);
       }
     }
   }, [userId]);
@@ -43,5 +47,11 @@ export default function useGetMyTourns(userId: string | undefined) {
     }
   }, [userId, fetchTournaments]);
 
-  return { tournaments, loading, errorTourn, refetch: fetchTournaments };
+  return {
+    tournaments,
+    loading,
+    errorTourn,
+    fetchTourns,
+    refetch: fetchTournaments,
+  };
 }

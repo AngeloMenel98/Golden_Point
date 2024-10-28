@@ -24,29 +24,30 @@ import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
 import ClubRow from "../Rows/ClubRow/ClubRow";
 import SecondaryButton from "../../../../components/buttons/SecondaryButton/SecondaryButton";
-import { CreationData } from "../Tours";
 import useGetClubs from "../../../../hooks/useGetClubs";
 import { Errors } from "../../../../errors/Errors";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ClubAPI, { ClubCredentials } from "../../../../services/ClubApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
 import TourAPI, { TourCredentials } from "../../../../services/TourApi";
-import { TourDTO } from "../../../../entities/dtos/TourDTO";
+import BouncingCircles from "../../../../components/spinner/spinner";
+import useClickOutside from "../../../../hooks/functionalities/useClickOutside";
+import { CreationTour } from "../../../../utils/interfaces";
 
 interface TourModalProps {
   tourApi: TourAPI;
   onClose: () => void;
-  addTour: (newTour: TourDTO) => void;
+  refetch: () => void;
 }
 
 const clubAPI = new ClubAPI();
 
-const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
+const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
   const user = useSelector((state: RootState) => state.user.user);
   const { allClubs, addClubToState } = useGetClubs();
 
-  const [data, setData] = useState<CreationData>({
+  const [data, setData] = useState<CreationTour>({
     tourName: "",
     clubName: "",
     address: "",
@@ -57,10 +58,13 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
   const [clubsSelected, setClubsSelected] = useState<ClubDTO[]>([]);
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
+
   const handleSaveClub = async () => {
     setFieldErrors({});
     const club: ClubCredentials = {
-      userId: user?.Id,
+      userId: user?.id,
       clubName: data.clubName,
       address: data.address,
       availableFrom: data.avFrom,
@@ -100,7 +104,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
   const handleSaveTour = async () => {
     setFieldErrors({});
     const tour: TourCredentials = {
-      userId: user?.Id,
+      userId: user?.id,
       clubsId: clubsSelected.map((c) => c.Id),
       title: data.tourName,
     };
@@ -113,15 +117,8 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
         ...res.fieldErrors,
       }));
     } else {
-      const newTour: TourDTO = new TourDTO();
-      newTour.Id = res.id;
-      newTour.TourTitle = res.title;
-      newTour.TourCode = res.tourCode;
-      newTour.UserCount = 1;
-      newTour.TournamentCount = 0;
-      newTour.UserOwner = user?.UserName || "";
-      addTour(newTour);
       onClose();
+      refetch();
     }
   };
 
@@ -143,7 +140,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
 
   return (
     <ModalWrapper>
-      <ModalContent width={45}>
+      <ModalContent width={45} ref={modalRef}>
         <HeaderContainer>
           <H3Styled>Crear Tour</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
@@ -227,7 +224,6 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
           boxCol={black}
           mWidth={1000}
           mHeight={110}
-          error={fieldErrors.notFound}
         >
           {filteredClubs.map((club, index) => (
             <ClubRow
@@ -236,6 +232,9 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, addTour }) => {
               onCheckboxChange={handleCheckboxChange}
             />
           ))}
+          {filteredClubs.length === 0 && (
+            <BouncingCircles text="nuevos Clubs" />
+          )}
         </Card>
 
         <FooterContainer>

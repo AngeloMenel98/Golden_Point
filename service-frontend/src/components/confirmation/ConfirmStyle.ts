@@ -1,5 +1,11 @@
 import styled from "styled-components";
-import { black, darkGreen, grayModal, white } from "../../utils/colors";
+import {
+  black,
+  darkGreen,
+  grayModal,
+  lightRed,
+  white,
+} from "../../utils/colors";
 
 export const ModalWrapper = styled.div`
   position: fixed;
@@ -59,11 +65,12 @@ export const ButtonSection = styled.div`
   padding: 1rem;
 `;
 
-export const H3Styled = styled.h3`
-  color: ${darkGreen};
-  margin: 0;
-`;
 export const H4Styled = styled.h4`
   color: ${darkGreen};
   margin: 0;
+`;
+
+export const NameSpan = styled.span`
+  font-weight: bold;
+  color: ${lightRed}; // Puedes cambiar el color a lo que prefieras
 `;

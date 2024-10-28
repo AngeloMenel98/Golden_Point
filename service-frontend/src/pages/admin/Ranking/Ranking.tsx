@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
   MainContainer,
   RankingSection,
-  HeaderContainer,
-  H3,
   SpaceContainer,
   TableContainer,
 } from "./RankingStyle";
@@ -13,56 +11,25 @@ import {
 import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
-import DropDown from "../../../components/dropdown/DropDown/DropDown";
-import SecondaryButton from "../../../components/buttons/SecondaryButton/SecondaryButton";
-import { useNavigate } from "react-router-dom";
-import UserAPI from "../../../services/UserApi";
-import { Errors } from "../../../errors/Errors";
-import { darkGreen, pastelGreen } from "../../../utils/colors";
 import UsersTable from "../../../components/userTable/UserTable";
-import useGetCats from "../../../hooks/useGetCatsByTournId";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
-
-const userAPI = new UserAPI();
-
-interface UserRanking {
-  id: string;
-  lastname: string;
-  firstname: string;
-  totalpoints: string;
-}
+import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
+import useGetRankings from "../../../hooks/useGetRankings";
+import BouncingCircles from "../../../components/spinner/spinner";
 
 const Rankings: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tour = useSelector((state: RootState) => state.tour.tour);
 
-  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const { users, isLoading, hasFetched, fieldErrors, refetch } = useGetRankings(
+    tour?.id,
+    selectedCategory
+  );
 
-  const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [users, setUsers] = useState<UserRanking[]>([]);
-
-  const [fieldErrors, setFieldErrors] = useState<Errors>({});
-
-  const returnToTournaments = () => {
-    navigate("/tournaments");
-  };
-
-  const handleChangeCat = async (category: string[]) => {
+  const handleChangeCat = async (category: string) => {
     setSelectedCategory(category);
-
-    await getRanking(category[0]);
-  };
-
-  const getRanking = async (category: string) => {
-    const res = await userAPI.getRanking(tour?.Id, category);
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    } else {
-      setUsers(res);
-    }
+    refetch();
   };
 
   const breadcrumbPath = [
@@ -73,13 +40,13 @@ const Rankings: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <RankingSection>
         <SpaceContainer>
           <Breadcrumb path={breadcrumbPath} />
         </SpaceContainer>
         <SpaceContainer>
-          <DropDown
+          <DropDownUnique
             buttonText="Categoria"
             items={[
               "Masculino-Sexta",
@@ -87,16 +54,23 @@ const Rankings: React.FC = () => {
               "Masculino-Quinta",
               "Femenino-Sexta",
               "Femenino-Septima",
+              "Femenino-Quinta",
             ]}
             width={225}
-            error={""}
+            error={fieldErrors?.notFound}
             onChange={handleChangeCat}
-            amountChars={20}
           />
         </SpaceContainer>
-        <TableContainer>
-          <UsersTable users={users} />
-        </TableContainer>
+        {hasFetched && (
+          <TableContainer>
+            <UsersTable users={users} />
+          </TableContainer>
+        )}
+        {isLoading && (
+          <TableContainer>
+            <BouncingCircles text="categoría" />
+          </TableContainer>
+        )}
       </RankingSection>
     </MainContainer>
   );

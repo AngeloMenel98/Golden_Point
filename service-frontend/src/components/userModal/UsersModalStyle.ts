@@ -1,10 +1,5 @@
 import styled from "styled-components";
-import {
-  black,
-  darkGreen,
-  grayModal,
-  white,
-} from "../../../../../utils/colors";
+import { black, darkGreen, grayModal, white } from "../../utils/colors";
 
 export const ModalWrapper = styled.div`
   position: fixed;
@@ -38,7 +33,18 @@ export const HeaderContainer = styled.div`
   padding: 0.5rem;
 `;
 
+export const UserContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 export const H3Styled = styled.h3`
+  color: ${darkGreen};
+  margin: 0;
+`;
+
+export const H4Styled = styled.h4`
   color: ${darkGreen};
   margin: 0;
 `;

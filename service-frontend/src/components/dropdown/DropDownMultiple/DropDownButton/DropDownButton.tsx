@@ -1,8 +1,8 @@
 import React from "react";
-import ChevronDownIcon from "../../../icons/ChevronDownIcon/ChevronDownIcon";
+import ChevronDownIcon from "../../../../icons/ChevronDownIcon/ChevronDownIcon";
 import { Button, ButtonContainer, ButtonText, Icon } from "./DDButtonStyle";
-import ChevronUpIcon from "../../../icons/ChevronUpIcon/ChevronUpIcon";
-import { darkGreen } from "../../../utils/colors";
+import ChevronUpIcon from "../../../../icons/ChevronUpIcon/ChevronUpIcon";
+import { darkGreen } from "../../../../utils/colors";
 
 interface DropDownButtonProps {
   children: React.ReactNode;

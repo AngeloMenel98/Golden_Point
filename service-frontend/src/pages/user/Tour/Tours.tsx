@@ -25,21 +25,15 @@ import SecondaryButton from "../../../components/buttons/SecondaryButton/Seconda
 
 import JoinIcon from "../../../icons/JoinIcon/JoinIcon";
 import JoinModal from "./Modals/JoinModal/JoinModal";
-import { JoinCredentials } from "../../../services/TourApi";
+import TourAPI, { JoinCredentials } from "../../../services/TourApi";
 import { Errors } from "../../../errors/Errors";
 import { TourDTO } from "../../../entities/dtos/TourDTO";
 import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
 import useGetMyTourns from "../../../hooks/useGetMyTourns";
 import MyTournsCards from "../../../components/myTourns/myTournsCard";
+import BouncingCircles from "../../../components/spinner/spinner";
 
-export interface CreationData {
-  tourName: string;
-  clubName: string;
-  address: string;
-  courts: string;
-  avFrom: string;
-  avTo: string;
-}
+const tourAPI = new TourAPI();
 
 const ToursUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user?.user);
@@ -49,8 +43,8 @@ const ToursUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
-  const { tours, tourAPI, error, addTourToState } = useGetTours(user);
-  const { tournaments, loading } = useGetMyTourns(user?.Id);
+  const { tours, error, hasFetched, refetch } = useGetTours(user);
+  const { tournaments, loading, fetchTourns } = useGetMyTourns(user?.id);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -62,7 +56,7 @@ const ToursUser: React.FC = () => {
 
   const handleJoin = async () => {
     const joinCred: JoinCredentials = {
-      userId: user?.Id,
+      userId: user?.id,
       tourCode: code,
     };
     const res = await tourAPI.joinUser(joinCred);
@@ -79,9 +73,11 @@ const ToursUser: React.FC = () => {
       newTour.TourCode = res.tourCode;
       newTour.UserCount = 1;
       newTour.TournamentCount = 0;
-      newTour.UserOwner = user?.UserName || "";
-      addTourToState(newTour);
+      newTour.UserOwner = user?.userName || "";
+
       handleCloseModal();
+
+      refetch();
     }
   };
 
@@ -95,7 +91,7 @@ const ToursUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>
@@ -139,17 +135,23 @@ const ToursUser: React.FC = () => {
           />
         )}
         <H2>Lista de Tours</H2>
-        <TourCard
-          tours={tours}
-          tourApi={tourAPI}
-          tourTitle={tourTitle}
-          error={error}
-        />
-        {!loading && (
+        {hasFetched && (
+          <TourCard tours={tours} tourTitle={tourTitle} error={error} />
+        )}
+
+        {fetchTourns && (
           <>
             <H2>Mis Partidos</H2>
             <TableContainer>
               <MyTournsCards tourns={tournaments} />
+            </TableContainer>
+          </>
+        )}
+        {loading && (
+          <>
+            <H2>Mis Partidos</H2>
+            <TableContainer>
+              <BouncingCircles text="tus Partidos" />
             </TableContainer>
           </>
         )}

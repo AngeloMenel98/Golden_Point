@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import { red } from "../../../../../utils/colors";
@@ -12,12 +12,14 @@ import {
   DataContainer,
 } from "./TournamentModalStyle";
 import SecondaryButton from "../../../../../components/buttons/SecondaryButton/SecondaryButton";
-import DropDown from "../../../../../components/dropdown/DropDown/DropDown";
-import { CreationData } from "../../Tournament";
+import DropDown from "../../../../../components/dropdown/DropDownMultiple/DropDown/DropDown";
 import { Errors } from "../../../../../errors/Errors";
+import DropDownUnique from "../../../../../components/dropdown/DropDownSingle/DropDown/DropDown";
+import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
+import { CreationTournament } from "../../../../../utils/interfaces";
 
 interface TournamentModalProps {
-  data: CreationData;
+  data: CreationTournament;
   onChangeData: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
   onSaveTourn: () => void;
@@ -25,7 +27,7 @@ interface TournamentModalProps {
 }
 
 interface DropDownData {
-  master: number[];
+  master: number;
   maleCat: string[];
   femaleCat: string[];
 }
@@ -38,24 +40,26 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
   errors,
 }) => {
   const cats = ["Cuarta", "Quinta", "Sexta", "Septima", "Octava", "Suma 7"];
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
 
   const masters = [1000, 1500];
 
   const [dropDownData, setDropDownData] = useState<DropDownData>({
-    master: [],
+    master: 0,
     maleCat: [],
     femaleCat: [],
   });
 
   useEffect(() => {
-    data.master = dropDownData.master[0];
+    data.master = dropDownData.master;
     data.maleCat = dropDownData.maleCat;
     data.femaleCat = dropDownData.femaleCat;
   }, [dropDownData]);
 
   return (
     <ModalWrapper>
-      <ModalContent width={25}>
+      <ModalContent width={25} ref={modalRef}>
         <HeaderContainer>
           <H3Styled>Crear Torneo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
@@ -70,11 +74,11 @@ const TournamentModal: React.FC<TournamentModalProps> = ({
             onChange={onChangeData}
             error={errors.tournamentName}
           />
-          <DropDown
+          <DropDownUnique
             buttonText="Master"
             items={masters}
             width={100}
-            onChange={(selectedItem: number[]) => {
+            onChange={(selectedItem: number) => {
               setDropDownData({ ...dropDownData, master: selectedItem });
             }}
             error={errors.master}

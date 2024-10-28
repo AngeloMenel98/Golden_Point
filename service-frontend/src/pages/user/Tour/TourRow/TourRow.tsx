@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   TourRowContainer,
   LeftContainer,
@@ -13,28 +12,32 @@ import {
 } from "./TourRowStyle";
 import { TourDTO } from "../../../../entities/dtos/TourDTO";
 import CopyableText from "../../../../components/copyableText/CopyableText";
-import TrashIcon from "../../../../icons/TrashIcon/TrashIcon";
-import { red } from "../../../../utils/colors";
-import TourAPI, { DeletedTour } from "../../../../services/TourApi";
+
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../reduxSlices/store";
 import { useDispatch } from "react-redux";
 import { setTour } from "../../../../reduxSlices/tour/tourSlice";
+import { TourData } from "../../../../utils/interfaces";
 
 interface TourRowProps {
   tourData: TourDTO;
-  tourApi: TourAPI;
 }
 
-const TourRow: React.FC<TourRowProps> = ({ tourData, tourApi }) => {
-  //const user = useSelector((state: RootState) => state.user.user);
-
+const TourRow: React.FC<TourRowProps> = ({ tourData }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleTourClick = () => {
-    dispatch(setTour(tourData));
+    const tourAsInterface: TourData = {
+      id: tourData.Id,
+      tourTitle: tourData.TourTitle,
+      tourCode: tourData.TourCode,
+      userCount: tourData.UserCount,
+      tournamentCount: tourData.TournamentCount,
+      userOwner: tourData.UserOwner,
+    };
+
+    localStorage.setItem("tourToken", JSON.stringify(tourAsInterface));
+    dispatch(setTour(tourAsInterface));
     navigate("/tournaments");
   };
 

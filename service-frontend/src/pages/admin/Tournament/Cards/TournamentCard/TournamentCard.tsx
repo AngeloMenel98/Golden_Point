@@ -12,23 +12,28 @@ import TournamentAPI, {
 } from "../../../../../services/TournamentApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
+import BouncingCircles from "../../../../../components/spinner/spinner";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
-  error: string;
+  error: string | undefined;
+  refetch: () => void;
   setShFooter: Dispatch<SetStateAction<boolean>>;
 }
 
 const tournamentAPI = new TournamentAPI();
 
 const TournamentCard: React.FC<TournamentCardProps> = ({
-  tournaments,
+  tournaments: initialTourns,
   tournamentTitle,
   error,
+  refetch,
   setShFooter,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
+
+  const [tourns, setTourns] = useState<TournamentDTO[]>(initialTourns);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isManagerOpen, setIsManagerOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -40,7 +45,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
 
   const rowRefs = useRef<Array<HTMLDivElement | null>>([]);
 
-  const filteredTourns = tournaments.filter((tourn) =>
+  const filteredTourns = tourns.filter((tourn) =>
     tourn.Title.toLowerCase().includes(tournamentTitle.toLowerCase())
   );
 
@@ -81,17 +86,33 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   const startTournament = async () => {
     const start: DeletedTournament = {
       tournamentId: tournSelected.Id,
-      userId: user?.Id,
+      userId: user?.id,
     };
     const res = await tournamentAPI.startTournament(start);
 
     if (!res.fieldErrors) {
+      tournSelected.Status = "inProgress";
       setShFooter(true);
     } else {
       alert("Error al iniciar torneo");
     }
 
     handleCloseModal();
+  };
+
+  const onDelete = async (tourn: TournamentDTO) => {
+    const deleteTourn: DeletedTournament = {
+      tournamentId: tourn.Id,
+      userId: user?.id,
+    };
+    const res = await tournamentAPI.deleteTournament(deleteTourn);
+
+    if (!res.fieldErrors) {
+      setTourns((prevTourns) => prevTourns.filter((t) => t.Id !== tourn.Id));
+      refetch();
+    } else {
+      alert("Error al eliminar torneo");
+    }
   };
 
   return (
@@ -102,14 +123,17 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         boxCol={pastelGreen}
         mWidth={1200}
         mHeight={1000}
-        error={error}
       >
+        {(filteredTourns.length === 0 || error) && (
+          <BouncingCircles text="la creación de un Torneo" />
+        )}
         {filteredTourns.map((tourn, index) => (
           <TournamentRow
             key={index}
             ref={(el) => (rowRefs.current[index] = el)}
             tournData={tourn}
             onOpen={() => handleOpenModal(index, tourn)}
+            onDelete={() => onDelete(tourn)}
           />
         ))}
       </Card>
@@ -135,7 +159,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
       )}
 
       {isDeleteOpen && (
-        <DeleteTeam onClose={deleteTeamClose} tournamentId={tournSelected.Id} />
+        <DeleteTeam onClose={deleteTeamClose} tournament={tournSelected} />
       )}
     </CardContainer>
   );

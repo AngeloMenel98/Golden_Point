@@ -6,6 +6,7 @@ import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import UsersButton from "../../../../../components/buttons/UsersButton/UsersButton";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
 import UserCircleIcon from "../../../../../icons/UserCircleIcon/UserCircleIcon";
+import BouncingCircles from "../../../../../components/spinner/spinner";
 
 interface UsersCardProps {
   users: UserDTO[];
@@ -33,8 +34,7 @@ const UsersCard: React.FC<UsersCardProps> = ({
       borderCol={darkGreen}
       boxCol={pastelGreen}
       mWidth={600}
-      mHeight={400}
-      error={error}
+      mHeight={300}
     >
       <UsersContainer>
         {filteredUsers.map((user, index) => (
@@ -48,6 +48,7 @@ const UsersCard: React.FC<UsersCardProps> = ({
           />
         ))}
       </UsersContainer>
+      {filteredUsers.length === 0 && <BouncingCircles text="nuevos Usuarios" />}
     </Card>
   );
 };

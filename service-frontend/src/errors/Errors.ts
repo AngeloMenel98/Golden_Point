@@ -35,7 +35,7 @@ export interface Errors {
 export const ErrorsRes = {
   //Tournaments
   tournamentNameReq: "Nombre del Torneo es obligatorio",
-  masterReq: "Master es obligatorio",
+  masterReq: "Master obligatorio",
   categoriesReq: "Al menos se necesita una categoría",
   notFoundTournReq: "No se encontro ningún Torneo.",
 
@@ -55,6 +55,9 @@ export const ErrorsRes = {
 
   //Match
   notFoundMatchReq: "No se encontro ningún Partido.",
+
+  //Ranking
+  notFoundRankReq: "No se encontro ningún Usuario.",
 
   //Register
   usernameRequired: "Nombre de Usuario es obligatorio",
@@ -90,7 +93,8 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   [ErrorsRes.tourCodeExistReq]: "tourCode",
   [ErrorsRes.userAlreadyJoined]: "userJoined",
 
-  //Team
+  //Ranking
+  [ErrorsRes.notFoundRankReq]: "notFound",
 
   //Match
   [ErrorsRes.notFoundMatchReq]: "notFound",

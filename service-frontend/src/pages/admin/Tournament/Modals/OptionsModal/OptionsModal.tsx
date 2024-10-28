@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useRef } from "react";
 import { ModalWrapper, Container, MyButton, MyIcon } from "./OptionsModalStyle";
-import PrimaryButton from "../../../../../components/buttons/PrimaryButton/PrimaryButton";
 import AddIcon from "../../../../../icons/AddIcon/AddIcon";
 import TrashIcon from "../../../../../icons/TrashIcon/TrashIcon";
 import { pastelGreen, red } from "../../../../../utils/colors";
 import CheckIcon from "../../../../../icons/CheckIcon/CheckIcon";
+import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
 
 interface OptsModalProps {
   open: boolean;
@@ -27,15 +27,23 @@ const OptsModal: React.FC<OptsModalProps> = ({
   isActive,
   position,
 }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  useClickOutside(modalRef, onClose);
+
   return (
     <ModalWrapper
       open={open}
       width={width}
       top={position.top}
       right={position.right}
+      ref={modalRef}
     >
       <Container>
-        <MyButton hasIcon={true} onClick={onAddTeam}>
+        <MyButton
+          hasIcon={true}
+          onClick={onAddTeam}
+          disabled={isActive === "inProgress"}
+        >
           <MyIcon>
             <AddIcon width={15} height={15} color={pastelGreen} />
           </MyIcon>
@@ -43,7 +51,12 @@ const OptsModal: React.FC<OptsModalProps> = ({
         </MyButton>
       </Container>
       <Container>
-        <MyButton hasIcon={true} isDangerous={true} onClick={onDeleteTeam}>
+        <MyButton
+          hasIcon={true}
+          isDangerous={true}
+          onClick={onDeleteTeam}
+          disabled={isActive === "inProgress"}
+        >
           <MyIcon>
             <TrashIcon width={17} height={17} color={red} />
           </MyIcon>
@@ -61,13 +74,6 @@ const OptsModal: React.FC<OptsModalProps> = ({
           </MyIcon>
           Iniciar Torneo
         </MyButton>
-      </Container>
-      <Container>
-        <PrimaryButton
-          text="Cancelar"
-          isDangerousAction={true}
-          onClick={onClose}
-        />
       </Container>
     </ModalWrapper>
   );

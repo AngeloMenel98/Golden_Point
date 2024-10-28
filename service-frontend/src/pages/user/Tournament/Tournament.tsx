@@ -22,20 +22,13 @@ import {
   TournamentSection,
 } from "./TournamentStyle";
 import UsersIcon from "../../../icons/UsersIcon/UsersIcon";
-import UsersModal from "./Modal/UsersModal/UsersModal";
 import { useNavigate } from "react-router-dom";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
-
-export interface CreationData {
-  tournamentName: string;
-  master: number;
-  maleCat: string[];
-  femaleCat: string[];
-}
+import UsersModal from "../../../components/userModal/UsersModal";
 
 const TournamentUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
-  const tourData = useSelector((state: RootState) => state.tour.tour);
+  const tour = useSelector((state: RootState) => state.tour.tour);
 
   const navigate = useNavigate();
 
@@ -50,7 +43,7 @@ const TournamentUser: React.FC = () => {
     setUserOpen(false);
   };
 
-  const { tournaments, errorTournament } = useGetTournaments(tourData);
+  const { tournaments, errors, hasFetched } = useGetTournaments(tour);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -67,13 +60,13 @@ const TournamentUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.UserName} />
+      <NavBar userName={user?.userName} />
       <TournamentSection>
         <BreadCrumbContainer>
           <Breadcrumb path={breadcrumbPath} />
         </BreadCrumbContainer>
         <SpaceContainer>
-          <H3>Tour: {tourData?.TourTitle}</H3>
+          <H3>Tour: {tour?.tourTitle}</H3>
           <HeaderButtons>
             <SecondaryButton
               icon={
@@ -88,7 +81,11 @@ const TournamentUser: React.FC = () => {
             />
           </HeaderButtons>
           {isUserOpen && (
-            <UsersModal tourId={tourData?.Id} onClose={usersCloseModal} />
+            <UsersModal
+              tourId={tour?.id}
+              onClose={usersCloseModal}
+              isAddTeam={false}
+            />
           )}
           <HeaderButtons>
             <SecondaryButton
@@ -111,11 +108,13 @@ const TournamentUser: React.FC = () => {
           </InputContainer>
         </SpaceContainer>
         <H3>Lista de Torneos</H3>
-        <TournamentCard
-          tournaments={tournaments}
-          tournamentTitle={tournamentTitle}
-          error={errorTournament}
-        />
+        {hasFetched && (
+          <TournamentCard
+            tournaments={tournaments}
+            tournamentTitle={tournamentTitle}
+            error={errors.notFound}
+          />
+        )}
       </TournamentSection>
     </MainContainer>
   );

@@ -14,3 +14,5 @@ export const red = "#7f0000";
 export const lightRed = "#ce6161";
 
 export const lemonYellow = "#FAFA33";
+
+export const disable = "#ebebe4";

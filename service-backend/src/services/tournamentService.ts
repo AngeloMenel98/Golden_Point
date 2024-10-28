@@ -334,7 +334,7 @@ export class TournamentService {
   async getMyTournaments(userId: string) {
     const tournaments = await TournamentRepository.getMyTournaments(userId);
     if (tournaments.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Torneos Propios"));
+      throw new ServiceCodeError(codeErrors.GEN_2("Torneos Propio"));
     }
     return tournaments;
   }

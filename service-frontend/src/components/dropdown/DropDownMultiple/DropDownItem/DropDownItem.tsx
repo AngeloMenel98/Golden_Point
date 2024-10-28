@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Icon } from "./DDItemStyle";
-import CheckIcon from "../../../icons/CheckIcon/CheckIcon";
-import { darkGreen } from "../../../utils/colors";
+import CheckIcon from "../../../../icons/CheckIcon/CheckIcon";
+import { darkGreen } from "../../../../utils/colors";
 
 interface DropDownItemProps {
   children: React.ReactNode;

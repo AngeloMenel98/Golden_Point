@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { darkGreen, white } from "../../../utils/colors";
+import { darkGreen, white } from "../../../../utils/colors";
 
 export const ContentContainer = styled.div<{ open: boolean; width: number }>`
   display: flex;

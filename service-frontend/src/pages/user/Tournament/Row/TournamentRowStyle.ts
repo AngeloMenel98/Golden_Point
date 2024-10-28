@@ -1,5 +1,11 @@
 import styled from "styled-components";
-import { black, darkGreen, mint, pastelGreen } from "../../../../utils/colors";
+import {
+  black,
+  darkGreen,
+  disable,
+  mint,
+  pastelGreen,
+} from "../../../../utils/colors";
 
 export const TourRowContainer = styled.div`
   display: flex;
@@ -109,6 +115,12 @@ export const TourName = styled.button`
 
   &:hover {
     color: ${mint};
+  }
+  &:disabled {
+    opacity: 0.8;
+    color: ${disable};
+    cursor: not-allowed;
+    pointer-events: none;
   }
 `;
 
