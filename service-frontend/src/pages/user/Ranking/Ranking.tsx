@@ -17,7 +17,7 @@ import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetRankings from "../../../hooks/useGetRankings";
 import BouncingCircles from "../../../components/spinner/spinner";
 
-const Rankings: React.FC = () => {
+const RankingsUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const tour = useSelector((state: RootState) => state.tour.tour);
 
@@ -39,7 +39,7 @@ const Rankings: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.userName} />
+      <NavBar userName={user?.userName} isUser={true} />
       <RankingSection>
         <SpaceContainer>
           <Breadcrumb path={breadcrumbPath} />
@@ -75,4 +75,4 @@ const Rankings: React.FC = () => {
   );
 };
 
-export default Rankings;
+export default RankingsUser;

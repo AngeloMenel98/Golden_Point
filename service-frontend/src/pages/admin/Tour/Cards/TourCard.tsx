@@ -25,11 +25,7 @@ const TourCard: React.FC<TourCardProps> = ({
   refetch,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
-  const [tours, setTours] = useState<TourDTO[]>(initialTours);
-
-  useEffect(() => {
-    setTours(initialTours);
-  }, [initialTours]);
+  const [tours, setTours] = useState<TourDTO[]>(() => initialTours);
 
   const filteredTours = tours.filter((tour) =>
     tour.TourTitle.toLowerCase().includes(tourTitle.toLowerCase())
@@ -43,10 +39,14 @@ const TourCard: React.FC<TourCardProps> = ({
 
     const tourRes = await tourApi.deleteTour(deleteTour);
     if (tourRes != null) {
-      setTours(tours.filter((tour) => tour.Id !== tt.Id));
+      console.log("tourRes", tourRes);
+      setTours((prevTours) =>
+        prevTours.filter((tour) => tour.Id !== tourRes.id)
+      );
+
       refetch();
     } else {
-      console.error("Failed to delete tour");
+      alert("Error al eliminar Tour");
     }
   };
 

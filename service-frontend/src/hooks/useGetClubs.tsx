@@ -5,7 +5,11 @@ import { Errors } from "../errors/Errors";
 
 const clubAPI = new ClubAPI();
 
-export default function useGetClubs(userId: string | undefined) {
+export default function useGetClubs(
+  userId: string | undefined,
+  isAll: boolean,
+  tourId?: string | undefined
+) {
   const [allClubs, setAllClubs] = useState<ClubDTO[]>([]);
   const [errors, setErrors] = useState<Errors>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -18,7 +22,13 @@ export default function useGetClubs(userId: string | undefined) {
     setErrors({});
 
     try {
-      const clubRes: any = await clubAPI.getClubs(userId);
+      let clubRes: any;
+      if (isAll) {
+        clubRes = await clubAPI.getClubs(userId);
+        console.log("entro");
+      } else {
+        clubRes = await clubAPI.getClubsPerTour(userId, tourId);
+      }
       const clubArray: ClubDTO[] = clubRes.map((c: any) => {
         const club = new ClubDTO();
 

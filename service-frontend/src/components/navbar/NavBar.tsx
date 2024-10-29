@@ -16,9 +16,10 @@ import { logOutUser } from "../../reduxSlices/user/userSlice";
 
 interface NavBarProps {
   userName: string | undefined;
+  isUser?: boolean;
 }
 
-const NavBar: React.FC<NavBarProps> = ({ userName }) => {
+const NavBar: React.FC<NavBarProps> = ({ userName, isUser }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -39,7 +40,7 @@ const NavBar: React.FC<NavBarProps> = ({ userName }) => {
 
   return (
     <>
-      <NavbarContainer>
+      <NavbarContainer isUser={isUser}>
         <GPLogo width={100} height={50} />
         <DataContainer>
           <Username>{userName}</Username>

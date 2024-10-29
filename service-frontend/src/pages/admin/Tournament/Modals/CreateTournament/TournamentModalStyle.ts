@@ -17,7 +17,7 @@ export const ModalWrapper = styled.div`
   width: 100%;
   height: 100%;
   background-color: ${grayModal};
-  z-index: 1001;
+  z-index: 1000;
 `;
 
 export const ModalContent = styled.div<{ width: number }>`

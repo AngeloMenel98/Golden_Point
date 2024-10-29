@@ -91,7 +91,7 @@ const ToursUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.userName} />
+      <NavBar userName={user?.userName} isUser={true} />
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>

@@ -99,6 +99,32 @@ export class ClubController {
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
+
+  async getClubsPerTour(req: Request, res: Response) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          error: errors.array().map((error) => ({
+            msg: error.msg,
+          })),
+        });
+      }
+
+      const { userId, tourId } = req.params;
+
+      const response = await this.clubService.getClubsPerTour(userId, tourId);
+      res.status(201).json(response);
+    } catch (e) {
+      console.error("Error getting clubs:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
 }
 
 export default new ClubController();

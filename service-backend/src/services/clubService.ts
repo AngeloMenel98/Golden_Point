@@ -42,4 +42,17 @@ export class ClubService {
     }
     return existingClub;
   }
+
+  async getClubsPerTour(userId: string, tourId: string) {
+    const existingClubs: unknown[] = await ClubRepository.getClubsPerTour(
+      userId,
+      tourId
+    );
+
+    if (existingClubs.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+    }
+
+    return existingClubs;
+  }
 }

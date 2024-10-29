@@ -33,5 +33,9 @@ router.post(
 );
 
 router.get("/club/clubs/:userId", clubController.getAll.bind(clubController));
+router.get(
+  "/clubs/:userId/:tourId",
+  clubController.getClubsPerTour.bind(clubController)
+);
 
 export default router;

@@ -11,23 +11,31 @@ import {
   TextSpan,
 } from "./ClubRowStyle";
 import { ClubDTO } from "../../../../../entities/dtos/ClubDTO";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Checkbox from "../../../../../components/checkbox/Checkbox";
 import { formatDateTime } from "../../../../../utils/transformDate";
 
 interface ClubRowProps {
   clubData: ClubDTO;
   onCheckboxChange: (club: ClubDTO, isChecked: boolean) => void;
+  isChecked: boolean;
 }
 
-const ClubRow: React.FC<ClubRowProps> = ({ clubData, onCheckboxChange }) => {
-  const [isChecked, setIsChecked] = useState(false);
+const ClubRow: React.FC<ClubRowProps> = ({
+  clubData,
+  onCheckboxChange,
+  isChecked,
+}) => {
+  const [localChecked, setLocalChecked] = useState(isChecked);
 
-  const handleCheckboxChange = () => {
-    setIsChecked(!isChecked);
-    onCheckboxChange(clubData, !isChecked);
+  useEffect(() => {
+    setLocalChecked(isChecked);
+  }, [isChecked]);
+
+  const handleCheckboxChange = (newChecked: boolean) => {
+    setLocalChecked(newChecked); // Actualiza el estado local
+    onCheckboxChange(clubData, newChecked); // Llama a la función del padre
   };
-
   return (
     <ClubRowContainer>
       <LeftContainer>
@@ -40,14 +48,14 @@ const ClubRow: React.FC<ClubRowProps> = ({ clubData, onCheckboxChange }) => {
       </LeftContainer>
       <RightContainer>
         <HoursContainer>
-          Horario: <TextSpan>{formatDateTime(clubData.AvFrom)}</TextSpan>
+          Fecha: <TextSpan>{formatDateTime(clubData.AvFrom)}</TextSpan>
         </HoursContainer>
         <CourtsContainer>
           Canchas: <TextSpan>{clubData.CourtCount}</TextSpan>
         </CourtsContainer>
       </RightContainer>
       <FullRightContainer>
-        <Checkbox checked={isChecked} onChange={handleCheckboxChange} />
+        <Checkbox checked={localChecked} onChange={handleCheckboxChange} />
       </FullRightContainer>
     </ClubRowContainer>
   );

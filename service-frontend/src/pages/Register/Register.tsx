@@ -46,6 +46,10 @@ const Register: React.FC = () => {
     navigate("/");
   };
 
+  const backToLogin = () => {
+    navigate("/");
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.id === "password" || e.target.id === "confirmPassword") {
       setData({ ...data, [e.target.id]: e.target.value });
@@ -61,6 +65,7 @@ const Register: React.FC = () => {
           data={data}
           onChange={handleChange}
           onClick={handleClick}
+          onBack={backToLogin}
           error={fieldErrors}
         />
       </CardContainer>

@@ -1,16 +1,25 @@
 import styled from "styled-components";
-import { black, darkGreen, grayModal, white } from "../../../../utils/colors";
+import {
+  black,
+  darkGray,
+  darkGreen,
+  grayModal,
+  pastelGreen,
+  white,
+} from "../../../../utils/colors";
 
 export const ModalWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: ${grayModal};
+  z-index: 1000;
 `;
 
 export const HeaderContainer = styled.div`
@@ -80,7 +89,72 @@ export const ButtonSection = styled.div`
   padding: 1rem;
 `;
 
-export const H3Styled = styled.h3`
+export const H3 = styled.h3`
   color: ${darkGreen};
   margin: 0;
+`;
+
+export const TitleContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+export const H4 = styled.h4`
+  color: ${darkGreen};
+  margin: 0;
+  text-decoration: underline;
+`;
+
+export const TooltipContainer = styled.div`
+  position: relative;
+  display: inline-block;
+
+  &:hover .tooltip {
+    visibility: visible;
+    opacity: 0.95;
+  }
+`;
+
+export const TooltipText = styled.span`
+  visibility: hidden;
+  opacity: 0;
+  width: 200px;
+  background-color: ${darkGray};
+  color: ${white};
+  text-align: center;
+  border-radius: 8px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 65%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s;
+
+  /* Flecha del tooltip */
+  &:after {
+    content: "";
+    position: absolute;
+    top: 100%; /* Ubicación en la parte inferior del tooltip */
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: ${darkGray} transparent transparent transparent;
+  }
+`;
+
+export const IconContainer = styled.span`
+  margin-left: 8px;
+  color: gray;
+  cursor: pointer;
+`;
+
+export const NoteStyled = styled.p`
+  display: flex;
+  justify-content: flex-end;
+
+  font-size: 0.8rem;
+  color: ${pastelGreen};
+  margin: 4px 0px;
 `;

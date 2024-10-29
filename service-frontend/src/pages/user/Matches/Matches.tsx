@@ -80,7 +80,7 @@ const MatchesUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.userName} />
+      <NavBar userName={user?.userName} isUser={true} />
       <TournamentSection>
         <HeaderContainer>
           <Breadcrumb path={breadcrumbPath} />

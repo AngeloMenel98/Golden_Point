@@ -60,7 +60,7 @@ const TournamentUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.userName} />
+      <NavBar userName={user?.userName} isUser={true} />
       <TournamentSection>
         <BreadCrumbContainer>
           <Breadcrumb path={breadcrumbPath} />

@@ -22,12 +22,13 @@ import ClubCard from "./Cards/ClubCard";
 
 const Clubs: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
+  const tour = useSelector((state: RootState) => state.tour.tour);
 
   const [clubName, setClubName] = useState<string>("");
   const [clubSelected, setClubsSelected] = useState<ClubDTO[]>([]);
 
   const { allClubs, errors, isLoading, refetch, hasFetched, addClubToState } =
-    useGetClubs(user?.id);
+    useGetClubs(user?.id, false, tour?.id);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setClubName(e.target.value);
