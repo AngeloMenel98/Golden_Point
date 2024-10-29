@@ -59,7 +59,9 @@ const TourCard: React.FC<TourCardProps> = ({
         mWidth={1200}
         mHeight={1000}
       >
-        {error && <BouncingCircles text="la creación de un Tour" />}
+        {(filteredTours.length === 0 || error) && (
+          <BouncingCircles text="la creación de un Tour" />
+        )}
         {filteredTours.map((tour) => (
           <TourRow
             key={tour.Id}
@@ -67,7 +69,6 @@ const TourCard: React.FC<TourCardProps> = ({
             onDelete={() => handleDeleteTour(tour)}
           />
         ))}
-        {filteredTours.length === 0 && <BouncingCircles text="nuevos Tours" />}
       </Card>
     </CardContainer>
   );

@@ -1,24 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
-import { MainContainer, ClubSection, HeaderContainer } from "./ClubsStyle";
+import {
+  MainContainer,
+  ClubSection,
+  HeaderContainer,
+  InputContainer,
+  SpaceContainer,
+} from "./ClubsStyle";
 
 import NavBar from "../../../components/navbar/NavBar";
 
 import { RootState } from "../../../reduxSlices/store";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
+import useGetClubs from "../../../hooks/useGetClubs";
+import { ClubDTO } from "../../../entities/dtos/ClubDTO";
+import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
+import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
+import { darkGreen } from "../../../utils/colors";
+import ClubCard from "./Cards/ClubCard";
 
 const Clubs: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
-  /*const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const tournamentId = params.get("tournamentId") || "";*/
+  const [clubName, setClubName] = useState<string>("");
+  const [clubSelected, setClubsSelected] = useState<ClubDTO[]>([]);
+
+  const { allClubs, errors, isLoading, refetch, hasFetched, addClubToState } =
+    useGetClubs(user?.id);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setClubName(e.target.value);
+  };
 
   const breadcrumbPath = [
     { name: "Tours", link: "/" },
     { name: "Torneos", link: "/tournaments" },
-    { name: "Clubs", link: `/clubs` },
+    { name: "Clubs", link: `/calendarClubs` },
   ];
 
   return (
@@ -28,36 +46,29 @@ const Clubs: React.FC = () => {
         <HeaderContainer>
           <Breadcrumb path={breadcrumbPath} />
         </HeaderContainer>
-        {/*<SpaceContainer>
-          <ButtonContainer>
-            <DropDown
-              buttonText="Categoria"
-              items={cats}
-              width={225}
-              error={""}
-              onChange={handleChangeCat}
-              amountChars={20}
-            />
-          </ButtonContainer>
-          <ButtonContainer>
-            <DropDown
-              buttonText="Instancia"
-              items={stages}
-              width={150}
-              error={""}
-              onChange={handleChangeGroup}
-              amountChars={20}
-            />
-          </ButtonContainer>
-        </SpaceContainer>
-        <SpaceContainer>
-          <MatchCard
-            error={errors.notFound}
-            matches={filteredMatches}
-            teams={allTeams}
-            reloadMatches={reloadMatches}
+
+        <InputContainer>
+          <SecondaryInput
+            id="searchTour"
+            type="text"
+            value={clubName}
+            placeholder="Buscar Club"
+            icon={<SearchIcon width={20} height={17} color={darkGreen} />}
+            maxLength={10}
+            isBig={true}
+            onChange={handleChange}
           />
-        </SpaceContainer>*/}
+        </InputContainer>
+        {hasFetched && (
+          <SpaceContainer>
+            <ClubCard
+              clubs={allClubs}
+              clubName={clubName}
+              error={errors?.notFound}
+              refetch={refetch}
+            />
+          </SpaceContainer>
+        )}
       </ClubSection>
     </MainContainer>
   );

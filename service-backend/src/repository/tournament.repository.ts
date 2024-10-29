@@ -172,6 +172,8 @@ export const TournamentRepository = AppDataSource.getRepository(
         .innerJoin("team", "tm", 't.id = tm."tournamentId"')
         .innerJoin("team_users_user", "tuu", 'tuu."teamId" = tm.id')
         .innerJoin("user", "u", 'tuu."userId" = u.id')
+        .innerJoin("tour_users_user", "utu", 'utu."userId" = u.id')
+        .innerJoin("tour", "tor", 'utu."tourId" = tor.id ')
         .innerJoin("team_match", "tm2", 'tm2."teamId" = tm.id')
         .innerJoin("match", "m", 'tm2."matchId" = m.id')
         .innerJoin("group_stage", "gs", 'gs.id = m."groupStageId"')
@@ -187,6 +189,7 @@ export const TournamentRepository = AppDataSource.getRepository(
         })
         .andWhere("t.status = :status", { status: "inProgress" })
         .andWhere("tm2.isWinner = :isWinner", { isWinner: false })
+        .andWhere("tor.isDeleted = :isDeleted", { isDeleted: false })
         .getRawMany()
     );
   },

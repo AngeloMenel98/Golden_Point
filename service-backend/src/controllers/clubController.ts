@@ -85,7 +85,9 @@ export class ClubController {
         });
       }
 
-      const response = await this.clubService.getAll();
+      const userId = req.params.userId;
+
+      const response = await this.clubService.getAll(userId);
       res.status(201).json(response);
     } catch (e) {
       console.error("Error getting clubs:", e);

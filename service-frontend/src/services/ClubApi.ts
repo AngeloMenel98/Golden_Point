@@ -11,9 +11,9 @@ export interface ClubCredentials {
 }
 
 class ClubAPI extends GeneralAPI {
-  async getClubs() {
+  async getClubs(userId: string | undefined) {
     try {
-      const res = await this.api.get(`/club/clubs`);
+      const res = await this.api.get(`/club/clubs/${userId}`);
       return res.data;
     } catch (e) {
       isAxiosError(e);

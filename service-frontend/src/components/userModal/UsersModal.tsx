@@ -39,9 +39,6 @@ const UsersModal: React.FC<UsersModalProps> = ({
   const [fullName, setFullName] = useState<string>("");
   const [players, setPlayers] = useState<UserDTO[]>([]);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-  useClickOutside(modalRef, onClose);
-
   useEffect(() => {
     if (onPlayersChange) {
       onPlayersChange(players);
@@ -66,7 +63,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
 
   return (
     <ModalWrapper>
-      <ModalContent width={40} ref={modalRef}>
+      <ModalContent width={40}>
         <HeaderContainer>
           {isAddTeam ? (
             <H3Styled>Selecciona usuarios para un equipo</H3Styled>

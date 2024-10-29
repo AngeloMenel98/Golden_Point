@@ -36,7 +36,10 @@ const AppRoutes: React.FC = () => {
           element={isAdmin ? <Matches /> : <MatchesUser />}
         />
         <Route path="/ranking" element={<Rankings />} />
-        <Route path="/clubs" element={isAdmin ?? <Clubs />} />
+        <Route
+          path="/calendarClubs"
+          element={isAdmin ? <Clubs /> : <Clubs />}
+        />
       </Routes>
     </div>
   );

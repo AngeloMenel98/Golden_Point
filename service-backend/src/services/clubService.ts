@@ -23,8 +23,8 @@ export class ClubService {
     return ClubRepository.create(newClub, newCalClub, newCourts);
   }
 
-  async getAll() {
-    const existingClubs: unknown[] = await ClubRepository.getAll();
+  async getAll(userId: string) {
+    const existingClubs: unknown[] = await ClubRepository.getAll(userId);
 
     if (existingClubs.length == 0) {
       throw new ServiceCodeError(codeErrors.GEN_2("Club"));

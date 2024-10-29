@@ -45,7 +45,7 @@ const clubAPI = new ClubAPI();
 
 const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
   const user = useSelector((state: RootState) => state.user.user);
-  const { allClubs, addClubToState } = useGetClubs();
+  const { allClubs, addClubToState } = useGetClubs(user?.id);
 
   const [data, setData] = useState<CreationTour>({
     tourName: "",
@@ -189,8 +189,9 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
           </LeftContainer>
 
           <RightContainer>
+            <H3Styled>Disponibilidad Torneo</H3Styled>
             <SecondaryInput
-              label="Horario Inicial"
+              label="Inicio"
               id="avFrom"
               type="datetime-local"
               value={data.avFrom}
@@ -199,7 +200,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
               error={fieldErrors.avFrom}
             />
             <SecondaryInput
-              label="Horario Final"
+              label="Final"
               id="avTo"
               type="datetime-local"
               value={data.avTo}

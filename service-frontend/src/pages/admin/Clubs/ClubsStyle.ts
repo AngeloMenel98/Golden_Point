@@ -29,3 +29,7 @@ export const SpaceContainer = styled.div`
   justify-content: space-evenly;
   width: 100%;
 `;
+
+export const InputContainer = styled.div`
+  padding: 0.5rem;
+`;
