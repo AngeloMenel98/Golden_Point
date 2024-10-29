@@ -55,4 +55,26 @@ export class ClubService {
 
     return existingClubs;
   }
+
+  async updateClub(
+    clubId: string,
+    clubName: string,
+    location: string,
+    avFrom: string,
+    avTo: string
+  ) {
+    const club = await ClubRepository.updateClub(
+      clubId,
+      clubName,
+      location,
+      avFrom,
+      avTo
+    );
+
+    if (!club) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+    }
+
+    return club;
+  }
 }

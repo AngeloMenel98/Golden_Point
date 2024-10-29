@@ -66,9 +66,10 @@ export const AddressSpan = styled.span`
 
 interface ClubCardProps {
   clubsData: ClubDTO[];
+  onClick: (club: ClubDTO) => void;
 }
 
-const ClubInfo: React.FC<ClubCardProps> = ({ clubsData }) => {
+const ClubInfo: React.FC<ClubCardProps> = ({ clubsData, onClick }) => {
   return (
     <>
       {clubsData.map((cl, index) => (
@@ -79,6 +80,7 @@ const ClubInfo: React.FC<ClubCardProps> = ({ clubsData }) => {
           boxCol={pastelGreen}
           mWidth={400}
           mHeight={400}
+          onClick={() => onClick(cl)}
         >
           <TitleContainer>
             <CardTitle>{cl.ClubName}</CardTitle>

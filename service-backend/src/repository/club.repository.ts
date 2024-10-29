@@ -98,4 +98,43 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       )
       .getRawMany();
   },
+
+  async updateClub(
+    clubId: string,
+    clubName: string,
+    location: string,
+    avFrom: string,
+    avTo: string
+  ) {
+    return this.manager.transaction(async (transactionalEntityManager) => {
+      // Update the Club entity
+      await transactionalEntityManager
+        .createQueryBuilder()
+        .update(Club)
+        .set({
+          clubName: clubName,
+          location: location,
+        })
+        .where("id = :id", { id: clubId })
+        .execute();
+
+      const updatedClub = await transactionalEntityManager.findOne(Club, {
+        where: { id: clubId },
+        relations: ["calendarClub"],
+      });
+
+      if (updatedClub && updatedClub.calendarClub) {
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .update(CalendarClub)
+          .set({
+            availableFrom: avFrom,
+            availableTo: avTo,
+          })
+          .where("id = :id", { id: updatedClub.calendarClub.id })
+          .execute();
+      }
+      return updatedClub;
+    });
+  },
 });

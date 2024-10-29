@@ -65,8 +65,6 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
   const [clubsSelected, setClubsSelected] = useState<ClubDTO[]>([]);
   const [fieldErrors, setFieldErrors] = useState<Errors>({});
 
-  console.log(clubsSelected);
-
   const modalRef = useRef<HTMLDivElement>(null);
   useClickOutside(modalRef, onClose);
 

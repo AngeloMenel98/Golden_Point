@@ -10,6 +10,15 @@ export interface ClubCredentials {
   courtsNumber: string;
 }
 
+export interface UpdateClub {
+  userId?: string;
+  clubId: string;
+  clubName: string;
+  location: string;
+  avFrom: string;
+  avTo: string;
+}
+
 class ClubAPI extends GeneralAPI {
   async getClubs(userId: string) {
     try {
@@ -32,6 +41,15 @@ class ClubAPI extends GeneralAPI {
   async addClub(club: ClubCredentials) {
     try {
       const res = await this.api.post("/club/create", club);
+      return res.data;
+    } catch (e) {
+      return isAxiosError(e);
+    }
+  }
+
+  async updateClub(club: UpdateClub) {
+    try {
+      const res = await this.api.post("/club/update", club);
       return res.data;
     } catch (e) {
       return isAxiosError(e);

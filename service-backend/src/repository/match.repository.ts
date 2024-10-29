@@ -118,8 +118,8 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
 
   async updateMatch(matchId: string, matchDate: string, court: Court) {
     return this.createQueryBuilder()
-      .update(Match) // Asegúrate de usar la entidad correcta
-      .set({ matchDate, court }) // Actualizas la relación pasando el id de la cancha
+      .update(Match)
+      .set({ matchDate, court })
       .where("id = :matchId", { matchId })
       .execute();
   },

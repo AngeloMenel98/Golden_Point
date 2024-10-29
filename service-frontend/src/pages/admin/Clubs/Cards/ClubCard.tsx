@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../../reduxSlices/store";
 import BouncingCircles from "../../../../components/spinner/spinner";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
 import { CardContainer, ClubContainer } from "./ClubCardStyle";
 import ClubInfo from "../../../../components/card/ClubCard/ClubInfoCard";
+import EditClub from "../Modals/EditClub";
+import ClubAPI, { UpdateClub } from "../../../../services/ClubApi";
 
 interface CardProps {
   clubs: ClubDTO[];
@@ -13,14 +14,36 @@ interface CardProps {
   refetch: () => void;
 }
 
+const clubApi = new ClubAPI();
+
 const ClubCard: React.FC<CardProps> = ({
   clubs: initialClubs,
   clubName,
   error,
   refetch,
 }) => {
-  const user = useSelector((state: RootState) => state.user.user);
   const [clubs, setClubs] = useState<ClubDTO[]>(initialClubs);
+  const [selectedClub, setSelectedClub] = useState<ClubDTO | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpen = (club: ClubDTO) => {
+    setSelectedClub(club);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (club: UpdateClub) => {
+    const res = await clubApi.updateClub(club);
+    if (!res.fieldErrors) {
+      refetch();
+    } else {
+      alert("Error al actualizar");
+    }
+  };
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     setClubs(initialClubs);
@@ -36,8 +59,15 @@ const ClubCard: React.FC<CardProps> = ({
         <BouncingCircles text="nuevos Clubs" />
       )}
       <ClubContainer>
-        <ClubInfo clubsData={filteredClubs} />
+        <ClubInfo clubsData={filteredClubs} onClick={handleOpen} />
       </ClubContainer>
+      {isModalOpen && selectedClub && (
+        <EditClub
+          club={selectedClub}
+          onSave={handleSave}
+          onClose={handleClose}
+        />
+      )}
     </CardContainer>
   );
 };

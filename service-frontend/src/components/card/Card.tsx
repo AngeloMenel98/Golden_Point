@@ -1,7 +1,5 @@
 import { ReactNode } from "react";
 import { CardContainer, StyledCard } from "./CardStyle";
-import { black } from "../../utils/colors";
-import BouncingCircles from "../spinner/spinner";
 
 interface CardProps {
   children: ReactNode;
@@ -10,6 +8,7 @@ interface CardProps {
   boxCol: string;
   mWidth: number;
   mHeight: number;
+  onClick?: () => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -19,6 +18,7 @@ const Card: React.FC<CardProps> = ({
   boxCol,
   mWidth,
   mHeight,
+  onClick,
 }) => {
   return (
     <CardContainer>
@@ -28,6 +28,7 @@ const Card: React.FC<CardProps> = ({
         boxCol={boxCol}
         mWidth={mWidth}
         mHeight={mHeight}
+        onClick={onClick}
       >
         {children}
       </StyledCard>

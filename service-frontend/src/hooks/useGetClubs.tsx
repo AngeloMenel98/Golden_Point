@@ -25,7 +25,6 @@ export default function useGetClubs(
       let clubRes: any;
       if (isAll) {
         clubRes = await clubAPI.getClubs(userId);
-        console.log("entro");
       } else {
         clubRes = await clubAPI.getClubsPerTour(userId, tourId);
       }
