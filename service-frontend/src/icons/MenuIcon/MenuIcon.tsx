@@ -1,5 +1,6 @@
 import React from "react";
 import { white } from "../../utils/colors";
+<<<<<<< HEAD
 
 interface MenuIconProps {
   width: number;
@@ -9,6 +10,11 @@ interface MenuIconProps {
 }
 
 const MenuIcon: React.FC<MenuIconProps> = ({
+=======
+import { IconProps } from "../../utils/interfaces";
+
+const MenuIcon: React.FC<IconProps> = ({
+>>>>>>> develop
   width,
   height,
   onClick,

@@ -2,24 +2,13 @@ import React from "react";
 import { black } from "../../utils/colors";
 
 import styled from "styled-components";
-
-interface IconProps {
-  onClick?: () => void;
-  color?: string;
-}
-
-interface CrossIconProps {
-  width: number;
-  height: number;
-  color?: string;
-  onClick?: () => void;
-}
+import { IconProps } from "../../utils/interfaces";
 
 const IconSVG = styled.svg<IconProps>`
   cursor: ${({ onClick }) => (onClick ? "pointer" : "default")};
 `;
 
-const CrossIcon: React.FC<CrossIconProps> = ({
+const CrossIcon: React.FC<IconProps> = ({
   width,
   height,
   color = black,

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   Box2,
   CardContainer,
@@ -14,13 +15,22 @@ import {
   pastelGreen,
   white,
 } from "../../../../../utils/colors";
+=======
+import { Box2, CardContainer, Column2x, Container } from "./PosCardStyle";
+import Card from "../../../../../components/card/Card";
+import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
+>>>>>>> develop
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 
 interface PosCardProps {
   teams: TeamDTO[];
 }
 
+<<<<<<< HEAD
 const PositionCard: React.FC<PosCardProps> = ({ teams }) => {
+=======
+const PositionCard: React.FC<PosCardProps> = ({}) => {
+>>>>>>> develop
   return (
     <CardContainer>
       <Card

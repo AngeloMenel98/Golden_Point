@@ -26,7 +26,7 @@ services:
     build:
       context: ./service-backend
       dockerfile: ./Dockerfile/Dockerfile
-    image: angemenel98/gp-backend:0.0.2
+    image: angemenel98/gp-backend:0.0.4
     container_name: backend_app
     ports:
       - "8080:8080"
@@ -49,10 +49,14 @@ services:
     build:
       context: ./service-frontend
       dockerfile: ./Dockerfile
-    image: angemenel98/gp-frontend:0.0.2
+    image: angemenel98/gp-frontend:0.0.4
+
     container_name: frontend_app
     depends_on:
       - backend
+    environment:
+      BASE_URL: ${BASE_URL}
+      PORT: ${PORT}
     ports:
       - "3000:3000"
 

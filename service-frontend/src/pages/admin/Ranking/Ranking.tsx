@@ -15,7 +15,11 @@ import UsersTable from "../../../components/userTable/UserTable";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
 import useGetRankings from "../../../hooks/useGetRankings";
+<<<<<<< HEAD
 import BouncingCircles from "../../../components/spinner/spinner";
+=======
+import { Note } from "../Tour/Cards/TourCardStyle";
+>>>>>>> develop
 
 const Rankings: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -68,7 +72,11 @@ const Rankings: React.FC = () => {
         )}
         {isLoading && (
           <TableContainer>
+<<<<<<< HEAD
             <BouncingCircles text="categoría" />
+=======
+            <Note>Selecciona una Categoria para ver el Ranking</Note>
+>>>>>>> develop
           </TableContainer>
         )}
       </RankingSection>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import SecondaryInput from "../inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../icons/SearchIcon/SearchIcon";
@@ -17,7 +17,6 @@ import {
 import useGetUsers from "../../hooks/useGetUsers";
 import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
 import { UserDTO } from "../../entities/dtos/UserDTO";
-import useClickOutside from "../../hooks/functionalities/useClickOutside";
 
 interface UsersModalProps {
   tourId: string | undefined;
@@ -38,9 +37,6 @@ const UsersModal: React.FC<UsersModalProps> = ({
 
   const [fullName, setFullName] = useState<string>("");
   const [players, setPlayers] = useState<UserDTO[]>([]);
-
-  const modalRef = useRef<HTMLDivElement>(null);
-  useClickOutside(modalRef, onClose);
 
   useEffect(() => {
     if (onPlayersChange) {
@@ -66,7 +62,7 @@ const UsersModal: React.FC<UsersModalProps> = ({
 
   return (
     <ModalWrapper>
-      <ModalContent width={40} ref={modalRef}>
+      <ModalContent width={40}>
         <HeaderContainer>
           {isAddTeam ? (
             <H3Styled>Selecciona usuarios para un equipo</H3Styled>

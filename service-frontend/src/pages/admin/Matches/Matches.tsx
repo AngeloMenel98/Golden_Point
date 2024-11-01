@@ -20,7 +20,11 @@ import useGetTeams from "../../../hooks/useGetTeams";
 import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
+<<<<<<< HEAD
 import BouncingCircles from "../../../components/spinner/spinner";
+=======
+import { Note } from "../Tour/Cards/TourCardStyle";
+>>>>>>> develop
 
 const Matches: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -121,7 +125,13 @@ const Matches: React.FC = () => {
         )}
         {isLoading && (
           <SpaceContainer>
+<<<<<<< HEAD
             <BouncingCircles text="categoria e instancia" />
+=======
+            <Note>
+              Selecciona una categoria e instancia para ver los Partidos
+            </Note>
+>>>>>>> develop
           </SpaceContainer>
         )}
       </TournamentSection>

@@ -19,6 +19,13 @@ const codeErrors = {
 
   COURT_1: `Número de cancha no existe.`,
 
+<<<<<<< HEAD
+=======
+  CLUB_1: `Debe haber al menos una cancha disponible.`,
+  CLUB_2: (value: any, text: any, date: any) =>
+    `La ${value} debe ser ${text} a la ${date}.`,
+
+>>>>>>> develop
   SET_0: `Cantidad de Sets insuficientes.`,
   SET_1: (value: any) => `El partido ya tiene ${value} sets.`,
   SET_2: `Uno de los equipos debe ganar ambos sets.`,

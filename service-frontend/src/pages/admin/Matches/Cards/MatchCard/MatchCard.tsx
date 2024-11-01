@@ -6,6 +6,10 @@ import Match from "../../../../../components/match/Match";
 import EditMatch from "../../Modals/EditMatch/EditMatch";
 import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
+<<<<<<< HEAD
+=======
+import { Note } from "../../../Tour/Cards/TourCardStyle";
+>>>>>>> develop
 
 interface MatchCardProps {
   matches: MatchDTO[];
@@ -81,6 +85,10 @@ const MatchCard: React.FC<MatchCardProps> = ({
             />
           </MatchContainer>
         ))}
+<<<<<<< HEAD
+=======
+        {error && <Note>{error}</Note>}
+>>>>>>> develop
       </Card>
 
       {isMatchOpen && (

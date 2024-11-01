@@ -43,7 +43,12 @@ const TournamentUser: React.FC = () => {
     setUserOpen(false);
   };
 
+<<<<<<< HEAD
   const { tournaments, errors, hasFetched } = useGetTournaments(tour);
+=======
+  const { tournaments, errors, hasFetched, isLoading } =
+    useGetTournaments(tour);
+>>>>>>> develop
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -60,7 +65,11 @@ const TournamentUser: React.FC = () => {
 
   return (
     <MainContainer>
+<<<<<<< HEAD
       <NavBar userName={user?.userName} />
+=======
+      <NavBar userName={user?.userName} isUser={true} />
+>>>>>>> develop
       <TournamentSection>
         <BreadCrumbContainer>
           <Breadcrumb path={breadcrumbPath} />
@@ -113,6 +122,10 @@ const TournamentUser: React.FC = () => {
             tournaments={tournaments}
             tournamentTitle={tournamentTitle}
             error={errors.notFound}
+<<<<<<< HEAD
+=======
+            isLoading={isLoading}
+>>>>>>> develop
           />
         )}
       </TournamentSection>

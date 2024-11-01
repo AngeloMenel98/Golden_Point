@@ -6,6 +6,7 @@ interface StyledCardProps {
   boxCol: string;
   mWidth: number;
   mHeight: number;
+  onClick?: (event: React.MouseEvent) => void;
 }
 
 export const CardContainer = styled.div`
@@ -18,7 +19,6 @@ export const CardContainer = styled.div`
 
 export const StyledCard = styled.div<StyledCardProps>`
   flex: 1;
-
   max-width: ${({ mWidth }) => `${mWidth}px`};
   max-height: ${({ mHeight }) => `${mHeight}px`};
   padding: 1rem;
@@ -27,4 +27,15 @@ export const StyledCard = styled.div<StyledCardProps>`
   box-shadow: 0 0 15px ${(props) => props.boxCol};
   background-color: ${(props) => props.backgroundCol};
   overflow-y: auto;
+  transition: transform 0.2s;
+
+  ${({ onClick }) =>
+    onClick &&
+    `
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  `}
 `;

@@ -1,6 +1,9 @@
 import styled from "styled-components";
 import bannerImg from "../../assets/GP_WallPaper.jpg";
+<<<<<<< HEAD
 import { h3 } from "../../utils/fontSizes";
+=======
+>>>>>>> develop
 import { pastelGreen, darkGreen, mint } from "../../utils/colors";
 import { Link } from "react-router-dom";
 
@@ -35,7 +38,11 @@ export const BannerSection = styled.div`
   background-repeat: no-repeat;
   background-size: cover;
   background-image: url(${bannerImg});
+<<<<<<< HEAD
   ${h3}
+=======
+
+>>>>>>> develop
   color: white;
   text-align: center;
   display: flex;

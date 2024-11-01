@@ -1,5 +1,6 @@
 import React from "react";
 import { black } from "../../utils/colors";
+<<<<<<< HEAD
 
 // Define las propiedades que espera el componente
 interface SearchIconProps {
@@ -14,6 +15,11 @@ const SearchIcon: React.FC<SearchIconProps> = ({
   height,
   color = black,
 }) => {
+=======
+import { IconProps } from "../../utils/interfaces";
+
+const SearchIcon: React.FC<IconProps> = ({ width, height, color = black }) => {
+>>>>>>> develop
   return (
     <svg
       width={width}
