@@ -30,3 +30,10 @@ export interface CreationTournament {
   maleCat: string[];
   femaleCat: string[];
 }
+
+export interface IconProps {
+  width: number;
+  height: number;
+  color?: string;
+  onClick?: () => void;
+}

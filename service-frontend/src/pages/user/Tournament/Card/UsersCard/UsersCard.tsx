@@ -1,17 +1,13 @@
 import React from "react";
 import { UsersContainer } from "./UsersCardStyle";
 import Card from "../../../../../components/card/Card";
-import {
-  black,
-  darkGreen,
-  pastelGreen,
-  white,
-} from "../../../../../utils/colors";
+import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 
 import UsersButton from "../../../../../components/buttons/UsersButton/UsersButton";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
 import UserCircleIcon from "../../../../../icons/UserCircleIcon/UserCircleIcon";
 import BouncingCircles from "../../../../../components/spinner/spinner";
+import { Note } from "../../../../admin/Tour/Cards/TourCardStyle";
 
 interface UsersCardProps {
   users: UserDTO[];
@@ -54,7 +50,7 @@ const UsersCard: React.FC<UsersCardProps> = ({
           />
         ))}
       </UsersContainer>
-      {error && <p style={{ color: black }}>{error}</p>}
+      {error && <Note>{error}</Note>}
 
       {filteredUsers.length === 0 && <BouncingCircles text="nuevos Usuarios" />}
     </Card>

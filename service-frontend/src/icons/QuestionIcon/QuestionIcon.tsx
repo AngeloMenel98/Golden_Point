@@ -1,11 +1,6 @@
 import React from "react";
 import { black } from "../../utils/colors";
-
-interface IconProps {
-  width: number;
-  height: number;
-  color?: string;
-}
+import { IconProps } from "../../utils/interfaces";
 
 const QuestionIcon: React.FC<IconProps> = ({
   width,

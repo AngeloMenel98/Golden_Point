@@ -53,6 +53,9 @@ services:
     container_name: frontend_app
     depends_on:
       - backend
+    environment:
+      BASE_URL: ${BASE_URL}
+      PORT: ${PORT}
     ports:
       - "3000:3000"
 

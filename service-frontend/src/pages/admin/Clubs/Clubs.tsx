@@ -14,7 +14,6 @@ import NavBar from "../../../components/navbar/NavBar";
 import { RootState } from "../../../reduxSlices/store";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetClubs from "../../../hooks/useGetClubs";
-import { ClubDTO } from "../../../entities/dtos/ClubDTO";
 import SecondaryInput from "../../../components/inputs/SecondaryInput/SecondaryInput";
 import SearchIcon from "../../../icons/SearchIcon/SearchIcon";
 import { darkGreen } from "../../../utils/colors";
@@ -25,10 +24,13 @@ const Clubs: React.FC = () => {
   const tour = useSelector((state: RootState) => state.tour.tour);
 
   const [clubName, setClubName] = useState<string>("");
-  const [clubSelected, setClubsSelected] = useState<ClubDTO[]>([]);
+  //const [clubSelected, setClubsSelected] = useState<ClubDTO[]>([]);
 
-  const { allClubs, errors, isLoading, refetch, hasFetched, addClubToState } =
-    useGetClubs(user?.id, false, tour?.id);
+  const { allClubs, errors, refetch, hasFetched } = useGetClubs(
+    user?.id,
+    false,
+    tour?.id
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setClubName(e.target.value);

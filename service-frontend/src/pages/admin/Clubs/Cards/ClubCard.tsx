@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import BouncingCircles from "../../../../components/spinner/spinner";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
 import { CardContainer, ClubContainer } from "./ClubCardStyle";

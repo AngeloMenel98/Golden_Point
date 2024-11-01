@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import SecondaryInput from "../inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../icons/CrossIcon/CrossIcon";
 import SearchIcon from "../../icons/SearchIcon/SearchIcon";
@@ -17,7 +17,6 @@ import {
 import useGetUsers from "../../hooks/useGetUsers";
 import SecondaryButton from "../buttons/SecondaryButton/SecondaryButton";
 import { UserDTO } from "../../entities/dtos/UserDTO";
-import useClickOutside from "../../hooks/functionalities/useClickOutside";
 
 interface UsersModalProps {
   tourId: string | undefined;

@@ -1,14 +1,8 @@
 import React from "react";
 import { black } from "../../utils/colors";
+import { IconProps } from "../../utils/interfaces";
 
-interface UsersIconProps {
-  width: number;
-  height: number;
-  color?: string;
-  onClick?: () => void;
-}
-
-const UsersIcon: React.FC<UsersIconProps> = ({
+const UsersIcon: React.FC<IconProps> = ({
   width,
   height,
   color = black,

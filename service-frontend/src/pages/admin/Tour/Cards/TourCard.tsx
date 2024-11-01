@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Card from "../../../../components/card/Card";
 import { TourDTO } from "../../../../entities/dtos/TourDTO";
 import TourAPI, { DeletedTour } from "../../../../services/TourApi";
 import { darkGreen, pastelGreen, white } from "../../../../utils/colors";
 import TourRow from "../Rows/TourRow";
-import { CardContainer } from "./TourCardStyle";
+import { CardContainer, Note } from "./TourCardStyle";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
 import BouncingCircles from "../../../../components/spinner/spinner";
@@ -14,6 +14,7 @@ interface TourCardProps {
   tourApi: TourAPI;
   tourTitle: string;
   error: string;
+  isLoading: boolean;
   refetch: () => void;
 }
 
@@ -22,6 +23,7 @@ const TourCard: React.FC<TourCardProps> = ({
   tourApi,
   tourTitle,
   error,
+  isLoading,
   refetch,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -59,9 +61,7 @@ const TourCard: React.FC<TourCardProps> = ({
         mWidth={1200}
         mHeight={1000}
       >
-        {(filteredTours.length === 0 || error) && (
-          <BouncingCircles text="la creación de un Tour" />
-        )}
+        {filteredTours.length === 0 && error && <Note>{error}</Note>}
         {filteredTours.map((tour) => (
           <TourRow
             key={tour.Id}
@@ -69,6 +69,7 @@ const TourCard: React.FC<TourCardProps> = ({
             onDelete={() => handleDeleteTour(tour)}
           />
         ))}
+        {isLoading && <BouncingCircles text="los Tours" />}
       </Card>
     </CardContainer>
   );

@@ -1,14 +1,8 @@
 import React from "react";
 import { black } from "../../utils/colors";
+import { IconProps } from "../../utils/interfaces";
 
-interface ChevronUpIconProps {
-  width: number;
-  height: number;
-  color?: string;
-  onClick?: () => void;
-}
-
-const ChevronDownIcon: React.FC<ChevronUpIconProps> = ({
+const ChevronDownIcon: React.FC<IconProps> = ({
   width,
   height,
   color = black,

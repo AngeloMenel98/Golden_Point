@@ -1,14 +1,8 @@
 import React from "react";
 import { black } from "../../utils/colors";
+import { IconProps } from "../../utils/interfaces";
 
-interface EditIconProps {
-  width: number;
-  height: number;
-  color?: string;
-  onClick?: () => void;
-}
-
-const EditIcon: React.FC<EditIconProps> = ({
+const EditIcon: React.FC<IconProps> = ({
   width,
   height,
   color = black,

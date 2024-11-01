@@ -1,14 +1,8 @@
 import React from "react";
 import { white } from "../../utils/colors";
+import { IconProps } from "../../utils/interfaces";
 
-interface MenuIconProps {
-  width: number;
-  height: number;
-  color?: string;
-  onClick?: () => void;
-}
-
-const MenuIcon: React.FC<MenuIconProps> = ({
+const MenuIcon: React.FC<IconProps> = ({
   width,
   height,
   onClick,

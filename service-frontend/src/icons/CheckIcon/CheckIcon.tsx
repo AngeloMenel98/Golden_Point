@@ -1,17 +1,8 @@
 import React from "react";
 import { black } from "../../utils/colors";
+import { IconProps } from "../../utils/interfaces";
 
-interface CheckIconProps {
-  width: number;
-  height: number;
-  color?: string;
-}
-
-const CheckIcon: React.FC<CheckIconProps> = ({
-  width,
-  height,
-  color = black,
-}) => {
+const CheckIcon: React.FC<IconProps> = ({ width, height, color = black }) => {
   return (
     <svg
       width={width}

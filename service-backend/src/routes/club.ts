@@ -28,6 +28,10 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Fecha Final")),
+    check("courtsNumber")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("Cantidad de canchas")),
   ],
   clubController.create.bind(clubController)
 );

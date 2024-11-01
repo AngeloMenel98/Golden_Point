@@ -1,26 +1,13 @@
-import {
-  Box2,
-  CardContainer,
-  Column2x,
-  Container,
-  HorizontalLine,
-  MatchContainer,
-  VerticalLine,
-} from "./PosCardStyle";
+import { Box2, CardContainer, Column2x, Container } from "./PosCardStyle";
 import Card from "../../../../../components/card/Card";
-import {
-  black,
-  darkGreen,
-  pastelGreen,
-  white,
-} from "../../../../../utils/colors";
+import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
 
 interface PosCardProps {
   teams: TeamDTO[];
 }
 
-const PositionCard: React.FC<PosCardProps> = ({ teams }) => {
+const PositionCard: React.FC<PosCardProps> = ({}) => {
   return (
     <CardContainer>
       <Card

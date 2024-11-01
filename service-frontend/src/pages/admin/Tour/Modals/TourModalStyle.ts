@@ -105,6 +105,13 @@ export const H4 = styled.h4`
   text-decoration: underline;
 `;
 
+export const Note = styled.span`
+  display: flex;
+  justify-content: flex-end;
+  color: ${darkGreen};
+  margin: 0;
+`;
+
 export const TooltipContainer = styled.div`
   position: relative;
   display: inline-block;

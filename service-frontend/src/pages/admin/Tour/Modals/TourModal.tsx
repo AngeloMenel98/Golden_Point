@@ -24,6 +24,7 @@ import {
   H3,
   H4,
   TooltipText,
+  Note,
 } from "./TourModalStyle";
 import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
@@ -40,6 +41,7 @@ import BouncingCircles from "../../../../components/spinner/spinner";
 import useClickOutside from "../../../../hooks/functionalities/useClickOutside";
 import { CreationTour } from "../../../../utils/interfaces";
 import QuestionIcon from "../../../../icons/QuestionIcon/QuestionIcon";
+import useIntervals from "../../../../hooks/functionalities/useInterval";
 
 interface TourModalProps {
   tourApi: TourAPI;
@@ -67,6 +69,12 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
 
   const modalRef = useRef<HTMLDivElement>(null);
   useClickOutside(modalRef, onClose);
+
+  const intervalCount = useIntervals(
+    data.avFrom,
+    data.avTo,
+    parseInt(data.courts)
+  );
 
   const handleSaveClub = async () => {
     setFieldErrors({});
@@ -228,6 +236,9 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
               onChange={handleData}
               error={fieldErrors.avTo}
             />
+            {intervalCount !== null && data.courts !== "" && (
+              <Note>*Partidos disponibles: {intervalCount}</Note>
+            )}
           </RightContainer>
           <FullRightContainer>
             <PlusIcon
@@ -256,9 +267,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
               )}
             />
           ))}
-          {filteredClubs.length === 0 && (
-            <BouncingCircles text="nuevos Clubs" />
-          )}
+          {filteredClubs.length === 0 && <Note>No hay ningún Club</Note>}
         </Card>
 
         <FooterContainer>

@@ -1,19 +1,8 @@
 import React from "react";
 import { black } from "../../utils/colors";
+import { IconProps } from "../../utils/interfaces";
 
-// Define las propiedades que espera el componente
-interface EnterIconProps {
-  width: number;
-  height: number;
-  color?: string;
-}
-
-// Define el componente de SVG
-const EnterIcon: React.FC<EnterIconProps> = ({
-  width,
-  height,
-  color = black,
-}) => {
+const EnterIcon: React.FC<IconProps> = ({ width, height, color = black }) => {
   return (
     <svg
       width={width}

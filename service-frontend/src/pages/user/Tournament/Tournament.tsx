@@ -43,7 +43,8 @@ const TournamentUser: React.FC = () => {
     setUserOpen(false);
   };
 
-  const { tournaments, errors, hasFetched } = useGetTournaments(tour);
+  const { tournaments, errors, hasFetched, isLoading } =
+    useGetTournaments(tour);
 
   const handleTournTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTournTitle(e.target.value);
@@ -113,6 +114,7 @@ const TournamentUser: React.FC = () => {
             tournaments={tournaments}
             tournamentTitle={tournamentTitle}
             error={errors.notFound}
+            isLoading={isLoading}
           />
         )}
       </TournamentSection>

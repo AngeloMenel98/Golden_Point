@@ -12,6 +12,18 @@ export class ClubService {
   }
 
   async create(newClub: Club, newCalClub: CalendarClub, courtsNumber: number) {
+    const avFrom = new Date(newCalClub.availableFrom);
+    const avTo = new Date(newCalClub.availableTo);
+    if (courtsNumber <= 0) {
+      throw new ServiceCodeError(codeErrors.CLUB_1);
+    }
+
+    if (avFrom >= avTo) {
+      throw new ServiceCodeError(
+        codeErrors.CLUB_2("fecha de inicio", "anterior", "fecha final")
+      );
+    }
+
     const newCourts: Court[] = [];
     for (let i = 0; i < courtsNumber; i = i + 1) {
       const newCourt = new Court();
