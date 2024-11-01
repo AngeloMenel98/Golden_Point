@@ -128,13 +128,15 @@ export class TournamentController {
 
       await this.tournService.getHoursOfMatches(clubData);
 
-      const matches = await this.tournService.createGroupsDTOPerCat(
-        clubData,
-        teamData,
-        tourn
-      );
+      const { groupMatches, clubInfo } =
+        await this.tournService.createGroupsDTOPerCat(
+          clubData,
+          teamData,
+          tourn
+        );
+      console.log(clubInfo);
 
-      const response = matches.map((match) => ({
+      const response = groupMatches.map((match) => ({
         id: match.id,
         amountTourPoints: match.amountTourPoints,
         amountTourCoins: match.amountTourCoins,
@@ -158,8 +160,6 @@ export class TournamentController {
       res.status(500).json({ error: "Error interno del servidor" });
     }
   }
-
-  //async getWinningTeams(req: Request, res: Response) {}
 
   async getAll(req: Request, res: Response) {
     try {

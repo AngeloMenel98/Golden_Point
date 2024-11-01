@@ -1,4 +1,4 @@
-import { CategoryService, MatchService, TourService } from ".";
+import { CategoryService, ClubService, MatchService, TourService } from ".";
 import codeErrors from "../constants/codeErrors";
 import time from "../constants/time";
 import { Category, Match, Tournament } from "../entity";
@@ -117,9 +117,13 @@ export class TournamentService {
     for (let cl of clubData) {
       cl.allHours = [];
       const firstTime = cl.avFrom;
+
       cl.allHours.push(firstTime);
 
-      while (cl.avFrom.getTime() < cl.avTo.getTime() - time.DAY) {
+      while (
+        cl.avFrom.getTime() + time.HOUR_HALF <
+        cl.avTo.getTime() - time.DAY
+      ) {
         const newHour = new Date(cl.avFrom.getTime() + time.HOUR_HALF);
         cl.avFrom = newHour;
         cl.allHours.push(newHour);
@@ -128,7 +132,7 @@ export class TournamentService {
       cl.avFrom = new Date(firstTime.getTime() + time.DAY);
       cl.allHours.push(cl.avFrom);
 
-      while (cl.avFrom.getTime() < cl.avTo.getTime()) {
+      while (cl.avFrom.getTime() + time.HOUR_HALF < cl.avTo.getTime()) {
         const newHour = new Date(cl.avFrom.getTime() + time.HOUR_HALF);
         cl.avFrom = newHour;
         cl.allHours.push(newHour);
@@ -179,8 +183,9 @@ export class TournamentService {
         groupDTOs.push(groupDTO);
       }
     }
+    const groupMatches = await this.createGroupsMatches(groupDTOs, tournament);
 
-    return this.createGroupsMatches(groupDTOs, tournament);
+    return { groupMatches, clubInfo: clubData };
   }
 
   async getWinningTeams(tournamentId: string, groupStage: string[]) {
@@ -267,8 +272,6 @@ export class TournamentService {
   async createNextMatches(teams: any[], tournament: Tournament) {
     const matches: Match[] = [];
 
-    console.log("Teams:", teams);
-
     const teamsByGroup = teams.reduce((acc, team) => {
       if (!acc[team.groupStageId]) {
         acc[team.groupStageId] = [];
@@ -287,24 +290,34 @@ export class TournamentService {
       });
     }
 
-    const matchups = [
-      [teamsByGroup["Grupo 1"][0], teamsByGroup["Grupo 2"][1]],
-      [teamsByGroup["Grupo 2"][0], teamsByGroup["Grupo 1"][1]],
-      [teamsByGroup["Grupo 3"][0], teamsByGroup["Grupo 4"][1]],
-      [teamsByGroup["Grupo 4"][0], teamsByGroup["Grupo 3"][1]],
-    ];
+    const matchups = [];
+    const groups = Object.keys(teamsByGroup); // Get the group names dynamically
+
+    for (let i = 0; i < groups.length; i += 2) {
+      if (teamsByGroup[groups[i]] && teamsByGroup[groups[i + 1]]) {
+        matchups.push([
+          teamsByGroup[groups[i]][0], // First place from the first group
+          teamsByGroup[groups[i + 1]][1], // Second place from the second group
+        ]);
+        matchups.push([
+          teamsByGroup[groups[i + 1]][0], // First place from the second group
+          teamsByGroup[groups[i]][1], // Second place from the first group
+        ]);
+      }
+    }
+
     //FIXME: Get matchDate and courtId correction
     for (const [team1, team2] of matchups) {
       const match = new Match();
       match.amountTourCoins = 70;
-      match.amountTourPoints = 50;
+      match.amountTourPoints = 75;
       match.matchDate = "2024-09-02 9:00";
 
       const m = await this.matchService.create(
         match,
-        [team1, team2],
+        [team1.teamId, team2.teamId],
         tournament,
-        "35573b77-2f32-41df-b237-8e799d0ba8c9",
+        "4c517cbb-9c05-48bf-837b-b6bae86edd9a",
         "Cuartos de Final"
       );
       matches.push(m);
