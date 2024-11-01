@@ -13,11 +13,13 @@ import TournamentAPI, {
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
 import BouncingCircles from "../../../../../components/spinner/spinner";
+import { Note } from "../../../Tour/Cards/TourCardStyle";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
   tournamentTitle: string;
   error: string | undefined;
+  isLoading: boolean;
   refetch: () => void;
   setShFooter: Dispatch<SetStateAction<boolean>>;
 }
@@ -28,6 +30,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
   tournaments: initialTourns,
   tournamentTitle,
   error,
+  isLoading,
   refetch,
   setShFooter,
 }) => {
@@ -124,9 +127,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
         mWidth={1200}
         mHeight={1000}
       >
-        {(filteredTourns.length === 0 || error) && (
-          <BouncingCircles text="la creación de un Torneo" />
-        )}
+        {filteredTourns.length === 0 && error && <Note>{error}</Note>}
         {filteredTourns.map((tourn, index) => (
           <TournamentRow
             key={index}
@@ -136,6 +137,7 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
             onDelete={() => onDelete(tourn)}
           />
         ))}
+        {isLoading && <BouncingCircles text="los Torneos" />}
       </Card>
 
       {isModalOpen && (

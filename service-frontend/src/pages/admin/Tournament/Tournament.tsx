@@ -131,6 +131,9 @@ const Tournament: React.FC = () => {
   const openRankings = () => {
     navigate("/ranking");
   };
+  const openCalendarClubs = () => {
+    navigate("/calendarClubs");
+  };
 
   const breadcrumbPath = [
     { name: "Tours", link: "/" },
@@ -175,6 +178,10 @@ const Tournament: React.FC = () => {
               onClick={openRankings}
             />
           </HeaderButtons>
+
+          <HeaderButtons>
+            <SecondaryButton text="Clubs" onClick={openCalendarClubs} />
+          </HeaderButtons>
         </HeaderContainer>
         <SpaceContainer>
           <ButtonContainer>
@@ -210,6 +217,7 @@ const Tournament: React.FC = () => {
             tournaments={tournaments}
             tournamentTitle={tournamentTitle}
             error={errors.notFound}
+            isLoading={isLoading}
             refetch={refetch}
             setShFooter={setShowFooter}
           />

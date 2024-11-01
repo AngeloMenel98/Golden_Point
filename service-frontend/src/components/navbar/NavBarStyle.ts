@@ -1,15 +1,17 @@
 import styled from "styled-components";
-import { pastelGreen, white, darkGreen } from "../../utils/colors";
+import { pastelGreen, white, darkGreen, cream } from "../../utils/colors";
 
-export const NavbarContainer = styled.div`
+interface Props {
+  isUser?: boolean;
+}
+export const NavbarContainer = styled.div<Props>`
   display: flex;
   align-items: center;
   flex: 1;
   width: 100%;
-
   padding: 0.01rem 0.01rem;
   justify-content: space-between;
-  background-color: ${pastelGreen};
+  background-color: ${({ isUser }) => (isUser ? cream : pastelGreen)};
   color: white;
 
   @media screen and (max-width: 480px) {
@@ -44,7 +46,7 @@ export const IconButton = styled.button`
   }
 `;
 
-export const MenuDropdown = styled.div`
+export const MenuDropdown = styled.div<Props>`
   display: flex;
   flex-direction: column;
   align-items: center;

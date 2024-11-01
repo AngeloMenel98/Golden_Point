@@ -28,6 +28,7 @@ export const SpaceContainer = styled.div`
   align-items: center;
   justify-content: space-evenly;
   width: 100%;
+  padding: 0.5rem;
 `;
 
 export const ButtonContainer = styled.div`

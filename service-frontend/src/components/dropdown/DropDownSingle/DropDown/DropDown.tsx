@@ -35,8 +35,8 @@ const DropDownUnique = <T extends string | number | boolean>({
 
   const handleItemClick = (item: T) => {
     setSelectedItem(item);
-    onChange(item); // Llamar onChange con el nuevo valor seleccionado
-    setOpen(false); // Cerrar el dropdown después de seleccionar un item
+    onChange(item);
+    setOpen(false);
   };
 
   return (

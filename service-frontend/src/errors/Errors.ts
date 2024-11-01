@@ -45,13 +45,15 @@ export const ErrorsRes = {
   addressReq: "Dirección es obligatorio",
   avFromReq: "Fecha Inicial es obligatorio",
   avToReq: "Fecha Final es obligatorio",
-  courtsReq: "Numero de Canchas es obligatorio",
+  courtsReq: "Cantidad de canchas es obligatorio",
   notFoundTourReq: "No se encontro ningún Tour.",
   tourCodeReq: "Código del Tour es obligatorio",
   tourCodeExistReq: "El código del Tour no existe.",
   userAlreadyJoined: "El Usuario ya esta unido al Tour.",
 
-  //Team
+  //Club
+  amountCourtsReq: "Debe haber al menos una cancha disponible.",
+  dateReq: "La fecha de inicio debe ser anterior a la fecha final.",
 
   //Match
   notFoundMatchReq: "No se encontro ningún Partido.",
@@ -92,6 +94,10 @@ export const errorMappings: { [key: string]: keyof Errors } = {
   [ErrorsRes.tourCodeReq]: "tourCode",
   [ErrorsRes.tourCodeExistReq]: "tourCode",
   [ErrorsRes.userAlreadyJoined]: "userJoined",
+
+  //Clubs
+  [ErrorsRes.amountCourtsReq]: "courts",
+  [ErrorsRes.dateReq]: "avFrom",
 
   //Ranking
   [ErrorsRes.notFoundRankReq]: "notFound",

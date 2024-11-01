@@ -2,4 +2,3 @@
 .env.prod
 .gitignore
 node_modules
-src/data-source.ts

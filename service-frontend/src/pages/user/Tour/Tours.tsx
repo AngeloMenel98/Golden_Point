@@ -43,7 +43,7 @@ const ToursUser: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Errors>();
 
-  const { tours, error, hasFetched, refetch } = useGetTours(user);
+  const { tours, error, isLoading, hasFetched, refetch } = useGetTours(user);
   const { tournaments, loading, fetchTourns } = useGetMyTourns(user?.id);
 
   const handleOpenModal = () => {
@@ -91,7 +91,7 @@ const ToursUser: React.FC = () => {
 
   return (
     <MainContainer>
-      <NavBar userName={user?.userName} />
+      <NavBar userName={user?.userName} isUser={true} />
       <TourSection>
         <ButtonInputContainer>
           <ButtonContainer>
@@ -136,7 +136,12 @@ const ToursUser: React.FC = () => {
         )}
         <H2>Lista de Tours</H2>
         {hasFetched && (
-          <TourCard tours={tours} tourTitle={tourTitle} error={error} />
+          <TourCard
+            tours={tours}
+            tourTitle={tourTitle}
+            error={error}
+            isLoading={isLoading}
+          />
         )}
 
         {fetchTourns && (

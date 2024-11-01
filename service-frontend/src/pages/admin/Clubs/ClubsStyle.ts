@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { darkGreen, white } from "../../../utils/colors";
+import { white } from "../../../utils/colors";
 
 export const MainContainer = styled.div`
   width: 100%;
@@ -28,4 +28,8 @@ export const SpaceContainer = styled.div`
   align-items: center;
   justify-content: space-evenly;
   width: 100%;
+`;
+
+export const InputContainer = styled.div`
+  padding: 0.5rem;
 `;

@@ -9,6 +9,7 @@ import {
 import Match from "../../../../../components/match/Match";
 import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
+import { Note } from "../../../../admin/Tour/Cards/TourCardStyle";
 
 interface MatchCardProps {
   matches: MatchDTO[];
@@ -31,7 +32,7 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
             <Match key={match.Id} match={match} teams={teams} />
           </MatchContainer>
         ))}
-        {error && <p style={{ color: black }}>{error}</p>}
+        {error && <Note>{error}</Note>}
       </Card>
     </CardContainer>
   );

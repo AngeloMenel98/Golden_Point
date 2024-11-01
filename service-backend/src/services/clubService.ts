@@ -12,6 +12,18 @@ export class ClubService {
   }
 
   async create(newClub: Club, newCalClub: CalendarClub, courtsNumber: number) {
+    const avFrom = new Date(newCalClub.availableFrom);
+    const avTo = new Date(newCalClub.availableTo);
+    if (courtsNumber <= 0) {
+      throw new ServiceCodeError(codeErrors.CLUB_1);
+    }
+
+    if (avFrom >= avTo) {
+      throw new ServiceCodeError(
+        codeErrors.CLUB_2("fecha de inicio", "anterior", "fecha final")
+      );
+    }
+
     const newCourts: Court[] = [];
     for (let i = 0; i < courtsNumber; i = i + 1) {
       const newCourt = new Court();
@@ -23,8 +35,8 @@ export class ClubService {
     return ClubRepository.create(newClub, newCalClub, newCourts);
   }
 
-  async getAll() {
-    const existingClubs: unknown[] = await ClubRepository.getAll();
+  async getAll(userId: string) {
+    const existingClubs: unknown[] = await ClubRepository.getAll(userId);
 
     if (existingClubs.length == 0) {
       throw new ServiceCodeError(codeErrors.GEN_2("Club"));
@@ -41,5 +53,40 @@ export class ClubService {
       throw new ServiceCodeError(codeErrors.GEN_1("Club"));
     }
     return existingClub;
+  }
+
+  async getClubsPerTour(userId: string, tourId: string) {
+    const existingClubs: unknown[] = await ClubRepository.getClubsPerTour(
+      userId,
+      tourId
+    );
+
+    if (existingClubs.length == 0) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+    }
+
+    return existingClubs;
+  }
+
+  async updateClub(
+    clubId: string,
+    clubName: string,
+    location: string,
+    avFrom: string,
+    avTo: string
+  ) {
+    const club = await ClubRepository.updateClub(
+      clubId,
+      clubName,
+      location,
+      avFrom,
+      avTo
+    );
+
+    if (!club) {
+      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+    }
+
+    return club;
   }
 }

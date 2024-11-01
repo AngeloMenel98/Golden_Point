@@ -48,21 +48,93 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       .getRawMany();
   },
 
-  async getAll() {
+  async getAll(userId: string) {
     return this.createQueryBuilder("c")
       .select([
         "c.id AS id",
         'c."clubName"',
         'c."location" AS address',
-        'COUNT(co."courtNumber") AS courtCount',
+        'COUNT(distinct co."courtNumber") AS courtCount',
         'cc."availableFrom"',
         'cc."availableTo"',
       ])
       .innerJoin("calendar_club", "cc", 'cc.id = c."calendarClubId"')
       .innerJoin("court", "co", 'co."clubId" = c.id')
+      .innerJoin("tour_clubs_club", "tcc", 'tcc."clubId" = c.id')
+      .innerJoin("tour", "t", 'tcc."tourId" = t.id')
+      .innerJoin("tour_users_user", "tuu", 'tuu."tourId" = t.id')
+      .innerJoin("user", "u", 'u.id = tuu."userId"')
+      .where("u.id = :userId", {
+        userId,
+      })
       .groupBy(
-        'c.id, cc.id, c."clubName", cc."availableFrom", cc."availableTo"'
+        'c.id, c."clubName", c."location", cc."availableFrom", cc."availableTo"'
       )
       .getRawMany();
+  },
+
+  async getClubsPerTour(userId: string, tourId: string) {
+    return this.createQueryBuilder("c")
+      .select([
+        "c.id AS id",
+        'c."clubName"',
+        'c."location" AS address',
+        'COUNT(distinct co."courtNumber") AS courtCount',
+        'cc."availableFrom"',
+        'cc."availableTo"',
+      ])
+      .innerJoin("calendar_club", "cc", 'cc.id = c."calendarClubId"')
+      .innerJoin("court", "co", 'co."clubId" = c.id')
+      .innerJoin("tour_clubs_club", "tcc", 'tcc."clubId" = c.id')
+      .innerJoin("tour", "t", 'tcc."tourId" = t.id')
+      .innerJoin("tour_users_user", "tuu", 'tuu."tourId" = t.id')
+      .innerJoin("user", "u", 'u.id = tuu."userId"')
+      .where("u.id = :userId", {
+        userId,
+      })
+      .andWhere("t.id = :tourId", { tourId })
+      .groupBy(
+        'c.id, c."clubName", c."location", cc."availableFrom", cc."availableTo"'
+      )
+      .getRawMany();
+  },
+
+  async updateClub(
+    clubId: string,
+    clubName: string,
+    location: string,
+    avFrom: string,
+    avTo: string
+  ) {
+    return this.manager.transaction(async (transactionalEntityManager) => {
+      // Update the Club entity
+      await transactionalEntityManager
+        .createQueryBuilder()
+        .update(Club)
+        .set({
+          clubName: clubName,
+          location: location,
+        })
+        .where("id = :id", { id: clubId })
+        .execute();
+
+      const updatedClub = await transactionalEntityManager.findOne(Club, {
+        where: { id: clubId },
+        relations: ["calendarClub"],
+      });
+
+      if (updatedClub && updatedClub.calendarClub) {
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .update(CalendarClub)
+          .set({
+            availableFrom: avFrom,
+            availableTo: avTo,
+          })
+          .where("id = :id", { id: updatedClub.calendarClub.id })
+          .execute();
+      }
+      return updatedClub;
+    });
   },
 });
