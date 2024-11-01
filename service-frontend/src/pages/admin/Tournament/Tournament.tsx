@@ -180,10 +180,7 @@ const Tournament: React.FC = () => {
           </HeaderButtons>
 
           <HeaderButtons>
-            <SecondaryButton
-              text="Calendario Clubs"
-              onClick={openCalendarClubs}
-            />
+            <SecondaryButton text="Clubs" onClick={openCalendarClubs} />
           </HeaderButtons>
         </HeaderContainer>
         <SpaceContainer>

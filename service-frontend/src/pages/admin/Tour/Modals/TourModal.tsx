@@ -205,8 +205,8 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
                   <QuestionIcon width={15} height={15} color={darkGreen} />
                 </IconContainer>
                 <TooltipText className="tooltip">
-                  Fechas para primer torneo del club. Cambiar en Tour para otros
-                  Torneos.
+                  Fechas para primer Torneo del Club. Modificar en Clubs dentro
+                  de un Tour para próximos Torneos.
                 </TooltipText>
               </TooltipContainer>
             </TitleContainer>
@@ -228,8 +228,6 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
               onChange={handleData}
               error={fieldErrors.avTo}
             />
-
-            {/*<NoteStyled>*Solo para un torneo. Modificar en Tour.</NoteStyled>*/}
           </RightContainer>
           <FullRightContainer>
             <PlusIcon

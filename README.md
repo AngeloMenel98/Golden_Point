@@ -1,82 +1,125 @@
-# Padel Tournaments Mobile App
+# Golden Point Web Application
 
-## Introduction
+Golden Point is a web application designed to streamline the organization and management of amateur padel tournaments. This platform enhances interactions between players, organizers, and spectators by digitalizing key tournament processes, including managing user participation, tracking scores, and displaying rankings.
 
-I decided to do a mobile app for padel clubs which organize tournaments along the entire year.
-From my point of view not only the management of the tournaments, but also the communication with players and viewers are doing it with differents tools, so my idea with this app is integrate all information and management in one place.
-This app will provide the administrators a simpler way to organize and communicate the tournaments to players and users who go to the clubs to watch the matches.
+## Table of Contents
 
-## Objectives
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Available Scripts](#available-scripts)
+- [Environment Variables](#environment-variables)
+- [Deployment](#deployment)
 
-1. Manage Tours and Tournaments.
-2. Show Tournaments information to players & viewers.
+## Getting Started
 
-## Value proposal
+### Prerequisites
 
-- The app wil provide to the clients a better organization where includes all information about tournaments, rankings and brackets per category.
-- It is a closer and simpler approach to all players and viewers.
+To set up this project locally, ensure you have the following software installed:
 
-## Scope
+- [Node.js (v14 or higher)](https://nodejs.org/) – Required for running the application.
+- [Docker](https://www.docker.com/) – To run the application in a containerized environment.
+- [Docker Compose](https://docs.docker.com/compose/install/) – Required for orchestrating Docker containers.
+- [Git](https://git-scm.com/) – For cloning the repository.
 
-- The scope of this proyect is limited to one client.
+### Installation
 
-## Modules
+#### Clone the Repository
 
-The modules are:
+```bash
+git clone https://github.com/AngeloMenel98/Golden_Point.git
+cd Golden_Point
+```
 
-- Users
-- Tours/Tournament
-- News
-- Single Players
-- **_Tour Coins_**
+#### Install Dependencies
 
-## Requirements List
+```bash
+npm install
+```
 
-### **_Tours/Tournament_**
+#### Install Docker-Compose
 
-1. **Create Tour:**
-   - A Tour needs: name, club with amount of courts,categories (M/F).
-   - It generates a code once it is created.
-2. **Create Tournament:**
-   - A tournament needs: name, amount of points per position.
-   - The admins can add players by their username.
-3. **View of Tours:**
-   - Show a list of all tours created and joined.
-   - Every row has to show the Tour's name, an **A** if you are an admin or a **J** if you joined.
-   - Show **_Create Tour_** Button.
-   - Show **_Join Tour_** Button.
-   - The **_Join Tour_** Button opens a modal where the user can use the Tour's Code.
-4. **View of Tournaments:**
-   - Show a list of all tournaments of a Tour.
-   - Show amount of points granted per tournament.
-   - Every row has to show the Tournament's name, an **_Add team_** Button.
-   - The tournament will appear in the list no matter if the user is an admin, player or viewer.
-   - It has to has a **_Ranking_**, **_Create Tournament_** & **_Search Tournament_** Buttons.
-   - An **ADMIN** can:
-     - See the users joined to the Tour.
-     - Add users to a Tournament as players from the list of users.
-     - Delete Teams from a Tournament.
-     - Add ADMINS to a Tour.
-5. **Brackets:**
-   - Contains all instances of the tournaments, those instances are **_Groups_**, **_Round 16_**, **_Quarter-Finals_**, **_Semi-Finals_**, **_Final_**.
-   - The instances are in a dropdown.
-   - If a Tournament's category doesn't complete the **_Round 16_**, the algorithm will complete the brackets according to ....
-   - There has to be a _Category_ Button which change the brackets from one category to another.
-   - Every bracket shows the names of the 4 players, the date and hour of the match, the place where it is going to play and the result of the match.
-   - The user can scroll between all brackets.
-   - The group instance has the 3 matches.
-   - The group instance view uses pages to see all groups.
-   - From group instace, the first 2 teams passes to the next round.
-   - An **ADMIN** can:
-     - Click on any match and add the results of the sets.
-6. **Ranking:**
-   - It has to has a **_Category_** Button which shows the ranking of any category.
-   - It has to has a **_Search Player_** Button which find a player rank by its lastname or name.
-   - If the user search for a player the view only shows the player/s found.
-   - This view shows a table which has the rank on the left, Player's name in the middle & Accumulated points on the right.
+###### Linux
 
-### **_News_**
+```bash
+sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-1.  ## **Tournament's Rewards:**
-2.  ## **Tournament's Rules:**
-3.  ## **Sponsors:**
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+- To verify installation
+
+```bash
+docker-compose --version
+```
+
+## Project structure
+
+```bash
+golden-point/
+├── service-backend/                 # Contains the backend service code
+│   ├── src/                         # Source files for the backend application
+│   ├── package.json                 # Dependencies and scripts for the backend
+│   ├── tsconfig.json                # TypeScript configuration file for the backend
+│   ├── .env.template                # Template for environment variables for the backend
+│   ├── Dockerfile                   # Dockerfile for building the backend service container
+│
+├── service-frontend/                # Contains the frontend application code
+│   ├── src/                         # Source files for the frontend application
+│   ├── Dockerfile                   # Dockerfile for building the frontend application container
+│   ├── package.json                 # Dependencies and scripts for the frontend
+│   ├── vite.config.ts               # Configuration file for Vite, the frontend build tool
+│   └── tsconfig.json                # TypeScript configuration file for the frontend
+│
+├── docker-compose.yml               # Docker Compose configuration file for orchestrating services
+├── README.md                        # Project documentation, including setup and usage instructions
+└── ...                               # Other project files and directories
+```
+
+## Available Scripts
+
+#### BackEnd
+
+- `npm start`: Starts the backend server in development mode.
+- `npm run typeorm`: Executes TypeORM commands. Make sure to provide the appropriate arguments as needed (e.g., migration, seeding).
+- `npm run typeCheck`: Checks TypeScript types without emitting any output files.
+- `npm run build`: Compiles the TypeScript code into JavaScript, generating files in the `build/` directory.
+
+#### FrontEnd
+
+- `npm run dev`: Starts the frontend application in development mode.
+- `npm run build`: Compiles TypeScript code and builds the frontend application for production.
+- `npm run lint`: Runs ESLint on the project, checking for code quality and style issues. It only allows warnings if they are reported and fails if any are found.
+- `npm run preview`: Serves the production build for previewing the application locally.
+
+#### Docker
+
+To run both services using Docker, execute the following command in the root of the project:
+
+- `docker-compose --env-file {path/to/env_file} up -d`: Builds and starts the backend and frontend services in containers. Replace _{path/to/env_file}_ with the actual path to your environment variable file.
+- `docker-compose --env-file {path/to/env_file} down`: Stops and removes the containers. Again, replace _{path/to/env_file}_ with the path to your environment variable file.
+
+## Environment Variables
+
+To run the application, you'll need to set up the following environment variables. You can create a .env file in the root of your project and populate it with the values shown below:
+
+```bash
+PORT=             # Port on which the server will run
+JWT_TTL=          # JSON Web Token time-to-live in seconds
+DB_HOST=          # Database host
+DB_PORT=          # Database port (default is usually 5432 for PostgreSQL)
+DB_NAME=          # Name of the database
+DB_USERNAME=      # Database username
+DB_PASSWORD=      # Database password
+LOG_LEVEL=        # Logging level (options: debug, info, warn, error)
+DB_TIMEOUT=       # Timeout for database connections in milliseconds
+JWT_SECRET_KEY=   # Secret key for signing JWTs
+```
+
+## Deployment
+
+To deploy the application using Docker, follow these steps:
+
+1. Log in to DockerHub: `docker login`
+2. Build the new image: `docker-compose --env-file {path/to/env_file} build`
+3. If the local image name is different to the dockerhub image name, add this command: `docker tag {local_image_name} angemenel98/{dockerhub_image_name}:{tag_version}`
+4. Push the Local Image to DockerHub:`docker push angemenel98/{image_name}:{tag_version}`
