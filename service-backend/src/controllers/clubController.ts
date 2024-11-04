@@ -85,6 +85,20 @@ export class ClubController {
         });
       }
 
+<<<<<<< HEAD
+      const response = await this.clubService.getAll();
+      res.status(201).json(response);
+    } catch (e) {
+      console.error("Error getting clubs:", e);
+
+      if (isServiceCodeError(e)) {
+        return res.status(400).json({ error: [{ msg: e.message }] });
+      }
+
+      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+    }
+  }
+=======
       const userId = req.params.userId;
 
       const response = await this.clubService.getAll(userId);
@@ -159,6 +173,7 @@ export class ClubController {
       res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
     }
   }
+>>>>>>> develop
 }
 
 export default new ClubController();

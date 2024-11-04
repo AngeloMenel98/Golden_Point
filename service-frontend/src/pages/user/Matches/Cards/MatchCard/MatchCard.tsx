@@ -4,7 +4,10 @@ import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import Match from "../../../../../components/match/Match";
 import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
+<<<<<<< HEAD
+=======
 import { Note } from "../../../../admin/Tour/Cards/TourCardStyle";
+>>>>>>> develop
 
 interface MatchCardProps {
   matches: MatchDTO[];
@@ -27,7 +30,11 @@ const MatchCard: React.FC<MatchCardProps> = ({ matches, teams, error }) => {
             <Match key={match.Id} match={match} teams={teams} />
           </MatchContainer>
         ))}
+<<<<<<< HEAD
+        {error && <p style={{ color: black }}>{error}</p>}
+=======
         {error && <Note>{error}</Note>}
+>>>>>>> develop
       </Card>
     </CardContainer>
   );

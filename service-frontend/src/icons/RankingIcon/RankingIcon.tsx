@@ -1,8 +1,23 @@
 import React from "react";
 import { black } from "../../utils/colors";
+<<<<<<< HEAD
+
+interface RankingIconProps {
+  width: number;
+  height: number;
+  color?: string;
+}
+
+const RankingIcon: React.FC<RankingIconProps> = ({
+  width,
+  height,
+  color = black,
+}) => {
+=======
 import { IconProps } from "../../utils/interfaces";
 
 const RankingIcon: React.FC<IconProps> = ({ width, height, color = black }) => {
+>>>>>>> develop
   return (
     <svg
       width={width}

@@ -11,7 +11,10 @@ import Matches from "../pages/admin/Matches/Matches";
 import MatchesUser from "../pages/user/Matches/Matches";
 import TournamentUser from "../pages/user/Tournament/Tournament";
 import Rankings from "../pages/admin/Ranking/Ranking";
+<<<<<<< HEAD
+=======
 import RankingsUser from "../pages/user/Ranking/Ranking";
+>>>>>>> develop
 
 import useSetUser from "../hooks/reduxHooks/useSetUser";
 import Clubs from "../pages/admin/Clubs/Clubs";
@@ -36,11 +39,16 @@ const AppRoutes: React.FC = () => {
           path="/matches"
           element={isAdmin ? <Matches /> : <MatchesUser />}
         />
+<<<<<<< HEAD
+        <Route path="/ranking" element={<Rankings />} />
+        <Route path="/clubs" element={isAdmin ?? <Clubs />} />
+=======
         <Route
           path="/ranking"
           element={isAdmin ? <Rankings /> : <RankingsUser />}
         />
         <Route path="/calendarClubs" element={<Clubs />} />
+>>>>>>> develop
       </Routes>
     </div>
   );

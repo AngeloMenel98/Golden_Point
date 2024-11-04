@@ -1,6 +1,16 @@
 import React from "react";
 import { black } from "../../utils/colors";
+<<<<<<< HEAD
+
+interface IconProps {
+  width: number;
+  height: number;
+  color?: string;
+  onClick?: () => void;
+}
+=======
 import { IconProps } from "../../utils/interfaces";
+>>>>>>> develop
 
 const UserCircleIcon: React.FC<IconProps> = ({
   width,

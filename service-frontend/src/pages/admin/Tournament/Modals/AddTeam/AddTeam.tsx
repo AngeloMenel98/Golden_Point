@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import { useEffect, useState } from "react";
+=======
 import { useEffect, useRef, useState } from "react";
+>>>>>>> develop
 import SecondaryInput from "../../../../../components/inputs/SecondaryInput/SecondaryInput";
 import CrossIcon from "../../../../../icons/CrossIcon/CrossIcon";
 import { red } from "../../../../../utils/colors";
@@ -21,7 +25,10 @@ import {
 } from "../../../../../entities/dtos/TournamentDTO";
 import useSeparateCats from "../../../../../hooks/useSeparateCats";
 import DropDownUnique from "../../../../../components/dropdown/DropDownSingle/DropDown/DropDown";
+<<<<<<< HEAD
+=======
 import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
+>>>>>>> develop
 
 interface AddTeamProps {
   players: UserDTO[];
@@ -42,10 +49,13 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
   onClose,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
+<<<<<<< HEAD
+=======
 
   const modalRef = useRef<HTMLDivElement>(null);
   useClickOutside(modalRef, onClose);
 
+>>>>>>> develop
   const [teamName, setTeamName] = useState<string>("");
 
   const { maleCat, femaleCat } = useSeparateCats(tournament.Categories);
@@ -102,7 +112,11 @@ const AddTeamModal: React.FC<AddTeamProps> = ({
 
   return (
     <ModalWrapper>
+<<<<<<< HEAD
+      <ModalContent width={40}>
+=======
       <ModalContent width={40} ref={modalRef}>
+>>>>>>> develop
         <HeaderContainer>
           <H3Styled>Crear Equipo</H3Styled>
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />

@@ -48,18 +48,33 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       .getRawMany();
   },
 
+<<<<<<< HEAD
+  async getAll() {
+=======
   async getAll(userId: string) {
+>>>>>>> develop
     return this.createQueryBuilder("c")
       .select([
         "c.id AS id",
         'c."clubName"',
         'c."location" AS address',
+<<<<<<< HEAD
+        'COUNT(co."courtNumber") AS courtCount',
+=======
         'COUNT(distinct co."courtNumber") AS courtCount',
+>>>>>>> develop
         'cc."availableFrom"',
         'cc."availableTo"',
       ])
       .innerJoin("calendar_club", "cc", 'cc.id = c."calendarClubId"')
       .innerJoin("court", "co", 'co."clubId" = c.id')
+<<<<<<< HEAD
+      .groupBy(
+        'c.id, cc.id, c."clubName", cc."availableFrom", cc."availableTo"'
+      )
+      .getRawMany();
+  },
+=======
       .innerJoin("tour_clubs_club", "tcc", 'tcc."clubId" = c.id')
       .innerJoin("tour", "t", 'tcc."tourId" = t.id')
       .innerJoin("tour_users_user", "tuu", 'tuu."tourId" = t.id')
@@ -137,4 +152,5 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       return updatedClub;
     });
   },
+>>>>>>> develop
 });

@@ -1,9 +1,13 @@
+<<<<<<< HEAD
+import { H2, InputContainer, InputGroup } from "./RegisterCardStyle";
+=======
 import {
   H2,
   InputContainer,
   InputGroup,
   ButtonContainer,
 } from "./RegisterCardStyle";
+>>>>>>> develop
 import { darkGreen, lightGray, white } from "../../../utils/colors";
 
 import Card from "../../../components/card/Card";
@@ -16,7 +20,10 @@ import { Errors } from "../../../errors/Errors";
 interface RegisterCardProps {
   data: DataRegister;
   onClick: () => void;
+<<<<<<< HEAD
+=======
   onBack: () => void;
+>>>>>>> develop
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: Errors;
 }
@@ -25,7 +32,10 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
   data,
   onClick,
   onChange,
+<<<<<<< HEAD
+=======
   onBack,
+>>>>>>> develop
   error,
 }) => {
   return (
@@ -36,7 +46,11 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
       mWidth={700}
       mHeight={550}
     >
+<<<<<<< HEAD
+      <H2>Registro</H2>
+=======
       <H2>Registro de nuevo usuario</H2>
+>>>>>>> develop
       <InputGroup>
         <InputContainer>
           <SecondaryInput
@@ -128,6 +142,9 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
           />
         </InputContainer>
       </InputGroup>
+<<<<<<< HEAD
+      <PrimaryButton text="Registrarse" onClick={onClick} />
+=======
       <ButtonContainer>
         <PrimaryButton
           text="Volver"
@@ -136,6 +153,7 @@ const RegisterCard: React.FC<RegisterCardProps> = ({
         />
         <PrimaryButton text="Registrarse" onClick={onClick} />
       </ButtonContainer>
+>>>>>>> develop
     </Card>
   );
 };

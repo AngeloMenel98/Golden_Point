@@ -20,10 +20,6 @@ import useGetTeams from "../../../hooks/useGetTeams";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
 import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
-<<<<<<< HEAD
-import BouncingCircles from "../../../components/spinner/spinner";
-=======
->>>>>>> feature/Brackets
 import { Note } from "../../admin/Tour/Cards/TourCardStyle";
 
 const MatchesUser: React.FC = () => {

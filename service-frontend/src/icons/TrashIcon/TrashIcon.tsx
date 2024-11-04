@@ -1,8 +1,20 @@
 import React from "react";
 import { black } from "../../utils/colors";
+<<<<<<< HEAD
+
+interface TrashIconProps {
+  width: number;
+  height: number;
+  color?: string;
+  onClick?: () => void;
+}
+
+const TrashIcon: React.FC<TrashIconProps> = ({
+=======
 import { IconProps } from "../../utils/interfaces";
 
 const TrashIcon: React.FC<IconProps> = ({
+>>>>>>> develop
   width,
   height,
   color = black,

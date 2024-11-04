@@ -15,11 +15,8 @@ import UsersTable from "../../../components/userTable/UserTable";
 import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetRankings from "../../../hooks/useGetRankings";
-<<<<<<< HEAD
-import BouncingCircles from "../../../components/spinner/spinner";
-=======
->>>>>>> feature/Brackets
 import { Note } from "../../admin/Tour/Cards/TourCardStyle";
+
 
 const RankingsUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -80,3 +77,4 @@ const RankingsUser: React.FC = () => {
 };
 
 export default RankingsUser;
+
