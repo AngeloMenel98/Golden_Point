@@ -10,12 +10,6 @@ export interface ClubCredentials {
   courtsNumber: string;
 }
 
-<<<<<<< HEAD
-class ClubAPI extends GeneralAPI {
-  async getClubs() {
-    try {
-      const res = await this.api.get(`/club/clubs`);
-=======
 export interface UpdateClub {
   userId?: string;
   clubId: string;
@@ -38,7 +32,6 @@ class ClubAPI extends GeneralAPI {
   async getClubsPerTour(userId: string, tourId: string | undefined) {
     try {
       const res = await this.api.get(`/clubs/${userId}/${tourId}`);
->>>>>>> develop
       return res.data;
     } catch (e) {
       isAxiosError(e);
@@ -53,8 +46,6 @@ class ClubAPI extends GeneralAPI {
       return isAxiosError(e);
     }
   }
-<<<<<<< HEAD
-=======
 
   async updateClub(club: UpdateClub) {
     try {
@@ -64,7 +55,6 @@ class ClubAPI extends GeneralAPI {
       return isAxiosError(e);
     }
   }
->>>>>>> develop
 }
 
 export default ClubAPI;

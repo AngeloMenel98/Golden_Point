@@ -1,9 +1,4 @@
 import styled from "styled-components";
-<<<<<<< HEAD
-import { black, darkGreen, grayModal, white } from "../../../../utils/colors";
-
-export const ModalWrapper = styled.div`
-=======
 import {
   black,
   darkGray,
@@ -18,21 +13,13 @@ export const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
 
->>>>>>> develop
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-<<<<<<< HEAD
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${grayModal};
-=======
   background-color: ${grayModal};
   z-index: 1000;
->>>>>>> develop
 `;
 
 export const HeaderContainer = styled.div`
@@ -102,12 +89,6 @@ export const ButtonSection = styled.div`
   padding: 1rem;
 `;
 
-<<<<<<< HEAD
-export const H3Styled = styled.h3`
-  color: ${darkGreen};
-  margin: 0;
-`;
-=======
 export const H3 = styled.h3`
   color: ${darkGreen};
   margin: 0;
@@ -184,4 +165,3 @@ export const NoteStyled = styled.p`
   color: ${pastelGreen};
   margin: 4px 0px;
 `;
->>>>>>> develop

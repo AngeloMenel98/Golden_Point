@@ -1,20 +1,8 @@
 import React from "react";
 import { black } from "../../utils/colors";
-<<<<<<< HEAD
-
-interface OptsIconProps {
-  width: number;
-  height: number;
-  color?: string;
-  onClick?: () => void;
-}
-
-const OptsIcon: React.FC<OptsIconProps> = ({
-=======
 import { IconProps } from "../../utils/interfaces";
 
 const OptsIcon: React.FC<IconProps> = ({
->>>>>>> develop
   width,
   height,
   color = black,

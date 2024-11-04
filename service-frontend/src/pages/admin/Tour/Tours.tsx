@@ -31,11 +31,7 @@ const Tours: React.FC = () => {
   const [tourTitle, setTourTitle] = useState<string>("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-<<<<<<< HEAD
-  const { tours, error, hasFetched, refetch } = useGetTours(user);
-=======
   const { tours, error, isLoading, hasFetched, refetch } = useGetTours(user);
->>>>>>> develop
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -84,10 +80,7 @@ const Tours: React.FC = () => {
             tourApi={tourAPI}
             tourTitle={tourTitle}
             error={error}
-<<<<<<< HEAD
-=======
             isLoading={isLoading}
->>>>>>> develop
             refetch={refetch}
           />
         )}

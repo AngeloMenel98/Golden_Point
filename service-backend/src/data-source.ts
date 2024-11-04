@@ -16,10 +16,7 @@ import {
   Notification,
   Reward,
   TeamMatch,
-<<<<<<< HEAD
-=======
   GroupStage,
->>>>>>> develop
 } from "./entity/index";
 
 export const AppDataSource = new DataSource({
@@ -47,10 +44,8 @@ export const AppDataSource = new DataSource({
     Notification,
     Reward,
     TeamMatch,
-<<<<<<< HEAD
-=======
+
     GroupStage,
->>>>>>> develop
   ],
   migrations: [],
   subscribers: [],

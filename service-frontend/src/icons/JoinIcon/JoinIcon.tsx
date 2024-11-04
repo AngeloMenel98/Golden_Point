@@ -1,20 +1,9 @@
 import React from "react";
 import { black } from "../../utils/colors";
-<<<<<<< HEAD
 
-interface JoinIconProps {
-  width: number;
-  height: number;
-  color?: string;
-  onClick?: () => void;
-}
-
-const JoinIcon: React.FC<JoinIconProps> = ({
-=======
 import { IconProps } from "../../utils/interfaces";
 
 const JoinIcon: React.FC<IconProps> = ({
->>>>>>> develop
   width,
   height,
   color = black,

@@ -1,15 +1,8 @@
 import styled from "styled-components";
-<<<<<<< HEAD
-import { black } from "../../../utils/colors";
-
-export const H2 = styled.h2`
-  color: ${black};
-=======
 import { darkGreen } from "../../../utils/colors";
 
 export const H2 = styled.h2`
   color: ${darkGreen};
->>>>>>> develop
 `;
 
 export const InputGroup = styled.div`
@@ -27,8 +20,6 @@ export const InputContainer = styled.div`
   margin-bottom: 1rem;
   margin-right: 1rem;
 `;
-<<<<<<< HEAD
-=======
 
 export const ButtonContainer = styled.div`
   display: flex;
@@ -37,4 +28,3 @@ export const ButtonContainer = styled.div`
   justify-content: center;
   gap: 0.5rem;
 `;
->>>>>>> develop

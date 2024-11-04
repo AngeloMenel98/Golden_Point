@@ -55,6 +55,15 @@ export class SetController {
       const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
 
       await this.teamMatchService.addWinner(teamId, matchId);
+      //-----------------------
+      /*    const groups = await this.tournamentService.getWinningTeams(
+        tournament.id,
+        ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"],
+
+      );
+      if (groups !== -1) {
+        await this.tournamentService.createNextMatches(
+
       const groups = await this.tournamentService.getWinningTeams(
         tournament.id,
         ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"]
@@ -64,7 +73,10 @@ export class SetController {
         // Crear los partidos de la siguiente fase (Cuartos de Final)
         const ms = await this.tournamentService.createNextMatches(
           groups,
-          tournament
+          tournament,
+          "Cuartos de Final",
+          70,
+          75
         );
       }
 
@@ -72,19 +84,32 @@ export class SetController {
         tournamentId,
         ["Cuartos de Final"]
       );
+      console.log("Quarters", quarters);
 
       if (quarters !== -1) {
-        await this.tournamentService.createNextMatches(quarters, tournament);
+        await this.tournamentService.createNextMatches(
+          quarters,
+          tournament,
+          "Semi-Final",
+          100,
+          150
+        );
       }
-
-      const semis = await this.tournamentService.getWinningTeams(tournamentId, [
-        "Semi-Final",
-      ]);
+      const semis = await this.tournamentService.getWinningTeams(
+        tournamentId,
+        ["Semi-Final"]
+      );
 
       if (semis !== -1) {
-        await this.tournamentService.createNextMatches(semis, tournament);
-      }*/
-
+        await this.tournamentService.createNextMatches(
+          semis,
+          tournament,
+          "Final",
+          200,
+          300
+        );
+      }
+      //----------------------------*/
       const response = {
         winner,
         sets: setsSaved.map((s) => ({
