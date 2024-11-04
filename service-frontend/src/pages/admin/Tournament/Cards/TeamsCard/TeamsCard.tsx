@@ -16,10 +16,6 @@ interface TeamsCardProps {
 }
 
 const TeamsCard: React.FC<TeamsCardProps> = ({
-<<<<<<< HEAD
-  error,
-=======
->>>>>>> develop
   name,
   deletedTeams,
   allTeams,

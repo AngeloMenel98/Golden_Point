@@ -11,19 +11,11 @@ import {
 import {
   ModalContent,
   ModalWrapper,
-<<<<<<< HEAD
-  H3Styled,
-=======
->>>>>>> develop
   HeaderContainer,
   ClubContainer,
   LeftContainer,
   RightContainer,
   FooterContainer,
-<<<<<<< HEAD
-  ButtonSection,
-  FullRightContainer,
-=======
   TitleContainer,
   IconContainer,
   TooltipContainer,
@@ -33,7 +25,6 @@ import {
   H4,
   TooltipText,
   Note,
->>>>>>> develop
 } from "./TourModalStyle";
 import PlusIcon from "../../../../icons/PlusIcon/PlusIcon";
 import { ClubDTO } from "../../../../entities/dtos/ClubDTO";
@@ -48,11 +39,8 @@ import { RootState } from "../../../../reduxSlices/store";
 import TourAPI, { TourCredentials } from "../../../../services/TourApi";
 import useClickOutside from "../../../../hooks/functionalities/useClickOutside";
 import { CreationTour } from "../../../../utils/interfaces";
-<<<<<<< HEAD
-=======
 import QuestionIcon from "../../../../icons/QuestionIcon/QuestionIcon";
 import useIntervals from "../../../../hooks/functionalities/useInterval";
->>>>>>> develop
 
 interface TourModalProps {
   tourApi: TourAPI;
@@ -64,12 +52,8 @@ const clubAPI = new ClubAPI();
 
 const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
   const user = useSelector((state: RootState) => state.user.user);
-<<<<<<< HEAD
-  const { allClubs, addClubToState } = useGetClubs();
-=======
 
   const { allClubs, addClubToState } = useGetClubs(user?.id, true);
->>>>>>> develop
 
   const [data, setData] = useState<CreationTour>({
     tourName: "",
@@ -85,15 +69,12 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
   const modalRef = useRef<HTMLDivElement>(null);
   useClickOutside(modalRef, onClose);
 
-<<<<<<< HEAD
-=======
   const intervalCount = useIntervals(
     data.avFrom,
     data.avTo,
     parseInt(data.courts)
   );
 
->>>>>>> develop
   const handleSaveClub = async () => {
     setFieldErrors({});
     const club: ClubCredentials = {
@@ -161,17 +142,11 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
 
   const handleCheckboxChange = (club: ClubDTO, isChecked: boolean) => {
     if (isChecked) {
-<<<<<<< HEAD
-      setClubsSelected([...clubsSelected, club]);
-    } else {
-      setClubsSelected(clubsSelected.filter((c) => c !== club));
-=======
       setClubsSelected((prevSelected) => [...prevSelected, club]);
     } else {
       setClubsSelected((prevSelected) =>
         prevSelected.filter((c) => c.Id !== club.Id)
       );
->>>>>>> develop
     }
   };
 
@@ -183,11 +158,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
     <ModalWrapper>
       <ModalContent width={45} ref={modalRef}>
         <HeaderContainer>
-<<<<<<< HEAD
-          <H3Styled>Crear Tour</H3Styled>
-=======
           <H3>Crear Tour</H3>
->>>>>>> develop
           <CrossIcon width={30} height={30} color={red} onClick={onClose} />
         </HeaderContainer>
 
@@ -234,10 +205,6 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
           </LeftContainer>
 
           <RightContainer>
-<<<<<<< HEAD
-            <SecondaryInput
-              label="Horario Inicial"
-=======
             <TitleContainer>
               <H4>Disponibilidad del Club para Torneo</H4>
               <TooltipContainer>
@@ -252,7 +219,6 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
             </TitleContainer>
             <SecondaryInput
               label="Inicio"
->>>>>>> develop
               id="avFrom"
               type="datetime-local"
               value={data.avFrom}
@@ -261,11 +227,7 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
               error={fieldErrors.avFrom}
             />
             <SecondaryInput
-<<<<<<< HEAD
-              label="Horario Final"
-=======
               label="Final"
->>>>>>> develop
               id="avTo"
               type="datetime-local"
               value={data.avTo}
@@ -273,12 +235,9 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
               onChange={handleData}
               error={fieldErrors.avTo}
             />
-<<<<<<< HEAD
-=======
             {intervalCount !== null && data.courts !== "" && (
               <Note>*Partidos disponibles: {intervalCount}</Note>
             )}
->>>>>>> develop
           </RightContainer>
           <FullRightContainer>
             <PlusIcon
@@ -302,20 +261,12 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
               key={index}
               clubData={club}
               onCheckboxChange={handleCheckboxChange}
-<<<<<<< HEAD
-            />
-          ))}
-          {filteredClubs.length === 0 && (
-            <BouncingCircles text="nuevos Clubs" />
-          )}
-=======
               isChecked={clubsSelected.some(
                 (selectedClub) => selectedClub.Id === club.Id
               )}
             />
           ))}
           {filteredClubs.length === 0 && <Note>No hay ningún Club</Note>}
->>>>>>> develop
         </Card>
 
         <FooterContainer>
