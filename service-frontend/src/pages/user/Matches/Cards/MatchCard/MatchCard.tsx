@@ -1,11 +1,6 @@
 import { CardContainer, MatchContainer } from "./MatchCardStyle";
 import Card from "../../../../../components/card/Card";
-import {
-  black,
-  darkGreen,
-  pastelGreen,
-  white,
-} from "../../../../../utils/colors";
+import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import Match from "../../../../../components/match/Match";
 import { MatchDTO } from "../../../../../entities/dtos/MatchDTO";
 import { TeamDTO } from "../../../../../entities/dtos/TeamDTO";
