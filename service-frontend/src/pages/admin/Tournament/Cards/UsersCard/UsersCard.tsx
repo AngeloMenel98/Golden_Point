@@ -6,11 +6,8 @@ import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import UsersButton from "../../../../../components/buttons/UsersButton/UsersButton";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
 import UserCircleIcon from "../../../../../icons/UserCircleIcon/UserCircleIcon";
-import BouncingCircles from "../../../../../components/spinner/spinner";
-<<<<<<< HEAD
-=======
 import { Note } from "../../../Tour/Cards/TourCardStyle";
->>>>>>> develop
+
 
 interface UsersCardProps {
   users: UserDTO[];
@@ -22,10 +19,6 @@ interface UsersCardProps {
 
 const UsersCard: React.FC<UsersCardProps> = ({
   users,
-<<<<<<< HEAD
-  error,
-=======
->>>>>>> develop
   name,
   addPlayers,
   selectedPlayers,
@@ -55,11 +48,7 @@ const UsersCard: React.FC<UsersCardProps> = ({
           />
         ))}
       </UsersContainer>
-<<<<<<< HEAD
-      {filteredUsers.length === 0 && <BouncingCircles text="nuevos Usuarios" />}
-=======
       {filteredUsers.length === 0 && <Note>No se encontro ningún Usuario</Note>}
->>>>>>> develop
     </Card>
   );
 };

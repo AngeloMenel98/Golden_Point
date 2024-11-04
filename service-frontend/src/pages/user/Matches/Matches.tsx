@@ -20,11 +20,7 @@ import useGetTeams from "../../../hooks/useGetTeams";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetCatsByTournId from "../../../hooks/useGetCatsByTournId";
 import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
-import BouncingCircles from "../../../components/spinner/spinner";
-<<<<<<< HEAD
-=======
 import { Note } from "../../admin/Tour/Cards/TourCardStyle";
->>>>>>> develop
 
 const MatchesUser: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -84,11 +80,7 @@ const MatchesUser: React.FC = () => {
 
   return (
     <MainContainer>
-<<<<<<< HEAD
-      <NavBar userName={user?.userName} />
-=======
       <NavBar userName={user?.userName} isUser={true} />
->>>>>>> develop
       <TournamentSection>
         <HeaderContainer>
           <Breadcrumb path={breadcrumbPath} />
@@ -124,11 +116,7 @@ const MatchesUser: React.FC = () => {
         )}
         {isLoading && (
           <SpaceContainer>
-<<<<<<< HEAD
-            <BouncingCircles text="categoria e instancia" />
-=======
             <Note>Selecciona una categoría e instancia para ver Partidos</Note>
->>>>>>> develop
           </SpaceContainer>
         )}
       </TournamentSection>

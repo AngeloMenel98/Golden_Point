@@ -23,6 +23,7 @@ export class MatchService {
     const teams: Team[] = await Promise.all(
       teamIds.map((teamId) => this.teamService.findById(teamId))
     );
+
     const court = await this.courtService.findById(courtId);
 
     if (teams.length != 2) {

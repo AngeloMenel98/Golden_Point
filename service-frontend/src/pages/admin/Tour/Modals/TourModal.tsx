@@ -46,7 +46,6 @@ import ClubAPI, { ClubCredentials } from "../../../../services/ClubApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
 import TourAPI, { TourCredentials } from "../../../../services/TourApi";
-import BouncingCircles from "../../../../components/spinner/spinner";
 import useClickOutside from "../../../../hooks/functionalities/useClickOutside";
 import { CreationTour } from "../../../../utils/interfaces";
 <<<<<<< HEAD

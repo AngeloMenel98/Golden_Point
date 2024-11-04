@@ -15,15 +15,10 @@ import UsersTable from "../../../components/userTable/UserTable";
 import DropDownUnique from "../../../components/dropdown/DropDownSingle/DropDown/DropDown";
 import Breadcrumb from "../../../components/breadcrumb/BreadCrumb";
 import useGetRankings from "../../../hooks/useGetRankings";
-import BouncingCircles from "../../../components/spinner/spinner";
-<<<<<<< HEAD
-
-const Rankings: React.FC = () => {
-=======
 import { Note } from "../../admin/Tour/Cards/TourCardStyle";
 
+
 const RankingsUser: React.FC = () => {
->>>>>>> develop
   const user = useSelector((state: RootState) => state.user.user);
   const tour = useSelector((state: RootState) => state.tour.tour);
 
@@ -45,11 +40,7 @@ const RankingsUser: React.FC = () => {
 
   return (
     <MainContainer>
-<<<<<<< HEAD
-      <NavBar userName={user?.userName} />
-=======
       <NavBar userName={user?.userName} isUser={true} />
->>>>>>> develop
       <RankingSection>
         <SpaceContainer>
           <Breadcrumb path={breadcrumbPath} />
@@ -77,11 +68,7 @@ const RankingsUser: React.FC = () => {
 
         {isLoading && (
           <TableContainer>
-<<<<<<< HEAD
-            <BouncingCircles text="categoría" />
-=======
             <Note>Selecciona una categoría para ver Rankings</Note>
->>>>>>> develop
           </TableContainer>
         )}
       </RankingSection>
@@ -89,8 +76,5 @@ const RankingsUser: React.FC = () => {
   );
 };
 
-<<<<<<< HEAD
-export default Rankings;
-=======
 export default RankingsUser;
->>>>>>> develop
+

@@ -50,7 +50,10 @@ services:
       context: ./service-frontend
       dockerfile: ./Dockerfile
     image: angemenel98/gp-frontend:0.0.4
+<<<<<<< HEAD
 
+=======
+>>>>>>> feature/Brackets
     container_name: frontend_app
     depends_on:
       - backend

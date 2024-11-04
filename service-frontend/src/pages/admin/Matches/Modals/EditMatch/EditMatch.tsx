@@ -31,6 +31,7 @@ interface EditMatchProps {
   onEditMatch: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClose: () => void;
   reloadMatches: () => void;
+  tournamentId: string;
 }
 
 const setAPI: SetAPI = new SetAPI();
@@ -41,6 +42,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
   onEditMatch,
   onClose,
   reloadMatches,
+  tournamentId,
 }) => {
   const user = useSelector((state: RootState) => state.user.user);
 
@@ -65,6 +67,7 @@ const EditMatch: React.FC<EditMatchProps> = ({
       setsTeam2: setT2,
       teamsId: editMatch.teamsId.map((t) => t),
       matchId: editMatch.matchId,
+      tournamentId,
     };
 
     const res = await setAPI.addSets(newSets);

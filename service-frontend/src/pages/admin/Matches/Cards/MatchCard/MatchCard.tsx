@@ -15,6 +15,7 @@ interface MatchCardProps {
   matches: MatchDTO[];
   teams: TeamDTO[];
   error?: string;
+  tournamentId: string;
   reloadMatches: () => void;
 }
 
@@ -38,6 +39,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
   teams,
   error,
   reloadMatches,
+  tournamentId,
 }) => {
   const [isMatchOpen, setIsMatchOpen] = useState(false);
   const [editMatch, setEditMatch] = useState<MatchData>({
@@ -96,6 +98,7 @@ const MatchCard: React.FC<MatchCardProps> = ({
           editMatch={editMatch}
           onEditMatch={handleChangeMatch}
           onClose={closeMatchModal}
+          tournamentId={tournamentId}
           reloadMatches={reloadMatches}
         />
       )}

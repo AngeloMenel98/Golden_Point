@@ -28,6 +28,10 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("teamsId")),
+    check("tournamentId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("tournamentId")),
   ],
   setController.create.bind(setController)
 );
