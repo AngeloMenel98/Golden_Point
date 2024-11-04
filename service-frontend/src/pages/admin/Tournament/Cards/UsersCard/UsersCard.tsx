@@ -6,7 +6,10 @@ import { darkGreen, pastelGreen, white } from "../../../../../utils/colors";
 import UsersButton from "../../../../../components/buttons/UsersButton/UsersButton";
 import { UserDTO } from "../../../../../entities/dtos/UserDTO";
 import UserCircleIcon from "../../../../../icons/UserCircleIcon/UserCircleIcon";
+<<<<<<< HEAD
 import BouncingCircles from "../../../../../components/spinner/spinner";
+=======
+>>>>>>> feature/Brackets
 import { Note } from "../../../Tour/Cards/TourCardStyle";
 
 interface UsersCardProps {

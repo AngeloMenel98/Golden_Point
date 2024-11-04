@@ -1,3 +1,4 @@
+import { fail } from "assert";
 import { AppDataSource } from "../data-source";
 import { Category, Tour, Tournament } from "../entity";
 
@@ -56,37 +57,21 @@ export const TournamentRepository = AppDataSource.getRepository(
   },
 
   async getWinningTeams(tournamentId: string, groupStage: string[]) {
-    // Subquery to check if all matches in a group stage have a winner
-    const isFinish = await AppDataSource.createQueryBuilder()
+    const groupStagesString = `'${groupStage.join("','")}'`;
+
+    const matchesQ = await AppDataSource.createQueryBuilder()
       .select(
-        `CASE 
-      WHEN COUNT(*) > 0 THEN TRUE 
-      ELSE FALSE 
-    END AS "hasIncompleteGroupStage"`
+        ` COUNT(distinct m.id) as matches,
+          COUNT(CASE WHEN tm."isWinner" = true THEN 1 END) total_wins`
       )
-      .from(
-        (subquery) =>
-          subquery
-            .select("1")
-            .from("match", "m")
-            .innerJoin("team_match", "tm", '"m"."id" = "tm"."matchId"')
-            .innerJoin("group_stage", "gs", '"gs"."id" = "m"."groupStageId"')
-            .where('"m"."tournamentId" = :tournamentId', { tournamentId })
-            .andWhere('"gs"."groupStage" IN (:...groupStages)', {
-              groupStages: groupStage, // Array con 'Grupo 1', 'Grupo 2', etc.
-            })
-            .groupBy('"m"."groupStageId"')
-            .having(
-              'SUM(CASE WHEN tm."isWinner" IS TRUE THEN 0 ELSE 1 END) > 0'
-            ),
-        "subquery"
-      )
+      .from("match", "m")
+      .innerJoin("team_match", "tm", '"m"."id" = "tm"."matchId"')
+      .innerJoin("group_stage", "gs", '"gs"."id" = "m"."groupStageId"')
+      .where('"m"."tournamentId" = :tournamentId', { tournamentId })
+      .andWhere(`gs.groupStage IN (${groupStagesString})`)
       .getRawOne();
 
-    const isIncomplete = isFinish?.hasIncompleteGroupStage === true;
-
-    console.log("isIncomplet:", isIncomplete);
-    if (!isIncomplete) {
+    if (matchesQ?.matches != matchesQ?.total_wins) {
       return -1;
     }
 
@@ -123,7 +108,6 @@ export const TournamentRepository = AppDataSource.getRepository(
       .where('"m"."tournamentId" = :tournamentId', { tournamentId })
       .groupBy('"tm"."teamId", "m"."groupStageId"');
 
-    // Main query to get the winning teams
     const winningTeams = await AppDataSource.createQueryBuilder()
       .select([
         '"tw"."groupStageId" AS "groupStageId"',
@@ -145,7 +129,6 @@ export const TournamentRepository = AppDataSource.getRepository(
       .limit(8)
       .getRawMany();
 
-    console.log("Wining:", winningTeams);
     return winningTeams;
   },
 

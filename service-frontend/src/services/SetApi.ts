@@ -7,6 +7,7 @@ export interface SetAtts {
   setsTeam2: string[];
   teamsId: string[];
   matchId: string;
+  tournamentId: string;
 }
 
 class SetAPI extends GeneralAPI {

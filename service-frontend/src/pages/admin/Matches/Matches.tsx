@@ -115,6 +115,7 @@ const Matches: React.FC = () => {
               error={errors.notFound}
               matches={filteredMatches}
               teams={allTeams}
+              tournamentId={tournamentId}
               reloadMatches={reloadMatches}
             />
           </SpaceContainer>

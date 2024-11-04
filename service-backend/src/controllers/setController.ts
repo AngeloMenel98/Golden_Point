@@ -55,22 +55,20 @@ export class SetController {
       const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
 
       await this.teamMatchService.addWinner(teamId, matchId);
-      /*const groups = await this.tournamentService.getWinningTeams(
-        tournamentId,
+      const groups = await this.tournamentService.getWinningTeams(
+        tournament.id,
         ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"]
       );
 
-      console.log("Groups:", groups);
-      if (groups !== -1) {
+      if (groups != -1) {
         // Crear los partidos de la siguiente fase (Cuartos de Final)
         const ms = await this.tournamentService.createNextMatches(
           groups,
           tournament
         );
-        console.log(ms);
       }
 
-      const quarters = await this.tournamentService.getWinningTeams(
+      /*const quarters = await this.tournamentService.getWinningTeams(
         tournamentId,
         ["Cuartos de Final"]
       );
