@@ -28,20 +28,14 @@ router.post(
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Fecha Final")),
-<<<<<<< HEAD
-=======
     check("courtsNumber")
       .not()
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Cantidad de canchas")),
->>>>>>> develop
   ],
   clubController.create.bind(clubController)
 );
 
-<<<<<<< HEAD
-router.get("/club/clubs", clubController.getAll.bind(clubController));
-=======
 router.post(
   "/club/update",
   [
@@ -78,6 +72,5 @@ router.get(
   "/clubs/:userId/:tourId",
   clubController.getClubsPerTour.bind(clubController)
 );
->>>>>>> develop
 
 export default router;

@@ -4,7 +4,7 @@ import { Court } from "../entity";
 export const CourtRepository = AppDataSource.getRepository(Court).extend({
   async getCourtByClubId(clubId: string, courtNumber: string) {
     return this.createQueryBuilder("court")
-      .innerJoin("court.club", "club") // Asumiendo que existe una relación entre Court y Club
+      .innerJoin("court.club", "club")
       .where('club."id" = :clubId', { clubId })
       .andWhere('court."courtNumber" = :courtNumber', { courtNumber })
       .getOne();
