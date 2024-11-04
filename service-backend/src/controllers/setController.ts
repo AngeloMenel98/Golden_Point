@@ -63,6 +63,15 @@ export class SetController {
       );
       if (groups !== -1) {
         await this.tournamentService.createNextMatches(
+
+      const groups = await this.tournamentService.getWinningTeams(
+        tournament.id,
+        ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"]
+      );
+
+      if (groups != -1) {
+        // Crear los partidos de la siguiente fase (Cuartos de Final)
+        const ms = await this.tournamentService.createNextMatches(
           groups,
           tournament,
           "Cuartos de Final",
@@ -71,7 +80,7 @@ export class SetController {
         );
       }
 
-      const quarters = await this.tournamentService.getWinningTeams(
+      /*const quarters = await this.tournamentService.getWinningTeams(
         tournamentId,
         ["Cuartos de Final"]
       );
