@@ -173,9 +173,14 @@ enum Status {
 ### Match Flow
 
 1. **Group Stage**: Matches auto-generated when tournament starts
-2. **Within Group**: 3 teams = 3 matches each (each pair plays once)
-3. **Ranking**: Winner = more matches won > games difference
-4. **Advancement**: Top 2 from each group advance to knockout
+2. **Within Group**: 3 teams = 3 matches total (round-robin: each team plays 2 matches)
+   - Team A vs Team B
+   - Team A vs Team C
+   - Team B vs Team C
+3. **Group Ranking**: Teams ranked by:
+   - 1st: More matches won
+   - 2nd: Higher games difference (if tied on matches)
+4. **Advancement to Knockout**: Top 2 teams from each group advance
 5. **Knockout**: Manually created via `createNextMatches`
 
 ### Match Result Calculation
@@ -183,9 +188,14 @@ enum Status {
 - **Set**: Best of games (tracked in Set entity)
 - **Match**: Team with most sets won
 - **Group Ranking**:
-  1. Total matches won
-  2. Games difference (if tied)
+  1. Total matches won (primary)
+  2. Games difference (if tied on matches)
   3. Head-to-head (if still tied)
+
+### Knockout Advancement Rules
+
+- Top 2 teams from each group advance to knockout
+- Tiebreaker: More matches won > Higher games difference
 
 ---
 
@@ -310,7 +320,10 @@ class GroupDTO {
 
 ```typescript
 // Sort each group by: matchesWon DESC, gamesDiff DESC
-// Pair: group[N][0] vs group[N+1][1] and group[N+1][0] vs group[N][1]
+// Select top 2 from each group
+// Pairing:
+//   - group[N][0] vs group[N+1][1]  (1st of group N vs 2nd of group N+1)
+//   - group[N+1][0] vs group[N][1]  (1st of group N+1 vs 2nd of group N)
 ```
 
 ---
