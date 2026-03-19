@@ -1,9 +1,7 @@
 import { CategoryService, ClubService, MatchService, TourService } from ".";
-import codeErrors from "../constants/codeErrors";
 import time from "../constants/time";
 import { Category, Match, Tournament } from "../entity";
 import { GroupDTO } from "../entity/dtos/GroupsDTO";
-import { ServiceCodeError } from "../errors/errorsClass";
 import {
   ClubRepository,
   TeamRepository,
@@ -16,6 +14,8 @@ import {
 } from "../utils/functionHelpers";
 import { Stats } from "fs";
 import { Status } from "../entity/Tournament";
+import { notFound, conflict, validationError } from "../types/error/app-error";
+import { TeamRankingData } from "../types/dto/team.dto";
 
 export class TournamentService {
   private tourService: TourService;
@@ -34,11 +34,11 @@ export class TournamentService {
     categoryData: Category[]
   ) {
     if (newTournament.master <= 0) {
-      throw new ServiceCodeError(codeErrors.TOURN_1);
+      throw validationError("Master obligatorio");
     }
 
     if (categoryData.length == 0) {
-      throw new ServiceCodeError(codeErrors.TOURN_2);
+      throw validationError("Al menos se necesita una categoría");
     }
 
     const existingTour = await this.tourService.findById(tourId);
@@ -67,13 +67,11 @@ export class TournamentService {
     const teamsWithCat = await TeamRepository.getTeams(tournament.id);
 
     if (!clubsWithCat || clubsWithCat.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Club con el Tournament ID"));
+      throw conflict("No se encontro ningún Club con el Tournament ID", "Club");
     }
 
     if (!teamsWithCat || teamsWithCat.length == 0) {
-      throw new ServiceCodeError(
-        codeErrors.GEN_2("Equipo con el Tournament ID")
-      );
+      throw conflict("No se encontro ningún Equipo con el Tournament ID", "Equipo");
     }
 
     const clubData: ClubData[] = [];
@@ -156,7 +154,7 @@ export class TournamentService {
       const numTeams = teams.length;
 
       if (numTeams < 3 || numTeams % 3 !== 0) {
-        throw new ServiceCodeError(codeErrors.TOURN_3);
+        throw validationError("Numero de equipo no suficientes");
       }
 
       const numGroups = numTeams / 3;
@@ -203,7 +201,7 @@ export class TournamentService {
     });
 
     if (!existingTourn) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Tournament"));
+      throw notFound("Tournament", tournamentId);
     }
 
     return existingTourn;
@@ -235,11 +233,11 @@ export class TournamentService {
       const matchDates = grDTO.matchDates;
 
       if (matchDates.length < 3) {
-        throw new ServiceCodeError(codeErrors.GEN_2("Match Date"));
+        throw conflict("No se encontro ningún Match Date", "Match Date");
       }
 
       if (courtIds.length === 0) {
-        throw new ServiceCodeError(codeErrors.GEN_2("Courts IDs"));
+        throw conflict("No se encontro ningún Courts IDs", "Courts IDs");
       }
 
       for (const courtId of courtIds) {
@@ -269,7 +267,7 @@ export class TournamentService {
     return matches;
   }
 
-  async createNextMatches(teams: any[], tournament: Tournament) {
+  async createNextMatches(teams: TeamRankingData[], tournament: Tournament) {
     const matches: Match[] = [];
 
     const teamsByGroup = teams.reduce((acc, team) => {
@@ -330,7 +328,7 @@ export class TournamentService {
     const tournaments: TourData[] = await TournamentRepository.getAll(tourId);
 
     if (tournaments.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Torneo"));
+      throw conflict("No se encontro ningún Torneo", "Torneo");
     }
 
     return tournaments;
@@ -339,7 +337,7 @@ export class TournamentService {
   async getCategoriesByTournId(tournId: string) {
     const categories = await TournamentRepository.getCategoryByTournId(tournId);
     if (categories.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Categorias"));
+      throw conflict("No se encontro ningún Categorias", "Categorias");
     }
     return categories;
   }
@@ -347,7 +345,7 @@ export class TournamentService {
   async getMyTournaments(userId: string) {
     const tournaments = await TournamentRepository.getMyTournaments(userId);
     if (tournaments.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Torneos Propio"));
+      throw conflict("No se encontro ningún Torneos Propio", "Torneos Propio");
     }
     return tournaments;
   }

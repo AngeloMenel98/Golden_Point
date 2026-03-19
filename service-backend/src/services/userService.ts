@@ -1,10 +1,8 @@
 import { PerDataRepository, UserRepository } from "../repository";
 import { PersonalData, TourCoin, User } from "../entity";
-import valMessage from "../constants/validationMessages";
-
-import { UserServiceError, ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
 import { isNotUserAdmin } from "../helpers/validations";
+import { UserListResult, UserRankingResult } from "../types/dto/user.dto";
+import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class UserService {
   constructor() {}
@@ -15,17 +13,11 @@ export class UserService {
     });
 
     if (!existingUser) {
-      throw new UserServiceError(
-        valMessage.VALUE_NOT_EXIST("Nombre de Usuario"),
-        username
-      );
+      throw notFound("Nombre de Usuario", username);
     }
 
     if (!existingUser.compareHashPass(password)) {
-      throw new UserServiceError(
-        valMessage.VALUE_INCORRECT("Contraseña"),
-        password
-      );
+      throw conflict("Contraseña incorrecta", "Contraseña");
     }
 
     return existingUser;
@@ -34,15 +26,12 @@ export class UserService {
   async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
     const username = await UserRepository.findByUsername(user.username);
     if (username) {
-      throw new UserServiceError(
-        codeErrors.GEN_3("Nombre de Usuario"),
-        user.username
-      );
+      throw conflict("Nombre de Usuario ya existe", "Nombre de Usuario");
     }
 
     const email = await UserRepository.findByEmail(user.email);
     if (email) {
-      throw new UserServiceError(codeErrors.GEN_3("Email"), user.username);
+      throw conflict("Email ya existe", "Email");
     }
 
     return UserRepository.create(user, perData, tourCoin);
@@ -54,7 +43,7 @@ export class UserService {
     );
 
     if (!existingPerData) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Personal Data"));
+      throw conflict("No se encontro ningún Personal Data", "Personal Data");
     }
 
     return UserRepository.update(existingUser, existingPerData, user, perData);
@@ -70,10 +59,7 @@ export class UserService {
     const user = await UserRepository.findByUsername(username);
 
     if (!user) {
-      throw new UserServiceError(
-        valMessage.VALUE_NOT_EXIST("Nombre de Usuario"),
-        username
-      );
+      throw notFound("Nombre de Usuario", username);
     }
 
     return user;
@@ -85,7 +71,7 @@ export class UserService {
     });
 
     if (!existingUser) {
-      throw new UserServiceError(codeErrors.GEN_1("User"), userId);
+      throw notFound("User", userId);
     }
     return existingUser;
   }
@@ -94,7 +80,7 @@ export class UserService {
     const userData = await UserRepository.findUserWithPerData(userId);
 
     if (!userData) {
-      throw new UserServiceError(valMessage.VALUE_NOT_EXIST("User ID"), userId);
+      throw notFound("User ID", userId);
     }
 
     const user = {
@@ -110,20 +96,20 @@ export class UserService {
     return { user: user, perData: userData.personalData };
   }
 
-  async getAll(tourId: string) {
-    const users: unknown[] = await UserRepository.getAll(tourId);
+  async getAll(tourId: string): Promise<UserListResult[]> {
+    const users: UserListResult[] = await UserRepository.getAll(tourId);
 
     if (users.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Usuarios"));
+      throw conflict("No se encontro ningún Usuario.", "Usuarios");
     }
     return users;
   }
 
-  async getRanking(tourId: string, category: string) {
-    const users: unknown[] = await UserRepository.getRanking(tourId, category);
+  async getRanking(tourId: string, category: string): Promise<UserRankingResult[]> {
+    const users: UserRankingResult[] = await UserRepository.getRanking(tourId, category);
 
     if (users.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Usuario"));
+      throw conflict("No se encontro ningún Usuario.", "Usuario");
     }
     return users;
   }

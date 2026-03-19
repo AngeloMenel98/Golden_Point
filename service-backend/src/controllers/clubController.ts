@@ -2,7 +2,15 @@ import { ClubService } from "../services";
 import { CalendarClub, Club } from "../entity";
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
-import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { ApiResponse, success, failure } from "../types/response/api-response";
+import {
+  isNotFoundError,
+  isValidationError,
+  isConflictError,
+  isInternalError,
+  isUnauthorizedError,
+} from "../types/error/error-guards";
+import { ErrorType } from "../types/error/error-type";
 import { Manager } from "../helpers/manager";
 
 export class ClubController {
@@ -14,15 +22,16 @@ export class ClubController {
     this.manager = Manager.getInstance();
   }
 
-  async create(req: Request, res: Response) {
+  async create(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const {
@@ -51,90 +60,81 @@ export class ClubController {
         courtsNumber
       );
 
-      const response = {
+      const response: ApiResponse<{
+        id: string;
+        clubName: string;
+        address: string;
+        calendarClub: string;
+      }> = success({
         id: club.id,
         clubName: club.clubName,
         address: club.location,
         calendarClub: club.calendarClub.id,
-      };
+      });
 
       res.status(201).json(response);
     } catch (e) {
-      console.error("Error creating clubs:", e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async getAll(req: Request, res: Response) {
+  async getAll(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const userId = req.params.userId;
 
       const response = await this.clubService.getAll(userId);
-      res.status(201).json(response);
+      const apiResponse: ApiResponse<typeof response> = success(response);
+      res.status(200).json(apiResponse);
     } catch (e) {
-      console.error("Error getting clubs:", e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async getClubsPerTour(req: Request, res: Response) {
+  async getClubsPerTour(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { userId, tourId } = req.params;
 
       const response = await this.clubService.getClubsPerTour(userId, tourId);
-      res.status(201).json(response);
+      const apiResponse: ApiResponse<typeof response> = success(response);
+      res.status(200).json(apiResponse);
     } catch (e) {
-      console.error("Error getting clubs:", e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async updateClub(req: Request, res: Response) {
+  async updateClub(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { clubId, clubName, location, avFrom, avTo, userId } = req.body;
@@ -148,16 +148,29 @@ export class ClubController {
         avFrom,
         avTo
       );
-      res.status(201).json(response);
+      const apiResponse: ApiResponse<typeof response> = success(response);
+      res.status(200).json(apiResponse);
     } catch (e) {
-      console.error("Error getting clubs:", e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
+  }
+
+  private handleError(e: unknown): ErrorType {
+    if (isNotFoundError(e)) return e;
+    if (isValidationError(e)) return e;
+    if (isConflictError(e)) return e;
+    if (isUnauthorizedError(e)) return e;
+    if (isInternalError(e)) return e;
+    return { type: "INTERNAL", message: "Internal server error" };
+  }
+
+  private getErrorStatus(e: unknown): number {
+    if (isNotFoundError(e)) return 404;
+    if (isValidationError(e)) return 400;
+    if (isConflictError(e)) return 409;
+    if (isUnauthorizedError(e)) return 401;
+    return 500;
   }
 }
 

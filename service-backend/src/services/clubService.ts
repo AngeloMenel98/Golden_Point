@@ -1,8 +1,7 @@
 import { ClubRepository } from "../repository";
 import { CalendarClub, Club, Court } from "../entity";
 import { TourService } from ".";
-import { ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
+import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class ClubService {
   private tourService: TourService;
@@ -15,13 +14,11 @@ export class ClubService {
     const avFrom = new Date(newCalClub.availableFrom);
     const avTo = new Date(newCalClub.availableTo);
     if (courtsNumber <= 0) {
-      throw new ServiceCodeError(codeErrors.CLUB_1);
+      throw validationError("Debe haber al menos una cancha disponible");
     }
 
     if (avFrom >= avTo) {
-      throw new ServiceCodeError(
-        codeErrors.CLUB_2("fecha de inicio", "anterior", "fecha final")
-      );
+      throw validationError("La fecha de inicio debe ser anterior a la fecha final");
     }
 
     const newCourts: Court[] = [];
@@ -39,7 +36,7 @@ export class ClubService {
     const existingClubs: unknown[] = await ClubRepository.getAll(userId);
 
     if (existingClubs.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+      throw conflict("No se encontro ningún Club", "Club");
     }
 
     return existingClubs;
@@ -50,7 +47,7 @@ export class ClubService {
       id: clubId,
     });
     if (!existingClub) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Club"));
+      throw notFound("Club", clubId);
     }
     return existingClub;
   }
@@ -62,7 +59,7 @@ export class ClubService {
     );
 
     if (existingClubs.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+      throw conflict("No se encontro ningún Club", "Club");
     }
 
     return existingClubs;
@@ -84,7 +81,7 @@ export class ClubService {
     );
 
     if (!club) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+      throw conflict("No se encontro ningún Club", "Club");
     }
 
     return club;

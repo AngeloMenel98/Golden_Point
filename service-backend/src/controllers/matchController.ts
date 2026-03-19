@@ -2,7 +2,14 @@ import { validationResult } from "express-validator";
 import { Match } from "../entity";
 import { MatchService } from "../services";
 import { Request, Response } from "express";
-import { isServiceCodeError } from "../errors/errors";
+import { ApiResponse, success, failure } from "../types/response/api-response";
+import {
+  isNotFoundError,
+  isValidationError,
+  isConflictError,
+  isInternalError,
+} from "../types/error/error-guards";
+import { ErrorType } from "../types/error/error-type";
 
 export class MatchController {
   private matchService: MatchService;
@@ -11,15 +18,16 @@ export class MatchController {
     this.matchService = new MatchService();
   }
 
-  async getMatches(req: Request, res: Response) {
+  async getMatches(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { tournamentId, category, groupStage } = req.params;
@@ -30,27 +38,24 @@ export class MatchController {
         groupStage
       );
 
-      res.status(201).json(response);
+      const apiResponse: ApiResponse<typeof response> = success(response);
+      res.status(200).json(apiResponse);
     } catch (e) {
-      console.error("Error getting matches:", e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async updateMatch(req: Request, res: Response) {
+  async updateMatch(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { matchId, matchDate, courtNumber, clubId } = req.body;
@@ -62,16 +67,27 @@ export class MatchController {
         clubId
       );
 
-      res.status(201).json(response);
+      const apiResponse: ApiResponse<typeof response> = success(response);
+      res.status(200).json(apiResponse);
     } catch (e) {
-      console.error("Error updating match:", e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
+  }
+
+  private handleError(e: unknown): ErrorType {
+    if (isNotFoundError(e)) return e;
+    if (isValidationError(e)) return e;
+    if (isConflictError(e)) return e;
+    if (isInternalError(e)) return e;
+    return { type: "INTERNAL", message: "Internal server error" };
+  }
+
+  private getErrorStatus(e: unknown): number {
+    if (isNotFoundError(e)) return 404;
+    if (isValidationError(e)) return 400;
+    if (isConflictError(e)) return 409;
+    return 500;
   }
 }
 

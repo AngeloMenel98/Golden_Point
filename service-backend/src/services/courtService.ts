@@ -1,6 +1,5 @@
 import { CourtRepository } from "../repository";
-import { ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
+import { notFound } from "../types/error/app-error";
 
 export class CourtService {
   constructor() {}
@@ -11,7 +10,7 @@ export class CourtService {
     });
 
     if (!existingCourt) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Court"));
+      throw notFound("Court", courtId);
     }
 
     return existingCourt;

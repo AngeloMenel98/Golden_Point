@@ -1,0 +1,58 @@
+import { User, UserRole } from "../../entity/User";
+import { PersonalData } from "../../entity/PersonalData";
+
+export type UserResponse = {
+  id: string;
+  username: string;
+  email: string;
+  isSingle: boolean;
+  role: UserRole;
+};
+
+export type UserDetailResponse = UserResponse & {
+  personalData: {
+    firstName: string;
+    lastName: string;
+    location: string;
+    phoneNumber: string;
+  } | null;
+};
+
+export type UserCreateRequest = Pick<User, "username" | "email" | "password"> & {
+  firstName: string;
+  lastName: string;
+  location: string;
+  phoneNumber: string;
+};
+
+export type UserUpdateRequest = Partial<Pick<User, "password" | "isSingle">> & {
+  firstName?: string;
+  lastName?: string;
+  location?: string;
+  phoneNumber?: string;
+};
+
+export type UserLoginRequest = Pick<User, "username" | "password">;
+
+export type UserLoginResponse = {
+  token: string;
+  user: UserResponse;
+};
+
+export type UserRankingResult = {
+  id: string;
+  lastName: string;
+  firstName: string;
+  totalPoints: number;
+};
+
+export type UserListResult = {
+  userId: string;
+  userName: string;
+  email: string;
+  isSingle: boolean;
+  lastName: string;
+  firstName: string;
+  phoneNumber: string;
+  location: string;
+};

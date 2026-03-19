@@ -1,12 +1,9 @@
-import codeErrors from "../constants/codeErrors";
-import { ServiceCodeError } from "../errors/errorsClass";
 import { CourtData, TeamData } from "./interfaces";
+import { conflict } from "../types/error/app-error";
 
 function sortTeamsPerCategoryByPoints(teamData: TeamData[]) {
   if (teamData.length === 0) {
-    throw new ServiceCodeError(
-      codeErrors.GEN_2("Equipo para ordenar por puntos")
-    );
+    throw conflict("No se encontro ningún Equipo para ordenar por puntos", "Equipo");
   }
 
   const teamsByCategory = {};

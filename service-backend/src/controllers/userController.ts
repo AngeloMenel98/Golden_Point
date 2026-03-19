@@ -5,7 +5,21 @@ import { validationResult } from "express-validator";
 import { PersonalData, TourCoin, User } from "../entity";
 import { UserService } from "../services";
 import { UserRole } from "../entity/User";
-import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { ApiResponse, success, failure } from "../types/response/api-response";
+import {
+  isNotFoundError,
+  isValidationError,
+  isConflictError,
+  isInternalError,
+  isUnauthorizedError,
+} from "../types/error/error-guards";
+import { ErrorType } from "../types/error/error-type";
+import {
+  UserResponse,
+  UserLoginResponse,
+  UserListResult,
+  UserRankingResult,
+} from "../types/dto/user.dto";
 
 export class UserController {
   private userService: UserService;
@@ -14,22 +28,24 @@ export class UserController {
     this.userService = new UserService();
   }
 
-  async logIn(req: Request, res: Response) {
+  async logIn(req: Request, res: Response): Promise<void> {
     try {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
-        return res.status(401).json({
-          error: errs.array().map((e) => ({
-            msg: e.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+          field: "login",
         });
+        res.status(401).json(errorResponse);
+        return;
       }
 
       const { username, password } = req.body;
 
       const user = await this.userService.logIn(username, password);
 
-      const response = {
+      const userResponse: UserResponse = {
         id: user.id,
         username: user.username,
         email: user.email,
@@ -38,33 +54,28 @@ export class UserController {
       };
 
       const secretKey = process.env.JWT_SECRET_KEY;
-      const token = jwt.sign(response, secretKey);
+      const token = jwt.sign(userResponse, secretKey!);
 
-      const tokenJSON = {
-        token: token,
-      };
+      const loginResponse: UserLoginResponse = { token, user: userResponse };
+      const response: ApiResponse<UserLoginResponse> = success(loginResponse);
 
-      res.status(201).json(tokenJSON);
+      res.status(201).json(response);
     } catch (e) {
-      console.error("Error Loggin In", e);
-
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async create(req: Request, res: Response) {
+  async create(req: Request, res: Response): Promise<void> {
     try {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
-        return res.status(401).json({
-          error: errs.array().map((e) => ({
-            msg: e.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const {
@@ -99,34 +110,31 @@ export class UserController {
         newTourCoin
       );
 
-      const response = {
+      const response: ApiResponse<UserResponse> = success({
         id: user.id,
         username: user.username,
         email: user.email,
         isSingle: user.isSingle,
-      };
+        role: user.role,
+      });
 
       res.status(201).json(response);
     } catch (e: unknown) {
-      console.error("Error creating user:", e);
-
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async update(req: Request, res: Response) {
+  async update(req: Request, res: Response): Promise<void> {
     try {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
-        return res.status(401).json({
-          errors: errs.array().map((e) => ({
-            msg: e.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const {
@@ -160,125 +168,117 @@ export class UserController {
         updatedPerData
       );
 
-      const response = {
+      const response: ApiResponse<UserResponse> = success({
         id: resUser.id,
         username: resUser.username,
         email: resUser.email,
         isSingle: resUser.isSingle,
-      };
+        role: resUser.role,
+      });
 
-      res.status(201).json(response);
+      res.status(200).json(response);
     } catch (e) {
-      console.error("Error updating user:", e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async delete(req: Request, res: Response) {
+  async delete(req: Request, res: Response): Promise<void> {
     try {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
-        return res.status(401).json({
-          errors: errs.array().map((e) => ({
-            msg: e.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { userId } = req.body;
       const user = await this.userService.findById(userId);
 
       const resp = await this.userService.delete(user);
-      const response = {
+
+      const response: ApiResponse<UserResponse> = success({
         id: resp.id,
         username: resp.username,
         email: resp.email,
         isSingle: resp.isSingle,
-      };
-      res.status(201).json(response);
-    } catch (e) {
-      console.error(e);
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
-      }
+        role: resp.role,
+      });
 
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async findByUsername(req: Request, res: Response) {
+  async findByUsername(req: Request, res: Response): Promise<void> {
     try {
       const errs = validationResult(req);
       if (!errs.isEmpty()) {
-        return res.status(401).json({
-          errors: errs.array().map((e) => ({
-            msg: e.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { username } = req.params;
       const resp = await this.userService.findByUsername(username);
 
-      const response = {
+      const response: ApiResponse<UserResponse> = success({
         id: resp.id,
         username: resp.username,
         email: resp.email,
         isSingle: resp.isSingle,
-      };
-      res.status(201).json(response);
+        role: resp.role,
+      });
+
+      res.status(200).json(response);
     } catch (e) {
-      console.error("Error finding username:", e);
-
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async getUsers(req: Request, res: Response) {
+  async getUsers(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const tourId = req.params.tourId;
 
       const users = await this.userService.getAll(tourId);
 
-      res.status(201).json(users);
+      const response: ApiResponse<UserListResult[]> = success(users);
+      res.status(200).json(response);
     } catch (e) {
-      console.error(e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async getRanking(req: Request, res: Response) {
+  async getRanking(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const tourId = req.params.tourId;
@@ -286,16 +286,29 @@ export class UserController {
 
       const users = await this.userService.getRanking(tourId, category);
 
-      res.status(201).json(users);
+      const response: ApiResponse<UserRankingResult[]> = success(users);
+      res.status(200).json(response);
     } catch (e) {
-      console.error(e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
+  }
+
+  private handleError(e: unknown): ErrorType {
+    if (isNotFoundError(e)) return e;
+    if (isValidationError(e)) return e;
+    if (isConflictError(e)) return e;
+    if (isUnauthorizedError(e)) return e;
+    if (isInternalError(e)) return e;
+    return { type: "INTERNAL", message: "Internal server error" };
+  }
+
+  private getErrorStatus(e: unknown): number {
+    if (isNotFoundError(e)) return 404;
+    if (isValidationError(e)) return 400;
+    if (isConflictError(e)) return 409;
+    if (isUnauthorizedError(e)) return 401;
+    return 500;
   }
 }
 

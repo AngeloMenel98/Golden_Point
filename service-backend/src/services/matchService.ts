@@ -1,8 +1,7 @@
 import { CourtRepository, MatchRepository } from "../repository";
 import { Court, Match, Team, Tournament } from "../entity";
 import { TeamService, CourtService } from ".";
-import { ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
+import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class MatchService {
   private teamService: TeamService;
@@ -27,7 +26,7 @@ export class MatchService {
     const court = await this.courtService.findById(courtId);
 
     if (teams.length != 2) {
-      throw new ServiceCodeError(codeErrors.MATCH_1);
+      throw validationError("Cantidad de equipos incorrectos");
     }
 
     return MatchRepository.create(
@@ -45,7 +44,7 @@ export class MatchService {
     });
 
     if (!existingMatch) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Match"));
+      throw notFound("Match", matchId);
     }
 
     return existingMatch;
@@ -59,10 +58,10 @@ export class MatchService {
     );
 
     if (matches.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Partido"));
+      throw conflict("No se encontro ningún Partido", "Partido");
     }
     if (!matches) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Torneo"));
+      throw notFound("Torneo", tournamentId);
     }
 
     return matches;
@@ -77,13 +76,13 @@ export class MatchService {
     const court = await CourtRepository.getCourtByClubId(clubId, courtNumber);
 
     if (!court) {
-      throw new ServiceCodeError(codeErrors.COURT_1);
+      throw validationError("Número de cancha no existe");
     }
 
     const match = await MatchRepository.updateMatch(matchId, matchDate, court);
 
     if (!match) {
-      throw new ServiceCodeError(codeErrors.MATCH_2);
+      throw validationError("El partido no se pudo actualizar");
     }
 
     return match;
