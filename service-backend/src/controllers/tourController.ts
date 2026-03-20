@@ -1,5 +1,5 @@
 import { Club, Tour } from "../entity";
-import { ClubService, TourService, UserService } from "../services";
+import { ClubService, TourService, UserService, ServiceRegistry } from "../services";
 import { generateCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
@@ -15,14 +15,22 @@ import { ErrorType } from "../types/error/error-type";
 import { Manager } from "../helpers/manager";
 
 export class TourController {
-  private tourService: TourService;
-  private clubService: ClubService;
+  private _tourService?: TourService;
+  private _clubService?: ClubService;
   private manager: Manager;
 
-  constructor() {
-    this.tourService = new TourService();
-    this.clubService = new ClubService();
+  constructor(tourService?: TourService, clubService?: ClubService) {
+    this._tourService = tourService;
+    this._clubService = clubService;
     this.manager = Manager.getInstance();
+  }
+
+  private get tourService(): TourService {
+    return this._tourService ?? ServiceRegistry.tourService;
+  }
+
+  private get clubService(): ClubService {
+    return this._clubService ?? ServiceRegistry.clubService;
   }
 
   async create(req: Request, res: Response): Promise<void> {

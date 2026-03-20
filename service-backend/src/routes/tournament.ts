@@ -62,6 +62,18 @@ router.post(
   tournController.start.bind(tournController)
 );
 
+// Manual knockout trigger endpoint
+router.post(
+  "/tournaments/:id/categories/:categoryId/trigger-knockout",
+  [
+    check("userId")
+      .not()
+      .isEmpty()
+      .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
+  ],
+  tournController.triggerKnockout.bind(tournController)
+);
+
 router.get(
   "/tournament/cats/:tournId",
   tournController.getCatByTournId.bind(tournController)

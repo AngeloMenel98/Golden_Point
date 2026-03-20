@@ -1,25 +1,36 @@
-FROM node:16 AS builder
+# Stage 1: Builder
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json .
+COPY package*.json ./
 
-RUN npm install --force
+RUN npm ci
 
 COPY . .
 
 RUN npm run build
 
-FROM node:16
+# Stage 2: Runtime
+FROM nginx:alpine
 
-WORKDIR /app
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY --from=builder /app/dist ./dist
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-COPY package*.json . 
-RUN npm install --omit=dev
+RUN chown -R nginx:nginx /usr/share/nginx/html && \
+    chown -R nginx:nginx /var/cache/nginx && \
+    chown -R nginx:nginx /var/log/nginx && \
+    chown -R nginx:nginx /etc/nginx/conf.d && \
+    touch /var/run/nginx.pid && \
+    chown -R nginx:nginx /var/run/nginx.pid
+
+USER nginx
 
 EXPOSE 3000
 
-CMD ["npm", "run", "serve"]
+ENV BASE_URL=${BASE_URL:-http://localhost:8080}
 
+# Healthcheck removed - handled by docker-compose
+
+CMD ["nginx", "-g", "daemon off;"]

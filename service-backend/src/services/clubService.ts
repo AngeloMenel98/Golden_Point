@@ -4,10 +4,17 @@ import { TourService } from ".";
 import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class ClubService {
-  private tourService: TourService;
+  private _tourService?: TourService;
 
-  constructor() {
-    this.tourService = new TourService();
+  constructor(tourService?: TourService) {
+    this._tourService = tourService;
+  }
+
+  private get tourService(): TourService {
+    if (!this._tourService) {
+      this._tourService = new TourService();
+    }
+    return this._tourService;
   }
 
   async create(newClub: Club, newCalClub: CalendarClub, courtsNumber: number) {

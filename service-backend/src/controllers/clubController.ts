@@ -1,4 +1,4 @@
-import { ClubService } from "../services";
+import { ClubService, ServiceRegistry } from "../services";
 import { CalendarClub, Club } from "../entity";
 import { validationResult } from "express-validator";
 import { Request, Response } from "express";
@@ -14,12 +14,16 @@ import { ErrorType } from "../types/error/error-type";
 import { Manager } from "../helpers/manager";
 
 export class ClubController {
-  private clubService: ClubService;
+  private _clubService?: ClubService;
   private manager: Manager;
 
-  constructor() {
-    this.clubService = new ClubService();
+  constructor(clubService?: ClubService) {
+    this._clubService = clubService;
     this.manager = Manager.getInstance();
+  }
+
+  private get clubService(): ClubService {
+    return this._clubService ?? ServiceRegistry.clubService;
   }
 
   async create(req: Request, res: Response): Promise<void> {

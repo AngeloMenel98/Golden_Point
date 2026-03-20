@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { Match } from "../entity";
-import { MatchService } from "../services";
+import { MatchService, ServiceRegistry } from "../services";
 import { Request, Response } from "express";
 import { ApiResponse, success, failure } from "../types/response/api-response";
 import {
@@ -12,10 +12,14 @@ import {
 import { ErrorType } from "../types/error/error-type";
 
 export class MatchController {
-  private matchService: MatchService;
+  private _matchService?: MatchService;
 
-  constructor() {
-    this.matchService = new MatchService();
+  constructor(matchService?: MatchService) {
+    this._matchService = matchService;
+  }
+
+  private get matchService(): MatchService {
+    return this._matchService ?? ServiceRegistry.matchService;
   }
 
   async getMatches(req: Request, res: Response): Promise<void> {

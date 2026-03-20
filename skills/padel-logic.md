@@ -19,25 +19,25 @@ A **Tour** is a container for multiple tournaments. It represents a complete pad
 
 ### Tour Entity Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | UUID | Primary key |
-| `title` | string | Tour name |
-| `tourCode` | string | 6-character unique code for joining |
-| `isDeleted` | boolean | Soft delete flag |
-| `users` | User[] | Players/admins in the tour (Many-to-Many) |
-| `tournaments` | Tournament[] | Tournaments in this tour (One-to-Many) |
-| `clubs` | Club[] | Venues for the tour (Many-to-Many) |
+| Field         | Type         | Description                               |
+| ------------- | ------------ | ----------------------------------------- |
+| `id`          | UUID         | Primary key                               |
+| `title`       | string       | Tour name                                 |
+| `tourCode`    | string       | 6-character unique code for joining       |
+| `isDeleted`   | boolean      | Soft delete flag                          |
+| `users`       | User[]       | Players/admins in the tour (Many-to-Many) |
+| `tournaments` | Tournament[] | Tournaments in this tour (One-to-Many)    |
+| `clubs`       | Club[]       | Venues for the tour (Many-to-Many)        |
 
 ### Tour Operations
 
-| Operation | Endpoint | Description |
-|-----------|----------|-------------|
-| Create | POST /tour/create | Admin creates a new tour with title and club associations |
-| Delete | POST /tour/delete | Soft delete a tour |
-| Join | POST /tour/join | User joins a tour using tourCode |
-| Get All | GET /tour/tours/:userId | Get all tours a user belongs to |
-| Get By ID | GET /tour/:tourId | Get a specific tour |
+| Operation | Endpoint                | Description                                               |
+| --------- | ----------------------- | --------------------------------------------------------- |
+| Create    | POST /tour/create       | Admin creates a new tour with title and club associations |
+| Delete    | POST /tour/delete       | Soft delete a tour                                        |
+| Join      | POST /tour/join         | User joins a tour using tourCode                          |
+| Get All   | GET /tour/tours/:userId | Get all tours a user belongs to                           |
+| Get By ID | GET /tour/:tourId       | Get a specific tour                                       |
 
 ### Tour Business Rules
 
@@ -58,36 +58,36 @@ A **Tournament** is a single competition within a Tour. It belongs to exactly on
 
 ```typescript
 enum Status {
-  PENDING = "pending",           // Created but not started
-  IN_PROGRESS = "inProgress",    // Active and matches being played
-  FINISH = "finish"              // Completed
+  PENDING = "pending", // Created but not started
+  IN_PROGRESS = "inProgress", // Active and matches being played
+  FINISH = "finish", // Completed
 }
 ```
 
 ### Tournament Entity Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | UUID | Primary key |
-| `title` | string | Tournament name |
-| `master` | number | Point multiplier (must be > 0) |
-| `status` | Status | PENDING, IN_PROGRESS, or FINISH |
-| `isDeleted` | boolean | Soft delete flag |
-| `tour` | Tour | Parent tour (Many-to-One) |
+| Field        | Type       | Description                              |
+| ------------ | ---------- | ---------------------------------------- |
+| `id`         | UUID       | Primary key                              |
+| `title`      | string     | Tournament name                          |
+| `master`     | number     | Point multiplier (must be > 0)           |
+| `status`     | Status     | PENDING, IN_PROGRESS, or FINISH          |
+| `isDeleted`  | boolean    | Soft delete flag                         |
+| `tour`       | Tour       | Parent tour (Many-to-One)                |
 | `categories` | Category[] | Gender/level combinations (Many-to-Many) |
-| `matches` | Match[] | All matches in tournament (One-to-Many) |
-| `teams` | Team[] | Registered teams (One-to-Many) |
+| `matches`    | Match[]    | All matches in tournament (One-to-Many)  |
+| `teams`      | Team[]     | Registered teams (One-to-Many)           |
 
 ### Tournament Operations
 
-| Operation | Endpoint | Description |
-|-----------|----------|-------------|
-| Create | POST /tournament/create | Admin creates tournament with categories |
-| Delete | POST /tournament/delete | Soft delete a tournament |
-| Start | POST /tournament/start | Begin tournament (generate groups/matches) |
-| Get All | GET /tournament/tourns/:tourId | Get all tournaments in a tour |
-| Get Categories | GET /tournament/cats/:tournId | Get categories for a tournament |
-| Get My Tournaments | GET /tournament/:userId | Get user's active tournaments |
+| Operation          | Endpoint                       | Description                                |
+| ------------------ | ------------------------------ | ------------------------------------------ |
+| Create             | POST /tournament/create        | Admin creates tournament with categories   |
+| Delete             | POST /tournament/delete        | Soft delete a tournament                   |
+| Start              | POST /tournament/start         | Begin tournament (generate groups/matches) |
+| Get All            | GET /tournament/tourns/:tourId | Get all tournaments in a tour              |
+| Get Categories     | GET /tournament/cats/:tournId  | Get categories for a tournament            |
+| Get My Tournaments | GET /tournament/:userId        | Get user's active tournaments              |
 
 ### Tournament Business Rules
 
@@ -136,15 +136,15 @@ enum Status {
 
 ### Team Entity Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | UUID | Primary key |
-| `teamName` | string | Team name |
-| `category` | string | Gender/level category (e.g., "Male-A") |
-| `isDeleted` | boolean | Soft delete flag |
-| `users` | User[] | Exactly 2 players (Many-to-Many) |
-| `tournament` | Tournament | Parent tournament (Many-to-One) |
-| `teamMatches` | TeamMatch[] | Match participations (One-to-Many) |
+| Field         | Type        | Description                            |
+| ------------- | ----------- | -------------------------------------- |
+| `id`          | UUID        | Primary key                            |
+| `teamName`    | string      | Team name                              |
+| `category`    | string      | Gender/level category (e.g., "Male-A") |
+| `isDeleted`   | boolean     | Soft delete flag                       |
+| `users`       | User[]      | Exactly 2 players (Many-to-Many)       |
+| `tournament`  | Tournament  | Parent tournament (Many-to-One)        |
+| `teamMatches` | TeamMatch[] | Match participations (One-to-Many)     |
 
 ### Team Business Rules
 
@@ -158,17 +158,17 @@ enum Status {
 
 ### Match Entity Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | UUID | Primary key |
-| `amountTourPoints` | number | Points earned for winning |
-| `amountTourCoins` | number | Tour coins earned |
-| `matchDate` | string | Scheduled date/time |
-| `groupStage` | string | Group/bracket identifier (e.g., "Grupo 1", "Cuartos de Final") |
-| `tournament` | Tournament | Parent tournament (Many-to-One) |
-| `court` | Court | Playing venue (Many-to-One) |
-| `teamMatches` | TeamMatch[] | Teams participating (One-to-Many) |
-| `sets` | Set[] | Match results (One-to-Many) |
+| Field              | Type        | Description                                                    |
+| ------------------ | ----------- | -------------------------------------------------------------- |
+| `id`               | UUID        | Primary key                                                    |
+| `amountTourPoints` | number      | Points earned for winning                                      |
+| `amountTourCoins`  | number      | Tour coins earned                                              |
+| `matchDate`        | string      | Scheduled date/time                                            |
+| `groupStage`       | string      | Group/bracket identifier (e.g., "Grupo 1", "Cuartos de Final") |
+| `tournament`       | Tournament  | Parent tournament (Many-to-One)                                |
+| `court`            | Court       | Playing venue (Many-to-One)                                    |
+| `teamMatches`      | TeamMatch[] | Teams participating (One-to-Many)                              |
+| `sets`             | Set[]       | Match results (One-to-Many)                                    |
 
 ### Match Flow
 
@@ -185,17 +185,31 @@ enum Status {
 
 ### Match Result Calculation
 
-- **Set**: Best of games (tracked in Set entity)
-- **Match**: Team with most sets won
-- **Group Ranking**:
-  1. Total matches won (primary)
-  2. Games difference (if tied on matches)
-  3. Head-to-head (if still tied)
+#### Set Rules
+
+- **Set Win Condition**: A team must win **2 out of 3 sets** to win the match
+- **Set Length**: Each set finishes at **6 games**
+- **Tiebreak**: If a set is tied **6-6** or **5-5**, it extends to **7 games** (sudden death at 7)
+- **Set Tracking**: Game results are tracked in the `Set` entity
+
+#### Match Win Condition
+
+- Team with **most sets won** wins the match
+- A match can end **2-0** or **2-1** (best of 3 sets)
+
+#### Group Ranking
+
+1. Total matches won (primary)
+2. Games difference (if tied on matches)
+3. Head-to-head (if still tied)
 
 ### Knockout Advancement Rules
 
 - Top 2 teams from each group advance to knockout
-- Tiebreaker: More matches won > Higher games difference
+- Tiebreaker order:
+  1. More matches won
+  2. Higher games difference
+  3. Head-to-head result
 
 ---
 
@@ -207,18 +221,43 @@ Categories define gender and skill level combinations for fair competition:
 
 | Category | Description |
 |----------|-------------|
-| `Male-A` | Male players, highest level |
-| `Male-B` | Male players, intermediate level |
-| `Male-C` | Male players, beginner level |
-| `Female-A` | Female players, highest level |
-| `Female-B` | Female players, intermediate level |
-| `Female-C` | Female players, beginner level |
+| `Male-8` | Male players, lowest level |
+| `Male-7` | Male players |
+| `Male-6` | Male players |
+| `Male-5` | Male players |
+| `Male-4` | Male players |
+| `Male-3` | Male players |
+| `Male-2` | Male players |
+| `Male-1` | Male players, highest level |
+| `Female-8` | Female players, lowest level |
+| `Female-7` | Female players |
+| `Female-6` | Female players |
+| `Female-5` | Female players |
+| `Female-4` | Female players |
+| `Female-3` | Female players |
+| `Female-2` | Female players |
+| `Female-1` | Female players, highest level |
+| `Mixed-8` | Mixed gender, lowest level |
+| `Mixed-7` | Mixed gender |
+| `Mixed-6` | Mixed gender |
+| `Mixed-5` | Mixed gender |
+| `Mixed-4` | Mixed gender |
+| `Mixed-3` | Mixed gender |
+| `Mixed-2` | Mixed gender |
+| `Mixed-1` | Mixed gender, highest level |
+
+### Level System
+
+- Levels range from **8th** (lowest) to **1st** (highest)
+- Higher number = lower skill level
+- Lower number = higher skill level
 
 ### Category Usage
 
 - Tournaments can have multiple categories
 - Teams are assigned one category
 - Group stage is organized BY category
+- **Mixed teams**: Teams can have male and female players combined
 
 ---
 
@@ -226,23 +265,23 @@ Categories define gender and skill level combinations for fair competition:
 
 ### Club Entity Fields
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | UUID | Primary key |
-| `clubName` | string | Venue name |
-| `location` | string | Physical location |
-| `tours` | Tour[] | Tours hosted (Many-to-Many) |
+| Field      | Type   | Description                 |
+| ---------- | ------ | --------------------------- |
+| `id`       | UUID   | Primary key                 |
+| `clubName` | string | Venue name                  |
+| `location` | string | Physical location           |
+| `tours`    | Tour[] | Tours hosted (Many-to-Many) |
 
 ### CalendarClub (Tour-Club Association)
 
 Links Tours to available Clubs with scheduling info:
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `availableFrom` | Date | Start of availability window |
-| `availableTo` | Date | End of availability window |
-| `courtNumbers` | string | Comma-separated court IDs |
-| `categories` | string | Available categories |
+| Field           | Type   | Description                  |
+| --------------- | ------ | ---------------------------- |
+| `availableFrom` | Date   | Start of availability window |
+| `availableTo`   | Date   | End of availability window   |
+| `courtNumbers`  | string | Comma-separated court IDs    |
+| `categories`    | string | Available categories         |
 
 ---
 
@@ -258,7 +297,7 @@ Links Tours to available Clubs with scheduling info:
 
 ```typescript
 // Aggregates points for users across all won matches in a Tour
-SELECT 
+SELECT
   u.id,
   pd.lastName,
   pd.firstName,
@@ -296,12 +335,12 @@ ORDER BY totalPoints DESC
 
 ```typescript
 class GroupDTO {
-  teamsId: string[];      // 3 team IDs
-  courtsId: string[];     // Available courts
-  matchDates: Date[];     // Scheduled times
-  tourPoints: number;     // Points for winning
-  tourCoins: number;      // Coins for winning
-  groupName: string;      // e.g., "Grupo 1"
+  teamsId: string[]; // 3 team IDs
+  courtsId: string[]; // Available courts
+  matchDates: Date[]; // Scheduled times
+  tourPoints: number; // Points for winning
+  tourCoins: number; // Coins for winning
+  groupName: string; // e.g., "Grupo 1"
 }
 ```
 
@@ -311,10 +350,65 @@ class GroupDTO {
 
 ### Advancement Rules
 
-- Top 2 teams from each group advance
+- Top 2 teams from each group advance to knockout
+- Pairing: 1st place from Group A vs 2nd place from Group B, and vice versa
 - If groups are [A, B, C, D]:
   - A1 vs B2, B1 vs A2
   - C1 vs D2, D1 vs C2
+
+### Knockout Progression Flow
+
+```
+┌─────────────────────────────────────────────┐
+│              GROUP STAGE                     │
+│  • Teams play round-robin within groups      │
+│  • Uses available hours from clubs           │
+│  • Scheduled match dates/times assigned      │
+└─────────────────────┬───────────────────────┘
+                      │
+                      ▼ (when ALL group matches complete)
+┌─────────────────────────────────────────────┐
+│           QUARTERFINALS (Cuartos)            │
+│  • Top 2 from each group advance             │
+│  • Bracket pairing based on group results     │
+│  • Uses next available hours                 │
+└─────────────────────┬───────────────────────┘
+                      │
+                      ▼ (when ALL quarterfinals complete)
+┌─────────────────────────────────────────────┐
+│            SEMIFINALS (Semifinales)          │
+│  • 4 remaining teams                         │
+│  • Winners of QF1 vs QF2, QF3 vs QF4         │
+│  • Uses next available hours                 │
+└─────────────────────┬───────────────────────┘
+                      │
+                      ▼ (when ALL semifinals complete)
+┌─────────────────────────────────────────────┐
+│                 FINALS (Final)               │
+│  • 2 remaining teams                         │
+│  • Winners of SF1 vs SF2                     │
+│  • Champion determined                        │
+└─────────────────────────────────────────────┘
+```
+
+### Automatic Match Completion Detection
+
+The system SHALL monitor match completion by category:
+
+1. **Completion Check**: Query all matches for a category with current round `groupStage`
+2. **All Complete?**: Check if ALL matches have sets recorded (has winner)
+3. **Proceed**: If complete → create next round matches using next available hours
+4. **Repeat**: Continue until Final match is complete
+
+### Scheduling for Knockout Rounds
+
+- Knockout matches use **remaining available hours** from the club schedule
+- Hours are consumed sequentially (FIFO) across all rounds
+- Court assignment follows same logic as group stage
+- Round names are dynamic based on remaining teams:
+  - 8 teams remaining → "Cuartos de Final"
+  - 4 teams remaining → "Semifinales"
+  - 2 teams remaining → "Final"
 
 ### createNextMatches Logic
 
@@ -325,6 +419,16 @@ class GroupDTO {
 //   - group[N][0] vs group[N+1][1]  (1st of group N vs 2nd of group N+1)
 //   - group[N+1][0] vs group[N][1]  (1st of group N+1 vs 2nd of group N)
 ```
+
+### Set Entity Reference
+
+| Field        | Type   | Description                     |
+| ------------ | ------ | ------------------------------- |
+| `id`         | UUID   | Primary key                     |
+| `setNumber`  | number | 1, 2, or 3 (set order in match) |
+| `team1Games` | number | Games won by team 1 (0-7)       |
+| `team2Games` | number | Games won by team 2 (0-7)       |
+| `match`      | Match  | Parent match (Many-to-One)      |
 
 ---
 
@@ -340,10 +444,10 @@ TourCoins are a virtual currency earned by winning matches:
 
 ### TourCoin Entity
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `coins` | number | Current balance |
-| `user` | User | Owner (One-to-One) |
+| Field   | Type   | Description        |
+| ------- | ------ | ------------------ |
+| `coins` | number | Current balance    |
+| `user`  | User   | Owner (One-to-One) |
 
 ---
 
@@ -351,11 +455,11 @@ TourCoins are a virtual currency earned by winning matches:
 
 ### Notification Entity
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `message` | string | Notification content |
-| `isRead` | boolean | Read status |
-| `user` | User | Recipient (Many-to-One) |
+| Field     | Type    | Description             |
+| --------- | ------- | ----------------------- |
+| `message` | string  | Notification content    |
+| `isRead`  | boolean | Read status             |
+| `user`    | User    | Recipient (Many-to-One) |
 
 ---
 
@@ -363,10 +467,10 @@ TourCoins are a virtual currency earned by winning matches:
 
 ### Reward Entity
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `description` | string | Reward description |
-| `coinsRequired` | number | Cost in coins |
-| `users` | User[] | Users who claimed (Many-to-Many) |
+| Field           | Type   | Description                      |
+| --------------- | ------ | -------------------------------- |
+| `description`   | string | Reward description               |
+| `coinsRequired` | number | Cost in coins                    |
+| `users`         | User[] | Users who claimed (Many-to-Many) |
 
 ---

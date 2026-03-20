@@ -5,6 +5,8 @@ import {
   TeamMatchService,
   TeamService,
   TournamentService,
+  MatchService,
+  ServiceRegistry,
 } from "../services";
 import { validationResult } from "express-validator";
 import { ApiResponse, success, failure } from "../types/response/api-response";
@@ -19,16 +21,39 @@ import { ErrorType } from "../types/error/error-type";
 import { Manager } from "../helpers/manager";
 
 export class SetController {
-  private setService: SetService;
-  private teamMatchService: TeamMatchService;
-  private tournamentService: TournamentService;
+  private _setService?: SetService;
+  private _teamMatchService?: TeamMatchService;
+  private _tournamentService?: TournamentService;
+  private _matchService?: MatchService;
   private manager: Manager;
 
-  constructor() {
-    this.setService = new SetService();
-    this.teamMatchService = new TeamMatchService();
-    this.tournamentService = new TournamentService();
+  constructor(
+    setService?: SetService,
+    teamMatchService?: TeamMatchService,
+    tournamentService?: TournamentService,
+    matchService?: MatchService
+  ) {
+    this._setService = setService;
+    this._teamMatchService = teamMatchService;
+    this._tournamentService = tournamentService;
+    this._matchService = matchService;
     this.manager = Manager.getInstance();
+  }
+
+  private get setService(): SetService {
+    return this._setService ?? ServiceRegistry.setService;
+  }
+
+  private get teamMatchService(): TeamMatchService {
+    return this._teamMatchService ?? ServiceRegistry.teamMatchService;
+  }
+
+  private get tournamentService(): TournamentService {
+    return this._tournamentService ?? ServiceRegistry.tournamentService;
+  }
+
+  private get matchService(): MatchService {
+    return this._matchService ?? ServiceRegistry.matchService;
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -43,7 +68,7 @@ export class SetController {
         return;
       }
 
-      const { userId, setsTeam1, setsTeam2, matchId, teamsId, tournamentId } =
+      const { userId, setsTeam1, setsTeam2, matchId, teamsId, tournamentId, categoryId } =
         req.body;
 
       const user = await this.manager.checkUserExists(userId);
@@ -64,6 +89,16 @@ export class SetController {
       const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
 
       await this.teamMatchService.addWinner(teamId, matchId);
+
+      // Trigger knockout progression after winner is set
+      // This is non-blocking - knockout progression happens asynchronously
+      if (categoryId) {
+        this.matchService
+          .checkKnockoutTrigger(tournamentId, categoryId)
+          .catch((err) =>
+            console.error("Knockout trigger failed:", err)
+          );
+      }
 
       const response: ApiResponse<{
         winner: string;

@@ -3,7 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 
 import { PersonalData, TourCoin, User } from "../entity";
-import { UserService } from "../services";
+import { UserService, ServiceRegistry } from "../services";
 import { UserRole } from "../entity/User";
 import { ApiResponse, success, failure } from "../types/response/api-response";
 import {
@@ -22,10 +22,14 @@ import {
 } from "../types/dto/user.dto";
 
 export class UserController {
-  private userService: UserService;
+  private _userService?: UserService;
 
-  constructor() {
-    this.userService = new UserService();
+  constructor(userService?: UserService) {
+    this._userService = userService;
+  }
+
+  private get userService(): UserService {
+    return this._userService ?? ServiceRegistry.userService;
   }
 
   async logIn(req: Request, res: Response): Promise<void> {
@@ -61,6 +65,7 @@ export class UserController {
 
       res.status(201).json(response);
     } catch (e) {
+      console.error("Login error:", e);
       const errorResponse: ApiResponse<never> = failure(this.handleError(e));
       res.status(this.getErrorStatus(e)).json(errorResponse);
     }

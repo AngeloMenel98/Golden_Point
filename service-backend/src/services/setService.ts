@@ -4,10 +4,17 @@ import { MatchService } from ".";
 import { validationError } from "../types/error/app-error";
 
 export class SetService {
-  private matchService: MatchService;
+  private _matchService?: MatchService;
 
-  constructor() {
-    this.matchService = new MatchService();
+  constructor(matchService?: MatchService) {
+    this._matchService = matchService;
+  }
+
+  private get matchService(): MatchService {
+    if (!this._matchService) {
+      this._matchService = new MatchService();
+    }
+    return this._matchService;
   }
 
   async create(newSets: Set[], matchId: string) {

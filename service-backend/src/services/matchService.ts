@@ -1,15 +1,42 @@
 import { CourtRepository, MatchRepository } from "../repository";
 import { Court, Match, Team, Tournament } from "../entity";
-import { TeamService, CourtService } from ".";
+import { TeamService, CourtService, TournamentService } from ".";
 import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class MatchService {
-  private teamService: TeamService;
-  private courtService: CourtService;
+  private _teamService?: TeamService;
+  private _courtService?: CourtService;
+  private _tournamentService?: TournamentService;
 
-  constructor() {
-    this.teamService = new TeamService();
-    this.courtService = new CourtService();
+  constructor(
+    teamService?: TeamService,
+    courtService?: CourtService,
+    tournamentService?: TournamentService
+  ) {
+    this._teamService = teamService;
+    this._courtService = courtService;
+    this._tournamentService = tournamentService;
+  }
+
+  private get teamService(): TeamService {
+    if (!this._teamService) {
+      this._teamService = new TeamService();
+    }
+    return this._teamService;
+  }
+
+  private get courtService(): CourtService {
+    if (!this._courtService) {
+      this._courtService = new CourtService();
+    }
+    return this._courtService;
+  }
+
+  private get tournamentService(): TournamentService {
+    if (!this._tournamentService) {
+      this._tournamentService = new TournamentService();
+    }
+    return this._tournamentService;
   }
 
   async create(
@@ -86,5 +113,37 @@ export class MatchService {
     }
 
     return match;
+  }
+
+  /**
+   * Check and trigger knockout progression if match completion warrants it
+   * This is called after a winner is set for a match
+   */
+  async checkKnockoutTrigger(
+    tournamentId: string,
+    categoryId: string
+  ): Promise<{ triggered: boolean; result?: { stage: string; matchesCreated: number } }> {
+    try {
+      const result = await this.tournamentService.processKnockoutProgression(
+        tournamentId,
+        categoryId
+      );
+
+      if (result) {
+        return {
+          triggered: true,
+          result: {
+            stage: result.stage,
+            matchesCreated: result.matchesCreated,
+          },
+        };
+      }
+
+      return { triggered: false };
+    } catch (error) {
+      console.error("Error in knockout trigger:", error);
+      // Don't throw - knockout progression failure shouldn't break set creation
+      return { triggered: false };
+    }
   }
 }

@@ -4,7 +4,7 @@ import path = require("path");
 import * as dotenv from "dotenv";
 
 // Load environment variables FIRST, before any other imports
-const envFilePath = path.join(__dirname, "..", ".env.dev");
+const envFilePath = path.join(__dirname, "..", ".env");
 dotenv.config({ path: envFilePath });
 
 import configureRoutes from "./routes/index";

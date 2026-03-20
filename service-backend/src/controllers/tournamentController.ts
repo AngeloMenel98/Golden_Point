@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { Tournament } from "../entity";
-import { TournamentService } from "../services";
+import { TournamentService, ServiceRegistry } from "../services";
 import { Request, Response } from "express";
 import { ApiResponse, success, failure } from "../types/response/api-response";
 import {
@@ -16,12 +16,16 @@ import { TourData } from "../utils/interfaces";
 import { Status } from "../entity/Tournament";
 
 export class TournamentController {
-  private tournService: TournamentService;
+  private _tournService?: TournamentService;
   private manager: Manager;
 
-  constructor() {
-    this.tournService = new TournamentService();
+  constructor(tournService?: TournamentService) {
+    this._tournService = tournService;
     this.manager = Manager.getInstance();
+  }
+
+  private get tournService(): TournamentService {
+    return this._tournService ?? ServiceRegistry.tournamentService;
   }
 
   async create(req: Request, res: Response): Promise<void> {
@@ -262,6 +266,60 @@ export class TournamentController {
       const tournaments = await this.tournService.getMyTournaments(userId);
 
       const response: ApiResponse<typeof tournaments> = success(tournaments);
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
+    }
+  }
+
+  /**
+   * Manual trigger endpoint for knockout progression
+   * POST /tournaments/:id/categories/:categoryId/trigger-knockout
+   */
+  async triggerKnockout(req: Request, res: Response): Promise<void> {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+        });
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const tournamentId = req.params.id;
+      const categoryId = req.params.categoryId;
+      const { userId } = req.body;
+
+      // Verify admin access
+      const existingUser = await this.manager.checkUserExists(userId);
+      await this.manager.checkIfADMIN(existingUser);
+
+      // Verify tournament exists
+      await this.tournService.findById(tournamentId);
+
+      // Process knockout progression
+      const result = await this.tournService.processKnockoutProgression(
+        tournamentId,
+        categoryId
+      );
+
+      const response: ApiResponse<{
+        triggered: boolean;
+        stage?: string;
+        matchesCreated?: number;
+        message: string;
+      }> = success({
+        triggered: result !== null,
+        stage: result?.stage,
+        matchesCreated: result?.matchesCreated,
+        message: result
+          ? `Created ${result.matchesCreated} matches for ${result.stage}`
+          : "No knockout progression needed",
+      });
+
       res.status(200).json(response);
     } catch (e) {
       const errorResponse: ApiResponse<never> = failure(this.handleError(e));

@@ -1,14 +1,22 @@
 {
    "compilerOptions": {
-      "lib": [ "es5", "es6" ],
-      "types": ["node", "express", "cors"],
-      "target": "es5",
+      "lib": [ "es2017" ],
+      "types": ["node", "express", "cors", "jest"],
+      "target": "es2017",
       "module": "commonjs",
       "moduleResolution": "node",
+      "baseUrl": ".",
+      "paths": {
+         "*": ["node_modules/*"]
+      },
       "outDir": "./build",
       "emitDecoratorMetadata": true,
       "experimentalDecorators": true,
-      "sourceMap": true
+      "sourceMap": true,
+      "downlevelIteration": true,
+      "esModuleInterop": true,
+      "strict": false,
+      "skipLibCheck": true
    },
-   "include": ["src/**/*.ts","src/process-env.d.ts"]
+   "include": ["src/**/*.ts", "src/__tests__/**/*.ts", "src/process-env.d.ts"]
 }

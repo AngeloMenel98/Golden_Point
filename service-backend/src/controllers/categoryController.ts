@@ -1,4 +1,4 @@
-import { CategoryService } from '../services';
+import { CategoryService, ServiceRegistry } from '../services';
 import { Category } from '../entity';
 import { Request, Response } from "express";
 import { ApiResponse, success, failure } from "../types/response/api-response";
@@ -10,10 +10,14 @@ import {
 import { ErrorType } from "../types/error/error-type";
 
 export class CategoryController {
-    private categoryService: CategoryService;
+    private _categoryService?: CategoryService;
 
-    constructor() {
-        this.categoryService = new CategoryService();
+    constructor(categoryService?: CategoryService) {
+        this._categoryService = categoryService;
+    }
+
+    private get categoryService(): CategoryService {
+        return this._categoryService ?? ServiceRegistry.categoryService;
     }
 
     /*async getAll(req: Request, res: Response): Promise<void> {

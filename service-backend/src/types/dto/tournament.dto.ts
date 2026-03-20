@@ -45,3 +45,29 @@ export type TeamData = {
   totalPoints: number;
   usersId: string[];
 };
+
+// Knockout Automation DTOs
+export type KnockoutResult = {
+  stage: string;
+  matchesCreated: number;
+  teams: string[];
+};
+
+export type StageCompletion = {
+  complete: boolean;
+  teams?: QualifiedTeam[];
+};
+
+export type QualifiedTeam = {
+  teamId: string;
+  groupStageId: string;
+  matchesWon: number;
+  gamesDiff: number;
+};
+
+export type KnockoutTriggerResponse = {
+  triggered: boolean;
+  message: string;
+  stage?: string;
+  matchesCreated?: number;
+};

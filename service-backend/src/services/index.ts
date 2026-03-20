@@ -11,6 +11,7 @@ import { CalendarClubService } from "./calendarClubService";
 import { CourtService } from "./courtService";
 import { CategoryService } from "./categoryService";
 import { TeamMatchService } from "./teamMatch";
+import { ServiceRegistry } from "./ServiceRegistry";
 
 export {
   PerDataService,
@@ -26,4 +27,5 @@ export {
   CourtService,
   CategoryService,
   TeamMatchService,
+  ServiceRegistry,
 };

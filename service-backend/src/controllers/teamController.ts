@@ -1,6 +1,6 @@
 import { validationResult } from "express-validator";
 import { Team } from "../entity";
-import { TeamService, TournamentService, UserService } from "../services";
+import { TeamService, TournamentService, UserService, ServiceRegistry } from "../services";
 import { Request, Response } from "express";
 import { ApiResponse, success, failure } from "../types/response/api-response";
 import {
@@ -14,14 +14,22 @@ import { ErrorType } from "../types/error/error-type";
 import { Manager } from "../helpers/manager";
 
 export class TeamController {
-  private teamService: TeamService;
+  private _teamService?: TeamService;
+  private _tournService?: TournamentService;
   private manager: Manager;
-  private tournService: TournamentService;
 
-  constructor() {
-    this.teamService = new TeamService();
+  constructor(teamService?: TeamService, tournService?: TournamentService) {
+    this._teamService = teamService;
+    this._tournService = tournService;
     this.manager = Manager.getInstance();
-    this.tournService = new TournamentService();
+  }
+
+  private get teamService(): TeamService {
+    return this._teamService ?? ServiceRegistry.teamService;
+  }
+
+  private get tournService(): TournamentService {
+    return this._tournService ?? ServiceRegistry.tournamentService;
   }
 
   async create(req: Request, res: Response): Promise<void> {

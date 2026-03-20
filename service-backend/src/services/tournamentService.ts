@@ -4,8 +4,10 @@ import { Category, Match, Tournament } from "../entity";
 import { GroupDTO } from "../entity/dtos/GroupsDTO";
 import {
   ClubRepository,
+  MatchRepository,
   TeamRepository,
   TournamentRepository,
+  KNOCKOUT_STAGES,
 } from "../repository";
 import { ClubData, CourtData, TeamData, TourData } from "../utils/interfaces";
 import {
@@ -16,16 +18,46 @@ import { Stats } from "fs";
 import { Status } from "../entity/Tournament";
 import { notFound, conflict, validationError } from "../types/error/app-error";
 import { TeamRankingData } from "../types/dto/team.dto";
+import {
+  KnockoutResult,
+  StageCompletion,
+  QualifiedTeam,
+} from "../types/dto/tournament.dto";
 
 export class TournamentService {
-  private tourService: TourService;
-  private categoryService: CategoryService;
-  private matchService: MatchService;
+  private _tourService?: TourService;
+  private _categoryService?: CategoryService;
+  private _matchService?: MatchService;
 
-  constructor() {
-    this.tourService = new TourService();
-    this.categoryService = new CategoryService();
-    this.matchService = new MatchService();
+  constructor(
+    tourService?: TourService,
+    categoryService?: CategoryService,
+    matchService?: MatchService
+  ) {
+    this._tourService = tourService;
+    this._categoryService = categoryService;
+    this._matchService = matchService;
+  }
+
+  private get tourService(): TourService {
+    if (!this._tourService) {
+      this._tourService = new TourService();
+    }
+    return this._tourService;
+  }
+
+  private get categoryService(): CategoryService {
+    if (!this._categoryService) {
+      this._categoryService = new CategoryService();
+    }
+    return this._categoryService;
+  }
+
+  private get matchService(): MatchService {
+    if (!this._matchService) {
+      this._matchService = new MatchService();
+    }
+    return this._matchService;
   }
 
   async create(
@@ -267,63 +299,6 @@ export class TournamentService {
     return matches;
   }
 
-  async createNextMatches(teams: TeamRankingData[], tournament: Tournament) {
-    const matches: Match[] = [];
-
-    const teamsByGroup = teams.reduce((acc, team) => {
-      if (!acc[team.groupStageId]) {
-        acc[team.groupStageId] = [];
-      }
-      acc[team.groupStageId].push(team);
-      return acc;
-    }, {});
-
-    for (const group in teamsByGroup) {
-      teamsByGroup[group].sort((a, b) => {
-        // Ordenar por matchesWon, y en caso de empate por gamesDiff
-        if (b.matchesWon === a.matchesWon) {
-          return b.gamesDiff - a.gamesDiff;
-        }
-        return b.matchesWon - a.matchesWon;
-      });
-    }
-
-    const matchups = [];
-    const groups = Object.keys(teamsByGroup); // Get the group names dynamically
-
-    for (let i = 0; i < groups.length; i += 2) {
-      if (teamsByGroup[groups[i]] && teamsByGroup[groups[i + 1]]) {
-        matchups.push([
-          teamsByGroup[groups[i]][0], // First place from the first group
-          teamsByGroup[groups[i + 1]][1], // Second place from the second group
-        ]);
-        matchups.push([
-          teamsByGroup[groups[i + 1]][0], // First place from the second group
-          teamsByGroup[groups[i]][1], // Second place from the first group
-        ]);
-      }
-    }
-
-    //FIXME: Get matchDate and courtId correction
-    for (const [team1, team2] of matchups) {
-      const match = new Match();
-      match.amountTourCoins = 70;
-      match.amountTourPoints = 75;
-      match.matchDate = "2024-09-02 9:00";
-
-      const m = await this.matchService.create(
-        match,
-        [team1.teamId, team2.teamId],
-        tournament,
-        "4c517cbb-9c05-48bf-837b-b6bae86edd9a",
-        "Cuartos de Final"
-      );
-      matches.push(m);
-    }
-
-    return matches;
-  }
-
   async getAll(tourId: string) {
     const tournaments: TourData[] = await TournamentRepository.getAll(tourId);
 
@@ -348,5 +323,455 @@ export class TournamentService {
       throw conflict("No se encontro ningún Torneos Propio", "Torneos Propio");
     }
     return tournaments;
+  }
+
+  // ============================================
+  // KNOCKOUT AUTOMATION METHODS
+  // ============================================
+
+  /**
+   * Check if all group stage matches are complete for a category
+   */
+  async checkCategoryGroupStageComplete(
+    tournamentId: string,
+    categoryId: string
+  ): Promise<StageCompletion> {
+    // Get all group stage matches (non-knockout)
+    const groupMatches = await MatchRepository.getGroupStageMatches(
+      tournamentId,
+      categoryId
+    );
+
+    if (groupMatches.length === 0) {
+      return { complete: false };
+    }
+
+    // Check if all matches have a winner
+    const allComplete = groupMatches.every((match) =>
+      match.teamMatches?.some((tm) => tm.isWinner === true)
+    );
+
+    if (!allComplete) {
+      return { complete: false };
+    }
+
+    // Get qualified teams (1st and 2nd place from each group)
+    const qualifiedTeams = await this.getQualifiedTeams(
+      tournamentId,
+      categoryId
+    );
+
+    return {
+      complete: true,
+      teams: qualifiedTeams,
+    };
+  }
+
+  /**
+   * Get qualified teams based on group stage results
+   * Returns teams sorted by group, with 1st and 2nd place from each group
+   */
+  private async getQualifiedTeams(
+    tournamentId: string,
+    categoryId: string
+  ): Promise<QualifiedTeam[]> {
+    const groupMatches = await MatchRepository.getGroupStageMatches(
+      tournamentId,
+      categoryId
+    );
+
+    // Group matches by their groupStageId
+    const matchesByGroup = new Map<string, Match[]>();
+    groupMatches.forEach((match) => {
+      const groupId = match.groupStage.id;
+      if (!matchesByGroup.has(groupId)) {
+        matchesByGroup.set(groupId, []);
+      }
+      matchesByGroup.get(groupId)!.push(match);
+    });
+
+    const qualifiedTeams: QualifiedTeam[] = [];
+
+    // For each group, determine 1st and 2nd place
+    for (const [groupId, matches] of matchesByGroup) {
+      // Count wins for each team in this group
+      const teamWins = new Map<string, number>();
+      const teamGamesDiff = new Map<string, number>();
+
+      matches.forEach((match) => {
+        const winner = match.teamMatches?.find((tm) => tm.isWinner === true);
+        const loser = match.teamMatches?.find((tm) => tm.isWinner === false);
+
+        if (winner && loser) {
+          teamWins.set(
+            winner.teamId,
+            (teamWins.get(winner.teamId) || 0) + 1
+          );
+        }
+      });
+
+      // Sort teams by wins and then by games difference
+      const teamsInGroup = [
+        ...new Set(
+          matches.flatMap((m) =>
+            m.teamMatches?.map((tm) => ({ teamId: tm.teamId, team: tm.team }))
+          )
+        ),
+      ];
+
+      const teamData = teamsInGroup.map(({ teamId }) => {
+        const teamMatch = matches
+          .flatMap((m) => m.teamMatches || [])
+          .find((tm) => tm.teamId === teamId);
+
+        return {
+          teamId,
+          team: teamMatch?.team,
+          wins: teamWins.get(teamId) || 0,
+        };
+      });
+
+      // Sort by wins descending
+      teamData.sort((a, b) => b.wins - a.wins);
+
+      // Get 1st and 2nd place
+      const topTwo = teamData.slice(0, 2);
+      topTwo.forEach((td) => {
+        qualifiedTeams.push({
+          teamId: td.teamId,
+          groupStageId: groupId,
+          matchesWon: td.wins,
+          gamesDiff: 0, // TODO: Calculate games diff properly if needed
+        });
+      });
+    }
+
+    return qualifiedTeams;
+  }
+
+  /**
+   * Check if a knockout stage is complete
+   */
+  async checkKnockoutStageComplete(
+    tournamentId: string,
+    categoryId: string,
+    stageName: string
+  ): Promise<{ complete: boolean; winners?: QualifiedTeam[] }> {
+    // Get all matches for this knockout stage
+    const matches = await MatchRepository.getKnockoutMatches(
+      tournamentId,
+      categoryId,
+      stageName
+    );
+
+    if (matches.length === 0) {
+      return { complete: false };
+    }
+
+    // Check if all matches have a winner
+    const allComplete = matches.every((match) =>
+      match.teamMatches?.some((tm) => tm.isWinner === true)
+    );
+
+    if (!allComplete) {
+      return { complete: false };
+    }
+
+    // Extract winners
+    const winners: QualifiedTeam[] = matches
+      .flatMap((match) => {
+        const winnerTM = match.teamMatches?.find((tm) => tm.isWinner === true);
+        if (!winnerTM) return [];
+        return {
+          teamId: winnerTM.teamId,
+          groupStageId: match.groupStage.id,
+          matchesWon: 1, // Single match in knockout
+          gamesDiff: 0,
+        };
+      })
+      .filter((w) => w !== null) as QualifiedTeam[];
+
+    return { complete: true, winners };
+  }
+
+  /**
+   * Calculate remaining hours for knockout scheduling
+   * Returns hours from club availability that haven't been used by group stage matches
+   */
+  async getRemainingHours(
+    tournamentId: string,
+    categoryId: string
+  ): Promise<Date[]> {
+    // Get club data for the tournament
+    const clubData = await this.getDataForStartingTournament(
+      await this.findById(tournamentId)
+    );
+
+    // Calculate all available hours for clubs
+    await this.getHoursOfMatches(clubData.clubData);
+
+    // Get all available hours
+    const allHours = new Set<string>();
+    clubData.clubData.forEach((club) => {
+      club.allHours?.forEach((hour) => {
+        allHours.add(hour.toISOString());
+      });
+    });
+
+    // Get scheduled dates for this category
+    const scheduledDates = await MatchRepository.getScheduledDatesByCategory(
+      tournamentId,
+      categoryId
+    );
+    const scheduledSet = new Set(
+      scheduledDates.map((d) => new Date(d).toISOString())
+    );
+
+    // Filter out scheduled hours
+    const remainingHours = [...allHours]
+      .filter((hour) => !scheduledSet.has(hour))
+      .map((hour) => new Date(hour))
+      .sort((a, b) => a.getTime() - b.getTime());
+
+    return remainingHours;
+  }
+
+  /**
+   * Main method to process knockout progression
+   * Creates next knockout stage if current stage is complete
+   */
+  async processKnockoutProgression(
+    tournamentId: string,
+    categoryId: string
+  ): Promise<KnockoutResult | null> {
+    const tournament = await this.findById(tournamentId);
+
+    // Step 1: Check if group stage is complete and create quarterfinals
+    const groupStageStatus = await this.checkCategoryGroupStageComplete(
+      tournamentId,
+      categoryId
+    );
+
+    if (groupStageStatus.complete && groupStageStatus.teams) {
+      const hasCuartos = await MatchRepository.hasKnockoutMatches(
+        tournamentId,
+        categoryId,
+        KNOCKOUT_STAGES.CUARTOS
+      );
+
+      if (!hasCuartos) {
+        // Validate minimum teams (8 teams = 4 quarterfinals)
+        if (groupStageStatus.teams.length < 4) {
+          throw validationError(
+            "Invalid bracket: minimum 4 teams required for knockout"
+          );
+        }
+
+        const remainingHours = await this.getRemainingHours(
+          tournamentId,
+          categoryId
+        );
+
+        if (remainingHours.length === 0) {
+          throw validationError(
+            "No remaining hours for knockout scheduling"
+          );
+        }
+
+        const matches = await this.createNextMatches(
+          groupStageStatus.teams,
+          tournament,
+          KNOCKOUT_STAGES.CUARTOS,
+          categoryId,
+          remainingHours
+        );
+
+        return {
+          stage: KNOCKOUT_STAGES.CUARTOS,
+          matchesCreated: matches.length,
+          teams: groupStageStatus.teams.map((t) => t.teamId),
+        };
+      }
+    }
+
+    // Step 2: Check if quarterfinals are complete and create semifinals
+    const cuartosStatus = await this.checkKnockoutStageComplete(
+      tournamentId,
+      categoryId,
+      KNOCKOUT_STAGES.CUARTOS
+    );
+
+    if (cuartosStatus.complete && cuartosStatus.winners) {
+      const hasSemis = await MatchRepository.hasKnockoutMatches(
+        tournamentId,
+        categoryId,
+        KNOCKOUT_STAGES.SEMIFINAL
+      );
+
+      if (!hasSemis) {
+        const remainingHours = await this.getRemainingHours(
+          tournamentId,
+          categoryId
+        );
+
+        if (remainingHours.length === 0) {
+          throw validationError(
+            "No remaining hours for knockout scheduling"
+          );
+        }
+
+        const matches = await this.createNextMatches(
+          cuartosStatus.winners,
+          tournament,
+          KNOCKOUT_STAGES.SEMIFINAL,
+          categoryId,
+          remainingHours
+        );
+
+        return {
+          stage: KNOCKOUT_STAGES.SEMIFINAL,
+          matchesCreated: matches.length,
+          teams: cuartosStatus.winners.map((t) => t.teamId),
+        };
+      }
+    }
+
+    // Step 3: Check if semifinals are complete and create final
+    const semisStatus = await this.checkKnockoutStageComplete(
+      tournamentId,
+      categoryId,
+      KNOCKOUT_STAGES.SEMIFINAL
+    );
+
+    if (semisStatus.complete && semisStatus.winners) {
+      const hasFinal = await MatchRepository.hasKnockoutMatches(
+        tournamentId,
+        categoryId,
+        KNOCKOUT_STAGES.FINAL
+      );
+
+      if (!hasFinal) {
+        const remainingHours = await this.getRemainingHours(
+          tournamentId,
+          categoryId
+        );
+
+        if (remainingHours.length === 0) {
+          throw validationError(
+            "No remaining hours for knockout scheduling"
+          );
+        }
+
+        const matches = await this.createNextMatches(
+          semisStatus.winners,
+          tournament,
+          KNOCKOUT_STAGES.FINAL,
+          categoryId,
+          remainingHours
+        );
+
+        return {
+          stage: KNOCKOUT_STAGES.FINAL,
+          matchesCreated: matches.length,
+          teams: semisStatus.winners.map((t) => t.teamId),
+        };
+      }
+    }
+
+    return null; // No progression needed or possible
+  }
+
+  /**
+   * Create knockout matches for given teams
+   * Refactored from original createNextMatches with dynamic parameters
+   */
+  async createNextMatches(
+    teams: QualifiedTeam[],
+    tournament: Tournament,
+    roundName: string,
+    categoryId: string,
+    remainingHours: Date[]
+  ): Promise<Match[]> {
+    const matches: Match[] = [];
+
+    // Group teams by their original groupStageId
+    const teamsByGroup = teams.reduce((acc, team) => {
+      if (!acc[team.groupStageId]) {
+        acc[team.groupStageId] = [];
+      }
+      acc[team.groupStageId].push(team);
+      return acc;
+    }, {} as Record<string, QualifiedTeam[]>);
+
+    // Sort teams within each group by matchesWon (and gamesDiff as tiebreaker)
+    for (const group in teamsByGroup) {
+      teamsByGroup[group].sort((a, b) => {
+        if (b.matchesWon === a.matchesWon) {
+          return b.gamesDiff - a.gamesDiff;
+        }
+        return b.matchesWon - a.matchesWon;
+      });
+    }
+
+    // Create matchups: 1st vs 2nd from cross groups
+    const matchups: [QualifiedTeam, QualifiedTeam][] = [];
+    const groups = Object.keys(teamsByGroup);
+
+    for (let i = 0; i < groups.length; i += 2) {
+      if (teamsByGroup[groups[i]] && teamsByGroup[groups[i + 1]]) {
+        matchups.push([
+          teamsByGroup[groups[i]][0], // 1st from group i
+          teamsByGroup[groups[i + 1]][1], // 2nd from group i+1
+        ]);
+        matchups.push([
+          teamsByGroup[groups[i + 1]][0], // 1st from group i+1
+          teamsByGroup[groups[i]][1], // 2nd from group i
+        ]);
+      }
+    }
+
+    // Create matches using remaining hours and a court
+    const clubData = await this.getDataForStartingTournament(tournament);
+    await this.getHoursOfMatches(clubData.clubData);
+
+    // Flatten all court IDs
+    const allCourtIds = clubData.clubData.flatMap((club) => club.ctNumbers);
+
+    let hourIndex = 0;
+    let courtIndex = 0;
+
+    for (const [team1, team2] of matchups) {
+      if (hourIndex >= remainingHours.length) {
+        break; // No more hours available
+      }
+
+      const match = new Match();
+      match.amountTourCoins = 70;
+      match.amountTourPoints = 75;
+      match.matchDate = remainingHours[hourIndex].toISOString();
+
+      const courtId = allCourtIds[courtIndex % allCourtIds.length];
+
+      try {
+        const m = await this.matchService.create(
+          match,
+          [team1.teamId, team2.teamId],
+          tournament,
+          courtId,
+          roundName
+        );
+        matches.push(m);
+      } catch (error) {
+        console.error(
+          `Error creating match for teams ${team1.teamId} vs ${team2.teamId}:`,
+          error
+        );
+      }
+
+      hourIndex++;
+      courtIndex++;
+    }
+
+    return matches;
   }
 }
