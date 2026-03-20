@@ -1,5 +1,4 @@
 import GeneralAPI from "./GeneralApi";
-import { isAxiosError } from "../errors/AxiosError";
 
 export interface ClubCredentials {
   userId?: string;
@@ -19,41 +18,28 @@ export interface UpdateClub {
   avTo: string;
 }
 
+interface ClubData {
+  id: string;
+  clubName: string;
+  address: string;
+}
+
 class ClubAPI extends GeneralAPI {
-  async getClubs(userId: string) {
-    try {
-      const res = await this.api.get(`/club/clubs/${userId}`);
-      return res.data;
-    } catch (e) {
-      isAxiosError(e);
-    }
+  async getClubs(userId: string): Promise<unknown> {
+    return this.api.get(`/club/clubs/${userId}`);
   }
 
-  async getClubsPerTour(userId: string, tourId: string | undefined) {
-    try {
-      const res = await this.api.get(`/clubs/${userId}/${tourId}`);
-      return res.data;
-    } catch (e) {
-      isAxiosError(e);
-    }
+  async getClubsPerTour(userId: string, tourId: string | undefined): Promise<unknown> {
+    return this.api.get(`/clubs/${userId}/${tourId}`);
   }
 
-  async addClub(club: ClubCredentials) {
-    try {
-      const res = await this.api.post("/club/create", club);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async addClub(_club: ClubCredentials): Promise<ClubData> {
+    const res = await this.api.post("/club/create", _club);
+    return res as unknown as ClubData;
   }
 
-  async updateClub(club: UpdateClub) {
-    try {
-      const res = await this.api.post("/club/update", club);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async updateClub(_club: UpdateClub): Promise<void> {
+    await this.api.post("/club/update", _club);
   }
 }
 

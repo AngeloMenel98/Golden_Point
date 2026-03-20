@@ -1,4 +1,3 @@
-import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface Credentials {
@@ -18,40 +17,24 @@ export interface DataRegister {
 }
 
 class UserAPI extends GeneralAPI {
-  async login(credentials: Credentials) {
-    try {
-      const res = await this.api.post("/login", credentials);
-      return res.data.data.token;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async login(credentials: Credentials): Promise<string> {
+    const res = await this.api.post<{ token: string }>("/login", credentials);
+    // Axios types don't know the interceptor unwraps; assert the runtime behavior
+    return (res as unknown as { token: string }).token;
   }
 
-  async register(data: DataRegister) {
-    try {
-      const res = await this.api.post("/register", data);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async register(_data: DataRegister): Promise<void> {
+    await this.api.post("/register", _data);
   }
 
-  async getUsers(tourId: string) {
-    try {
-      const res = await this.api.get(`/users/${tourId}`);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getUsers(tourId: string): Promise<unknown[]> {
+    const res = await this.api.get(`/users/${tourId}`);
+    return res as unknown as unknown[];
   }
 
-  async getRanking(tourId: string | undefined, category: string) {
-    try {
-      const res = await this.api.get(`/user/${tourId}/${category}`);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getRanking(tourId: string | undefined, category: string): Promise<unknown[]> {
+    const res = await this.api.get(`/user/${tourId}/${category}`);
+    return res as unknown as unknown[];
   }
 }
 

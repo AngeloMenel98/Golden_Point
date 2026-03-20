@@ -25,6 +25,7 @@ import { useRef, useState } from "react";
 import { Errors } from "../../../../../errors/Errors";
 import { parseDateTime } from "../../../../../utils/transformDate";
 import useClickOutside from "../../../../../hooks/functionalities/useClickOutside";
+import { ApiError } from "../../../../../services/GeneralApi";
 
 interface EditMatchProps {
   editMatch: MatchData;
@@ -70,11 +71,12 @@ const EditMatch: React.FC<EditMatchProps> = ({
       tournamentId,
     };
 
-    const res = await setAPI.addSets(newSets);
-
-    if (res != null) {
+    try {
+      await setAPI.addSets(newSets);
       onClose();
       reloadMatches();
+    } catch (err) {
+      // Silently close on success
     }
   };
 
@@ -87,16 +89,18 @@ const EditMatch: React.FC<EditMatchProps> = ({
       courtNumber: editMatch.court,
     };
 
-    const res = await matchAPI.updateMatch(updateMatch);
-
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    } else {
+    try {
+      await matchAPI.updateMatch(updateMatch);
       onClose();
       reloadMatches();
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr && apiErr.payload.fieldErrors) {
+        setFieldErrors((prevErrors: any) => ({
+          ...prevErrors,
+          ...apiErr.payload.fieldErrors,
+        }));
+      }
     }
   };
 

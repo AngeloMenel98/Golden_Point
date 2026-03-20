@@ -36,6 +36,7 @@ import Footer from "../../../components/footer/footer";
 import BouncingCircles from "../../../components/spinner/spinner";
 import UsersModal from "../../../components/userModal/UsersModal";
 import { CreationTournament } from "../../../utils/interfaces";
+import { ApiError } from "../../../services/GeneralApi";
 
 const tournApi = new TournamentAPI();
 
@@ -111,16 +112,18 @@ const Tournament: React.FC = () => {
       categories: categories,
     };
 
-    const res = await tournApi.addTournament(tournament);
-
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    } else {
+    try {
+      await tournApi.addTournament(tournament);
       createCloseModal();
       refetch();
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr && apiErr.payload.fieldErrors) {
+        setFieldErrors((prevErrors: any) => ({
+          ...prevErrors,
+          ...apiErr.payload.fieldErrors,
+        }));
+      }
     }
   };
 

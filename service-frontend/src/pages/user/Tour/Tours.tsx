@@ -32,6 +32,7 @@ import ArrowLeftIcon from "../../../icons/ArrowLeftIcon/ArrowLeftIcon";
 import useGetMyTourns from "../../../hooks/useGetMyTourns";
 import MyTournsCards from "../../../components/myTourns/myTournsCard";
 import BouncingCircles from "../../../components/spinner/spinner";
+import { ApiError } from "../../../services/GeneralApi";
 
 const tourAPI = new TourAPI();
 
@@ -59,18 +60,12 @@ const ToursUser: React.FC = () => {
       userId: user?.id,
       tourCode: code,
     };
-    const res = await tourAPI.joinUser(joinCred);
-
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    } else {
+    try {
+      const data = await tourAPI.joinUser(joinCred);
       const newTour: TourDTO = new TourDTO();
-      newTour.Id = res.id;
-      newTour.TourTitle = res.title;
-      newTour.TourCode = res.tourCode;
+      newTour.Id = data.id;
+      newTour.TourTitle = data.title;
+      newTour.TourCode = data.tourCode;
       newTour.UserCount = 1;
       newTour.TournamentCount = 0;
       newTour.UserOwner = user?.userName || "";
@@ -78,6 +73,14 @@ const ToursUser: React.FC = () => {
       handleCloseModal();
 
       refetch();
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr && apiErr.payload.fieldErrors) {
+        setFieldErrors((prevErrors: any) => ({
+          ...prevErrors,
+          ...apiErr.payload.fieldErrors,
+        }));
+      }
     }
   };
 

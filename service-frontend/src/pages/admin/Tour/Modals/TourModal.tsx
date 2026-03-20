@@ -41,6 +41,7 @@ import useClickOutside from "../../../../hooks/functionalities/useClickOutside";
 import { CreationTour } from "../../../../utils/interfaces";
 import QuestionIcon from "../../../../icons/QuestionIcon/QuestionIcon";
 import useIntervals from "../../../../hooks/functionalities/useInterval";
+import { ApiError } from "../../../../services/GeneralApi";
 
 interface TourModalProps {
   tourApi: TourAPI;
@@ -95,23 +96,25 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
       avTo: "",
     });
 
-    const res = await clubAPI.addClub(club);
-
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    } else {
+    try {
+      const newClubData = await clubAPI.addClub(club);
       const newClub: ClubDTO = new ClubDTO();
-      newClub.Id = res.id;
-      newClub.ClubName = res.clubName;
-      newClub.Address = res.address;
+      newClub.Id = newClubData.id;
+      newClub.ClubName = newClubData.clubName;
+      newClub.Address = newClubData.address;
       newClub.AvFrom = data.avFrom;
       newClub.AvTo = data.avTo;
       newClub.CourtCount = Number(data.courts);
 
       addClubToState(newClub);
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr && apiErr.payload.fieldErrors) {
+        setFieldErrors((prevErrors: any) => ({
+          ...prevErrors,
+          ...apiErr.payload.fieldErrors,
+        }));
+      }
     }
   };
 
@@ -123,16 +126,18 @@ const TourModal: React.FC<TourModalProps> = ({ tourApi, onClose, refetch }) => {
       title: data.tourName,
     };
 
-    const res = await tourApi.addTour(tour);
-
-    if (res.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...res.fieldErrors,
-      }));
-    } else {
+    try {
+      await tourApi.addTour(tour);
       onClose();
       refetch();
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr && apiErr.payload.fieldErrors) {
+        setFieldErrors((prevErrors: any) => ({
+          ...prevErrors,
+          ...apiErr.payload.fieldErrors,
+        }));
+      }
     }
   };
 

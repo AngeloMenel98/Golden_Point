@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { TourDTO } from "../entities/dtos/TourDTO";
 import TourAPI from "../services/TourApi";
 import { UserData } from "../utils/interfaces";
+import { ApiError } from "../services/GeneralApi";
 
 const tourAPI = new TourAPI();
 
@@ -20,31 +21,31 @@ export default function useGetTours(user: UserData | null) {
 
     try {
       const tourArray: TourDTO[] = [];
-      const tourRes = await tourAPI.getTours(user.id);
+      const data = await tourAPI.getTours(user.id);
 
-      if (tourRes.fieldErrors) {
-        setError(tourRes.fieldErrors.notFound);
-      } else {
-        tourRes.forEach((t: any) => {
-          const newTour = new TourDTO();
+      data.forEach((t: any) => {
+        const newTour = new TourDTO();
 
-          newTour.Id = t.tourid;
-          newTour.TourTitle = t.tourtitle;
-          newTour.TourCode = t.tourcode;
-          newTour.UserCount = t.usercount;
-          newTour.TournamentCount = t.tournamentcount;
-          newTour.UserOwner = t.firstusername;
+        newTour.Id = t.tourid;
+        newTour.TourTitle = t.tourtitle;
+        newTour.TourCode = t.tourcode;
+        newTour.UserCount = t.usercount;
+        newTour.TournamentCount = t.tournamentcount;
+        newTour.UserOwner = t.firstusername;
 
-          tourArray.push(newTour);
-        });
+        tourArray.push(newTour);
+      });
 
-        setTours(tourArray);
-      }
-
-      setIsLoading(false);
+      setTours(tourArray);
       setHasFetched(true);
-    } catch (error) {
-      setError("An unexpected error occurred while fetching tours.");
+    } catch (err) {
+      if (err instanceof ApiError && err.payload.fieldErrors) {
+        setError(err.payload.fieldErrors.notFound ?? "");
+      } else {
+        setError("An unexpected error occurred while fetching tours.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   }, [user]);
 

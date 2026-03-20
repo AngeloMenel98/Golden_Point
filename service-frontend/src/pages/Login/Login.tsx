@@ -16,6 +16,7 @@ import PrimaryInput from "../../components/inputs/PrimaryInput/PrimaryInput";
 import EnterIcon from "../../icons/EnterIcon/EnterIcon";
 import { Errors } from "../../errors/Errors";
 import { white } from "../../utils/colors";
+import { ApiError } from "../../services/GeneralApi";
 
 const userAPI = new UserAPI();
 
@@ -32,20 +33,19 @@ const Login: React.FC = () => {
   };
 
   const handleClick = async () => {
-    const token = await userAPI.login(credentials);
-
-    if (token.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...token.fieldErrors,
-      }));
-
-      return;
+    try {
+      const token = await userAPI.login(credentials);
+      localStorage.setItem("token", token);
+      window.location.reload();
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr && apiErr.payload.fieldErrors) {
+        setFieldErrors((prevErrors: any) => ({
+          ...prevErrors,
+          ...apiErr.payload.fieldErrors,
+        }));
+      }
     }
-
-    localStorage.setItem("token", token);
-
-    window.location.reload();
   };
 
   return (

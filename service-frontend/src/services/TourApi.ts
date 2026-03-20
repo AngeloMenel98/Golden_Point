@@ -1,4 +1,3 @@
-import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface DeletedTour {
@@ -17,41 +16,30 @@ export interface JoinCredentials {
   tourCode: string;
 }
 
+interface TourData {
+  id: string;
+  title: string;
+  tourCode: string;
+}
+
 class TourAPI extends GeneralAPI {
-  async addTour(newTour: TourCredentials) {
-    try {
-      const res = await this.api.post("/tour/create", newTour);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async addTour(_newTour: TourCredentials): Promise<void> {
+    await this.api.post("/tour/create", _newTour);
   }
 
-  async getTours(userId: string) {
-    try {
-      const res = await this.api.get(`/tour/tours/${userId}`);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getTours(_userId: string): Promise<unknown[]> {
+    const res = await this.api.get(`/tour/tours/${_userId}`);
+    return res as unknown as unknown[];
   }
 
-  async deleteTour(deletedTour: DeletedTour) {
-    try {
-      const res = await this.api.post("/tour/delete", deletedTour);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async deleteTour(_deletedTour: DeletedTour): Promise<{ id: string }> {
+    const res = await this.api.post("/tour/delete", _deletedTour);
+    return res as unknown as { id: string };
   }
 
-  async joinUser(joinCredentials: JoinCredentials) {
-    try {
-      const res = await this.api.post("/tour/join", joinCredentials);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async joinUser(joinCredentials: JoinCredentials): Promise<TourData> {
+    const res = await this.api.post("/tour/join", joinCredentials);
+    return res as unknown as TourData;
   }
 }
 

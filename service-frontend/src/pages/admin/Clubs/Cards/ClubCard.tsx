@@ -5,6 +5,7 @@ import { CardContainer, ClubContainer } from "./ClubCardStyle";
 import ClubInfo from "../../../../components/card/ClubCard/ClubInfoCard";
 import EditClub from "../Modals/EditClub";
 import ClubAPI, { UpdateClub } from "../../../../services/ClubApi";
+import { ApiError } from "../../../../services/GeneralApi";
 
 interface CardProps {
   clubs: ClubDTO[];
@@ -32,11 +33,13 @@ const ClubCard: React.FC<CardProps> = ({
   };
 
   const handleSave = async (club: UpdateClub) => {
-    const res = await clubApi.updateClub(club);
-    if (!res.fieldErrors) {
+    try {
+      await clubApi.updateClub(club);
       refetch();
-    } else {
-      alert("Error al actualizar");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        alert("Error al actualizar");
+      }
     }
   };
 

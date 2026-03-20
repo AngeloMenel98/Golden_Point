@@ -6,6 +6,7 @@ import { CardContainer, MainContainer } from "./RegisterStyle";
 
 import UserAPI, { DataRegister } from "../../services/UserApi";
 import { Errors } from "../../errors/Errors";
+import { ApiError } from "../../services/GeneralApi";
 
 const userAPI = new UserAPI();
 
@@ -33,17 +34,18 @@ const Register: React.FC = () => {
       return;
     }
 
-    const newUser = await userAPI.register(data);
-
-    if (newUser.fieldErrors) {
-      setFieldErrors((prevErrors: any) => ({
-        ...prevErrors,
-        ...newUser.fieldErrors,
-      }));
-      return;
+    try {
+      await userAPI.register(data);
+      navigate("/");
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr && apiErr.payload.fieldErrors) {
+        setFieldErrors((prevErrors: any) => ({
+          ...prevErrors,
+          ...apiErr.payload.fieldErrors,
+        }));
+      }
     }
-
-    navigate("/");
   };
 
   const backToLogin = () => {
