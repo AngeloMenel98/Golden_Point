@@ -24,4 +24,5 @@ export const isAxiosError = (e: unknown) => {
       return { fieldErrors };
     }
   }
+  return null;
 };

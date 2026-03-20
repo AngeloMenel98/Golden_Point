@@ -21,7 +21,7 @@ class UserAPI extends GeneralAPI {
   async login(credentials: Credentials) {
     try {
       const res = await this.api.post("/login", credentials);
-      return res.data.token;
+      return res.data.data.token;
     } catch (e) {
       return isAxiosError(e);
     }
