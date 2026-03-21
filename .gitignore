@@ -10,6 +10,14 @@ service-backend/tmp/
 service-backend/temp/
 service-backend/todo.md
 
+# Skills (project-specific, not committed)
+.skills/
+
+# New frontend (Next.js migration)
+new-frontend/node_modules/
+new-frontend/.next/
+new-frontend/out/
+
 secrets
 todo.md
 .env

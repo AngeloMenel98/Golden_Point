@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@theme {
+  /* Golden Point Green Palette */
+  --color-gp-dark: #40573C;
+  --color-gp-pastel: #96a259;
+  --color-gp-light: #dbead5;
+  --color-gp-mint: #98fb98;
+  --color-gp-text: #000000;
+  --color-gp-text-dark: #40573C;
+  --color-gp-gray: #767676;
+  --color-gp-gray-light: #DBDBDB;
+  --color-gp-red: #7f0000;
+  --color-gp-red-light: #ce6161;
+  --color-gp-yellow: #FAFA33;
+  --color-gp-disable: #ebebe4;
+  --color-gp-cream: #878672;
+  
+  /* Custom Screens */
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  
+  /* Typography */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+  
+  html,
+  body {
+    @apply antialiased;
+    @apply max-w-full overflow-x-hidden;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn-primary {
+    @apply w-full py-3 px-4 bg-gp-pastel text-white font-semibold rounded-md 
+           hover:bg-gp-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply py-2 px-4 border-2 border-gp-pastel text-gp-dark font-semibold rounded-md 
+           hover:bg-gp-pastel hover:text-white transition-colors;
+  }
+
+  /* Form Inputs */
+  .input-field {
+    @apply w-full p-3 border-2 border-gp-gray-light rounded-md 
+           focus:outline-none focus:border-gp-pastel text-base bg-white;
+  }
+  
+  .input-error {
+    @apply border-gp-red focus:border-gp-red;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white p-6 rounded-lg shadow-md;
+  }
+
+  /* Navbar */
+  .nav-bg {
+    @apply bg-gp-dark;
+  }
+  
+  .nav-text {
+    @apply text-white;
+  }
+}

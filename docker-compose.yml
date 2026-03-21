@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 
 services:
   db:
@@ -66,27 +66,27 @@ services:
 
   frontend:
     build:
-      context: ./service-frontend
+      context: ./new-frontend
       dockerfile: ./Dockerfile
     image: angemenel98/gp-frontend:latest
     container_name: frontend_app
     depends_on:
       - backend
     environment:
-      BASE_URL: ${BASE_URL}
-      PORT: ${PORT}
+      NEXT_PUBLIC_API_URL: http://backend:8080
+      NODE_ENV: production
     ports:
       - "3000:3000"
     networks:
       - common-net
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000 || exit 1"]
       interval: 30s
       timeout: 3s
       retries: 3
-      start_period: 5s
-    mem_limit: 64m
-    cpus: 0.25
+      start_period: 10s
+    mem_limit: 128m
+    cpus: 0.5
     restart: unless-stopped
     logging:
       driver: json-file
