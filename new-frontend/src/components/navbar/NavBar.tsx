@@ -12,6 +12,7 @@ export default function NavBar() {
     { label: 'Tournaments', href: '/tournaments' },
     { label: 'My Tournaments', href: '/my-tournaments' },
     { label: 'Ranking', href: '/ranking' },
+    { label: 'Tours', href: '/tours' },
   ];
 
   return (

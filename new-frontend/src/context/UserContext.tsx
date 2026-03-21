@@ -40,6 +40,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${apiUrl}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // Required for cookies to be stored
         body: JSON.stringify({ username, password }),
       });
 
@@ -53,9 +54,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
       const { token, user } = data.data;
 
-      if (token) {
-        localStorage.setItem("token", token);
-      }
+      // Set cookie for frontend domain (localhost:3001) so SSR can read it
+      // This cookie is readable by Next.js Server Components via cookies()
+      document.cookie = `token=${token}; path=/; max-age=${24 * 60 * 60}; samesite=lax`;
 
       setUser({
         id: user.id,
@@ -75,7 +76,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null);
-    localStorage.removeItem("token");
+    // Clear the frontend cookie
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax';
   }, []);
 
   return (

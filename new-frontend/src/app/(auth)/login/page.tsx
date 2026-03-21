@@ -1,37 +1,44 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useUser } from '@/context/UserContext';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useUser } from "@/context/UserContext";
 
 export default function LoginPage() {
   const router = useRouter();
   const { login, isLoading } = useUser();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     const result = await login(username, password);
-    
+
+    console.log("result", result);
+
     if (result.success) {
-      router.push('/tournaments');
+      router.push("/tours");
     } else {
-      setError(result.error || 'Login failed');
+      setError(result.error || "Login failed");
     }
   };
 
   return (
     <div className="card w-full max-w-md">
-      <h1 className="text-2xl font-bold text-center mb-6 text-gp-dark">Login</h1>
-      
+      <h1 className="text-2xl font-bold text-center mb-6 text-gp-dark">
+        Login
+      </h1>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="username" className="block text-sm font-medium text-gp-gray mb-1">
+          <label
+            htmlFor="username"
+            className="block text-sm font-medium text-gp-gray mb-1"
+          >
             Username
           </label>
           <input
@@ -44,9 +51,12 @@ export default function LoginPage() {
             required
           />
         </div>
-        
+
         <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gp-gray mb-1">
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gp-gray mb-1"
+          >
             Password
           </label>
           <input
@@ -60,21 +70,15 @@ export default function LoginPage() {
           />
         </div>
 
-        {error && (
-          <p className="text-gp-red text-sm text-center">{error}</p>
-        )}
+        {error && <p className="text-gp-red text-sm text-center">{error}</p>}
 
-        <button 
-          type="submit" 
-          className="btn-primary"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Logging in...' : 'Login'}
+        <button type="submit" className="btn-primary" disabled={isLoading}>
+          {isLoading ? "Logging in..." : "Login"}
         </button>
       </form>
-      
+
       <p className="text-center mt-4 text-gp-gray text-sm">
-        Don&apos;t have an account?{' '}
+        Don&apos;t have an account?{" "}
         <Link href="/register" className="text-gp-pastel hover:underline">
           Sign up
         </Link>

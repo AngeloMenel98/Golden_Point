@@ -13,33 +13,25 @@ class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  private getToken(): string | null {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('token');
-    }
-    return null;
-  }
+  // Note: This client doesn't read the token directly since it's httpOnly.
+  // For new-frontend API routes, use fetch with credentials: 'include'
+  // The cookie is automatically sent to the same-origin API routes.
+  // For external APIs, create a proxy route in /api.
 
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<ApiResponse<T>> {
-    const token = this.getToken();
-    
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       ...(options.headers as Record<string, string>),
     };
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
     try {
       const res = await fetch(`${this.baseUrl}${endpoint}`, {
         ...options,
         headers,
-        credentials: 'include',
+        credentials: 'include', // Send httpOnly cookie automatically
       });
 
       const data = await res.json();

@@ -60,6 +60,10 @@ export class UserController {
       const secretKey = process.env.JWT_SECRET_KEY;
       const token = jwt.sign(userResponse, secretKey!);
 
+      // Note: Setting cookie for cross-origin (different ports) is tricky.
+      // The frontend will set its own cookie after receiving the token.
+      // See UserContext.tsx for cookie setting.
+
       const loginResponse: UserLoginResponse = { token, user: userResponse };
       const response: ApiResponse<UserLoginResponse> = success(loginResponse);
 
@@ -112,7 +116,7 @@ export class UserController {
       const user = await this.userService.create(
         newUser,
         newPerData,
-        newTourCoin
+        newTourCoin,
       );
 
       const response: ApiResponse<UserResponse> = success({
@@ -170,7 +174,7 @@ export class UserController {
       const resUser = await this.userService.update(
         updatedUser,
         user,
-        updatedPerData
+        updatedPerData,
       );
 
       const response: ApiResponse<UserResponse> = success({
