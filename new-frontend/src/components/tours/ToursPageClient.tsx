@@ -1,12 +1,24 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { Tour } from "@/entities/Tour";
 import { TourList } from "./TourList";
 import { CreateTourModal } from "./CreateTourModal";
-import { JoinTourModal } from "./JoinTourModal";
+import { ConfirmationModal } from "./ConfirmationModal";
 import { ToursSkeleton } from "./ToursSkeleton";
 import { useTour } from "@/context/TourContext";
+
+// Dynamic import JoinTourModal only for non-admin users (excluded from admin bundle)
+const JoinTourModal = dynamic(() => import("./JoinTourModal").then((mod) => mod.JoinTourModal), {
+  ssr: false,
+});
+
+interface ConfirmationState {
+  isOpen: boolean;
+  tourId: string | null;
+  tourName: string | null;
+}
 
 interface ToursPageClientProps {
   initialTours: Tour[];
@@ -20,6 +32,11 @@ export function ToursPageClient({
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [confirmationModal, setConfirmationModal] = useState<ConfirmationState>({
+    isOpen: false,
+    tourId: null,
+    tourName: null,
+  });
 
   const {
     tours,
@@ -49,8 +66,31 @@ export function ToursPageClient({
     return await joinTour(code);
   };
 
-  const handleDeleteTour = async (id: string) => {
-    return await deleteTour(id);
+  const handleDeleteClick = (tourId: string, tourName: string) => {
+    setConfirmationModal({
+      isOpen: true,
+      tourId,
+      tourName,
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (confirmationModal.tourId) {
+      await deleteTour(confirmationModal.tourId);
+      setConfirmationModal({
+        isOpen: false,
+        tourId: null,
+        tourName: null,
+      });
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmationModal({
+      isOpen: false,
+      tourId: null,
+      tourName: null,
+    });
   };
 
   const handleNavigate = (tour: Tour) => {
@@ -73,14 +113,16 @@ export function ToursPageClient({
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <h1 className="text-3xl font-bold text-gp-dark">Tours</h1>
         <div className="flex gap-3">
-          {/* Join Tour Button (All Users) */}
-          <button
-            onClick={() => setIsJoinModalOpen(true)}
-            className="px-4 py-2 border-2 border-gp-dark text-gp-dark rounded-md hover:bg-gp-dark hover:text-white transition-colors font-medium"
-            type="button"
-          >
-            Unirse a Tour
-          </button>
+          {/* Join Tour Button (Non-Admin Users Only) */}
+          {!isAdmin && (
+            <button
+              onClick={() => setIsJoinModalOpen(true)}
+              className="px-4 py-2 border-2 border-gp-dark text-gp-dark rounded-md hover:bg-gp-dark hover:text-white transition-colors font-medium"
+              type="button"
+            >
+              Unirse a Tour
+            </button>
+          )}
 
           {/* Create Tour Button (Admin Only) */}
           {isAdmin && (
@@ -114,7 +156,12 @@ export function ToursPageClient({
       <TourList
         tours={displayTours}
         onNavigate={handleNavigate}
-        onDelete={handleDeleteTour}
+        onDelete={isAdmin ? (id) => {
+          const tour = displayTours.find(t => t.id === id);
+          if (tour) {
+            handleDeleteClick(id, tour.name);
+          }
+        } : undefined}
         isAdmin={isAdmin}
       />
 
@@ -126,12 +173,28 @@ export function ToursPageClient({
         existingTourNames={existingTourNames}
       />
 
-      {/* Join Tour Modal */}
-      <JoinTourModal
-        isOpen={isJoinModalOpen}
-        onClose={() => setIsJoinModalOpen(false)}
-        onSubmit={handleJoinTour}
-      />
+      {/* Join Tour Modal (Non-Admin Only) */}
+      {!isAdmin && (
+        <JoinTourModal
+          isOpen={isJoinModalOpen}
+          onClose={() => setIsJoinModalOpen(false)}
+          onSubmit={handleJoinTour}
+        />
+      )}
+
+      {/* Confirmation Modal (Admin Only) */}
+      {isAdmin && (
+        <ConfirmationModal
+          isOpen={confirmationModal.isOpen}
+          title="Eliminar Tour"
+          message={`¿Estás seguro de eliminar "${confirmationModal.tourName}"? Esta acción no se puede deshacer.`}
+          confirmLabel="Eliminar"
+          cancelLabel="Cancelar"
+          onConfirm={handleConfirmDelete}
+          onCancel={handleCancelDelete}
+          variant="danger"
+        />
+      )}
     </div>
   );
 }

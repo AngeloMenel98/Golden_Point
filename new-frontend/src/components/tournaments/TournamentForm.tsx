@@ -4,70 +4,52 @@ import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
-interface Club {
-  id: string;
-  name: string;
-}
-
-interface CreateTourModalProps {
+interface TournamentFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (name: string, clubsId: string[]) => Promise<{ success: boolean; error?: string }>;
-  existingTourNames: string[];
+  onSubmit: (data: { name: string; tourId: string; masterScore: number; categories: string[] }) => Promise<{ success: boolean; error?: string }>;
+  tourId: string;
+  existingTournamentNames: string[];
 }
 
-export function CreateTourModal({ isOpen, onClose, onSubmit, existingTourNames }: CreateTourModalProps) {
+const AVAILABLE_CATEGORIES = [
+  'Primera Division',
+  'Segunda Division',
+  'Tercera Division',
+  'Cuarta Division',
+  'Quinta Division',
+  'Sub-18',
+  'Sub-16',
+  'Sub-14',
+  'Femenino',
+  'Masculino',
+  'Mixto',
+];
+
+export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTournamentNames }: TournamentFormProps) {
   const [name, setName] = useState('');
-  const [selectedClubs, setSelectedClubs] = useState<string[]>([]);
+  const [masterScore, setMasterScore] = useState(0);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [clubs, setClubs] = useState<Club[]>([]);
-  const [clubSearch, setClubSearch] = useState('');
-  const [isLoadingClubs, setIsLoadingClubs] = useState(false);
-
-  // Fetch clubs from API
-  useEffect(() => {
-    if (isOpen) {
-      setIsLoadingClubs(true);
-      fetch('/api/clubs')
-        .then((res) => {
-          if (!res.ok) throw new Error('Error fetching clubs');
-          return res.json();
-        })
-        .then((data) => {
-          // Handle both array and { clubs: [] } response formats
-          const clubsList = Array.isArray(data) ? data : data.clubs || [];
-          setClubs(clubsList);
-        })
-        .catch(() => {
-          // Fallback to mock data if API fails
-          setClubs([
-            { id: '1', name: 'Club A' },
-            { id: '2', name: 'Club B' },
-            { id: '3', name: 'Club C' },
-          ]);
-        })
-        .finally(() => {
-          setIsLoadingClubs(false);
-        });
-    }
-  }, [isOpen]);
-
-  // Filter clubs by search query
-  const filteredClubs = clubs.filter((club) =>
-    club.name.toLowerCase().includes(clubSearch.toLowerCase())
-  );
+  const [categorySearch, setCategorySearch] = useState('');
 
   // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
       setName('');
-      setSelectedClubs([]);
+      setMasterScore(0);
+      setSelectedCategories([]);
       setError(null);
       setIsSubmitting(false);
-      setClubSearch('');
+      setCategorySearch('');
     }
   }, [isOpen]);
+
+  // Filter categories by search query
+  const filteredCategories = AVAILABLE_CATEGORIES.filter((category) =>
+    category.toLowerCase().includes(categorySearch.toLowerCase())
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,31 +57,30 @@ export function CreateTourModal({ isOpen, onClose, onSubmit, existingTourNames }
 
     // Validate name
     if (!name.trim()) {
-      setError('El nombre del tour es requerido');
+      setError('El nombre del torneo es requerido');
       return;
     }
 
     // Check for duplicates
-    if (existingTourNames.includes(name.trim().toLowerCase())) {
+    if (existingTournamentNames.includes(name.trim().toLowerCase())) {
       setError('Este nombre ya existe');
-      return;
-    }
-
-    // Validate clubs
-    if (selectedClubs.length === 0) {
-      setError('Selecciona al menos un club');
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const result = await onSubmit(name.trim(), selectedClubs);
+      const result = await onSubmit({
+        name: name.trim(),
+        tourId,
+        masterScore,
+        categories: selectedCategories,
+      });
       
       if (result.success) {
         onClose();
       } else {
-        setError(result.error || 'Error al crear el tour');
+        setError(result.error || 'Error al crear el torneo');
       }
     } catch {
       setError('Error de conexión. Intenta de nuevo.');
@@ -108,11 +89,11 @@ export function CreateTourModal({ isOpen, onClose, onSubmit, existingTourNames }
     }
   };
 
-  const toggleClub = (clubId: string) => {
-    setSelectedClubs(prev => 
-      prev.includes(clubId)
-        ? prev.filter(id => id !== clubId)
-        : [...prev, clubId]
+  const toggleCategory = (category: string) => {
+    setSelectedCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
     );
   };
 
@@ -125,7 +106,7 @@ export function CreateTourModal({ isOpen, onClose, onSubmit, existingTourNames }
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gp-dark">Crear Tour</h2>
+          <h2 className="text-xl font-bold text-gp-dark">Crear Torneo</h2>
           <button
             onClick={onClose}
             className="text-gp-gray hover:text-gp-dark transition-colors"
@@ -150,8 +131,8 @@ export function CreateTourModal({ isOpen, onClose, onSubmit, existingTourNames }
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Nombre del Tour"
-            placeholder="Mi Tour"
+            label="Nombre del Torneo"
+            placeholder="Copa Verano 2024"
             value={name}
             onChange={(e) => setName(e.target.value)}
             error={error?.includes('nombre') || error?.includes('existe') ? error : undefined}
@@ -161,53 +142,62 @@ export function CreateTourModal({ isOpen, onClose, onSubmit, existingTourNames }
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gp-gray">
-              Clubes
+              Master Score (Opcional)
             </label>
-            {isLoadingClubs ? (
-              <p className="text-sm text-gp-gray">Cargando clubes...</p>
-            ) : clubs.length === 0 ? (
-              <p className="text-sm text-gp-gray">No hay clubes disponibles</p>
+            <input
+              type="number"
+              min="0"
+              value={masterScore}
+              onChange={(e) => setMasterScore(parseInt(e.target.value) || 0)}
+              className="w-full p-2 border border-gp-gray-light rounded-md text-sm focus:outline-none focus:border-gp-pastel"
+              disabled={isSubmitting}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm font-medium text-gp-gray">
+              Categorías
+            </label>
+            {AVAILABLE_CATEGORIES.length === 0 ? (
+              <p className="text-sm text-gp-gray">No hay categorías disponibles</p>
             ) : (
               <>
-                {/* Club Search */}
+                {/* Category Search */}
                 <input
                   type="text"
-                  placeholder="Buscar clubes..."
-                  value={clubSearch}
-                  onChange={(e) => setClubSearch(e.target.value)}
+                  placeholder="Buscar categorías..."
+                  value={categorySearch}
+                  onChange={(e) => setCategorySearch(e.target.value)}
                   className="w-full p-2 border border-gp-gray-light rounded-md text-sm focus:outline-none focus:border-gp-pastel"
                 />
                 <div className="space-y-2 max-h-48 overflow-y-auto border border-gp-gray-light rounded-md p-2">
-                  {filteredClubs.length === 0 ? (
+                  {filteredCategories.length === 0 ? (
                     <p className="text-sm text-gp-gray text-center py-2">
-                      No se encontraron clubes
+                      No se encontraron categorías
                     </p>
                   ) : (
-                    filteredClubs.map((club) => (
+                    filteredCategories.map((category) => (
                       <label
-                        key={club.id}
+                        key={category}
                         className="flex items-center gap-2 cursor-pointer hover:bg-gp-light/30 p-2 rounded"
                       >
                         <input
                           type="checkbox"
-                          checked={selectedClubs.includes(club.id)}
-                          onChange={() => toggleClub(club.id)}
+                          checked={selectedCategories.includes(category)}
+                          onChange={() => toggleCategory(category)}
                           className="w-4 h-4 text-gp-pastel border-gp-gray-light rounded focus:ring-gp-pastel"
                           disabled={isSubmitting}
                         />
-                        <span className="text-gp-dark">{club.name}</span>
+                        <span className="text-gp-dark">{category}</span>
                       </label>
                     ))
                   )}
                 </div>
               </>
             )}
-            {error?.includes('club') && (
-              <p className="text-gp-red text-xs">{error}</p>
-            )}
           </div>
 
-          {error && !error.includes('nombre') && !error.includes('club') && (
+          {error && (
             <p className="text-gp-red text-sm">{error}</p>
           )}
 

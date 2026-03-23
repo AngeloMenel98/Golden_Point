@@ -6,7 +6,7 @@ const authRoutes = ['/login', '/register'];
 
 export function proxy(req: NextRequest) {
   // Check for token in cookies (set by backend login)
-  const token = req.cookies.get('auth_token')?.value;
+  const token = req.cookies.get('token')?.value;
   const { pathname } = req.nextUrl;
 
   // If user is logged in and tries to access login/register, redirect to dashboard

@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   ReactNode,
 } from "react";
 
@@ -78,6 +79,37 @@ export function UserProvider({ children }: { children: ReactNode }) {
     setUser(null);
     // Clear the frontend cookie
     document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax';
+  }, []);
+
+  // Hydrate user from cookie on mount (page refresh)
+  useEffect(() => {
+    const hydrateUser = async () => {
+      try {
+        const res = await fetch('/api/auth/me', {
+          credentials: 'include',
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data?.user) {
+            setUser({
+              id: data.data.user.id,
+              username: data.data.user.username,
+              email: data.data.user.email,
+              role: data.data.user.role,
+            });
+          }
+        } else {
+          // Token invalid/expired - clear cookie
+          document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax';
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Error hydrating user:', error);
+      }
+    };
+
+    hydrateUser();
   }, []);
 
   return (

@@ -49,8 +49,18 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
     
-    // Normalize response to Tour[] format
-    const tours = Array.isArray(data) ? data : (data.data || data.tours || []);
+    // Backend returns { success: true, data: [{ tourid, tourtitle, ... }] }
+    // Normalize to Tour[] format with camelCase field names
+    const rawTours = Array.isArray(data) ? data : (data.data || data.tours || []);
+    const tours = rawTours.map((t: Record<string, unknown>) => ({
+      id: t.tourid,
+      name: t.tourtitle,
+      tourCode: t.tourcode,
+      userCount: parseInt(String(t.usercount), 10) || 0,
+      tournamentCount: parseInt(String(t.tournamentcount), 10) || 0,
+      userOwner: t.firstusername || t.userowner || '',
+      createdAt: t.creationdate || t.createdat,
+    }));
     
     return NextResponse.json({ success: true, data: tours });
   } catch (error) {

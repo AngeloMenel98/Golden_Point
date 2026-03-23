@@ -18,7 +18,7 @@ export class Tour {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ unique: true })
   tourCode: string;
 
   @Column({ default: false })

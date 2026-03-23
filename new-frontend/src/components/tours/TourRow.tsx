@@ -25,13 +25,14 @@ export function TourRow({ tour, onNavigate, onDelete, isAdmin }: TourRowProps) {
       onNavigate(tour);
     }
     
-    // Navigate to tournaments page
+    // Navigate to tournaments page (clean URL, tourId stored in cookie)
+    document.cookie = `currentTourId=${tour.id}; path=/; max-age=86400`;
     router.push('/tournaments');
   };
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (onDelete && confirm(`¿Estás seguro de eliminar "${tour.name}"?`)) {
+    if (onDelete) {
       onDelete(tour.id);
     }
   };

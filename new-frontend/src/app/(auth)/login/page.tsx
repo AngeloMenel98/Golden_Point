@@ -18,8 +18,6 @@ export default function LoginPage() {
 
     const result = await login(username, password);
 
-    console.log("result", result);
-
     if (result.success) {
       router.push("/tours");
     } else {

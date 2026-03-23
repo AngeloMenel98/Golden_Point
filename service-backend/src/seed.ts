@@ -18,7 +18,7 @@ import { User, PersonalData, TourCoin, Tour, Club, CalendarClub, Tournament, Cat
 import { UserRole } from "./entity/User";
 import { Status } from "./entity/Tournament";
 import { Manager } from "./helpers/manager";
-import { generateCode } from "./helpers/generateTourCode.helper";
+import { generateTourCode } from "./helpers/generateTourCode.helper";
 
 async function seed() {
   console.log("🌱 Starting seed process...\n");
@@ -99,7 +99,7 @@ async function seed() {
     console.log("\n📝 Creating Tour...");
     const tour = new Tour();
     tour.title = "Torneo de Padel Verano 2026";
-    tour.tourCode = generateCode(6);
+    tour.tourCode = await generateTourCode();
 
     const createdTour = await tourService.create(tour, admin, []);
     console.log(`   ✅ Tour created: ${createdTour.title} (Code: ${createdTour.tourCode})`);

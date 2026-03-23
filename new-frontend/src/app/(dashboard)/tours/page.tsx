@@ -20,7 +20,7 @@ function getUserFromToken(
 
 async function fetchTours(userId: string, token: string): Promise<Tour[]> {
   try {
-    const response = await fetch(`${API_URL}/tour/tours/${userId}`, {
+    const response = await fetch(`${API_URL}/api/tour/tours/${userId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -30,8 +30,6 @@ async function fetchTours(userId: string, token: string): Promise<Tour[]> {
       cache: "no-store",
     });
 
-    console.log("response TOurs", response);
-
     if (!response.ok) {
       console.error("Failed to fetch tours:", response.status);
       return [];
@@ -39,18 +37,19 @@ async function fetchTours(userId: string, token: string): Promise<Tour[]> {
 
     const data = await response.json();
 
-    // Handle various response formats
-    if (Array.isArray(data)) {
-      return data;
-    }
-    if (data.data && Array.isArray(data.data)) {
-      return data.data;
-    }
-    if (data.tours && Array.isArray(data.tours)) {
-      return data.tours;
-    }
+    // Backend returns { success: true, data: [{ tourid, tourtitle, ... }] }
+    // Normalize to Tour[] format with camelCase field names
+    const rawTours = Array.isArray(data) ? data : data.data || data.tours || [];
+    const tours: Tour[] = (rawTours as Record<string, unknown>[]).map((t) => ({
+      id: t.tourid as string,
+      name: t.tourtitle as string,
+      tourCode: t.tourcode as string,
+      userCount: parseInt(String(t.usercount), 10) || 0,
+      tournamentCount: parseInt(String(t.tournamentcount), 10) || 0,
+      userOwner: (t.firstusername || t.userowner || "") as string,
+    }));
 
-    return [];
+    return tours;
   } catch (error) {
     console.error("Error fetching tours:", error);
     return [];
@@ -60,8 +59,6 @@ async function fetchTours(userId: string, token: string): Promise<Tour[]> {
 export default async function ToursPage() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value || "";
-
-  console.log("token", token);
 
   const user = token ? getUserFromToken(token) : null;
   const userId = user?.id || "1";

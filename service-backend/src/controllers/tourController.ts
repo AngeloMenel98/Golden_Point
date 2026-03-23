@@ -1,6 +1,6 @@
 import { Club, Tour } from "../entity";
 import { ClubService, TourService, UserService, ServiceRegistry } from "../services";
-import { generateCode } from "../helpers/generateTourCode.helper";
+import { generateTourCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { ApiResponse, success, failure } from "../types/response/api-response";
@@ -49,7 +49,7 @@ export class TourController {
 
       const newTour = new Tour();
       newTour.title = title;
-      newTour.tourCode = generateCode(6);
+      newTour.tourCode = await generateTourCode();
 
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
