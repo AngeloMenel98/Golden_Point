@@ -84,6 +84,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
   // Hydrate user from cookie on mount (page refresh)
   useEffect(() => {
     const hydrateUser = async () => {
+      setIsLoading(true);
       try {
         const res = await fetch('/api/auth/me', {
           credentials: 'include',
@@ -106,6 +107,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         console.error('Error hydrating user:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 

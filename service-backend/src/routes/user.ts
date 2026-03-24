@@ -81,6 +81,8 @@ router.post(
   userController.delete.bind(userController)
 );
 
+router.get("/me", userController.me.bind(userController));
+
 router.get("/:username", userController.findByUsername.bind(userController));
 
 router.get("/users/:tourId", userController.getUsers.bind(userController));

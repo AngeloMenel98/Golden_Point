@@ -39,15 +39,14 @@ async function fetchTournaments(
     }
 
     const data = await response.json();
+    const tournamentsData = data.data || data;
 
-    // Backend returns: { "tournamentId": { tournamentName, teamsCount, master, status, categories }, success: true }
-    // Normalize to Tournament[] format
-    const tournaments: Tournament[] = Object.entries(data)
+    const tournaments: Tournament[] = Object.entries(tournamentsData)
       .filter(([key]) => key !== "success")
       .map(([id, t]) => {
         const tournament = t as Record<string, unknown>;
         return {
-          id: id, // Keep as string (UUID)
+          id: id,
           tourId: tourId,
           name: String(
             tournament.tournamentName || tournament.name || "Unnamed",

@@ -303,6 +303,49 @@ export class UserController {
     }
   }
 
+  async me(req: Request, res: Response): Promise<void> {
+    try {
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "UNAUTHORIZED",
+          message: "Unauthorized",
+        });
+        res.status(401).json(errorResponse);
+        return;
+      }
+
+      const token = authHeader.split(" ")[1];
+      const secretKey = process.env.JWT_SECRET_KEY;
+
+      const decoded = jwt.verify(token, secretKey!) as {
+        id: string;
+        username: string;
+        email: string;
+        isSingle: boolean;
+        role: string;
+      };
+
+      const userResponse: UserResponse = {
+        id: decoded.id,
+        username: decoded.username,
+        email: decoded.email,
+        isSingle: decoded.isSingle,
+        role: decoded.role as UserRole,
+      };
+
+      const response: ApiResponse<UserResponse> = success(userResponse);
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure({
+        type: "UNAUTHORIZED",
+        message: "Unauthorized",
+      });
+      res.status(401).json(errorResponse);
+    }
+  }
+
   private handleError(e: unknown): ErrorType {
     if (isNotFoundError(e)) return e;
     if (isValidationError(e)) return e;

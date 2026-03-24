@@ -37,10 +37,12 @@ export function TournamentsClient({ isAdmin, tourId, initialTournaments = [] }: 
     }
   }, [initialTournaments, setTournaments]);
 
-  // Fetch tournaments on mount or when tourId changes
+  // Fetch tournaments on mount or when tourId changes (only if no initial data)
   useEffect(() => {
-    fetchTournaments(tourId);
-  }, [fetchTournaments, tourId]);
+    if (initialTournaments.length === 0) {
+      fetchTournaments(tourId);
+    }
+  }, [fetchTournaments, tourId, initialTournaments.length]);
 
   const handleCreate = useCallback(async (data: { name: string; tourId: string; masterScore: number; categories: string[] }) => {
     return await createTournament(data);

@@ -94,9 +94,10 @@ enum Status {
 - Only ADMIN users can create/delete/start tournaments
 - `master` (point multiplier) must be > 0
 - At least one category required
+- **Teams per category**: 12 teams minimum to start a category
 - Starting a tournament requires:
   - At least one Club associated via CalendarClub
-  - Teams registered in the tournament
+  - Minimum 12 teams per category registered
   - Tournament status changes to IN_PROGRESS
 
 ### Tournament Flow
