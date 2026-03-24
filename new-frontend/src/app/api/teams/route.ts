@@ -46,7 +46,15 @@ export async function GET(request: NextRequest) {
     // Backend returns: { success: true, data: { teams: [...] } } or similar
     const teams = data.data?.teams || data.data || [];
     
-    return NextResponse.json({ success: true, data: teams });
+    // Transform teamName to name and teamId to id for frontend compatibility
+    const transformedTeams = teams.map((team: any) => ({
+      id: team.teamId || team.id,
+      name: team.teamName || team.name,
+      category: team.category,
+      usersId: team.usersId,
+    }));
+    
+    return NextResponse.json({ success: true, data: transformedTeams });
   } catch (error) {
     console.error('Error fetching teams:', error);
     return NextResponse.json({ success: false, error: 'Error de conexión. Intenta de nuevo.' }, { status: 500 });

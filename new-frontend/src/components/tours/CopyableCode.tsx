@@ -9,7 +9,8 @@ interface CopyableCodeProps {
 export function CopyableCode({ code }: CopyableCodeProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = useCallback(async () => {
+  const handleCopy = useCallback(async (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     try {
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(code);

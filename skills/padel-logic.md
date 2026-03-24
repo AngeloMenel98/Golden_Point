@@ -155,6 +155,72 @@ enum Status {
 
 ---
 
+## Team API Endpoints (Frontend)
+
+The new Next.js frontend provides these API routes that proxy to the backend:
+
+| Operation | Endpoint | Description |
+| --------- | -------- | ----------- |
+| Get Teams | GET `/api/teams?tournamentId=` | Fetch all teams for a tournament |
+| Create Team | POST `/api/teams` | Create a new team with players |
+| Delete Team | DELETE `/api/teams/[id]` | Soft delete a team |
+
+### Get Teams (GET /api/teams)
+
+```typescript
+// Request
+GET /api/teams?tournamentId=123
+Authorization: Bearer <jwt_token>
+
+// Response (success)
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "teamName": "Team Alpha",
+      "category": "Male-A",
+      "users": [{ "id": "uuid", "firstName": "...", "lastName": "..." }]
+    }
+  ]
+}
+```
+
+### Create Team (POST /api/teams)
+
+```typescript
+// Request
+POST /api/teams
+Authorization: Bearer <jwt_token>
+{
+  "tournamentId": "uuid",
+  "teamName": "Team Alpha",
+  "category": "Male-A",
+  "playerIds": ["user-uuid-1", "user-uuid-2"]
+}
+
+// Response
+{ "success": true, "data": { ... } }
+```
+
+### Delete Team (DELETE /api/teams/[id])
+
+```typescript
+// Request
+DELETE /api/teams/team-uuid
+Authorization: Bearer <jwt_token>
+
+// Response
+{ "success": true, "data": { ... } }
+```
+
+**Note**: The backend query uses TypeORM `getRawMany()` which returns column aliases. The frontend API route transforms these fields:
+- `teamId` → `id`
+- `teamName` → `name`
+- Preserves `category` and `usersId`
+
+---
+
 ## Match System
 
 ### Match Entity Fields

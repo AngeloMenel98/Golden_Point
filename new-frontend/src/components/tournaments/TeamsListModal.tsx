@@ -35,7 +35,10 @@ export function TeamsListModal({ isOpen, onClose, tournamentId }: TeamsListModal
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose}></div>
-      <div className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4 max-h-[80vh] overflow-hidden">
+      <div 
+        className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4 max-h-[80vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="p-4 border-b border-gp-gray-light">
           <h2 className="text-xl font-bold text-gp-dark">Equipos del Torneo</h2>
         </div>

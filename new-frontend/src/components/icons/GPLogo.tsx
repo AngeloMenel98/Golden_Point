@@ -1,41 +1,82 @@
 import React from "react";
 
 interface GPLogoProps {
-  width: number;
-  height: number;
+  width?: number;
+  height?: number;
   style?: React.CSSProperties;
+  className?: string;
 }
 
-const GPLogo: React.FC<GPLogoProps> = ({ width, height, style }) => {
+const GPLogo: React.FC<GPLogoProps> = ({ width = 120, height = 60, style, className }) => {
+  // Scale factors
+  const scaleX = width / 120;
+  const scaleY = height / 60;
+
   return (
     <svg
       width={width}
       height={height}
-      viewBox="0 0 85 38"
+      viewBox="0 0 120 60"
       fill="none"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
+      xmlns="http://www.w3.org/2000/svg"
       style={style}
+      className={className}
+      role="img"
+      aria-label="Golden Point"
     >
-      <rect width="85" height="38" fill="url(#pattern0_270_992)" />
-      <defs>
-        <pattern
-          id="pattern0_270_992"
-          patternContentUnits="objectBoundingBox"
-          width="1"
-          height="1"
-        >
-          <use
-            xlinkHref="#image0_270_992"
-            transform="matrix(0.000244141 0 0 0.000546104 0 -0.0100612)"
-          />
-        </pattern>
-        <image
-          id="image0_270_992"
-          width="4096"
-          height="1868"
-          xlinkHref="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAEAAAAAdMCAYAAAAoQExAAAAgAElEQVR4XuzcMY6tVxGF0XZGwAgckiHnjpiAB0LGEAiJnHownoBjMmZgeQS2BAESPw46tErqeu/u2l6WbsT/TtdZdUL0ffHmPwIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQODlAl+8fAIDECBAgAABAgQIECBAgAABAgQIECBAgQIECBAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgS+PgEDAYABAgQIECBAgAABAgQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgAABAgQIEDhAQADAgiBAgAABAgQIECBAgQIAAAQIECBAgQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgAABAgQIECBAgAABAmcEBAA8AgIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQEBAgAABAgQIECBAgAABAgQIECBAgQIAAAQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIEBAAsAQIECBAgAABAgQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAIEBAACBgCUYgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIEBAAsAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQCBAQAAgYAlGIECAAAECBAgQIECAAAECBAgQIECAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQICANYAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgECAgABAwB/27m7HrqJaA4DuA4g4VkSUIKGJbENaW/8gJ7a9l7wJ8YI0LkywQEC9CSEgQEBIiYggxC5uSBAhdu7a++x9z9n/nDNnzrR3P3svfBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIDA/w88AI8h8YJ4DQABAgQIECBAgAABAgQIECBAgQIECBAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgQIAAAQIECBAgAABAgQIEDhA4AO8h0M5BggQIECAAAECBAgQIECAAAECBAgQIECAAAQIECBAgQIAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAwAEBv+EQ3eAQIEvh/At/9Q8M1gAABAAEE"
-        />
-      </defs>
+      {/* Background - optional rounded container */}
+      <rect 
+        x="2" 
+        y="2" 
+        width={116 * scaleX} 
+        height={56 * scaleY} 
+        rx="8" 
+        fill="#40573C" 
+      />
+      
+      {/* Court grid lines - forming abstract GP shape */}
+      <g stroke="#96a259" strokeWidth="2" strokeLinecap="round">
+        {/* Left diagonal / (forms G left side) */}
+        <line x1="25" y1="48" x2="45" y2="12" />
+        
+        {/* Top horizontal of G */}
+        <line x1="30" y1="12" x2="55" y2="12" />
+        
+        {/* Right curve of G (middle) */}
+        <path d="M55 12 Q65 12 65 25 Q65 38 55 38" />
+        
+        {/* Bottom of G */}
+        <line x1="35" y1="48" x2="55" y2="48" />
+        
+        {/* Vertical of G (left side) */}
+        <line x1="30" y1="12" x2="30" y2="48" />
+        
+        {/* P vertical line */}
+        <line x1="75" y1="12" x2="75" y2="48" />
+        
+        {/* P top horizontal */}
+        <line x1="75" y1="12" x2="95" y2="12" />
+        
+        {/* P right curve */}
+        <path d="M95 12 Q105 12 105 25 Q105 38 95 38" />
+        
+        {/* P middle horizontal */}
+        <line x1="75" y1="25" x2="95" y2="25" />
+      </g>
+      
+      {/* Decorative court line accent */}
+      <line 
+        x1="10" 
+        y1="55" 
+        x2="110" 
+        y2="55" 
+        stroke="#6B8E4A" 
+        strokeWidth="1" 
+        strokeLinecap="round" 
+      />
+      
+      {/* Small dot accent - padel ball reference */}
+      <circle cx="108" cy="45" r="3" fill="#96a259" />
     </svg>
   );
 };
