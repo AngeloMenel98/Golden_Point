@@ -60,7 +60,7 @@ export function TourRow({ tour, onNavigate, onDelete, isAdmin }: TourRowProps) {
       </div>
 
       {/* Stats */}
-      <div className="flex items-center gap-6 text-sm">
+      <div className="flex items-center gap-8 text-sm ml-4">
         <div className="text-center">
           <p className="font-semibold text-gp-dark">{tour.userCount || 0}</p>
           <p className="text-gp-gray text-xs">Usuarios</p>

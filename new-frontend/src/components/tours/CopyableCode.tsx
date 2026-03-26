@@ -53,7 +53,7 @@ export function CopyableCode({ code }: CopyableCodeProps) {
       type="button"
     >
       <span>{code}</span>
-      <span className="text-xs opacity-70">
+      <span className="text-xs opacity-0 group-hover:opacity-70 transition-opacity">
         {copied ? (
           <span className="text-gp-light font-bold">✓</span>
         ) : (

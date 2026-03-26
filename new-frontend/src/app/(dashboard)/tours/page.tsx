@@ -66,5 +66,5 @@ export default async function ToursPage() {
 
   const initialTours = token ? await fetchTours(userId, token) : [];
 
-  return <ToursPageClient initialTours={initialTours} isAdmin={isAdmin} />;
+  return <ToursPageClient initialTours={initialTours} isAdmin={isAdmin} userId={userId} />;
 }

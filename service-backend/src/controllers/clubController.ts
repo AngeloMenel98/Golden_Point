@@ -29,6 +29,7 @@ export class ClubController {
   async create(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
+
       if (!errors.isEmpty()) {
         const errorResponse: ApiResponse<never> = failure({
           type: "VALIDATION",
@@ -61,7 +62,7 @@ export class ClubController {
       const club = await this.clubService.create(
         newClub,
         newCalClub,
-        courtsNumber
+        courtsNumber,
       );
 
       const response: ApiResponse<{
@@ -150,7 +151,7 @@ export class ClubController {
         clubName,
         location,
         avFrom,
-        avTo
+        avTo,
       );
       const apiResponse: ApiResponse<typeof response> = success(response);
       res.status(200).json(apiResponse);

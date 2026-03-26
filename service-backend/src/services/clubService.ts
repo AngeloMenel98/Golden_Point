@@ -25,7 +25,9 @@ export class ClubService {
     }
 
     if (avFrom >= avTo) {
-      throw validationError("La fecha de inicio debe ser anterior a la fecha final");
+      throw validationError(
+        "La fecha de inicio debe ser anterior a la fecha final",
+      );
     }
 
     const newCourts: Court[] = [];
@@ -62,8 +64,10 @@ export class ClubService {
   async getClubsPerTour(userId: string, tourId: string) {
     const existingClubs: unknown[] = await ClubRepository.getClubsPerTour(
       userId,
-      tourId
+      tourId,
     );
+
+    console.log("existingClubs", existingClubs);
 
     if (existingClubs.length == 0) {
       throw conflict("No se encontro ningún Club", "Club");
@@ -77,14 +81,14 @@ export class ClubService {
     clubName: string,
     location: string,
     avFrom: string,
-    avTo: string
+    avTo: string,
   ) {
     const club = await ClubRepository.updateClub(
       clubId,
       clubName,
       location,
       avFrom,
-      avTo
+      avTo,
     );
 
     if (!club) {

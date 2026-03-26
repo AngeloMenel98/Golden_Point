@@ -42,20 +42,32 @@
 
 @layer components {
   /* Buttons */
+  .btn-base {
+    @apply py-3 px-4 font-semibold rounded-md transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
   .btn-primary {
-    @apply w-full py-3 px-4 bg-gp-pastel text-white font-semibold rounded-md 
-           hover:bg-gp-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed;
+    @apply w-full bg-gp-pastel text-white hover:bg-gp-dark;
   }
   
   .btn-secondary {
-    @apply py-2 px-4 border-2 border-gp-pastel text-gp-dark font-semibold rounded-md 
-           hover:bg-gp-pastel hover:text-white transition-colors;
+    @apply border-2 border-gp-pastel text-gp-dark hover:bg-gp-pastel hover:text-white;
+  }
+
+  /* Button Hover Effects */
+  .btn-hover-scale {
+    @apply transition-transform duration-150 hover:scale-[1.02];
   }
 
   /* Form Inputs */
   .input-field {
     @apply w-full p-3 border-2 border-gp-gray-light rounded-md 
-           focus:outline-none focus:border-gp-pastel text-base bg-white;
+           focus:outline-none focus:border-gp-pastel text-base bg-white
+           transition-all duration-150;
+  }
+
+  .input-field:focus {
+    @apply shadow-md;
   }
   
   .input-error {
@@ -74,5 +86,41 @@
   
   .nav-text {
     @apply text-white;
+  }
+
+  /* Modal Animations */
+  @keyframes modalEntrance {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes modalExit {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  .modal-animate-in {
+    animation: modalEntrance 250ms ease-out forwards;
+  }
+
+  .modal-animate-out {
+    animation: modalExit 200ms ease-in forwards;
+  }
+
+  /* Loading Opacity */
+  .loading-opacity {
+    @apply opacity-70;
   }
 }

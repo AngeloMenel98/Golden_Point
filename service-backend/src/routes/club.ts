@@ -6,7 +6,7 @@ import { clubController } from "../controllers";
 const router = Router();
 
 router.post(
-  "/club/create",
+  "/clubs",
   [
     check("clubName")
       .not()
@@ -33,7 +33,7 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Cantidad de canchas")),
   ],
-  clubController.create.bind(clubController)
+  clubController.create.bind(clubController),
 );
 
 router.post(
@@ -64,13 +64,13 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Fecha Final")),
   ],
-  clubController.updateClub.bind(clubController)
+  clubController.updateClub.bind(clubController),
 );
 
 router.get("/club/clubs/:userId", clubController.getAll.bind(clubController));
 router.get(
   "/clubs/:userId/:tourId",
-  clubController.getClubsPerTour.bind(clubController)
+  clubController.getClubsPerTour.bind(clubController),
 );
 
 export default router;

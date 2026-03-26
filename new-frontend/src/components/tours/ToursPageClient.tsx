@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { Tour } from "@/entities/Tour";
 import { TourList } from "./TourList";
-import { CreateTourModal } from "./CreateTourModal";
+import { CreateTourModal, ClubEntry } from "./CreateTourModal";
 import { ConfirmationModal } from "./ConfirmationModal";
 import { ToursSkeleton } from "./ToursSkeleton";
 import { useTour } from "@/context/TourContext";
@@ -23,11 +23,13 @@ interface ConfirmationState {
 interface ToursPageClientProps {
   initialTours: Tour[];
   isAdmin: boolean;
+  userId: string;
 }
 
 export function ToursPageClient({
   initialTours,
   isAdmin,
+  userId,
 }: ToursPageClientProps) {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState(false);
@@ -58,7 +60,8 @@ export function ToursPageClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialTours]);
 
-  const handleCreateTour = async (name: string, clubsId: string[]) => {
+  const handleCreateTour = async (name: string, clubs: ClubEntry[]) => {
+    const clubsId = clubs.map(club => club.id);
     return await createTour(name, clubsId);
   };
 
@@ -171,6 +174,7 @@ export function ToursPageClient({
         onClose={() => setIsCreateModalOpen(false)}
         onSubmit={handleCreateTour}
         existingTourNames={existingTourNames}
+        userId={userId}
       />
 
       {/* Join Tour Modal (Non-Admin Only) */}
