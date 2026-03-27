@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { Tournament } from "./Tournament";
 import { Team } from "./Team";
@@ -25,6 +26,9 @@ export class Match {
 
   @Column("timestamptz")
   matchDate: string;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
 
   @ManyToOne(() => Tournament, (tournament) => tournament.matches)
   tournament: Tournament;

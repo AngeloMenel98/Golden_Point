@@ -6,6 +6,7 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { Tour } from "./Tour";
 import { Category } from "./Category";
@@ -32,6 +33,9 @@ export class Tournament {
 
   @Column()
   isDeleted: boolean;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
 
   @Column({
     type: "enum",

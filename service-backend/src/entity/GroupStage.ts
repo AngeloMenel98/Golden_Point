@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import { Match } from "./Match";
 
@@ -14,6 +15,9 @@ export class GroupStage {
 
   @Column({ length: 25 })
   groupStage: string;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
 
   @OneToMany(() => Match, (match) => match.groupStage)
   matches: Match[];

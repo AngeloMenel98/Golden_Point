@@ -54,6 +54,7 @@ export class ClubController {
       const newClub = new Club();
       newClub.clubName = clubName;
       newClub.location = address;
+      newClub.createdBy = existingUser;
 
       const newCalClub = new CalendarClub();
       newCalClub.availableTo = availableTo;
@@ -99,6 +100,29 @@ export class ClubController {
       const userId = req.params.userId;
 
       const response = await this.clubService.getAll(userId);
+      const apiResponse: ApiResponse<typeof response> = success(response);
+      res.status(200).json(apiResponse);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
+    }
+  }
+
+  async getAllAvailable(req: Request, res: Response): Promise<void> {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+        });
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const userId = req.params.userId;
+
+      const response = await this.clubService.getAllAvailable(userId);
       const apiResponse: ApiResponse<typeof response> = success(response);
       res.status(200).json(apiResponse);
     } catch (e) {

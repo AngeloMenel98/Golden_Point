@@ -67,7 +67,8 @@ router.post(
   clubController.updateClub.bind(clubController),
 );
 
-router.get("/club/clubs/:userId", clubController.getAll.bind(clubController));
+router.get("/clubs/:userId", clubController.getAll.bind(clubController));
+router.get("/clubs/available/:userId", clubController.getAllAvailable.bind(clubController));
 router.get(
   "/clubs/:userId/:tourId",
   clubController.getClubsPerTour.bind(clubController),

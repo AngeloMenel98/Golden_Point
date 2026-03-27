@@ -5,10 +5,13 @@ import {
   OneToMany,
   ManyToOne,
   ManyToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Court } from "./Court";
 import { CalendarClub } from "./CalendarClub";
 import { Tour } from "./Tour";
+import { User } from "./User";
 
 @Entity()
 export class Club {
@@ -20,6 +23,15 @@ export class Club {
 
   @Column({ length: 30 })
   location: string;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updatedAt" })
+  updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.createdClubs)
+  createdBy: User;
 
   @OneToMany(() => Court, (court) => court.club)
   courts: Court[];

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Match } from './Match';
 
 @Entity()
@@ -11,6 +11,9 @@ export class Set {
 
     @Column('integer')
     gamesTeam2: number;
+
+    @CreateDateColumn({ name: "createdAt" })
+    createdAt: Date;
 
     @ManyToOne(() => Match, (match) => match.sets)
     match: Match;

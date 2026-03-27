@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryColumn, Column } from "typeorm";
+import { Entity, ManyToOne, PrimaryColumn, Column, CreateDateColumn } from "typeorm";
 import { Team } from "./Team";
 import { Match } from "./Match";
 
@@ -12,6 +12,9 @@ export class TeamMatch {
 
   @Column({ default: false })
   isWinner: boolean;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
 
   @ManyToOne(() => Team, (team) => team.teamMatches)
   team: Team;

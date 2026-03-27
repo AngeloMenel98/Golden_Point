@@ -4,6 +4,7 @@ import {
     JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
+    CreateDateColumn,
 } from 'typeorm';
 import { User } from './User';
 
@@ -20,6 +21,9 @@ export class Reward {
 
     @Column('integer')
     amountTourCoins: number;
+
+    @CreateDateColumn({ name: "createdAt" })
+    createdAt: Date;
 
     @ManyToMany(() => User, (user) => user.rewards)
     @JoinTable()

@@ -6,6 +6,7 @@ import {
   JoinTable,
   OneToMany,
   ManyToOne,
+  CreateDateColumn,
 } from "typeorm";
 import { User } from "./User";
 import { TeamMatch } from "./TeamMatch";
@@ -21,6 +22,9 @@ export class Team {
 
   @Column({ length: 50 })
   category: string;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
 
   @ManyToMany(() => User, (user) => user.teams)
   @JoinTable()

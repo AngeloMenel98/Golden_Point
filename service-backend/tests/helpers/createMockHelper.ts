@@ -12,6 +12,7 @@ export class CreateMockHelper {
       id,
       groupStage: name,
       matches: [],
+      createdAt: new Date(),
     };
   }
 
@@ -23,6 +24,7 @@ export class CreateMockHelper {
       users: [],
       teamMatches: [],
       tournament: {} as Tournament,
+      createdAt: new Date(),
     };
   }
 
@@ -37,6 +39,7 @@ export class CreateMockHelper {
       isWinner,
       team,
       match: {} as Match,
+      createdAt: new Date(),
     };
   }
 
@@ -51,6 +54,7 @@ export class CreateMockHelper {
       teamMatches: [],
       sets: [],
       groupStage: this.createGroupStage(`group-${id}`, stageName),
+      createdAt: new Date(),
     };
   }
 
@@ -65,6 +69,7 @@ export class CreateMockHelper {
       categories: [],
       matches: [],
       tour: {} as any,
+      createdAt: new Date(),
     } as Tournament;
   }
 
@@ -74,6 +79,7 @@ export class CreateMockHelper {
       courtNumber: 1,
       club: {} as any,
       matches: [],
+      createdAt: new Date(),
     };
   }
 

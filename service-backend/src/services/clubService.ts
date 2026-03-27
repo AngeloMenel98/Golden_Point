@@ -51,6 +51,16 @@ export class ClubService {
     return existingClubs;
   }
 
+  async getAllAvailable(userId: string) {
+    const existingClubs: unknown[] = await ClubRepository.getAllAvailable(userId);
+
+    if (existingClubs.length == 0) {
+      throw conflict("No se encontro ningún Club", "Club");
+    }
+
+    return existingClubs;
+  }
+
   async findById(clubId: string) {
     const existingClub = await ClubRepository.findOneBy({
       id: clubId,
@@ -66,8 +76,6 @@ export class ClubService {
       userId,
       tourId,
     );
-
-    console.log("existingClubs", existingClubs);
 
     if (existingClubs.length == 0) {
       throw conflict("No se encontro ningún Club", "Club");

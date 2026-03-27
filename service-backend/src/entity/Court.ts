@@ -4,6 +4,7 @@ import {
     Column,
     OneToMany,
     ManyToOne,
+    CreateDateColumn,
 } from 'typeorm';
 import { Match } from './Match';
 import { Club } from './Club';
@@ -15,6 +16,9 @@ export class Court {
 
     @Column()
     courtNumber: number;
+
+    @CreateDateColumn({ name: "createdAt" })
+    createdAt: Date;
 
     @OneToMany(() => Match, (match) => match.court)
     matches: Match[];
