@@ -20,7 +20,7 @@ function getUserFromToken(
 
 async function fetchTours(userId: string, token: string): Promise<Tour[]> {
   try {
-    const response = await fetch(`${API_URL}/api/tour/tours/${userId}`, {
+    const response = await fetch(`${API_URL}/api/tours/${userId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -39,12 +39,12 @@ async function fetchTours(userId: string, token: string): Promise<Tour[]> {
 
     const rawTours = Array.isArray(data) ? data : data.data || data.tours || [];
     const tours: Tour[] = (rawTours as Record<string, unknown>[]).map((t) => ({
-      id: t.tourid as string,
-      name: t.tourtitle as string,
-      tourCode: t.tourcode as string,
-      userCount: parseInt(String(t.usercount), 10) || 0,
-      tournamentCount: parseInt(String(t.tournamentcount), 10) || 0,
-      userOwner: (t.firstusername || t.userowner || "") as string,
+      id: (t.tourid || t.tourId) as string,
+      name: (t.tourtitle || t.tourTitle) as string,
+      tourCode: (t.tourcode || t.tourCode) as string,
+      userCount: parseInt(String(t.usercount || t.userCount), 10) || 0,
+      tournamentCount: parseInt(String(t.tournamentcount || t.tournamentCount), 10) || 0,
+      userOwner: (t.firstusername || t.firstUserName || t.userowner || "") as string,
     }));
 
     return tours;

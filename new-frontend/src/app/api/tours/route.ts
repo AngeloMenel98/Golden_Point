@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
       userId = searchParams.get("userId") || "1";
     }
 
-    const response = await fetch(`${API_URL}/tour/tours/${userId}`, {
+    const response = await fetch(`${API_URL}/api/tours/${userId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -62,12 +62,12 @@ export async function GET(request: NextRequest) {
     // Normalize to Tour[] format with camelCase field names
     const rawTours = Array.isArray(data) ? data : data.data || data.tours || [];
     const tours = rawTours.map((t: Record<string, unknown>) => ({
-      id: t.tourid,
-      name: t.tourtitle,
-      tourCode: t.tourcode,
-      userCount: parseInt(String(t.usercount), 10) || 0,
-      tournamentCount: parseInt(String(t.tournamentcount), 10) || 0,
-      userOwner: t.firstusername || t.userowner || "",
+      id: t.tourid || t.tourId,
+      name: t.tourtitle || t.tourTitle,
+      tourCode: t.tourcode || t.tourCode,
+      userCount: t.usercount || t.userCount || 0,
+      tournamentCount: t.tournamentcount || t.tournamentCount || 0,
+      userOwner: t.firstusername || t.firstUserName || "",
       createdAt: t.creationdate || t.createdat,
     }));
 
@@ -120,10 +120,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("Forwarding to backend:", `${API_URL}/tours`);
-    console.log("yeryeryeyryeryer");
-
-    const response = await fetch(`${API_URL}/tour/create`, {
+    const response = await fetch(`${API_URL}/api/tours`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
