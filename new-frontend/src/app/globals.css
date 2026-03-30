@@ -43,11 +43,11 @@
 @layer components {
   /* Buttons */
   .btn-base {
-    @apply py-3 px-4 font-semibold rounded-md transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed;
+    @apply py-2 px-5 font-semibold rounded-md transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed;
   }
 
   .btn-primary {
-    @apply w-full bg-gp-pastel text-white hover:bg-gp-dark;
+    @apply bg-gp-pastel text-white hover:bg-gp-dark;
   }
   
   .btn-secondary {
@@ -61,7 +61,7 @@
 
   /* Form Inputs */
   .input-field {
-    @apply w-full p-3 border-2 border-gp-gray-light rounded-md 
+    @apply w-full px-3 py-2 border-2 border-gp-gray-light rounded-md 
            focus:outline-none focus:border-gp-pastel text-base bg-white
            transition-all duration-150;
   }

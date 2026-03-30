@@ -57,7 +57,7 @@ export const Modal = ({ isOpen, onClose, title, children, showCloseButton = true
         <header className="flex justify-between items-center mb-2 flex-shrink-0 pb-2 border-b border-gp-pastel/30">
           <h2 id="modal-title" className="text-xl font-bold text-gp-dark">{title}</h2>
           {showCloseButton && (
-            <button onClick={onClose} className="p-2 hover:bg-gp-pastel/20 rounded-full transition-colors">
+            <button onClick={onClose} className="p-2 text-xl text-gp-red hover:bg-gp-red/10 rounded-full transition-colors">
               ✕
             </button>
           )}

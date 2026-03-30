@@ -17,9 +17,11 @@ interface ClubFormCardProps {
   onCreateClub?: (
     club: Omit<ClubEntry, "id">,
   ) => Promise<{ success: boolean; error?: string }>;
+  availableClubs?: ClubEntry[];
+  onDuplicateFound?: (clubId: string) => void;
 }
 
-export const ClubFormCard = ({ onAdd, onCreateClub }: ClubFormCardProps) => {
+export const ClubFormCard = ({ onAdd, onCreateClub, availableClubs, onDuplicateFound }: ClubFormCardProps) => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [courtCount, setCourtCount] = useState<number>(1);
@@ -109,6 +111,25 @@ export const ClubFormCard = ({ onAdd, onCreateClub }: ClubFormCardProps) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // Handle name change with duplicate check
+  const handleNameChange = (value: string) => {
+    setName(value);
+    // Check for duplicates in available clubs
+    const duplicateClub = availableClubs?.find(
+      (c) => c.clubName.toLowerCase() === value.toLowerCase()
+    );
+    if (duplicateClub) {
+      setErrors((prev) => ({ ...prev, name: "Este club ya existe" }));
+      // Auto-select the existing club in the list
+      onDuplicateFound?.(duplicateClub.id);
+    } else {
+      setErrors((prev) => {
+        const { name: _name, ...rest } = prev;
+        return rest;
+      });
+    }
+  };
+
   const handleSubmit = async () => {
     if (!validate()) return;
 
@@ -121,17 +142,20 @@ export const ClubFormCard = ({ onAdd, onCreateClub }: ClubFormCardProps) => {
     };
 
     // If callback provided, save to API first
+    let newClubId: string | undefined;
     if (onCreateClub) {
       const result = await onCreateClub(clubData);
       if (!result.success) {
         setErrors({ general: result.error || "Error al crear el club" });
         return;
       }
+      // Use the real ID from API if available
+      newClubId = result.newClubId;
     }
 
     // Add to local state (with ID from API or generated)
     onAdd({
-      id: crypto.randomUUID(),
+      id: newClubId || crypto.randomUUID(),
       ...clubData,
     });
 
@@ -145,111 +169,117 @@ export const ClubFormCard = ({ onAdd, onCreateClub }: ClubFormCardProps) => {
   };
 
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-2 items-start">
-      {/* Nombre del Club */}
-      <div className="flex-1 min-w-[150px]">
-        <label className="block text-sm font-medium text-gp-gray mb-1">
-          Nombre
-        </label>
-        <Input
-          label=""
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          onBlur={(e) => validateField("name", e.target.value)}
-          error={errors.name}
-          placeholder="Club Name"
-          style={{ height: "35px" }}
-        />
-      </div>
-
-      {/* Dirección */}
-      <div className="flex-1 min-w-[150px]">
-        <label className="block text-sm font-medium text-gp-gray mb-1">
-          Dirección
-        </label>
-        <Input
-          label=""
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          onBlur={(e) => validateField("address", e.target.value)}
-          error={errors.address}
-          placeholder="Club Address"
-          style={{ height: "35px" }}
-        />
-      </div>
-
-      {/* Nº Canchas */}
-      <div className="flex-1 min-w-[80px]">
-        <label className="block text-sm font-medium text-gp-gray mb-1">
-          Canchas
-        </label>
-        <Input
-          label=""
-          type="number"
-          min={1}
-          value={courtCount}
-          onChange={(e) => setCourtCount(parseInt(e.target.value) || 1)}
-          onBlur={(e) =>
-            validateField("courtCount", parseInt(e.target.value) || 1)
-          }
-          error={errors.courtCount}
-          style={{ height: "35px" }}
-        />
-      </div>
-
-      {/* Disponibilidad */}
-      <div className="flex-1 min-w-[280px]">
-        <label className="block text-sm font-medium text-gp-gray mb-1">
-          Disponibilidad
-        </label>
-        <div className="flex gap-2 items-start">
-          <div className="flex-1 min-w-[130px]">
-            <Input
-              label=""
-              type="datetime-local"
-              value={availabilityStart}
-              onChange={(e) => setAvailabilityStart(e.target.value)}
-              onBlur={(e) => validateField("availabilityStart", e.target.value)}
-              error={errors.availabilityStart}
-              placeholder="Inicio"
-              style={{ height: "35px" }}
-            />
-          </div>
-          <div className="flex-1 min-w-[130px]">
-            <Input
-              label=""
-              type="datetime-local"
-              value={availabilityEnd}
-              onChange={(e) => setAvailabilityEnd(e.target.value)}
-              onBlur={(e) => validateField("availabilityEnd", e.target.value)}
-              error={errors.availabilityEnd}
-              placeholder="Final"
-              style={{ height: "35px" }}
-            />
-          </div>
-          {/* Circular green (+) icon button */}
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="w-[35px] h-[35px] mt-0 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 hover:scale-105 transition-all shadow-lg"
-            aria-label="Añadir club"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-          </button>
+    <div className="flex flex-col gap-2">
+      {/* Row 1: Nombre and Dirección */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        {/* Nombre del Club */}
+        <div>
+          <label className="block text-sm font-medium text-gp-gray mb-1">
+            Nombre del club
+          </label>
+          <Input
+            label=""
+            value={name}
+            onChange={(e) => handleNameChange(e.target.value)}
+            onBlur={(e) => validateField("name", e.target.value)}
+            error={errors.name}
+            placeholder="Nombre del club"
+            className="h-9"
+          />
         </div>
+
+        {/* Dirección */}
+        <div>
+          <label className="block text-sm font-medium text-gp-gray mb-1">
+            Dirección del club
+          </label>
+          <Input
+            label=""
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            onBlur={(e) => validateField("address", e.target.value)}
+            error={errors.address}
+            placeholder="Dirección del club"
+            className="h-9"
+          />
+        </div>
+      </div>
+
+      {/* Row 2: Canchas, dates inline with + button */}
+      <div className="flex flex-wrap gap-2 items-end">
+        {/* Nº Canchas */}
+        <div className="min-w-[80px]">
+          <label className="block text-sm font-medium text-gp-gray mb-1">
+            Canchas
+          </label>
+          <Input
+            label=""
+            type="number"
+            min={1}
+            value={courtCount}
+            onChange={(e) => setCourtCount(parseInt(e.target.value) || 1)}
+            onBlur={(e) =>
+              validateField("courtCount", parseInt(e.target.value) || 1)
+            }
+            error={errors.courtCount}
+            className="h-9"
+          />
+        </div>
+
+        {/* Inicio */}
+        <div className="min-w-[140px]">
+          <label className="block text-sm font-medium text-gp-gray mb-1">
+            Desde
+          </label>
+          <Input
+            label=""
+            type="datetime-local"
+            value={availabilityStart}
+            onChange={(e) => setAvailabilityStart(e.target.value)}
+            onBlur={(e) => validateField("availabilityStart", e.target.value)}
+            error={errors.availabilityStart}
+            className="h-9"
+          />
+        </div>
+
+        {/* Hasta */}
+        <div className="min-w-[140px]">
+          <label className="block text-sm font-medium text-gp-gray mb-1">
+            Hasta
+          </label>
+          <Input
+            label=""
+            type="datetime-local"
+            value={availabilityEnd}
+            onChange={(e) => setAvailabilityEnd(e.target.value)}
+            onBlur={(e) => validateField("availabilityEnd", e.target.value)}
+            error={errors.availabilityEnd}
+            className="h-9"
+          />
+        </div>
+
+        {/* Circular green (+) icon button */}
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="w-9 h-9 rounded-full bg-green-500 text-white flex items-center justify-center hover:bg-green-600 hover:scale-105 transition-all shadow-lg"
+          aria-label="Añadir club"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   );
