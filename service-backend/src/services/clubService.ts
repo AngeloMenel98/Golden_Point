@@ -1,3 +1,4 @@
+import { In } from "typeorm";
 import { ClubRepository } from "../repository";
 import { CalendarClub, Club, Court } from "../entity";
 import { TourService } from ".";
@@ -69,6 +70,20 @@ export class ClubService {
       throw notFound("Club", clubId);
     }
     return existingClub;
+  }
+
+  async findByIds(clubIds: string[]) {
+    const existingClubs = await ClubRepository.find({
+      where: {
+        id: In(clubIds),
+      },
+    });
+    if (existingClubs.length !== clubIds.length) {
+      const foundIds = new Set(existingClubs.map((c) => c.id));
+      const missingIds = clubIds.filter((id) => !foundIds.has(id));
+      throw notFound("Club", missingIds[0]);
+    }
+    return existingClubs;
   }
 
   async getClubsPerTour(userId: string, tourId: string) {

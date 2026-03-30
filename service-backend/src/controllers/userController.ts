@@ -58,7 +58,10 @@ export class UserController {
       };
 
       const secretKey = process.env.JWT_SECRET_KEY;
-      const token = jwt.sign(userResponse, secretKey!);
+      if (!secretKey) {
+        throw new Error('JWT_SECRET_KEY environment variable is required');
+      }
+      const token = jwt.sign(userResponse, secretKey);
 
       // Note: Setting cookie for cross-origin (different ports) is tricky.
       // The frontend will set its own cookie after receiving the token.
@@ -318,8 +321,11 @@ export class UserController {
 
       const token = authHeader.split(" ")[1];
       const secretKey = process.env.JWT_SECRET_KEY;
+      if (!secretKey) {
+        throw new Error('JWT_SECRET_KEY environment variable is required');
+      }
 
-      const decoded = jwt.verify(token, secretKey!) as {
+      const decoded = jwt.verify(token, secretKey) as {
         id: string;
         username: string;
         email: string;

@@ -44,7 +44,7 @@ export const Modal = ({ isOpen, onClose, title, children, showCloseButton = true
       ref={dialogRef}
       onCancel={onClose} // Handles "Escape" key
       className={`
-        fixed inset-0 m-auto w-[90vw] max-w-lg min-w-[320px] h-fit max-h-[90vh]
+        fixed inset-0 m-auto max-w-[1000px] w-[95vw] min-w-[320px] h-fit max-h-[95vh]
         backdrop:bg-black/60 backdrop:backdrop-blur-sm 
         bg-gp-light p-0 rounded-2xl 
         shadow-[0_10px_40px_rgba(0,0,0,0.15)]
@@ -54,7 +54,7 @@ export const Modal = ({ isOpen, onClose, title, children, showCloseButton = true
       aria-labelledby="modal-title"
     >
       <div className="p-6">
-        <header className="flex justify-between items-center mb-4 flex-shrink-0">
+        <header className="flex justify-between items-center mb-2 flex-shrink-0 pb-2 border-b border-gp-pastel/30">
           <h2 id="modal-title" className="text-xl font-bold text-gp-dark">{title}</h2>
           {showCloseButton && (
             <button onClick={onClose} className="p-2 hover:bg-gp-pastel/20 rounded-full transition-colors">
@@ -62,7 +62,7 @@ export const Modal = ({ isOpen, onClose, title, children, showCloseButton = true
             </button>
           )}
         </header>
-        <div className="modal-content">{children}</div>
+        <div className="modal-content -mx-6 -mb-6 px-6 pb-6">{children}</div>
       </div>
     </dialog>,
     document.body

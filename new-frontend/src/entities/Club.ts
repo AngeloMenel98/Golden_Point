@@ -1,10 +1,11 @@
 export interface Club {
   id: string;
-  name: string;
+  clubName: string;
   address: string;
   courtCount: number;
   availableFrom: string;
   availableTo: string;
+  userId?: string;
 }
 
 export interface ClubDTO {
@@ -14,4 +15,5 @@ export interface ClubDTO {
   courtcount: number;
   availableFrom: string;
   availableTo: string;
+  userId?: string;
 }

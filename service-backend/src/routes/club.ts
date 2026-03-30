@@ -67,8 +67,9 @@ router.post(
   clubController.updateClub.bind(clubController),
 );
 
-router.get("/clubs/:userId", clubController.getAll.bind(clubController));
+// Note: /available route must come BEFORE /:userId to avoid route matching conflicts
 router.get("/clubs/available/:userId", clubController.getAllAvailable.bind(clubController));
+router.get("/clubs/:userId", clubController.getAll.bind(clubController));
 router.get(
   "/clubs/:userId/:tourId",
   clubController.getClubsPerTour.bind(clubController),

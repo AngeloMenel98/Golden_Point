@@ -7,6 +7,7 @@ import {
   ManyToMany,
   CreateDateColumn,
   UpdateDateColumn,
+  Index,
 } from "typeorm";
 import { Court } from "./Court";
 import { CalendarClub } from "./CalendarClub";
@@ -30,6 +31,7 @@ export class Club {
   @UpdateDateColumn({ name: "updatedAt" })
   updatedAt: Date;
 
+  @Index()
   @ManyToOne(() => User, (user) => user.createdClubs)
   createdBy: User;
 

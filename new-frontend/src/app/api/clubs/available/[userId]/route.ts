@@ -25,7 +25,7 @@ export async function GET(
       );
     }
 
-    const response = await fetch(`${API_URL}/clubs/${userId}`, {
+    const response = await fetch(`${API_URL}/clubs/available/${userId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -36,7 +36,7 @@ export async function GET(
 
     if (!response.ok) {
       return NextResponse.json(
-        { success: false, error: "Failed to fetch clubs" },
+        { success: false, error: "Failed to fetch available clubs" },
         { status: response.status },
       );
     }
@@ -51,11 +51,12 @@ export async function GET(
       courtCount: Number(c.courtcount),
       availableFrom: c.availableFrom,
       availableTo: c.availableTo,
+      userId: c.userId,
     }));
 
     return NextResponse.json({ success: true, data: clubs });
   } catch (error) {
-    console.error("Error fetching clubs:", error);
+    console.error("Error fetching available clubs:", error);
     return NextResponse.json(
       { success: false, error: "Error de conexión" },
       { status: 500 },

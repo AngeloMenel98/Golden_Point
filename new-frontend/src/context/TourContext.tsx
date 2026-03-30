@@ -1,7 +1,13 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useState, useCallback, ReactNode } from 'react';
-import { Tour } from '@/entities/Tour';
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  ReactNode,
+} from "react";
+import { Tour } from "@/entities/Tour";
 
 interface TourContextType {
   currentTour: Tour | null;
@@ -10,7 +16,10 @@ interface TourContextType {
   setTours: React.Dispatch<React.SetStateAction<Tour[]>>;
   isLoading: boolean;
   error: string | null;
-  createTour: (name: string, clubsId: string[]) => Promise<{ success: boolean; error?: string }>;
+  createTour: (
+    name: string,
+    clubsId: string[],
+  ) => Promise<{ success: boolean; error?: string }>;
   joinTour: (code: string) => Promise<{ success: boolean; error?: string }>;
   deleteTour: (id: string) => Promise<{ success: boolean; error?: string }>;
   refreshTours: () => Promise<void>;
@@ -27,127 +36,144 @@ export function TourProvider({ children }: { children: ReactNode }) {
   const refreshTours = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      // Cookie is automatically sent with credentials: 'include'
-      // The API route reads the cookie server-side
-      const response = await fetch('/api/tours', {
-        credentials: 'include',
+      const response = await fetch("/api/tours", {
+        credentials: "include",
       });
-      
+
       const result = await response.json();
-      
+
       if (!result.success) {
-        setError(result.error || 'Error al cargar los tours');
+        setError(result.error || "Error al cargar los tours");
         return;
       }
-      
+
       setTours(result.data || []);
     } catch (err) {
-      console.error('Error fetching tours:', err);
-      setError('Error de conexión. Intenta de nuevo.');
+      console.error("Error fetching tours:", err);
+      setError("Error de conexión. Intenta de nuevo.");
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const createTour = useCallback(async (name: string, clubsId: string[]): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Cookie is automatically sent with credentials: 'include'
-      const response = await fetch('/api/tours', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ name, clubsId }),
-      });
-      
-      const result = await response.json();
-      
-      if (!result.success) {
-        return { success: false, error: result.error };
-      }
-      
-      // Refresh tours list after creation
-      await refreshTours();
-      return { success: true };
-    } catch (err) {
-      console.error('Error creating tour:', err);
-      return { success: false, error: 'Error de conexión. Intenta de nuevo.' };
-    } finally {
-      setIsLoading(false);
-    }
-  }, [refreshTours]);
+  const createTour = useCallback(
+    async (
+      name: string,
+      clubsId: string[],
+    ): Promise<{ success: boolean; error?: string }> => {
+      setIsLoading(true);
+      setError(null);
 
-  const joinTour = useCallback(async (code: string): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Cookie is automatically sent with credentials: 'include'
-      const response = await fetch('/api/tours/join', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({ code }),
-      });
-      
-      const result = await response.json();
-      
-      if (!result.success) {
-        return { success: false, error: result.error };
-      }
-      
-      // Refresh tours list after joining
-      await refreshTours();
-      return { success: true };
-    } catch (err) {
-      console.error('Error joining tour:', err);
-      return { success: false, error: 'Error de conexión. Intenta de nuevo.' };
-    } finally {
-      setIsLoading(false);
-    }
-  }, [refreshTours]);
+      try {
+        const response = await fetch("/api/tours", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, clubsId }),
+        });
 
-  const deleteTour = useCallback(async (id: string): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Cookie is automatically sent with credentials: 'include'
-      const response = await fetch(`/api/tours/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-      });
-      
-      const result = await response.json();
-      
-      if (!result.success) {
-        return { success: false, error: result.error };
+        const result = await response.json();
+
+        if (!result.success) {
+          return { success: false, error: result.error };
+        }
+
+        // Refresh tours list after creation
+        await refreshTours();
+        return { success: true };
+      } catch (err) {
+        console.error("Error creating tour:", err);
+        return {
+          success: false,
+          error: "Error de conexión. Intenta de nuevo.",
+        };
+      } finally {
+        setIsLoading(false);
       }
-      
-      // Refresh tours list after deletion
-      await refreshTours();
-      
-      // Clear current tour if it was deleted
-      if (currentTour?.id === id) {
-        setCurrentTour(null);
+    },
+    [refreshTours],
+  );
+
+  const joinTour = useCallback(
+    async (code: string): Promise<{ success: boolean; error?: string }> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Cookie is automatically sent with credentials: 'include'
+        const response = await fetch("/api/tours/join", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ code }),
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          return { success: false, error: result.error };
+        }
+
+        // Refresh tours list after joining
+        await refreshTours();
+        return { success: true };
+      } catch (err) {
+        console.error("Error joining tour:", err);
+        return {
+          success: false,
+          error: "Error de conexión. Intenta de nuevo.",
+        };
+      } finally {
+        setIsLoading(false);
       }
-      
-      return { success: true };
-    } catch (err) {
-      console.error('Error deleting tour:', err);
-      return { success: false, error: 'Error de conexión. Intenta de nuevo.' };
-    } finally {
-      setIsLoading(false);
-    }
-  }, [refreshTours, currentTour]);
+    },
+    [refreshTours],
+  );
+
+  const deleteTour = useCallback(
+    async (id: string): Promise<{ success: boolean; error?: string }> => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Cookie is automatically sent with credentials: 'include'
+        const response = await fetch(`/api/tours/${id}`, {
+          method: "DELETE",
+          credentials: "include",
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          return { success: false, error: result.error };
+        }
+
+        // Refresh tours list after deletion
+        await refreshTours();
+
+        // Clear current tour if it was deleted
+        if (currentTour?.id === id) {
+          setCurrentTour(null);
+        }
+
+        return { success: true };
+      } catch (err) {
+        console.error("Error deleting tour:", err);
+        return {
+          success: false,
+          error: "Error de conexión. Intenta de nuevo.",
+        };
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [refreshTours, currentTour],
+  );
 
   return (
     <TourContext.Provider
@@ -172,7 +198,7 @@ export function TourProvider({ children }: { children: ReactNode }) {
 export function useTour(): TourContextType {
   const context = useContext(TourContext);
   if (!context) {
-    throw new Error('useTour must be used within a TourProvider');
+    throw new Error("useTour must be used within a TourProvider");
   }
   return context;
 }

@@ -1,5 +1,10 @@
 import { Club, Tour } from "../entity";
-import { ClubService, TourService, UserService, ServiceRegistry } from "../services";
+import {
+  ClubService,
+  TourService,
+  UserService,
+  ServiceRegistry,
+} from "../services";
 import { generateTourCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
@@ -35,6 +40,7 @@ export class TourController {
 
   async create(req: Request, res: Response): Promise<void> {
     try {
+      console.log("inside backend");
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         const errorResponse: ApiResponse<never> = failure({
@@ -54,11 +60,7 @@ export class TourController {
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
 
-      const clubs: Club[] = [];
-      for (let clubId of clubsId) {
-        const club = await this.clubService.findById(clubId);
-        clubs.push(club);
-      }
+      const clubs = await this.clubService.findByIds(clubsId);
 
       const tour = await this.tourService.create(newTour, user, clubs);
 

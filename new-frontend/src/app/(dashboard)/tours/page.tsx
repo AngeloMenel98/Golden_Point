@@ -37,8 +37,6 @@ async function fetchTours(userId: string, token: string): Promise<Tour[]> {
 
     const data = await response.json();
 
-    // Backend returns { success: true, data: [{ tourid, tourtitle, ... }] }
-    // Normalize to Tour[] format with camelCase field names
     const rawTours = Array.isArray(data) ? data : data.data || data.tours || [];
     const tours: Tour[] = (rawTours as Record<string, unknown>[]).map((t) => ({
       id: t.tourid as string,
@@ -66,5 +64,11 @@ export default async function ToursPage() {
 
   const initialTours = token ? await fetchTours(userId, token) : [];
 
-  return <ToursPageClient initialTours={initialTours} isAdmin={isAdmin} userId={userId} />;
+  return (
+    <ToursPageClient
+      initialTours={initialTours}
+      isAdmin={isAdmin}
+      userId={userId}
+    />
+  );
 }

@@ -49,16 +49,15 @@ export function CreateTourModal({
 
     setIsLoadingClubs(true);
     try {
-      const response = await fetch(`/api/club/clubs/${userId}`, {
+      const response = await fetch(`/api/clubs/available/${userId}`, {
         credentials: "include",
       });
       const result = await response.json();
 
       if (result.success && result.data) {
-        // Store fetched clubs as available (not selected yet)
         const fetchedClubs: ClubEntry[] = result.data.map((club: Club) => ({
           id: club.id,
-          name: club.name,
+          clubName: club.clubName,
           address: club.address,
           courtCount: club.courtCount || 1,
           availabilityStart: club.availableFrom || "",
@@ -169,7 +168,7 @@ export function CreateTourModal({
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          name: clubData.name,
+          name: clubData.clubName,
           address: clubData.address,
           courtCount: clubData.courtCount,
           availableFrom: clubData.availabilityStart,
@@ -203,7 +202,7 @@ export function CreateTourModal({
       {/* Error announcer for accessibility */}
       <ErrorAnnouncer message={error} />
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-2">
         <Input
           label="Nombre del Tour"
           placeholder="Mi Tour"
@@ -219,9 +218,11 @@ export function CreateTourModal({
         />
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gp-gray">
-            Clubes
-          </label>
+          <div>
+            <label className="block text-sm font-medium text-gp-gray">
+              Clubes
+            </label>
+          </div>
 
           {isLoadingClubs ? (
             <div className="text-center py-4 text-gp-gray">
@@ -259,12 +260,12 @@ export function CreateTourModal({
                 </span>
               </div>
 
-              {/* Club List with Checkboxes (scrollable if > 3) */}
-              <div className="space-y-3 max-h-64 overflow-y-auto">
+              {/* Scrollable Club List with Add Club form */}
+              <div className="gap-2 max-h-64 overflow-y-auto flex flex-col">
                 {availableClubs.map((club) => (
                   <div
                     key={club.id}
-                    className={`flex items-center p-3 border rounded-lg transition-colors cursor-pointer ${
+                    className={`flex items-center p-2 border rounded-lg transition-colors cursor-pointer ${
                       selectedClubIds.includes(club.id)
                         ? "bg-white border-gp-pastel"
                         : "bg-gray-50 border-gp-gray-light opacity-60"
@@ -276,53 +277,63 @@ export function CreateTourModal({
                       type="checkbox"
                       checked={selectedClubIds.includes(club.id)}
                       onChange={() => handleToggleClub(club.id)}
-                      className="w-5 h-5 text-gp-dark border-gp-gray-light rounded focus:ring-gp-pastel accent-gp-dark mr-3"
+                      className="w-4 h-4 text-gp-dark border-gp-gray-light rounded focus:ring-gp-pastel accent-gp-dark mr-2"
                     />
 
-                    <div className="flex-1">
-                      <p className="font-medium text-gp-dark">{club.name}</p>
-                      <p className="text-sm text-gp-gray">{club.address}</p>
-                      <p className="text-xs text-gp-gray">
-                        {club.courtCount} canchas •{" "}
-                        {club.availabilityStart && club.availabilityEnd
-                          ? `${new Date(club.availabilityStart).toLocaleDateString()} - ${new Date(club.availabilityEnd).toLocaleDateString()}`
-                          : "Sin disponibilidad definida"}
+                    {/* Club Name on far left */}
+                    <div className="flex-1 flex items-center gap-2">
+                      <p className="font-bold text-gp-dark text-sm">
+                        {club.clubName}
                       </p>
+                      <p className="text-xs text-gp-gray">• {club.address}</p>
+                      <p className="text-xs text-gp-gray">• {club.courtCount} canchas</p>
                     </div>
                   </div>
                 ))}
+
+                {/* Add Club Form - part of scrollable content */}
+                <div className="mt-2 border-t border-dashed border-gp-gray-light pt-2">
+                  <ErrorBoundary onRetry={handleRetry}>
+                    <Suspense fallback={<ClubFormCardSkeleton />}>
+                      <ClubFormCard
+                        onAdd={handleAddClub}
+                        onCreateClub={handleCreateClub}
+                      />
+                    </Suspense>
+                  </ErrorBoundary>
+                </div>
               </div>
             </>
           )}
 
           {/* Custom Clubs Added (from ClubFormCard) */}
           {selectedClubs.length > 0 && (
-            <div className="mt-4">
-              <p className="text-sm font-medium text-gp-gray mb-2">
+            <div className="mt-2">
+              <p className="text-sm font-medium text-gp-gray mb-1">
                 Clubes personalizados
               </p>
-              <div className="space-y-3">
+              <div className="gap-2 flex flex-col">
                 {selectedClubs.map((club) => (
                   <div
                     key={club.id}
-                    className="flex items-center justify-between p-3 bg-white border border-gp-gray-light rounded-lg"
+                    className="flex items-center justify-between p-2 bg-white border border-gp-gray-light rounded-lg"
                   >
-                    <div className="flex-1">
-                      <p className="font-medium text-gp-dark">{club.name}</p>
-                      <p className="text-sm text-gp-gray">{club.address}</p>
-                      <p className="text-xs text-gp-gray">
-                        {club.courtCount} canchas
+                    <div className="flex-1 flex items-center gap-2">
+                      <p className="font-bold text-gp-dark text-sm">
+                        {club.clubName}
                       </p>
+                      <p className="text-xs text-gp-gray">• {club.address}</p>
+                      <p className="text-xs text-gp-gray">• {club.courtCount} canchas</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveCustomClub(club.id)}
-                      className="p-2 text-gp-red hover:bg-gp-red/10 rounded transition-colors"
+                      className="p-1 text-gp-red hover:bg-gp-red/10 rounded transition-colors"
                       aria-label="Eliminar club"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
+                        className="h-4 w-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -331,7 +342,7 @@ export function CreateTourModal({
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          d="M6 18L18 6M6 6l12 12"
                         />
                       </svg>
                     </button>
@@ -341,18 +352,7 @@ export function CreateTourModal({
             </div>
           )}
 
-          {/* Add Club Form with Suspense and Error Boundary */}
-          <div className="mt-4">
-            <ErrorBoundary onRetry={handleRetry}>
-              <Suspense fallback={<ClubFormCardSkeleton />}>
-                <ClubFormCard
-                  onAdd={handleAddClub}
-                  onCreateClub={handleCreateClub}
-                />
-              </Suspense>
-            </ErrorBoundary>
-          </div>
-
+          {/* Error message for clubs */}
           {error?.includes("club") && (
             <p className="text-gp-red text-xs">{error}</p>
           )}
@@ -365,13 +365,14 @@ export function CreateTourModal({
             <p className="text-gp-red text-sm">{error}</p>
           )}
 
-        <div className="flex gap-3 pt-2">
+        {/* Centered Footer Buttons with compact styling */}
+        <div className="flex justify-center gap-3 pt-2">
           <Button
             type="button"
             variant="danger"
             onClick={onClose}
             disabled={isSubmitting}
-            className="flex-1"
+            className="h-[36px] px-[20px] text-[14px]"
           >
             Cancelar
           </Button>
@@ -380,7 +381,7 @@ export function CreateTourModal({
             variant="outline"
             isLoading={isSubmitting}
             disabled={isSubmitting}
-            className="flex-1"
+            className="h-[36px] px-[20px] text-[14px]"
           >
             Crear
           </Button>
