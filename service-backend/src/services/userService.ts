@@ -1,8 +1,8 @@
 import { PerDataRepository, UserRepository } from "../repository";
 import { PersonalData, TourCoin, User } from "../entity";
 import { isNotUserAdmin } from "../helpers/validations";
-import { UserListResult, UserRankingResult } from "../types/dto/user.dto";
-import { notFound, conflict, validationError } from "../types/error/app-error";
+import { UserListResult, UserRankingResult, UserStatsResponse, UserRankingResponse } from "../types/dto/user.dto";
+import { notFound, conflict } from "../types/error/app-error";
 
 export class UserService {
   constructor() {}
@@ -112,5 +112,75 @@ export class UserService {
       throw conflict("No se encontro ningún Usuario.", "Usuario");
     }
     return users;
+  }
+
+  async getUserStats(userId: string): Promise<UserStatsResponse> {
+    const existingUser = await UserRepository.findOneBy({ id: userId });
+    if (!existingUser) {
+      throw notFound("Usuario", userId);
+    }
+
+    const stats = await UserRepository.getUserStats(userId);
+
+    const { wins, losses, totalPoints, setsWon, setsLost } = stats;
+    const matchesPlayed = wins + losses;
+    const winRate = matchesPlayed > 0 ? (wins / matchesPlayed) * 100 : 0;
+
+    return {
+      userId,
+      matchesPlayed,
+      wins,
+      losses,
+      winRate: Math.round(winRate * 100) / 100,
+      setsWon,
+      setsLost,
+      totalPoints
+    };
+  }
+
+  async getTournamentUserStats(tourId: string, userId: string): Promise<UserStatsResponse> {
+    const existingUser = await UserRepository.findOneBy({ id: userId });
+    if (!existingUser) {
+      throw notFound("Usuario", userId);
+    }
+
+    const stats = await UserRepository.getTournamentUserStats(tourId, userId);
+
+    const { wins, losses, totalPoints, setsWon, setsLost } = stats;
+    const matchesPlayed = wins + losses;
+    const winRate = matchesPlayed > 0 ? (wins / matchesPlayed) * 100 : 0;
+
+    return {
+      userId,
+      matchesPlayed,
+      wins,
+      losses,
+      winRate: Math.round(winRate * 100) / 100,
+      setsWon,
+      setsLost,
+      totalPoints
+    };
+  }
+
+  async getGlobalRankings(): Promise<UserRankingResponse[]> {
+    const rankings = await UserRepository.getGlobalRankings();
+
+    return rankings.map((r: { userId: string; userName: string; points: number }, index: number) => ({
+      userId: r.userId,
+      userName: r.userName,
+      position: index + 1,
+      points: Number(r.points) || 0
+    }));
+  }
+
+  async getTournamentRankings(tourId: string): Promise<UserRankingResponse[]> {
+    const rankings = await UserRepository.getTournamentRankings(tourId);
+
+    return rankings.map((r: { userId: string; userName: string; points: number }, index: number) => ({
+      userId: r.userId,
+      userName: r.userName,
+      position: index + 1,
+      points: Number(r.points) || 0
+    }));
   }
 }

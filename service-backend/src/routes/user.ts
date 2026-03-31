@@ -83,13 +83,33 @@ router.post(
 
 router.get("/me", userController.me.bind(userController));
 
-router.get("/:username", userController.findByUsername.bind(userController));
-
 router.get("/users/:tourId", userController.getUsers.bind(userController));
 
 router.get(
   "/user/:tourId/:category",
   userController.getRanking.bind(userController)
 );
+
+router.get(
+  "/users/stats/:userId",
+  userController.getUserStats.bind(userController)
+);
+
+router.get(
+  "/users/stats/:tourId/:userId",
+  userController.getTournamentUserStats.bind(userController)
+);
+
+router.get(
+  "/users/rankings",
+  userController.getGlobalRankings.bind(userController)
+);
+
+router.get(
+  "/users/rankings/:tourId",
+  userController.getTournamentRankings.bind(userController)
+);
+
+router.get("/:username", userController.findByUsername.bind(userController));
 
 export default router;

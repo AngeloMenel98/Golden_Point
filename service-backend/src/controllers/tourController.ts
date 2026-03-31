@@ -40,7 +40,6 @@ export class TourController {
 
   async create(req: Request, res: Response): Promise<void> {
     try {
-      console.log("inside backend");
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         const errorResponse: ApiResponse<never> = failure({

@@ -88,4 +88,10 @@ router.get(
   "/tournament/:userId",
   tournController.getMyTournaments.bind(tournController)
 );
+
+router.get(
+  "/tournaments/:id",
+  tournController.getById.bind(tournController)
+);
+
 export default router;

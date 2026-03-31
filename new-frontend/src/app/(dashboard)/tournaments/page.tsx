@@ -86,10 +86,8 @@ export default async function TournamentsPage() {
   const user = token ? getUserFromToken(token) : null;
   const isAdmin = user?.role === "admin";
 
-  // Get tourId from cookie
   const tourId = cookieStore.get("currentTourId")?.value;
 
-  // Fetch tournaments by tourId
   const initialTournaments =
     token && tourId ? await fetchTournaments(tourId, token) : [];
 

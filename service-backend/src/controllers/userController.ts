@@ -19,6 +19,8 @@ import {
   UserLoginResponse,
   UserListResult,
   UserRankingResult,
+  UserStatsResponse,
+  UserRankingResponse,
 } from "../types/dto/user.dto";
 
 export class UserController {
@@ -299,6 +301,97 @@ export class UserController {
       const users = await this.userService.getRanking(tourId, category);
 
       const response: ApiResponse<UserRankingResult[]> = success(users);
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
+    }
+  }
+
+  async getUserStats(req: Request, res: Response): Promise<void> {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+        });
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const { userId } = req.params;
+      const stats = await this.userService.getUserStats(userId);
+
+      const response: ApiResponse<UserStatsResponse> = success(stats);
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
+    }
+  }
+
+  async getTournamentUserStats(req: Request, res: Response): Promise<void> {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+        });
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const { tourId, userId } = req.params;
+      const stats = await this.userService.getTournamentUserStats(tourId, userId);
+
+      const response: ApiResponse<UserStatsResponse> = success(stats);
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
+    }
+  }
+
+  async getGlobalRankings(req: Request, res: Response): Promise<void> {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+        });
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const rankings = await this.userService.getGlobalRankings();
+
+      const response: ApiResponse<UserRankingResponse[]> = success(rankings);
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
+    }
+  }
+
+  async getTournamentRankings(req: Request, res: Response): Promise<void> {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+        });
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const { tourId } = req.params;
+      const rankings = await this.userService.getTournamentRankings(tourId);
+
+      const response: ApiResponse<UserRankingResponse[]> = success(rankings);
       res.status(200).json(response);
     } catch (e) {
       const errorResponse: ApiResponse<never> = failure(this.handleError(e));

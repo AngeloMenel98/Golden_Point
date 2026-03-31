@@ -25,12 +25,12 @@ export async function POST(request: NextRequest) {
 
     const normalizedCode = code.trim().toUpperCase();
     
-    if (normalizedCode.length !== 6) {
-      return NextResponse.json({ success: false, error: 'El código debe tener 6 caracteres' }, { status: 400 });
+    if (normalizedCode.length !== 8) {
+      return NextResponse.json({ success: false, error: 'El código debe tener 8 caracteres' }, { status: 400 });
     }
 
-    // Validate alphanumeric
-    if (!/^[A-Z0-9]+$/.test(normalizedCode)) {
+    // Validate alphanumeric (allow lowercase since backend generates with both)
+    if (!/^[A-Za-z0-9]+$/.test(normalizedCode)) {
       return NextResponse.json({ success: false, error: 'Código de tour inválido' }, { status: 400 });
     }
 

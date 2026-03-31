@@ -55,9 +55,6 @@ export async function GET(request: NextRequest) {
 
     const data = await response.json();
 
-    // Backend returns: { success: true, data: { "tournamentId": { tournamentName, teamsCount, master, status, categories }, ... } }
-    // The data.data is an OBJECT with tournament IDs as keys, NOT an array
-
     const tournaments: Array<{
       id: string;
       tourId: string;

@@ -56,3 +56,21 @@ export type UserListResult = {
   phoneNumber: string;
   location: string;
 };
+
+export type UserStatsResponse = {
+  userId: string;
+  matchesPlayed: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  setsWon: number;
+  setsLost: number;
+  totalPoints: number;
+};
+
+export type UserRankingResponse = {
+  userId: string;
+  userName: string;
+  position: number;
+  points: number;
+};

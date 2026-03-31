@@ -1,12 +1,13 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import { Tournament } from '@/entities/Tournament';
-import { useTournament } from '@/context/TournamentContext';
-import { TournamentCard } from './TournamentCard';
-import { TournamentForm } from './TournamentForm';
-import { ConfirmationModal } from '@/components/tours/ConfirmationModal';
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Tournament } from "@/entities/Tournament";
+import { useTournament } from "@/context/TournamentContext";
+import { TournamentCard } from "./TournamentCard";
+import { TournamentForm } from "./TournamentForm";
+import { ConfirmationModal } from "@/components/tours/ConfirmationModal";
 
 interface TournamentsClientProps {
   isAdmin: boolean;
@@ -14,21 +15,28 @@ interface TournamentsClientProps {
   initialTournaments?: Tournament[];
 }
 
-export function TournamentsClient({ isAdmin, tourId, initialTournaments = [] }: TournamentsClientProps) {
+export function TournamentsClient({
+  isAdmin,
+  tourId,
+  initialTournaments = [],
+}: TournamentsClientProps) {
   const router = useRouter();
-  const { 
-    tournaments, 
-    setTournaments, 
-    isLoading, 
+  const {
+    tournaments,
+    setTournaments,
+    isLoading,
     error,
     fetchTournaments,
     createTournament,
     deleteTournament,
-    startTournament
+    startTournament,
   } = useTournament();
 
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [deleteConfirm, setDeleteConfirm] = useState<{ show: boolean; tournamentId: string | null }>({ show: false, tournamentId: null });
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    show: boolean;
+    tournamentId: string | null;
+  }>({ show: false, tournamentId: null });
 
   // Initialize tournaments from props
   useEffect(() => {
@@ -44,9 +52,17 @@ export function TournamentsClient({ isAdmin, tourId, initialTournaments = [] }: 
     }
   }, [fetchTournaments, tourId, initialTournaments.length]);
 
-  const handleCreate = useCallback(async (data: { name: string; tourId: string; masterScore: number; categories: string[] }) => {
-    return await createTournament(data);
-  }, [createTournament]);
+  const handleCreate = useCallback(
+    async (data: {
+      name: string;
+      tourId: string;
+      masterScore: number;
+      categories: string[];
+    }) => {
+      return await createTournament(data);
+    },
+    [createTournament],
+  );
 
   const handleDeleteClick = useCallback((tournamentId: string) => {
     setDeleteConfirm({ show: true, tournamentId });
@@ -54,32 +70,38 @@ export function TournamentsClient({ isAdmin, tourId, initialTournaments = [] }: 
 
   const handleDeleteConfirm = useCallback(async () => {
     if (deleteConfirm.tournamentId === null) return;
-    
+
     const result = await deleteTournament(deleteConfirm.tournamentId);
     setDeleteConfirm({ show: false, tournamentId: null });
-    
+
     if (!result.success) {
-      alert(result.error || 'Error al eliminar el torneo');
+      alert(result.error || "Error al eliminar el torneo");
     }
   }, [deleteConfirm.tournamentId, deleteTournament]);
 
-  const handleStartClick = useCallback(async (tournamentId: string) => {
-    const result = await startTournament(tournamentId);
-    
-    if (!result.success) {
-      alert(result.error || 'Error al iniciar el torneo');
-    }
-  }, [startTournament]);
+  const handleStartClick = useCallback(
+    async (tournamentId: string) => {
+      const result = await startTournament(tournamentId);
 
-  const handleTournamentClick = useCallback((tournament: Tournament) => {
-    router.push(`/tournaments/${tournament.id}`);
-  }, [router]);
+      if (!result.success) {
+        alert(result.error || "Error al iniciar el torneo");
+      }
+    },
+    [startTournament],
+  );
 
-  const existingNames = tournaments.map(t => t.name.toLowerCase());
+  const handleTournamentClick = useCallback(
+    (tournament: Tournament) => {
+      router.push(`/tournaments/${tournament.id}`);
+    },
+    [router],
+  );
+
+  const existingNames = tournaments.map((t) => t.name.toLowerCase());
 
   // Filter tournaments by tourId if provided
-  const filteredTournaments = tourId 
-    ? tournaments.filter(t => t.tourId === tourId)
+  const filteredTournaments = tourId
+    ? tournaments.filter((t) => t.tourId === tourId)
     : tournaments;
 
   if (isLoading && tournaments.length === 0) {
@@ -94,14 +116,27 @@ export function TournamentsClient({ isAdmin, tourId, initialTournaments = [] }: 
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gp-dark">Torneos</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-bold text-gp-dark">Torneos</h1>
+        </div>
         {isAdmin && (
           <button
             onClick={() => setShowCreateModal(true)}
             className="px-4 py-2 bg-gp-pastel text-white rounded-lg hover:bg-gp-pastel/90 transition-colors flex items-center gap-2"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
             </svg>
             Crear Torneo
           </button>
@@ -118,11 +153,22 @@ export function TournamentsClient({ isAdmin, tourId, initialTournaments = [] }: 
       {/* Empty State */}
       {filteredTournaments.length === 0 && !isLoading && (
         <div className="text-center p-12 bg-gp-light/30 rounded-lg">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gp-gray mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-16 w-16 mx-auto text-gp-gray mb-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1}
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+            />
           </svg>
           <p className="text-gp-gray text-lg mb-2">
-            {isAdmin ? 'No hay tournaments' : 'No participas en ningún torneo'}
+            {isAdmin ? "No hay tournaments" : "No participas en ningún torneo"}
           </p>
           {isAdmin && (
             <button
@@ -157,7 +203,7 @@ export function TournamentsClient({ isAdmin, tourId, initialTournaments = [] }: 
           isOpen={showCreateModal}
           onClose={() => setShowCreateModal(false)}
           onSubmit={handleCreate}
-          tourId={tourId || ''}
+          tourId={tourId || ""}
           existingTournamentNames={existingNames}
         />
       )}

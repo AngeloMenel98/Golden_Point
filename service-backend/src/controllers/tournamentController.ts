@@ -327,6 +327,39 @@ export class TournamentController {
     }
   }
 
+  async getById(req: Request, res: Response): Promise<void> {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
+        });
+        res.status(400).json(errorResponse);
+        return;
+      }
+
+      const { id } = req.params;
+      const tournament = await this.tournService.findById(id);
+
+      if (!tournament) {
+        const errorResponse: ApiResponse<never> = failure({
+          type: "NOT_FOUND",
+          entity: "Torneo",
+          id: id,
+        });
+        res.status(404).json(errorResponse);
+        return;
+      }
+
+      const response: ApiResponse<Tournament> = success(tournament);
+      res.status(200).json(response);
+    } catch (e) {
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
+    }
+  }
+
   private handleError(e: unknown): ErrorType {
     if (isNotFoundError(e)) return e;
     if (isValidationError(e)) return e;
