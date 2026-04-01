@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { Tournament, TournamentStatus, Category } from "@/entities/Tournament";
 import { TournamentsClient } from "@/components/tournaments/TournamentsClient";
+import { Tour } from "@/entities";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -47,7 +48,9 @@ async function fetchTournaments(
         const tournament = t as Record<string, unknown>;
         return {
           id: id,
-          tourId: tourId,
+          tour: {
+            id: tourId,
+          } as Tour,
           name: String(
             tournament.tournamentName || tournament.name || "Unnamed",
           ),

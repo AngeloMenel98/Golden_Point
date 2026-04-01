@@ -21,7 +21,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     existingUser: User,
     existingPerData: PersonalData,
     user: User,
-    perData: PersonalData
+    perData: PersonalData,
   ) {
     return this.manager.transaction(async (transactionalEntityManager) => {
       await transactionalEntityManager
@@ -90,12 +90,8 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .select([
         "u.id AS userId",
         "u.username AS userName",
-        "u.email as email",
-        "u.isSingle as isSingle",
         'pd."lastName" as lastName',
         'pd."firstName" as firstName',
-        'pd."phoneNumber" as phoneNumber',
-        'pd."location" as location',
       ])
       .innerJoin("personal_data", "pd", 'pd."userId" = u.id')
       .innerJoin("tour_users_user", "tuu", 'u.id = tuu."userId"')
@@ -132,25 +128,47 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     // Get all matches where user participated (via team_match -> team -> team_users)
     const matchResults = await this.createQueryBuilder()
       .select([
-        'm.id as matchId',
-        'tm.isWinner as isWinner',
+        "m.id as matchId",
+        "tm.isWinner as isWinner",
         'm."amountTourPoints" as points',
-        'trn.id as tournamentId'
+        "trn.id as tournamentId",
       ])
-      .from('team_users_user', 'tuu')
-      .innerJoin('team', 't', 't.id = tuu."teamId"')
-      .innerJoin('team_match', 'tm', 'tm."teamId" = t.id')
-      .innerJoin('match', 'm', 'm.id = tm."matchId"')
-      .innerJoin('tournament', 'trn', 'trn.id = m."tournamentId"')
+      .distinct(true)
+      .from("team_users_user", "tuu")
+      .innerJoin("team", "t", 't.id = tuu."teamId"')
+      .innerJoin("team_match", "tm", 'tm."teamId" = t.id')
+      .innerJoin("match", "m", 'm.id = tm."matchId"')
+      .innerJoin("set", "s", 's."matchId" = m.id')
+      .innerJoin("tournament", "trn", 'trn.id = m."tournamentId"')
       .where('tuu."userId" = :userId', { userId })
+      .getRawMany();
+
+    const setResults = await this.createQueryBuilder()
+      .select([
+        "s.id as setId",
+        "s.gamesTeam1 as gamesTeam1",
+        "s.gamesTeam2 as gamesTeam2",
+      ])
+      .distinct(true)
+      .from("set", "s")
+      .innerJoin("match", "m", 'm.id = s."matchId"')
+      .innerJoin("team_match", "tm1", 'tm1."matchId" = m.id')
+      .innerJoin("team", "t1", 't1.id = tm1."teamId"')
+      .innerJoin("team_users_user", "tuu1", 'tuu1."teamId" = t1.id')
+      .innerJoin("team_match", "tm2", 'tm2."matchId" = m.id')
+      .innerJoin("team", "t2", 't2.id = tm2."teamId"')
+      .where('tuu1."userId" = :userId', { userId })
+      //.andWhere("tm1.isWinner = true")
       .getRawMany();
 
     let wins = 0;
     let losses = 0;
     let totalPoints = 0;
+    let gamesWon = 0;
+    let gamesLost = 0;
 
-    matchResults.forEach((match: { isWinner: boolean; points: number }) => {
-      if (match.isWinner) {
+    matchResults.forEach((match: { iswinner: boolean; points: number }) => {
+      if (match.iswinner) {
         wins++;
         totalPoints += match.points;
       } else {
@@ -158,51 +176,33 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       }
     });
 
-    // Get all sets where user's team won
-    const setResults = await this.createQueryBuilder()
-      .select(['s.id', 's.gamesTeam1', 's.gamesTeam2'])
-      .from('set', 's')
-      .innerJoin('match', 'm', 'm.id = s."matchId"')
-      .innerJoin('team_match', 'tm1', 'tm1."matchId" = m.id')
-      .innerJoin('team', 't1', 't1.id = tm1."teamId"')
-      .innerJoin('team_users_user', 'tuu1', 'tuu1."teamId" = t1.id')
-      .innerJoin('team_match', 'tm2', 'tm2."matchId" = m.id')
-      .innerJoin('team', 't2', 't2.id = tm2."teamId"')
-      .where('tuu1."userId" = :userId', { userId })
-      .andWhere('tm1.isWinner = true')
-      .getRawMany();
-
-    let setsWon = 0;
-    let setsLost = 0;
-
-    setResults.forEach((set: { gamesTeam1: number; gamesTeam2: number }) => {
-      // User's team won the match, determine which set score is higher
-      if (set.gamesTeam1 > set.gamesTeam2) {
-        setsWon += set.gamesTeam1;
-        setsLost += set.gamesTeam2;
+    setResults.forEach((set: { gamesteam1: number; gamesteam2: number }) => {
+      if (set.gamesteam1 > set.gamesteam2) {
+        gamesWon += set.gamesteam1;
+        gamesLost += set.gamesteam2;
       } else {
-        setsLost += set.gamesTeam1;
-        setsWon += set.gamesTeam2;
+        gamesWon += set.gamesteam2;
+        gamesLost += set.gamesteam1;
       }
     });
 
-    return { wins, losses, totalPoints, setsWon, setsLost };
+    return { wins, losses, totalPoints, gamesWon, gamesLost };
   },
 
   async getTournamentUserStats(tourId: string, userId: string) {
     // Get matches for specific tournament
     const matchResults = await this.createQueryBuilder()
       .select([
-        'm.id as matchId',
-        'tm.isWinner as isWinner',
-        'm."amountTourPoints" as points'
+        "m.id as matchId",
+        "tm.isWinner as isWinner",
+        'm."amountTourPoints" as points',
       ])
-      .from('team_users_user', 'tuu')
-      .innerJoin('team', 't', 't.id = tuu."teamId"')
-      .innerJoin('team_match', 'tm', 'tm."teamId" = t.id')
-      .innerJoin('match', 'm', 'm.id = tm."matchId"')
-      .innerJoin('tournament', 'trn', 'trn.id = m."tournamentId"')
-      .innerJoin('tour_users_user', 'tuut', 'tuut."tourId" = trn."tourId"')
+      .from("team_users_user", "tuu")
+      .innerJoin("team", "t", 't.id = tuu."teamId"')
+      .innerJoin("team_match", "tm", 'tm."teamId" = t.id')
+      .innerJoin("match", "m", 'm.id = tm."matchId"')
+      .innerJoin("tournament", "trn", 'trn.id = m."tournamentId"')
+      .innerJoin("tour_users_user", "tuut", 'tuut."tourId" = trn."tourId"')
       .where('tuu."userId" = :userId', { userId })
       .andWhere('tuut."tourId" = :tourId', { tourId })
       .getRawMany();
@@ -222,69 +222,77 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
 
     // Get sets for this tournament
     const setResults = await this.createQueryBuilder()
-      .select(['s.gamesTeam1', 's.gamesTeam2'])
-      .from('set', 's')
-      .innerJoin('match', 'm', 'm.id = s."matchId"')
-      .innerJoin('tournament', 'trn', 'trn.id = m."tournamentId"')
-      .innerJoin('team_match', 'tm1', 'tm1."matchId" = m.id')
-      .innerJoin('team', 't1', 't1.id = tm1."teamId"')
-      .innerJoin('team_users_user', 'tuu1', 'tuu1."teamId" = t1.id')
+      .select(["s.gamesTeam1", "s.gamesTeam2"])
+      .from("set", "s")
+      .innerJoin("match", "m", 'm.id = s."matchId"')
+      .innerJoin("tournament", "trn", 'trn.id = m."tournamentId"')
+      .innerJoin("team_match", "tm1", 'tm1."matchId" = m.id')
+      .innerJoin("team", "t1", 't1.id = tm1."teamId"')
+      .innerJoin("team_users_user", "tuu1", 'tuu1."teamId" = t1.id')
       .where('tuu1."userId" = :userId', { userId })
       .andWhere('trn."tourId" = :tourId', { tourId })
-      .andWhere('tm1.isWinner = true')
+      .andWhere("tm1.isWinner = true")
       .getRawMany();
 
-    let setsWon = 0;
-    let setsLost = 0;
+    let gamesWon = 0;
+    let gamesLost = 0;
 
     setResults.forEach((set: { gamesTeam1: number; gamesTeam2: number }) => {
       if (set.gamesTeam1 > set.gamesTeam2) {
-        setsWon += set.gamesTeam1;
-        setsLost += set.gamesTeam2;
+        gamesWon += set.gamesTeam1;
+        gamesLost += set.gamesTeam2;
       } else {
-        setsLost += set.gamesTeam1;
-        setsWon += set.gamesTeam2;
+        gamesLost += set.gamesTeam1;
+        gamesWon += set.gamesTeam2;
       }
     });
 
-    return { wins, losses, totalPoints, setsWon, setsLost };
+    return { wins, losses, totalPoints, gamesWon, gamesLost };
   },
 
   async getGlobalRankings() {
     return this.createQueryBuilder()
       .select([
-        'u.id as userId',
-        'u.username as userName',
-        'COALESCE(SUM(m."amountTourPoints"), 0) as points'
+        "u.id as userId",
+        "u.username as userName",
+        'COALESCE(SUM(m."amountTourPoints"), 0) as points',
       ])
-      .from('user', 'u')
-      .leftJoin('team_users_user', 'tuu', 'tuu."userId" = u.id')
-      .leftJoin('team', 't', 't.id = tuu."teamId"')
-      .leftJoin('team_match', 'tm', 'tm."teamId" = t.id AND tm.isWinner = true')
-      .leftJoin('match', 'm', 'm.id = tm."matchId"')
-      .where('u.isDeleted = false')
-      .groupBy('u.id, u.username')
-      .orderBy('points', 'DESC')
+      .from("user", "u")
+      .leftJoin("team_users_user", "tuu", 'tuu."userId" = u.id')
+      .leftJoin("team", "t", 't.id = tuu."teamId"')
+      .leftJoin("team_match", "tm", 'tm."teamId" = t.id AND tm.isWinner = true')
+      .leftJoin("match", "m", 'm.id = tm."matchId"')
+      .where("u.isDeleted = false")
+      .groupBy("u.id, u.username")
+      .orderBy("points", "DESC")
       .getRawMany();
   },
 
   async getTournamentRankings(tourId: string) {
     return this.createQueryBuilder()
       .select([
-        'u.id as userId',
-        'u.username as userName',
-        'COALESCE(SUM(m."amountTourPoints"), 0) as points'
+        "u.id as userId",
+        "u.username as userName",
+        'COALESCE(SUM(m."amountTourPoints"), 0) as points',
       ])
-      .from('user', 'u')
-      .innerJoin('tour_users_user', 'tuut', 'tuut."userId" = u.id')
-      .innerJoin('team_users_user', 'tuu', 'tuu."userId" = u.id')
-      .innerJoin('team', 't', 't.id = tuu."teamId"')
-      .innerJoin('tournament', 'trn', 'trn."tourId" = :tourId', { tourId })
-      .innerJoin('team_match', 'tm', 'tm."teamId" = t.id AND tm.isWinner = true')
-      .innerJoin('match', 'm', 'm.id = tm."matchId" AND m."tournamentId" = trn.id')
-      .where('u.isDeleted = false')
-      .groupBy('u.id, u.username')
-      .orderBy('points', 'DESC')
+      .from("user", "u")
+      .innerJoin("tour_users_user", "tuut", 'tuut."userId" = u.id')
+      .innerJoin("team_users_user", "tuu", 'tuu."userId" = u.id')
+      .innerJoin("team", "t", 't.id = tuu."teamId"')
+      .innerJoin("tournament", "trn", 'trn."tourId" = :tourId', { tourId })
+      .innerJoin(
+        "team_match",
+        "tm",
+        'tm."teamId" = t.id AND tm.isWinner = true',
+      )
+      .innerJoin(
+        "match",
+        "m",
+        'm.id = tm."matchId" AND m."tournamentId" = trn.id',
+      )
+      .where("u.isDeleted = false")
+      .groupBy("u.id, u.username")
+      .orderBy("points", "DESC")
       .getRawMany();
   },
 });

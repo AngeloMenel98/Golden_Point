@@ -61,7 +61,7 @@ export class UserController {
 
       const secretKey = process.env.JWT_SECRET_KEY;
       if (!secretKey) {
-        throw new Error('JWT_SECRET_KEY environment variable is required');
+        throw new Error("JWT_SECRET_KEY environment variable is required");
       }
       const token = jwt.sign(userResponse, secretKey);
 
@@ -344,7 +344,10 @@ export class UserController {
       }
 
       const { tourId, userId } = req.params;
-      const stats = await this.userService.getTournamentUserStats(tourId, userId);
+      const stats = await this.userService.getTournamentUserStats(
+        tourId,
+        userId,
+      );
 
       const response: ApiResponse<UserStatsResponse> = success(stats);
       res.status(200).json(response);
@@ -355,6 +358,7 @@ export class UserController {
   }
 
   async getGlobalRankings(req: Request, res: Response): Promise<void> {
+    console.log("GET /users/rankings called");
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -415,7 +419,7 @@ export class UserController {
       const token = authHeader.split(" ")[1];
       const secretKey = process.env.JWT_SECRET_KEY;
       if (!secretKey) {
-        throw new Error('JWT_SECRET_KEY environment variable is required');
+        throw new Error("JWT_SECRET_KEY environment variable is required");
       }
 
       const decoded = jwt.verify(token, secretKey) as {

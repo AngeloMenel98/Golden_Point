@@ -18,7 +18,10 @@ export type UserDetailResponse = UserResponse & {
   } | null;
 };
 
-export type UserCreateRequest = Pick<User, "username" | "email" | "password"> & {
+export type UserCreateRequest = Pick<
+  User,
+  "username" | "email" | "password"
+> & {
   firstName: string;
   lastName: string;
   location: string;
@@ -49,12 +52,8 @@ export type UserRankingResult = {
 export type UserListResult = {
   userId: string;
   userName: string;
-  email: string;
-  isSingle: boolean;
   lastName: string;
   firstName: string;
-  phoneNumber: string;
-  location: string;
 };
 
 export type UserStatsResponse = {
@@ -63,8 +62,8 @@ export type UserStatsResponse = {
   wins: number;
   losses: number;
   winRate: number;
-  setsWon: number;
-  setsLost: number;
+  gamesWon: number;
+  gamesLost: number;
   totalPoints: number;
 };
 

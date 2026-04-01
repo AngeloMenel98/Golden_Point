@@ -1,7 +1,12 @@
 import { PerDataRepository, UserRepository } from "../repository";
 import { PersonalData, TourCoin, User } from "../entity";
 import { isNotUserAdmin } from "../helpers/validations";
-import { UserListResult, UserRankingResult, UserStatsResponse, UserRankingResponse } from "../types/dto/user.dto";
+import {
+  UserListResult,
+  UserRankingResult,
+  UserStatsResponse,
+  UserRankingResponse,
+} from "../types/dto/user.dto";
 import { notFound, conflict } from "../types/error/app-error";
 
 export class UserService {
@@ -39,7 +44,7 @@ export class UserService {
 
   async update(user: User, existingUser: User, perData: PersonalData) {
     const existingPerData = await PerDataRepository.findByUserId(
-      existingUser.id
+      existingUser.id,
     );
 
     if (!existingPerData) {
@@ -105,8 +110,14 @@ export class UserService {
     return users;
   }
 
-  async getRanking(tourId: string, category: string): Promise<UserRankingResult[]> {
-    const users: UserRankingResult[] = await UserRepository.getRanking(tourId, category);
+  async getRanking(
+    tourId: string,
+    category: string,
+  ): Promise<UserRankingResult[]> {
+    const users: UserRankingResult[] = await UserRepository.getRanking(
+      tourId,
+      category,
+    );
 
     if (users.length == 0) {
       throw conflict("No se encontro ningún Usuario.", "Usuario");
@@ -122,7 +133,7 @@ export class UserService {
 
     const stats = await UserRepository.getUserStats(userId);
 
-    const { wins, losses, totalPoints, setsWon, setsLost } = stats;
+    const { wins, losses, totalPoints, gamesWon, gamesLost } = stats;
     const matchesPlayed = wins + losses;
     const winRate = matchesPlayed > 0 ? (wins / matchesPlayed) * 100 : 0;
 
@@ -132,13 +143,16 @@ export class UserService {
       wins,
       losses,
       winRate: Math.round(winRate * 100) / 100,
-      setsWon,
-      setsLost,
-      totalPoints
+      gamesWon,
+      gamesLost,
+      totalPoints,
     };
   }
 
-  async getTournamentUserStats(tourId: string, userId: string): Promise<UserStatsResponse> {
+  async getTournamentUserStats(
+    tourId: string,
+    userId: string,
+  ): Promise<UserStatsResponse> {
     const existingUser = await UserRepository.findOneBy({ id: userId });
     if (!existingUser) {
       throw notFound("Usuario", userId);
@@ -146,7 +160,7 @@ export class UserService {
 
     const stats = await UserRepository.getTournamentUserStats(tourId, userId);
 
-    const { wins, losses, totalPoints, setsWon, setsLost } = stats;
+    const { wins, losses, totalPoints, gamesWon, gamesLost } = stats;
     const matchesPlayed = wins + losses;
     const winRate = matchesPlayed > 0 ? (wins / matchesPlayed) * 100 : 0;
 
@@ -156,31 +170,41 @@ export class UserService {
       wins,
       losses,
       winRate: Math.round(winRate * 100) / 100,
-      setsWon,
-      setsLost,
-      totalPoints
+      gamesWon,
+      gamesLost,
+      totalPoints,
     };
   }
 
   async getGlobalRankings(): Promise<UserRankingResponse[]> {
     const rankings = await UserRepository.getGlobalRankings();
 
-    return rankings.map((r: { userId: string; userName: string; points: number }, index: number) => ({
-      userId: r.userId,
-      userName: r.userName,
-      position: index + 1,
-      points: Number(r.points) || 0
-    }));
+    return rankings.map(
+      (
+        r: { userId: string; userName: string; points: number },
+        index: number,
+      ) => ({
+        userId: r.userId,
+        userName: r.userName,
+        position: index + 1,
+        points: Number(r.points) || 0,
+      }),
+    );
   }
 
   async getTournamentRankings(tourId: string): Promise<UserRankingResponse[]> {
     const rankings = await UserRepository.getTournamentRankings(tourId);
 
-    return rankings.map((r: { userId: string; userName: string; points: number }, index: number) => ({
-      userId: r.userId,
-      userName: r.userName,
-      position: index + 1,
-      points: Number(r.points) || 0
-    }));
+    return rankings.map(
+      (
+        r: { userId: string; userName: string; points: number },
+        index: number,
+      ) => ({
+        userId: r.userId,
+        userName: r.userName,
+        position: index + 1,
+        points: Number(r.points) || 0,
+      }),
+    );
   }
 }

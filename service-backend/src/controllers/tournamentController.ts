@@ -54,7 +54,7 @@ export class TournamentController {
       const tournament = await this.tournService.create(
         newTourn,
         tourId,
-        categories
+        categories,
       );
 
       const response: ApiResponse<{
@@ -143,7 +143,7 @@ export class TournamentController {
         await this.tournService.createGroupsDTOPerCat(
           clubData,
           teamData,
-          tourn
+          tourn,
         );
 
       const response: ApiResponse<
@@ -163,7 +163,7 @@ export class TournamentController {
           matchDate: match.matchDate,
           court: match.court.courtNumber,
           groupName: match.groupStage.groupStage,
-        }))
+        })),
       );
 
       res.status(200).json(response);
@@ -239,7 +239,7 @@ export class TournamentController {
       const cats = await this.tournService.getCategoriesByTournId(tournId);
 
       const response: ApiResponse<string[][]> = success(
-        cats.map((cat) => cat.categories)
+        cats.map((cat) => cat.categories),
       );
 
       res.status(200).json(response);
@@ -303,7 +303,7 @@ export class TournamentController {
       // Process knockout progression
       const result = await this.tournService.processKnockoutProgression(
         tournamentId,
-        categoryId
+        categoryId,
       );
 
       const response: ApiResponse<{

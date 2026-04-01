@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserCard } from '@/components/users/UserCard';
 import { UserStatsDrawer } from '@/components/users/UserStatsDrawer';
+import { useTournament } from '@/context/TournamentContext';
+import { Tournament, TournamentStatus } from '@/entities/Tournament';
 
 interface UserData {
   id: string;
@@ -16,6 +18,7 @@ interface UsersListProps {
   users: UserData[];
   tournamentId: string;
   tournamentName: string;
+  participationMap?: Map<string, boolean>;
 }
 
 interface SelectedUser {
@@ -28,8 +31,24 @@ export function UsersList({
   users,
   tournamentId,
   tournamentName,
+  participationMap,
 }: UsersListProps) {
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
+  const { setCurrentTournament } = useTournament();
+
+  useEffect(() => {
+    // Synchronize server-fetched tournament metadata into TournamentContext
+    // This allows components outside this page (like BreadcrumbNav) to access the name
+    setCurrentTournament({
+      id: tournamentId,
+      name: tournamentName,
+      // Required fields with default values as we only need the above for global UI
+      tour: { id: '', name: '' },
+      masterScore: 0,
+      status: TournamentStatus.PENDING,
+      categories: [],
+    } as Tournament);
+  }, [tournamentId, tournamentName, setCurrentTournament]);
 
   const handleUserClick = (user: UserData) => {
     setSelectedUser({
@@ -71,12 +90,13 @@ export function UsersList({
     <>
       {/* Grid layout: 3 columns desktop, 2 tablet, 1 mobile */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {users.map((user) => (
+        {users.map((user, index) => (
           <UserCard
-            key={user.id}
+            key={`${user.id}-${user.username}-${index}`}
             username={user.username}
             fullName={user.fullName || user.firstName || user.username}
             onClick={() => handleUserClick(user)}
+            isParticipating={participationMap?.get(user.id) ?? false}
           />
         ))}
       </div>

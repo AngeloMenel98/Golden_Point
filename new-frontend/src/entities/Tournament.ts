@@ -1,7 +1,9 @@
+import { Tour } from "./Tour";
+
 export enum TournamentStatus {
-  PENDING = 'pending',
-  IN_PROGRESS = 'inProgress',
-  FINISHED = 'finish'
+  PENDING = "pending",
+  IN_PROGRESS = "inProgress",
+  FINISHED = "finish",
 }
 
 export interface Category {
@@ -10,8 +12,8 @@ export interface Category {
 }
 
 export interface Tournament {
-  id: string;  // UUID from backend
-  tourId: string;
+  id: string;
+  tour: Tour;
   name: string;
   masterScore: number;
   status: TournamentStatus;
@@ -25,9 +27,9 @@ export interface Tournament {
 
 // Status label mapping
 export const STATUS_LABELS: Record<TournamentStatus, string> = {
-  [TournamentStatus.PENDING]: 'Pendiente',
-  [TournamentStatus.IN_PROGRESS]: 'Activo',
-  [TournamentStatus.FINISHED]: 'Finalizado'
+  [TournamentStatus.PENDING]: "Pendiente",
+  [TournamentStatus.IN_PROGRESS]: "Activo",
+  [TournamentStatus.FINISHED]: "Finalizado",
 };
 
 // Helper function to get status label

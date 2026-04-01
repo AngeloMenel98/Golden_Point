@@ -18,7 +18,6 @@ async function fetchTournament(
   token: string,
 ): Promise<Tournament | null> {
   try {
-    console.log("id", id);
     const response = await fetch(`${API_URL}/api/tournaments/${id}`, {
       method: "GET",
       headers: {
@@ -43,7 +42,7 @@ async function fetchTournament(
     const t = data.data;
     return {
       id: String(t.id || t.tournamentid),
-      tourId: String(t.tourid || t.tourId),
+      tour: t.tour,
       name: String(t.tournamentName || t.name || t.title || "Unnamed"),
       masterScore: parseInt(String(t.master || t.masterScore || 0), 10),
       status: (t.status as TournamentStatus) || TournamentStatus.PENDING,
@@ -83,9 +82,70 @@ async function fetchTournamentUsers(
       return [];
     }
 
-    return data.data || [];
+    // Extract only simplified fields: userId (or id), username, firstName, lastName
+    const users = data.data || [];
+    return users.map((user: Record<string, unknown>) => ({
+      id: String(user.id || user.userId || ""),
+      username: String(user.username || ""),
+      firstName: user.firstName ? String(user.firstName) : undefined,
+      lastName: user.lastName ? String(user.lastName) : undefined,
+      fullName:
+        user.firstName || user.lastName
+          ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
+          : undefined,
+    }));
   } catch (error) {
     console.error("Error fetching tournament users:", error);
+    return [];
+  }
+}
+
+interface TeamData {
+  id: string;
+  name: string;
+  category: string;
+  usersId: string[];
+}
+
+async function fetchTeamsByTournament(
+  tournamentId: string,
+  token: string,
+): Promise<TeamData[]> {
+  try {
+    const response = await fetch(`${API_URL}/api/teams/${tournamentId}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      console.error("Failed to fetch teams:", response.status);
+      return [];
+    }
+
+    const data = await response.json();
+
+    if (!data.success) {
+      return [];
+    }
+
+    const teams = data.data || data || [];
+    return teams.map((team: Record<string, unknown>) => ({
+      id: String(team.id || team.teamId || ""),
+      name: String(team.name || team.teamName || ""),
+      category: String(team.category || ""),
+      usersId: Array.isArray(team.usersId)
+        ? team.usersId.map((id: unknown) => String(id))
+        : typeof team.usersId === "string"
+          ? team.usersId.split(",").map((s: string) => s.trim())
+          : [],
+    }));
+  } catch (error) {
+    console.error("Error fetching teams:", error);
     return [];
   }
 }
@@ -118,38 +178,23 @@ export default async function TournamentUsersPage({
     );
   }
 
-  // Get tourId from tournament data to fetch users
-  const tourId = tournament.tourId;
-  const users =
-    token && tourId ? await fetchTournamentUsers(tourId, token) : [];
+  const users = token
+    ? await fetchTournamentUsers(tournament.tour.id, token)
+    : [];
+
+  // Fetch teams and build participation map
+  const teams = token ? await fetchTeamsByTournament(tournament.id, token) : [];
+
+  // Build participation map: userId -> boolean (true if in any team)
+  const participationMap = new Map<string, boolean>();
+  teams.forEach((team) => {
+    team.usersId.forEach((userId) => {
+      participationMap.set(userId, true);
+    });
+  });
 
   return (
     <div>
-      {/* Breadcrumb */}
-      <nav className="mb-6">
-        <ol className="flex items-center gap-2 text-sm">
-          <li>
-            <a
-              href="/tournaments"
-              className="text-gp-pastel hover:text-gp-dark transition-colors"
-            >
-              Torneos
-            </a>
-          </li>
-          <li className="text-gp-gray">/</li>
-          <li>
-            <a
-              href={`/tournaments/${id}`}
-              className="text-gp-pastel hover:text-gp-dark transition-colors"
-            >
-              {tournament.name}
-            </a>
-          </li>
-          <li className="text-gp-gray">/</li>
-          <li className="text-gp-dark font-medium">Participantes</li>
-        </ol>
-      </nav>
-
       {/* Page header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gp-dark">
@@ -166,6 +211,7 @@ export default async function TournamentUsersPage({
         users={users}
         tournamentId={id}
         tournamentName={tournament.name}
+        participationMap={participationMap}
       />
     </div>
   );

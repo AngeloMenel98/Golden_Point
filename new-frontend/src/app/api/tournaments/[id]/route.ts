@@ -33,8 +33,6 @@ export async function GET(
       credentials: "include",
     });
 
-    console.log("here we go again");
-
     if (!response.ok) {
       if (response.status === 401) {
         return NextResponse.json(

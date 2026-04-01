@@ -32,7 +32,7 @@ export class TournamentService {
   constructor(
     tourService?: TourService,
     categoryService?: CategoryService,
-    matchService?: MatchService
+    matchService?: MatchService,
   ) {
     this._tourService = tourService;
     this._categoryService = categoryService;
@@ -63,7 +63,7 @@ export class TournamentService {
   async create(
     newTournament: Tournament,
     tourId: string,
-    categoryData: Category[]
+    categoryData: Category[],
   ) {
     if (newTournament.master <= 0) {
       throw validationError("Master obligatorio");
@@ -75,9 +75,8 @@ export class TournamentService {
 
     const existingTour = await this.tourService.findById(tourId);
 
-    const existingCats = await this.categoryService.findCategories(
-      categoryData
-    );
+    const existingCats =
+      await this.categoryService.findCategories(categoryData);
 
     const newCategories = await this.categoryService.create(categoryData);
     const combinedCategories = [...existingCats, ...newCategories];
@@ -85,7 +84,7 @@ export class TournamentService {
     return TournamentRepository.create(
       newTournament,
       existingTour,
-      combinedCategories
+      combinedCategories,
     );
   }
 
@@ -103,7 +102,10 @@ export class TournamentService {
     }
 
     if (!teamsWithCat || teamsWithCat.length == 0) {
-      throw conflict("No se encontro ningún Equipo con el Tournament ID", "Equipo");
+      throw conflict(
+        "No se encontro ningún Equipo con el Tournament ID",
+        "Equipo",
+      );
     }
 
     const clubData: ClubData[] = [];
@@ -125,7 +127,7 @@ export class TournamentService {
         twc.tourId,
         tournament.id,
         twc.category,
-        twc.usersId.split(", ")
+        twc.usersId.split(", "),
       );
 
       teamData.push({
@@ -134,7 +136,7 @@ export class TournamentService {
         category: twc.category,
         totalPoints: usersWithPoints.reduce(
           (acc, user) => acc + user.points,
-          0
+          0,
         ),
         usersId: twc.usersId.split(", "),
       });
@@ -173,7 +175,7 @@ export class TournamentService {
   async createGroupsDTOPerCat(
     clubData: ClubData[],
     teamData: TeamData[],
-    tournament: Tournament
+    tournament: Tournament,
   ) {
     const sortedTeams = sortTeamsPerCategoryByPoints(teamData);
 
@@ -208,11 +210,12 @@ export class TournamentService {
           hoursForGroup,
           20,
           50,
-          "Grupo " + (i + 1)
+          "Grupo " + (i + 1),
         );
         groupDTOs.push(groupDTO);
       }
     }
+
     const groupMatches = await this.createGroupsMatches(groupDTOs, tournament);
 
     return { groupMatches, clubInfo: clubData };
@@ -221,15 +224,16 @@ export class TournamentService {
   async getWinningTeams(tournamentId: string, groupStage: string[]) {
     const tt = await TournamentRepository.getWinningTeams(
       tournamentId,
-      groupStage
+      groupStage,
     );
 
     return tt;
   }
 
   async findById(tournamentId: string) {
-    const existingTourn = await TournamentRepository.findOneBy({
-      id: tournamentId,
+    const existingTourn = await TournamentRepository.findOne({
+      where: { id: tournamentId },
+      relations: ["tour", "categories", "teams"],
     });
 
     if (!existingTourn) {
@@ -287,7 +291,7 @@ export class TournamentService {
               [teams[j], teams[k]],
               tournament,
               courtId,
-              grDTO.groupName
+              grDTO.groupName,
             );
             matches.push(m);
             matchIndex++;
@@ -334,12 +338,12 @@ export class TournamentService {
    */
   async checkCategoryGroupStageComplete(
     tournamentId: string,
-    categoryId: string
+    categoryId: string,
   ): Promise<StageCompletion> {
     // Get all group stage matches (non-knockout)
     const groupMatches = await MatchRepository.getGroupStageMatches(
       tournamentId,
-      categoryId
+      categoryId,
     );
 
     if (groupMatches.length === 0) {
@@ -348,7 +352,7 @@ export class TournamentService {
 
     // Check if all matches have a winner
     const allComplete = groupMatches.every((match) =>
-      match.teamMatches?.some((tm) => tm.isWinner === true)
+      match.teamMatches?.some((tm) => tm.isWinner === true),
     );
 
     if (!allComplete) {
@@ -358,7 +362,7 @@ export class TournamentService {
     // Get qualified teams (1st and 2nd place from each group)
     const qualifiedTeams = await this.getQualifiedTeams(
       tournamentId,
-      categoryId
+      categoryId,
     );
 
     return {
@@ -373,11 +377,11 @@ export class TournamentService {
    */
   private async getQualifiedTeams(
     tournamentId: string,
-    categoryId: string
+    categoryId: string,
   ): Promise<QualifiedTeam[]> {
     const groupMatches = await MatchRepository.getGroupStageMatches(
       tournamentId,
-      categoryId
+      categoryId,
     );
 
     // Group matches by their groupStageId
@@ -403,10 +407,7 @@ export class TournamentService {
         const loser = match.teamMatches?.find((tm) => tm.isWinner === false);
 
         if (winner && loser) {
-          teamWins.set(
-            winner.teamId,
-            (teamWins.get(winner.teamId) || 0) + 1
-          );
+          teamWins.set(winner.teamId, (teamWins.get(winner.teamId) || 0) + 1);
         }
       });
 
@@ -414,8 +415,8 @@ export class TournamentService {
       const teamsInGroup = [
         ...new Set(
           matches.flatMap((m) =>
-            m.teamMatches?.map((tm) => ({ teamId: tm.teamId, team: tm.team }))
-          )
+            m.teamMatches?.map((tm) => ({ teamId: tm.teamId, team: tm.team })),
+          ),
         ),
       ];
 
@@ -455,13 +456,13 @@ export class TournamentService {
   async checkKnockoutStageComplete(
     tournamentId: string,
     categoryId: string,
-    stageName: string
+    stageName: string,
   ): Promise<{ complete: boolean; winners?: QualifiedTeam[] }> {
     // Get all matches for this knockout stage
     const matches = await MatchRepository.getKnockoutMatches(
       tournamentId,
       categoryId,
-      stageName
+      stageName,
     );
 
     if (matches.length === 0) {
@@ -470,7 +471,7 @@ export class TournamentService {
 
     // Check if all matches have a winner
     const allComplete = matches.every((match) =>
-      match.teamMatches?.some((tm) => tm.isWinner === true)
+      match.teamMatches?.some((tm) => tm.isWinner === true),
     );
 
     if (!allComplete) {
@@ -500,11 +501,11 @@ export class TournamentService {
    */
   async getRemainingHours(
     tournamentId: string,
-    categoryId: string
+    categoryId: string,
   ): Promise<Date[]> {
     // Get club data for the tournament
     const clubData = await this.getDataForStartingTournament(
-      await this.findById(tournamentId)
+      await this.findById(tournamentId),
     );
 
     // Calculate all available hours for clubs
@@ -521,10 +522,10 @@ export class TournamentService {
     // Get scheduled dates for this category
     const scheduledDates = await MatchRepository.getScheduledDatesByCategory(
       tournamentId,
-      categoryId
+      categoryId,
     );
     const scheduledSet = new Set(
-      scheduledDates.map((d) => new Date(d).toISOString())
+      scheduledDates.map((d) => new Date(d).toISOString()),
     );
 
     // Filter out scheduled hours
@@ -542,40 +543,38 @@ export class TournamentService {
    */
   async processKnockoutProgression(
     tournamentId: string,
-    categoryId: string
+    categoryId: string,
   ): Promise<KnockoutResult | null> {
     const tournament = await this.findById(tournamentId);
 
     // Step 1: Check if group stage is complete and create quarterfinals
     const groupStageStatus = await this.checkCategoryGroupStageComplete(
       tournamentId,
-      categoryId
+      categoryId,
     );
 
     if (groupStageStatus.complete && groupStageStatus.teams) {
       const hasCuartos = await MatchRepository.hasKnockoutMatches(
         tournamentId,
         categoryId,
-        KNOCKOUT_STAGES.CUARTOS
+        KNOCKOUT_STAGES.CUARTOS,
       );
 
       if (!hasCuartos) {
         // Validate minimum teams (8 teams = 4 quarterfinals)
         if (groupStageStatus.teams.length < 4) {
           throw validationError(
-            "Invalid bracket: minimum 4 teams required for knockout"
+            "Invalid bracket: minimum 4 teams required for knockout",
           );
         }
 
         const remainingHours = await this.getRemainingHours(
           tournamentId,
-          categoryId
+          categoryId,
         );
 
         if (remainingHours.length === 0) {
-          throw validationError(
-            "No remaining hours for knockout scheduling"
-          );
+          throw validationError("No remaining hours for knockout scheduling");
         }
 
         const matches = await this.createNextMatches(
@@ -583,7 +582,7 @@ export class TournamentService {
           tournament,
           KNOCKOUT_STAGES.CUARTOS,
           categoryId,
-          remainingHours
+          remainingHours,
         );
 
         return {
@@ -598,26 +597,24 @@ export class TournamentService {
     const cuartosStatus = await this.checkKnockoutStageComplete(
       tournamentId,
       categoryId,
-      KNOCKOUT_STAGES.CUARTOS
+      KNOCKOUT_STAGES.CUARTOS,
     );
 
     if (cuartosStatus.complete && cuartosStatus.winners) {
       const hasSemis = await MatchRepository.hasKnockoutMatches(
         tournamentId,
         categoryId,
-        KNOCKOUT_STAGES.SEMIFINAL
+        KNOCKOUT_STAGES.SEMIFINAL,
       );
 
       if (!hasSemis) {
         const remainingHours = await this.getRemainingHours(
           tournamentId,
-          categoryId
+          categoryId,
         );
 
         if (remainingHours.length === 0) {
-          throw validationError(
-            "No remaining hours for knockout scheduling"
-          );
+          throw validationError("No remaining hours for knockout scheduling");
         }
 
         const matches = await this.createNextMatches(
@@ -625,7 +622,7 @@ export class TournamentService {
           tournament,
           KNOCKOUT_STAGES.SEMIFINAL,
           categoryId,
-          remainingHours
+          remainingHours,
         );
 
         return {
@@ -640,26 +637,24 @@ export class TournamentService {
     const semisStatus = await this.checkKnockoutStageComplete(
       tournamentId,
       categoryId,
-      KNOCKOUT_STAGES.SEMIFINAL
+      KNOCKOUT_STAGES.SEMIFINAL,
     );
 
     if (semisStatus.complete && semisStatus.winners) {
       const hasFinal = await MatchRepository.hasKnockoutMatches(
         tournamentId,
         categoryId,
-        KNOCKOUT_STAGES.FINAL
+        KNOCKOUT_STAGES.FINAL,
       );
 
       if (!hasFinal) {
         const remainingHours = await this.getRemainingHours(
           tournamentId,
-          categoryId
+          categoryId,
         );
 
         if (remainingHours.length === 0) {
-          throw validationError(
-            "No remaining hours for knockout scheduling"
-          );
+          throw validationError("No remaining hours for knockout scheduling");
         }
 
         const matches = await this.createNextMatches(
@@ -667,7 +662,7 @@ export class TournamentService {
           tournament,
           KNOCKOUT_STAGES.FINAL,
           categoryId,
-          remainingHours
+          remainingHours,
         );
 
         return {
@@ -690,18 +685,21 @@ export class TournamentService {
     tournament: Tournament,
     roundName: string,
     categoryId: string,
-    remainingHours: Date[]
+    remainingHours: Date[],
   ): Promise<Match[]> {
     const matches: Match[] = [];
 
     // Group teams by their original groupStageId
-    const teamsByGroup = teams.reduce((acc, team) => {
-      if (!acc[team.groupStageId]) {
-        acc[team.groupStageId] = [];
-      }
-      acc[team.groupStageId].push(team);
-      return acc;
-    }, {} as Record<string, QualifiedTeam[]>);
+    const teamsByGroup = teams.reduce(
+      (acc, team) => {
+        if (!acc[team.groupStageId]) {
+          acc[team.groupStageId] = [];
+        }
+        acc[team.groupStageId].push(team);
+        return acc;
+      },
+      {} as Record<string, QualifiedTeam[]>,
+    );
 
     // Sort teams within each group by matchesWon (and gamesDiff as tiebreaker)
     for (const group in teamsByGroup) {
@@ -758,13 +756,13 @@ export class TournamentService {
           [team1.teamId, team2.teamId],
           tournament,
           courtId,
-          roundName
+          roundName,
         );
         matches.push(m);
       } catch (error) {
         console.error(
           `Error creating match for teams ${team1.teamId} vs ${team2.teamId}:`,
-          error
+          error,
         );
       }
 

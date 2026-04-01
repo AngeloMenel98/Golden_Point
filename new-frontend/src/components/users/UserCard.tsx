@@ -3,6 +3,7 @@ interface UserCardProps {
   fullName?: string;
   avatar?: string;
   onClick: () => void;
+  isParticipating?: boolean;
 }
 
 export function UserCard({
@@ -10,6 +11,7 @@ export function UserCard({
   fullName,
   avatar,
   onClick,
+  isParticipating,
 }: UserCardProps) {
   return (
     <button
@@ -40,9 +42,20 @@ export function UserCard({
 
         {/* User info */}
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-gp-dark truncate">
-            {fullName || username}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="font-medium text-gp-dark truncate">
+              {fullName || username}
+            </p>
+            {/* Status dot - green for participating, red for not */}
+            {isParticipating !== undefined && (
+              <span
+                className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
+                  isParticipating ? 'bg-[#22c55e]' : 'bg-[#ef4444]'
+                }`}
+                title={isParticipating ? 'Inscrito en el torneo' : 'No inscrito en el torneo'}
+              />
+            )}
+          </div>
           <p className="text-sm text-gp-gray truncate">@{username}</p>
         </div>
 

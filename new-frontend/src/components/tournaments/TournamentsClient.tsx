@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { Tournament } from "@/entities/Tournament";
 import { useTournament } from "@/context/TournamentContext";
+import { useUser } from "@/context/UserContext";
 import { TournamentCard } from "./TournamentCard";
 import { TournamentForm } from "./TournamentForm";
 import { ConfirmationModal } from "@/components/tours/ConfirmationModal";
+import { UserStatsDrawer } from "@/components/users/UserStatsDrawer";
 
 interface TournamentsClientProps {
   isAdmin: boolean;
@@ -21,6 +22,7 @@ export function TournamentsClient({
   initialTournaments = [],
 }: TournamentsClientProps) {
   const router = useRouter();
+  const { user } = useUser();
   const {
     tournaments,
     setTournaments,
@@ -37,6 +39,7 @@ export function TournamentsClient({
     show: boolean;
     tournamentId: string | null;
   }>({ show: false, tournamentId: null });
+  const [showMyStats, setShowMyStats] = useState(false);
 
   // Initialize tournaments from props
   useEffect(() => {
@@ -101,7 +104,7 @@ export function TournamentsClient({
 
   // Filter tournaments by tourId if provided
   const filteredTournaments = tourId
-    ? tournaments.filter((t) => t.tourId === tourId)
+    ? tournaments.filter((t) => t.tour.id === tourId)
     : tournaments;
 
   if (isLoading && tournaments.length === 0) {
@@ -119,28 +122,53 @@ export function TournamentsClient({
         <div className="flex items-center gap-4">
           <h1 className="text-3xl font-bold text-gp-dark">Torneos</h1>
         </div>
-        {isAdmin && (
-          <button
-            onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-gp-pastel text-white rounded-lg hover:bg-gp-pastel/90 transition-colors flex items-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        <div className="flex items-center gap-2">
+          {/* My Stats Button - visible for non-admin users */}
+          {user && !isAdmin && (
+            <button
+              onClick={() => setShowMyStats(true)}
+              className="px-4 py-2 bg-gp-light text-gp-dark rounded-lg hover:bg-gp-light/80 transition-colors flex items-center gap-2 border border-gp-gray-light/30"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            Crear Torneo
-          </button>
-        )}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              Mis Estadísticas
+            </button>
+          )}
+          {isAdmin && (
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="px-4 py-2 bg-gp-pastel text-white rounded-lg hover:bg-gp-pastel/90 transition-colors flex items-center gap-2"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              Crear Torneo
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Error Message */}
@@ -218,6 +246,16 @@ export function TournamentsClient({
         onCancel={() => setDeleteConfirm({ show: false, tournamentId: null })}
         variant="danger"
       />
+
+      {/* My Stats Drawer - for non-admin users viewing their own stats */}
+      {user && !isAdmin && (
+        <UserStatsDrawer
+          isOpen={showMyStats}
+          onClose={() => setShowMyStats(false)}
+          userId={String(user.id)}
+          username={user.username}
+        />
+      )}
     </div>
   );
 }

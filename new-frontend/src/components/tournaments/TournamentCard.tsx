@@ -20,8 +20,6 @@ interface TournamentCardProps {
   onClick?: (tournament: Tournament) => void;
 }
 
-// Calculate teams needed for tournament
-// In padel tournaments: 12 teams per category (typical)
 function getTeamsNeeded(
   categoriesCount: number,
   currentTeams: number = 0,
@@ -149,6 +147,7 @@ export function TournamentCard({
           )}
           <Link
             href={`/tournaments/${tournament.id}/users`}
+            onClick={(e) => e.stopPropagation()}
             className="p-2 text-gp-gray hover:text-gp-pastel hover:bg-gp-pastel/10 rounded-lg transition-colors"
             title="Ver participantes"
           >
@@ -324,7 +323,6 @@ export function TournamentCard({
         )}
       </div>
 
-      {/* Add Team Modal */}
       <AddTeamModal
         isOpen={isAddTeamModalOpen}
         onClose={() => setIsAddTeamModalOpen(false)}
@@ -332,7 +330,6 @@ export function TournamentCard({
         categories={tournament.categories || []}
       />
 
-      {/* Teams List Modal */}
       <TeamsListModal
         isOpen={isTeamsListModalOpen}
         onClose={() => setIsTeamsListModalOpen(false)}

@@ -1,11 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 
 interface UserGlobalStats {
-  matchesWon: number;
-  matchesLost: number;
-  setsWon: number;
-  setsLost: number;
-  points: number;
+  wins: number;
+  losses: number;
+  winRate: number;
+  gamesWon: number;
+  gamesLost: number;
+  totalPoints: number;
   tournamentsPlayed: number;
   currentRanking: number;
   highestRanking: number;
@@ -48,49 +49,61 @@ export function useUserStats(): UseUserStatsReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchUserStats = useCallback(async (userId: string, tournamentId?: string) => {
-    setIsLoading(true);
-    setError(null);
+  const fetchUserStats = useCallback(
+    async (userId: string, tournamentId?: string) => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      // Fetch global stats
-      const globalResponse = await fetch(`/api/users/stats/${userId}`, {
-        credentials: 'include',
-      });
+      try {
+        // If tournamentId is provided, fetch only tournament-specific stats
+        // Otherwise, fetch global stats
+        let stats: UserStatsData;
 
-      if (!globalResponse.ok) {
-        throw new Error('Failed to fetch user stats');
-      }
+        if (tournamentId) {
+          // Call tournament-specific endpoint only (no separate global call)
+          const tourStatsResponse = await fetch(
+            `/api/users/stats/${tournamentId}/${userId}`,
+            {
+              credentials: "include",
+            },
+          );
 
-      const globalData = await globalResponse.json();
-
-      let stats: UserStatsData = {
-        global: globalData.data || globalData,
-      };
-
-      // If tournamentId provided, fetch tournament-specific stats
-      if (tournamentId) {
-        const tourStatsResponse = await fetch(
-          `/api/users/stats/${tournamentId}/${userId}`,
-          {
-            credentials: 'include',
+          if (!tourStatsResponse.ok) {
+            throw new Error("Failed to fetch user tournament stats");
           }
-        );
 
-        if (tourStatsResponse.ok) {
           const tourStatsData = await tourStatsResponse.json();
-          stats.tournament = tourStatsData.data || tourStatsData;
-        }
-      }
 
-      setUserStats(stats);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching stats');
-      setUserStats(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+          // For tournament-specific view, structure the stats appropriately
+          // The tournament stats become the "global" in this context for display
+          stats = {
+            global: tourStatsData.data || tourStatsData,
+          };
+        } else {
+          const globalResponse = await fetch(`/api/users/stats/${userId}`, {
+            credentials: "include",
+          });
+
+          if (!globalResponse.ok) {
+            throw new Error("Failed to fetch user global stats");
+          }
+
+          const globalData = await globalResponse.json();
+          stats = {
+            global: globalData.data || globalData,
+          };
+        }
+
+        setUserStats(stats);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Error fetching stats");
+        setUserStats(null);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   const fetchRankings = useCallback(async (tourId: string) => {
     setIsLoading(true);
@@ -98,17 +111,17 @@ export function useUserStats(): UseUserStatsReturn {
 
     try {
       const response = await fetch(`/api/users/rankings/${tourId}`, {
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch rankings');
+        throw new Error("Failed to fetch rankings");
       }
 
       const data = await response.json();
       setRankings(data.data || data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching rankings');
+      setError(err instanceof Error ? err.message : "Error fetching rankings");
       setRankings([]);
     } finally {
       setIsLoading(false);

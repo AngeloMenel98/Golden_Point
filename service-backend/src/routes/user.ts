@@ -19,7 +19,7 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Contraseña")),
   ],
-  userController.logIn.bind(userController)
+  userController.logIn.bind(userController),
 );
 
 router.post(
@@ -56,7 +56,7 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Ciudad")),
   ],
-  userController.create.bind(userController)
+  userController.create.bind(userController),
 );
 
 router.post(
@@ -67,7 +67,7 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
   ],
-  userController.update.bind(userController)
+  userController.update.bind(userController),
 );
 
 router.post(
@@ -78,7 +78,7 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
   ],
-  userController.delete.bind(userController)
+  userController.delete.bind(userController),
 );
 
 router.get("/me", userController.me.bind(userController));
@@ -86,28 +86,28 @@ router.get("/me", userController.me.bind(userController));
 router.get("/users/:tourId", userController.getUsers.bind(userController));
 
 router.get(
-  "/user/:tourId/:category",
-  userController.getRanking.bind(userController)
+  "/users/:tourId/:category",
+  userController.getRanking.bind(userController),
 );
 
 router.get(
   "/users/stats/:userId",
-  userController.getUserStats.bind(userController)
+  userController.getUserStats.bind(userController),
 );
 
 router.get(
   "/users/stats/:tourId/:userId",
-  userController.getTournamentUserStats.bind(userController)
+  userController.getTournamentUserStats.bind(userController),
 );
 
 router.get(
   "/users/rankings",
-  userController.getGlobalRankings.bind(userController)
+  userController.getGlobalRankings.bind(userController),
 );
 
 router.get(
   "/users/rankings/:tourId",
-  userController.getTournamentRankings.bind(userController)
+  userController.getTournamentRankings.bind(userController),
 );
 
 router.get("/:username", userController.findByUsername.bind(userController));
