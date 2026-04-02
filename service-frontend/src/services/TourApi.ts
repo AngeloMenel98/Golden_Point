@@ -28,7 +28,7 @@ class TourAPI extends GeneralAPI {
   }
 
   async getTours(_userId: string): Promise<unknown[]> {
-    const res = await this.api.get(`/tour/tours/${_userId}`);
+    const res = await this.api.get(`/tours/${_userId}`);
     return res as unknown as unknown[];
   }
 

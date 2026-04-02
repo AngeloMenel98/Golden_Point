@@ -12,7 +12,7 @@ interface UserStatsDrawerProps {
   username: string;
   fullName?: string;
   tournamentId?: string;
-  tournamentName?: string;
+  tourId?: string;
 }
 
 type TabType = "overview" | "stats" | "ranking";
@@ -24,15 +24,15 @@ export function UserStatsDrawer({
   username,
   fullName,
   tournamentId: initialTournamentId,
-  tournamentName: initialTournamentName,
+  tourId,
 }: UserStatsDrawerProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [selectedTournamentId, setSelectedTournamentId] = useState<
     string | undefined
   >(initialTournamentId);
-  const [selectedTournamentName, setSelectedTournamentName] = useState<
-    string | undefined
-  >(initialTournamentName);
+  // const [selectedTournamentName, setSelectedTournamentName] = useState<
+  //   string | undefined
+  // >(initialTournamentName);
   const {
     userStats,
     rankings,
@@ -41,6 +41,7 @@ export function UserStatsDrawer({
     fetchUserStats,
     fetchRankings,
   } = useUserStats();
+
   const {
     tournaments,
     isLoading: tournamentsLoading,
@@ -58,17 +59,16 @@ export function UserStatsDrawer({
   useEffect(() => {
     if (initialTournamentId) {
       setSelectedTournamentId(initialTournamentId);
-      setSelectedTournamentName(initialTournamentName);
     }
-  }, [initialTournamentId, initialTournamentName]);
+  }, [initialTournamentId]);
 
   // Fetch stats when selected tournament changes
   useEffect(() => {
     if (isOpen && userId) {
       fetchUserStats(userId, selectedTournamentId);
-      console.log("userStat, setWOn", userStats?.global.gamesWon);
-      if (selectedTournamentId) {
-        fetchRankings(selectedTournamentId);
+
+      if (tourId) {
+        fetchRankings(tourId);
       }
     }
   }, [isOpen, userId, selectedTournamentId, fetchUserStats, fetchRankings]);
@@ -138,20 +138,12 @@ export function UserStatsDrawer({
                 </div>
                 <div className="bg-gp-light/50 rounded-lg p-4">
                   <p className="text-sm text-gp-gray">Ranking Actual</p>
-                  <p className="text-2xl font-bold text-gp-pastel">
-                    #{userStats.global.currentRanking}
+                  <p className="text-l font-bold text-gp-pastel">
+                    {userStats.global.currentRanking === 0
+                      ? "-"
+                      : `#${userStats.global.currentRanking} · ${userStats.global.category}`}
                   </p>
                 </div>
-              </div>
-            )}
-
-            {/* Tournament info if applicable */}
-            {selectedTournamentName && (
-              <div className="bg-gp-pastel/10 rounded-lg p-4 border border-gp-pastel/20">
-                <p className="text-sm text-gp-gray">Torneo Actual</p>
-                <p className="font-medium text-gp-dark">
-                  {selectedTournamentName}
-                </p>
               </div>
             )}
           </div>
@@ -160,7 +152,6 @@ export function UserStatsDrawer({
       case "stats":
         return (
           <div className="p-4 space-y-6">
-            {/* Global Stats */}
             {userStats && (
               <>
                 <div>
@@ -303,13 +294,10 @@ export function UserStatsDrawer({
                 <div className="bg-gp-light/30 rounded-lg p-4">
                   <p className="text-sm text-gp-gray mb-1">Posición Actual</p>
                   <p className="text-3xl font-bold text-gp-pastel">
-                    #{userStats.global.currentRanking}
+                    {userStats.global.currentRanking === 0
+                      ? "-"
+                      : `#${userStats.global.currentRanking}`}
                   </p>
-                  {selectedTournamentId && userStats.tournament && (
-                    <p className="text-sm text-gp-gray mt-2">
-                      en {selectedTournamentName || "este torneo"}
-                    </p>
-                  )}
                 </div>
 
                 <div className="bg-gp-pastel/10 rounded-lg p-4 border border-gp-pastel/20">
@@ -317,7 +305,9 @@ export function UserStatsDrawer({
                     Mejor Posición Histórica
                   </p>
                   <p className="text-3xl font-bold text-gp-dark">
-                    #{userStats.global.highestRanking}
+                    {userStats.global.highestRanking === 0
+                      ? "-"
+                      : `#${userStats.global.highestRanking}`}
                   </p>
                 </div>
               </div>
@@ -404,11 +394,9 @@ export function UserStatsDrawer({
               const value = e.target.value;
               if (value === "global") {
                 setSelectedTournamentId(undefined);
-                setSelectedTournamentName(undefined);
               } else {
                 const tournament = tournaments.find((t) => t.id === value);
                 setSelectedTournamentId(value);
-                setSelectedTournamentName(tournament?.name);
               }
             }}
             className="w-full p-2 bg-gp-light/50 border border-gp-gray-light/30 rounded-lg text-gp-dark focus:outline-none focus:ring-2 focus:ring-gp-pastel/50"

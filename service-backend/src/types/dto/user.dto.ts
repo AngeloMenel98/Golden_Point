@@ -7,6 +7,8 @@ export type UserResponse = {
   email: string;
   isSingle: boolean;
   role: UserRole;
+  firstName?: string;
+  lastName?: string;
 };
 
 export type UserDetailResponse = UserResponse & {

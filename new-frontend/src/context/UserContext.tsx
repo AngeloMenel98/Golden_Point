@@ -13,6 +13,8 @@ export interface User {
   id: number;
   username: string;
   email: string;
+  firstName?: string;
+  lastName?: string;
   role?: "admin" | "user";
 }
 
@@ -63,6 +65,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
         id: user.id,
         username: user.username,
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
         role: user.role,
       });
 
@@ -78,7 +82,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     setUser(null);
     // Clear the frontend cookie
-    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax';
+    document.cookie =
+      "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax";
   }, []);
 
   // Hydrate user from cookie on mount (page refresh)
@@ -86,8 +91,8 @@ export function UserProvider({ children }: { children: ReactNode }) {
     const hydrateUser = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/auth/me', {
-          credentials: 'include',
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
         });
 
         if (res.ok) {
@@ -97,16 +102,19 @@ export function UserProvider({ children }: { children: ReactNode }) {
               id: data.data.user.id,
               username: data.data.user.username,
               email: data.data.user.email,
+              firstName: data.data.user.firstName,
+              lastName: data.data.user.lastName,
               role: data.data.user.role,
             });
           }
         } else {
           // Token invalid/expired - clear cookie
-          document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax';
+          document.cookie =
+            "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax";
           setUser(null);
         }
       } catch (error) {
-        console.error('Error hydrating user:', error);
+        console.error("Error hydrating user:", error);
       } finally {
         setIsLoading(false);
       }

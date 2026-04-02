@@ -52,11 +52,13 @@ export class UserController {
       const user = await this.userService.logIn(username, password);
 
       const userResponse: UserResponse = {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        isSingle: user.isSingle,
-        role: user.role,
+        id: user.user.id,
+        username: user.user.username,
+        email: user.user.email,
+        isSingle: user.user.isSingle,
+        role: user.user.role,
+        firstName: user.personalData?.firstName,
+        lastName: user.personalData?.lastName,
       };
 
       const secretKey = process.env.JWT_SECRET_KEY;
@@ -358,7 +360,6 @@ export class UserController {
   }
 
   async getGlobalRankings(req: Request, res: Response): Promise<void> {
-    console.log("GET /users/rankings called");
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -428,6 +429,8 @@ export class UserController {
         email: string;
         isSingle: boolean;
         role: string;
+        firstName?: string;
+        lastName?: string;
       };
 
       const userResponse: UserResponse = {
@@ -436,6 +439,8 @@ export class UserController {
         email: decoded.email,
         isSingle: decoded.isSingle,
         role: decoded.role as UserRole,
+        firstName: decoded.firstName,
+        lastName: decoded.lastName,
       };
 
       const response: ApiResponse<UserResponse> = success(userResponse);

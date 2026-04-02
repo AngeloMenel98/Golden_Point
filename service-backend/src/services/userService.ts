@@ -25,7 +25,12 @@ export class UserService {
       throw conflict("Contraseña incorrecta", "Contraseña");
     }
 
-    return existingUser;
+    // Fetch personalData for JWT payload
+    const userWithPerData = await UserRepository.findUserWithPerData(
+      existingUser.id,
+    );
+
+    return { user: existingUser, personalData: userWithPerData?.personalData };
   }
 
   async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
@@ -181,13 +186,19 @@ export class UserService {
 
     return rankings.map(
       (
-        r: { userId: string; userName: string; points: number },
+        r: {
+          userid: string;
+          username: string;
+          category: string;
+          totalpoints: number;
+        },
         index: number,
       ) => ({
-        userId: r.userId,
-        userName: r.userName,
+        userId: r.userid,
+        userName: r.username,
         position: index + 1,
-        points: Number(r.points) || 0,
+        category: r.category,
+        points: Number(r.totalpoints) || 0,
       }),
     );
   }

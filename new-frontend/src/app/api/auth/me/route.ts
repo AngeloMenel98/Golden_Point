@@ -51,6 +51,8 @@ export async function GET(_request: NextRequest) {
           username: safeUser.username || safeUser.name,
           email: safeUser.email,
           role: safeUser.role,
+          firstName: safeUser.firstName,
+          lastName: safeUser.lastName,
         }
       }
     });

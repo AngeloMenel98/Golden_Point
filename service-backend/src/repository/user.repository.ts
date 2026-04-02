@@ -100,30 +100,6 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .getRawMany();
   },
 
-  async getRanking(tourId: string, category: string) {
-    return this.createQueryBuilder("u")
-      .select([
-        "u.id AS id",
-        "pd.lastName AS lastName",
-        "pd.firstName AS firstName",
-        "SUM(m.amountTourPoints) AS totalPoints",
-      ])
-      .innerJoin("personal_data", "pd", "pd.userId = u.id")
-      .innerJoin("team_users_user", "tuu", "tuu.userId = u.id")
-      .innerJoin("team", "t", "t.id = tuu.teamId")
-      .innerJoin("team_match", "tm", "tm.teamId = t.id")
-      .innerJoin("match", "m", "m.id = tm.matchId")
-      .innerJoin("tournament", "trn", "trn.id = t.tournamentId")
-      .innerJoin("tour_users_user", "ttt", "ttt.userId = u.id")
-      .innerJoin("tour", "t2", "t2.id = ttt.tourId")
-      .where("tm.isWinner = :isWinner", { isWinner: true })
-      .andWhere("t2.id = :tourId", { tourId })
-      .andWhere("t.category = :category", { category })
-      .groupBy("u.id, pd.lastName, pd.firstName")
-      .orderBy("totalPoints", "DESC")
-      .getRawMany();
-  },
-
   async getUserStats(userId: string) {
     // Get all matches where user participated (via team_match -> team -> team_users)
     const matchResults = await this.createQueryBuilder()
@@ -250,49 +226,79 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     return { wins, losses, totalPoints, gamesWon, gamesLost };
   },
 
-  async getGlobalRankings() {
-    return this.createQueryBuilder()
+  async getRanking(tourId: string, category: string) {
+    return this.createQueryBuilder("u")
       .select([
-        "u.id as userId",
-        "u.username as userName",
-        'COALESCE(SUM(m."amountTourPoints"), 0) as points',
+        "u.id AS id",
+        "pd.lastName AS lastName",
+        "pd.firstName AS firstName",
+        "SUM(m.amountTourPoints) AS totalPoints",
       ])
-      .from("user", "u")
-      .leftJoin("team_users_user", "tuu", 'tuu."userId" = u.id')
-      .leftJoin("team", "t", 't.id = tuu."teamId"')
-      .leftJoin("team_match", "tm", 'tm."teamId" = t.id AND tm.isWinner = true')
-      .leftJoin("match", "m", 'm.id = tm."matchId"')
-      .where("u.isDeleted = false")
-      .groupBy("u.id, u.username")
-      .orderBy("points", "DESC")
+      .innerJoin("personal_data", "pd", "pd.userId = u.id")
+      .innerJoin("team_users_user", "tuu", "tuu.userId = u.id")
+      .innerJoin("team", "t", "t.id = tuu.teamId")
+      .innerJoin("team_match", "tm", "tm.teamId = t.id")
+      .innerJoin("match", "m", "m.id = tm.matchId")
+      .innerJoin("tournament", "trn", "trn.id = t.tournamentId")
+      .innerJoin("tour_users_user", "ttt", "ttt.userId = u.id")
+      .innerJoin("tour", "t2", "t2.id = ttt.tourId")
+      .where("tm.isWinner = :isWinner", { isWinner: true })
+      .andWhere("t2.id = :tourId", { tourId })
+      .andWhere("t.category = :category", { category })
+      .groupBy("u.id, pd.lastName, pd.firstName")
+      .orderBy("totalPoints", "DESC")
+      .getRawMany();
+  },
+
+  async getGlobalRankings() {
+    return this.createQueryBuilder("u")
+      .select([
+        "u.id AS userId",
+        "u.username AS userName",
+        "t.category AS category",
+        'COALESCE(SUM(m."amountTourPoints"), 0) AS totalPoints',
+      ])
+      .innerJoin("team_users_user", "tuu", "tuu.userId = u.id")
+      .innerJoin("team", "t", "t.id = tuu.teamId")
+      .innerJoin(
+        "team_match",
+        "tm",
+        'tm."teamId" = t.id AND tm."isWinner" = true',
+      )
+      .innerJoin("match", "m", "m.id = tm.matchId")
+      .where('u."isDeleted" = false')
+      .groupBy("u.id, t.category")
+      .orderBy("totalPoints", "DESC")
       .getRawMany();
   },
 
   async getTournamentRankings(tourId: string) {
-    return this.createQueryBuilder()
-      .select([
-        "u.id as userId",
-        "u.username as userName",
-        'COALESCE(SUM(m."amountTourPoints"), 0) as points',
-      ])
-      .from("user", "u")
-      .innerJoin("tour_users_user", "tuut", 'tuut."userId" = u.id')
+    return this.createQueryBuilder("u")
+      .select("u.id", "userId")
+      .addSelect("u.username", "userName")
+      .addSelect('COALESCE(SUM(m."amountTourPoints"), 0)', "points")
+      .innerJoin(
+        "tour_users_user",
+        "tuut",
+        'tuut."userId" = u.id AND tuut."tourId" = :tourId',
+        { tourId },
+      )
       .innerJoin("team_users_user", "tuu", 'tuu."userId" = u.id')
-      .innerJoin("team", "t", 't.id = tuu."teamId"')
-      .innerJoin("tournament", "trn", 'trn."tourId" = :tourId', { tourId })
       .innerJoin(
         "team_match",
         "tm",
-        'tm."teamId" = t.id AND tm.isWinner = true',
+        'tm."teamId" = tuu."teamId" AND tm."isWinner" = true',
       )
       .innerJoin(
         "match",
         "m",
-        'm.id = tm."matchId" AND m."tournamentId" = trn.id',
+        'm.id = tm."matchId" AND m."tournamentId" IN (SELECT id FROM "tournament" WHERE "tourId" = :tourId)',
+        { tourId },
       )
-      .where("u.isDeleted = false")
-      .groupBy("u.id, u.username")
-      .orderBy("points", "DESC")
+      .where('u."isDeleted" = false')
+      .groupBy("u.id")
+      .addGroupBy("u.username")
+      .orderBy('"points"', "DESC")
       .getRawMany();
   },
 });

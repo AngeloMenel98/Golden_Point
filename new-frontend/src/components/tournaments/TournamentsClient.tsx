@@ -254,6 +254,11 @@ export function TournamentsClient({
           onClose={() => setShowMyStats(false)}
           userId={String(user.id)}
           username={user.username}
+          fullName={
+            `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim() ||
+            user.username
+          }
+          tourId={tourId}
         />
       )}
     </div>
