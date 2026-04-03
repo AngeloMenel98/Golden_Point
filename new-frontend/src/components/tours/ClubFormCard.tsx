@@ -16,7 +16,7 @@ interface ClubFormCardProps {
   onAdd: (club: ClubEntry) => void;
   onCreateClub?: (
     club: Omit<ClubEntry, "id">,
-  ) => Promise<{ success: boolean; error?: string }>;
+  ) => Promise<{ success: boolean; error?: string; newClubId?: string }>;
   availableClubs?: ClubEntry[];
   onDuplicateFound?: (clubId: string) => void;
 }

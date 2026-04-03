@@ -165,10 +165,6 @@ export function CreateTourModal({
     );
   };
 
-  const handleRemoveCustomClub = (id: string) => {
-    setSelectedClubs((prev) => prev.filter((club) => club.id !== id));
-  };
-
   // Handle creating a new club via API
   const handleCreateClub = async (
     clubData: Omit<ClubEntry, "id">,

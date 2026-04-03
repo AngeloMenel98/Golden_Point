@@ -43,11 +43,11 @@ export function UsersList({
       id: tournamentId,
       name: tournamentName,
       // Required fields with default values as we only need the above for global UI
-      tour: { id: '', name: '' },
+      tour: { id: '', name: '', tourCode: '', userCount: 0, tournamentCount: 0, userOwner: '' },
       masterScore: 0,
       status: TournamentStatus.PENDING,
       categories: [],
-    } as Tournament);
+    } as unknown as Tournament);
   }, [tournamentId, tournamentName, setCurrentTournament]);
 
   const handleUserClick = (user: UserData) => {

@@ -13,6 +13,7 @@ interface UserStatsDrawerProps {
   fullName?: string;
   tournamentId?: string;
   tourId?: string;
+  tournamentName?: string;
 }
 
 type TabType = "overview" | "stats" | "ranking";
@@ -25,6 +26,7 @@ export function UserStatsDrawer({
   fullName,
   tournamentId: initialTournamentId,
   tourId,
+  tournamentName,
 }: UserStatsDrawerProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   const [selectedTournamentId, setSelectedTournamentId] = useState<
@@ -362,6 +364,13 @@ export function UserStatsDrawer({
 
   return (
     <Drawer isOpen={isOpen} onClose={onClose} title={fullName || username}>
+      {/* Tournament name if provided */}
+      {tournamentName && (
+        <div className="px-4 py-2 bg-gp-pastel/10 border-b border-gp-pastel/20">
+          <span className="text-sm text-gp-gray">Torneo:</span>
+          <span className="ml-2 text-sm font-medium text-gp-dark">{tournamentName}</span>
+        </div>
+      )}
       {/* Tabs */}
       <div className="flex border-b border-gp-gray-light/50">
         {tabs.map((tab) => (
@@ -395,7 +404,6 @@ export function UserStatsDrawer({
               if (value === "global") {
                 setSelectedTournamentId(undefined);
               } else {
-                const tournament = tournaments.find((t) => t.id === value);
                 setSelectedTournamentId(value);
               }
             }}

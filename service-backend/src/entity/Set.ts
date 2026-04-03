@@ -7,6 +7,9 @@ export class Set {
     id: string;
 
     @Column('integer')
+    setNumber: number;
+
+    @Column('integer')
     gamesTeam1: number;
 
     @Column('integer')
