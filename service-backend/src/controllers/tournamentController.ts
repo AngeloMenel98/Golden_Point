@@ -193,14 +193,14 @@ export class TournamentController {
 
       tours.forEach((tour) => {
         const tournamentId = tour.tournamentid;
-        const tournamentName = tour.tournamentname;
+        const title = tour.tournamentname;
         const genderCategory = tour.gender_category.split("-");
         const gender = genderCategory[0];
         const category = genderCategory[1];
 
         if (!response.hasOwnProperty(tournamentId)) {
           response[tournamentId] = {
-            tournamentName: tournamentName,
+            title: title,
             teamsCount: tour.teamscount,
             master: tour.master,
             categories: [],

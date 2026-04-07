@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { UserProvider } from "@/context/UserContext";
 import { TourProvider } from "@/context/TourContext";
+import { TournamentProvider } from "@/context/TournamentContext";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,7 +22,9 @@ export default function RootLayout({
       <body className={`${inter.className} min-h-full flex flex-col antialiased`}>
         <UserProvider>
           <TourProvider>
-            {children}
+            <TournamentProvider>
+              {children}
+            </TournamentProvider>
           </TourProvider>
         </UserProvider>
       </body>

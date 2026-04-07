@@ -14,8 +14,8 @@ export interface Category {
 export interface Tournament {
   id: string;
   tour: Tour;
-  name: string;
-  masterScore: number;
+  title: string;
+  master: number;
   status: TournamentStatus;
   teamsCount?: number;
   categories: Category[];

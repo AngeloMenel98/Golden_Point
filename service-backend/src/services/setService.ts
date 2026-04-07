@@ -48,17 +48,22 @@ export class SetService {
         newSets.filter((set) => set.gamesTeam2 > set.gamesTeam1).length >= 2;
 
       if (!team1Wins && !team2Wins) {
-        throw validationError("Uno de los equipos debe ganar al menos 2 de los 3 sets");
+        throw validationError(
+          "Uno de los equipos debe ganar al menos 2 de los 3 sets",
+        );
       }
       winner = team1Wins ? "Team 1" : "Team 2";
+
+      console.log("winner", winner);
     }
 
     const setsToSave = newSets.map((set) => ({
+      setNumber: set.setNumber,
       gamesTeam1: set.gamesTeam1,
       gamesTeam2: set.gamesTeam2,
       match: match,
     }));
-
+    console.log("setsToSave", setsToSave);
     const setsSaved = await SetRepository.save(setsToSave);
     return { winner, setsSaved };
   }

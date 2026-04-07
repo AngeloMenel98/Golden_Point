@@ -31,7 +31,7 @@ export class SetController {
     setService?: SetService,
     teamMatchService?: TeamMatchService,
     tournamentService?: TournamentService,
-    matchService?: MatchService
+    matchService?: MatchService,
   ) {
     this._setService = setService;
     this._teamMatchService = teamMatchService;
@@ -68,22 +68,33 @@ export class SetController {
         return;
       }
 
-      const { userId, setsTeam1, setsTeam2, matchId, teamsId, tournamentId, categoryId } =
-        req.body;
+      const {
+        userId,
+        setsTeam1,
+        setsTeam2,
+        matchId,
+        teamsId,
+        tournamentId,
+        categoryId,
+      } = req.body;
 
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
       const tournament = await this.tournamentService.findById(tournamentId);
 
-      const setsArray: Set[] = setsTeam1.map((setTeam1: number, index: number) => {
-        const set = new Set();
-        set.gamesTeam1 = setTeam1;
-        set.gamesTeam2 = setsTeam2[index];
-        return set;
-      });
+      const setsArray: Set[] = setsTeam1.map(
+        (setTeam1: number, index: number) => {
+          const set = new Set();
+          set.setNumber = index + 1;
+          set.gamesTeam1 = setTeam1;
+          set.gamesTeam2 = setsTeam2[index];
+          return set;
+        },
+      );
+
       const { winner, setsSaved } = await this.setService.create(
         setsArray,
-        matchId
+        matchId,
       );
 
       const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
@@ -95,9 +106,7 @@ export class SetController {
       if (categoryId) {
         this.matchService
           .checkKnockoutTrigger(tournamentId, categoryId)
-          .catch((err) =>
-            console.error("Knockout trigger failed:", err)
-          );
+          .catch((err) => console.error("Knockout trigger failed:", err));
       }
 
       const response: ApiResponse<{

@@ -14,22 +14,16 @@ interface BreadcrumbItem {
 export default function BreadcrumbNav() {
   const pathname = usePathname();
   const { currentTournament } = useTournament();
-
-  // Parse the pathname into segments
   const segments = pathname.split("/").filter(Boolean);
 
-  // Don't render on home page
   if (segments.length === 0 || (segments.length === 1 && segments[0] === "")) {
     return null;
   }
 
-  // Build breadcrumb items based on path
   const breadcrumbs: BreadcrumbItem[] = [];
 
-  // Always start with Home
   let currentPath = "";
 
-  // Determine the breadcrumb structure based on the path
   const firstSegment = segments[0];
 
   if (firstSegment === "tours") {
@@ -56,7 +50,7 @@ export default function BreadcrumbNav() {
         const tournamentId = segments[3];
         const tournamentName =
           currentTournament?.id === tournamentId
-            ? currentTournament.name
+            ? currentTournament.title
             : `Tournament ${tournamentId}`;
 
         // Add the specific tournament
@@ -89,9 +83,10 @@ export default function BreadcrumbNav() {
     if (segments[1]) {
       // /tournaments/[id] - could be tournament detail or matches
       const tournamentId = segments[1];
+      // Always use currentTournament's title if available, regardless of ID match
       const tournamentName =
-        currentTournament?.id === tournamentId
-          ? currentTournament.name
+        currentTournament?.title
+          ? currentTournament.title
           : `Tournament ${tournamentId}`;
 
       if (segments[2] === "matches") {

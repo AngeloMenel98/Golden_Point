@@ -1,7 +1,6 @@
 import { Suspense } from 'react';
 import NavBar from '@/components/navbar/NavBar';
 import BreadcrumbNav from '@/components/navbar/BreadcrumbNav';
-import { TournamentProvider } from '@/context/TournamentContext';
 
 function DashboardLoadingFallback() {
   return (
@@ -20,16 +19,14 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <NavBar />
-      <TournamentProvider>
-        <div className="px-5 lg:px-10 pt-4">
-          <BreadcrumbNav />
-        </div>
-        <main className="flex-1 p-5 lg:p-10 max-w-7xl mx-auto w-full">
-          <Suspense fallback={<DashboardLoadingFallback />}>
-            {children}
-          </Suspense>
-        </main>
-      </TournamentProvider>
+      <div className="px-5 lg:px-10 pt-4">
+        <BreadcrumbNav />
+      </div>
+      <main className="flex-1 p-5 lg:p-10 max-w-7xl mx-auto w-full">
+        <Suspense fallback={<DashboardLoadingFallback />}>
+          {children}
+        </Suspense>
+      </main>
     </div>
   );
 }

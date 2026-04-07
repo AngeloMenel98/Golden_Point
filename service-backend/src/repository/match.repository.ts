@@ -276,6 +276,8 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .from("team_match", "tm")
       .innerJoin("team", "t", 't.id = tm."teamId"')
       .where("tm.matchId IN (:...matchIds)", { matchIds })
+      .orderBy("tm.matchId")
+      .addOrderBy("tm.isWinner", "DESC")
       .getRawMany();
 
     const teamIds = [...new Set(teamMatches.map((tm) => tm.teamid))];
@@ -305,6 +307,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .select([
         "s.id AS id",
         "s.matchId AS matchId",
+        "s.setNumber as setNumber",
         "s.gamesTeam1 AS gamesTeam1",
         "s.gamesTeam2 AS gamesTeam2",
       ])
@@ -312,6 +315,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .from("set", "s")
       .where("s.matchId IN (:...matchIds)", { matchIds })
       .orderBy("s.matchId")
+      .addOrderBy("s.setNumber")
       .getRawMany();
 
     const response: MatchResponse[] = matches.map((match) => {
@@ -339,7 +343,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       const matchSets = sets.filter((s) => s.matchid === match.id);
 
       const formattedSets: MatchSetResponse[] = matchSets.map((s) => ({
-        setNumber: parseInt(s.setNumber, 10),
+        setNumber: parseInt(s.setnumber, 10),
         gamesTeam1: parseInt(s.gamesteam1, 10),
         gamesTeam2: parseInt(s.gamesteam2, 10),
       }));
