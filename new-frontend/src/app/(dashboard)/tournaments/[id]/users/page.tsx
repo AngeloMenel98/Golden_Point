@@ -86,7 +86,7 @@ async function fetchTournamentUsers(
     const users = data.data || [];
     return users.map((user: Record<string, unknown>) => ({
       id: String(user.id || user.userId || ""),
-      username: String(user.username || ""),
+      username: String(user.username || user.userName || ""),
       firstName: user.firstName ? String(user.firstName) : undefined,
       lastName: user.lastName ? String(user.lastName) : undefined,
       fullName:
@@ -211,6 +211,7 @@ export default async function TournamentUsersPage({
         users={users}
         tournamentId={id}
         tournamentName={tournament.title}
+        tourId={tournament.tour.id}
         participationMap={participationMap}
       />
     </div>

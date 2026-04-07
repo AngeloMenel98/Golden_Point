@@ -106,12 +106,13 @@ export class UserService {
     return { user: user, perData: userData.personalData };
   }
 
-  async getAll(tourId: string): Promise<UserListResult[]> {
+  async getAll(tourId: string) {
     const users: UserListResult[] = await UserRepository.getAll(tourId);
 
     if (users.length == 0) {
       throw conflict("No se encontro ningún Usuario.", "Usuarios");
     }
+
     return users;
   }
 

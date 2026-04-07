@@ -86,7 +86,7 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
   },
 
   async getAll(tourId: string) {
-    return this.createQueryBuilder("u")
+    const users = await this.createQueryBuilder("u")
       .select([
         "u.id AS userId",
         "u.username AS userName",
@@ -98,6 +98,20 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
       .innerJoin("tour", "t", 't.id = tuu."tourId"')
       .where("t.id = :tourId", { tourId })
       .getRawMany();
+
+    return users.map(
+      (u: {
+        userid: string;
+        username: string;
+        lastname: string;
+        firstname: string;
+      }) => ({
+        userId: u.userid,
+        userName: u.username,
+        firstName: u.firstname,
+        lastName: u.lastname,
+      }),
+    );
   },
 
   async getUserStats(userId: string) {

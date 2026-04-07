@@ -368,7 +368,9 @@ export function UserStatsDrawer({
       {tournamentName && (
         <div className="px-4 py-2 bg-gp-pastel/10 border-b border-gp-pastel/20">
           <span className="text-sm text-gp-gray">Torneo:</span>
-          <span className="ml-2 text-sm font-medium text-gp-dark">{tournamentName}</span>
+          <span className="ml-2 text-sm font-medium text-gp-dark">
+            {tournamentName}
+          </span>
         </div>
       )}
       {/* Tabs */}

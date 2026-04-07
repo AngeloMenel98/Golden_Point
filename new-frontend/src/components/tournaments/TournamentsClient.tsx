@@ -247,7 +247,6 @@ export function TournamentsClient({
         variant="danger"
       />
 
-      {/* My Stats Drawer - for non-admin users viewing their own stats */}
       {user && !isAdmin && (
         <UserStatsDrawer
           isOpen={showMyStats}
