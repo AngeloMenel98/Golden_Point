@@ -106,7 +106,7 @@ export function TournamentDetails({
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gp-dark">
-            {currentTournament.name}
+            {currentTournament.title}
           </h1>
           <p className="text-sm text-gp-gray mt-1">
             Tour ID: {currentTournament.tour?.id}
@@ -173,7 +173,7 @@ export function TournamentDetails({
         <div className="bg-gp-light/50 rounded-lg p-4">
           <p className="text-sm text-gp-gray">Master Score</p>
           <p className="text-xl font-bold text-gp-dark">
-            {currentTournament.masterScore}
+            {currentTournament.master}
           </p>
         </div>
         <div className="bg-gp-light/50 rounded-lg p-4">

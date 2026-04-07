@@ -34,21 +34,21 @@ export function UsersList({
   participationMap,
 }: UsersListProps) {
   const [selectedUser, setSelectedUser] = useState<SelectedUser | null>(null);
-  const { setCurrentTournament } = useTournament();
+  const { setCurrentTournament, currentTournament } = useTournament();
 
   useEffect(() => {
-    // Synchronize server-fetched tournament metadata into TournamentContext
-    // This allows components outside this page (like BreadcrumbNav) to access the name
-    setCurrentTournament({
-      id: tournamentId,
-      name: tournamentName,
-      // Required fields with default values as we only need the above for global UI
-      tour: { id: '', name: '', tourCode: '', userCount: 0, tournamentCount: 0, userOwner: '' },
-      masterScore: 0,
-      status: TournamentStatus.PENDING,
-      categories: [],
-    } as unknown as Tournament);
-  }, [tournamentId, tournamentName, setCurrentTournament]);
+    // Only update if tournament title is different to avoid infinite loops
+    if (tournamentName && currentTournament?.title !== tournamentName) {
+      setCurrentTournament({
+        id: tournamentId,
+        title: tournamentName,
+        tour: { id: '', name: '', tourCode: '', userCount: 0, tournamentCount: 0, userOwner: '' },
+        master: 0,
+        status: TournamentStatus.PENDING,
+        categories: [],
+      } as unknown as Tournament);
+    }
+  }, [tournamentId, tournamentName, setCurrentTournament, currentTournament]);
 
   const handleUserClick = (user: UserData) => {
     setSelectedUser({

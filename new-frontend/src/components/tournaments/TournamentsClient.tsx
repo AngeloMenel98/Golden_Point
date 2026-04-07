@@ -100,7 +100,7 @@ export function TournamentsClient({
     [router],
   );
 
-  const existingNames = tournaments.map((t) => t.name.toLowerCase());
+  const existingNames = tournaments.map((t) => t.title.toLowerCase());
 
   // Filter tournaments by tourId if provided
   const filteredTournaments = tourId

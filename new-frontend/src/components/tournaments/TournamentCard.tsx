@@ -119,7 +119,7 @@ export function TournamentCard({
       <div className="p-4">
         <div className="flex items-start justify-between mb-3">
           <h3 className="text-lg font-semibold text-gp-dark truncate flex-1">
-            {tournament.name}
+            {tournament.title}
           </h3>
           <span
             className={`px-2 py-1 text-xs font-medium rounded-full border ${getStatusBadgeClass(tournament.status as TournamentStatus)}`}
@@ -131,7 +131,7 @@ export function TournamentCard({
         <div className="flex items-center gap-4 text-sm text-gp-gray mb-3">
           <div>
             <span className="font-medium">Master Score:</span>{" "}
-            {tournament.masterScore}
+            {tournament.master}
           </div>
           <div>
             <span className="font-medium">Categorías:</span>{" "}
