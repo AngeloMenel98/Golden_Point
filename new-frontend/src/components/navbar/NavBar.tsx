@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
-import GPLogo from '@/components/icons/GPLogo';
+import RedesignedLogo from '@/components/icons/RedesignedLogo';
 import { User, LogOut } from 'lucide-react';
 
 export default function NavBar() {
@@ -12,7 +12,7 @@ export default function NavBar() {
     <nav className="flex justify-between items-center px-5 py-4 bg-gp-dark text-white shadow-lg">
       <div className="flex items-center gap-6">
         <Link href="/" className="flex items-center gap-2">
-          <GPLogo width={50} height={30} />
+          <RedesignedLogo width={50} height={30} />
         </Link>
       </div>
       <div className="flex items-center gap-4">

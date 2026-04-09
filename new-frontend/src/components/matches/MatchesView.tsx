@@ -9,7 +9,13 @@ import { useTournament } from "@/context/TournamentContext";
 import { useUser } from "@/context/UserContext";
 
 const CATEGORIES = ["Masculino-Septima", "Masculino-Sexta", "Femenino-Quinta"];
-const GROUP_STAGES = ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"];
+const GROUP_STAGES = [
+  "Grupo 1",
+  "Grupo 2",
+  "Grupo 3",
+  "Grupo 4",
+  "Cuartos de Final",
+];
 
 interface Props {
   initialMatches: Match[];
@@ -83,10 +89,10 @@ export default function MatchesView({
           <EmptyState />
         ) : (
           initialMatches.map((m) => (
-            <MatchCard 
-              key={m.id} 
-              match={m} 
-              onEdit={isAdmin ? () => setEditingMatch(m) : undefined} 
+            <MatchCard
+              key={m.id}
+              match={m}
+              onEdit={isAdmin ? () => setEditingMatch(m) : undefined}
             />
           ))
         )}

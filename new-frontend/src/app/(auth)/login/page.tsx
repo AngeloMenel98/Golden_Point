@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useUser } from "@/context/UserContext";
-import GPLogo from "@/components/icons/GPLogo";
+import RedesignedLogo from "@/components/icons/RedesignedLogo";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -37,7 +37,7 @@ export default function LoginPage() {
       >
         {/* Logo at bottom left */}
         <div className="absolute bottom-8 left-8">
-          <GPLogo width={180} height={90} />
+          <RedesignedLogo width={180} height={90} />
         </div>
       </div>
 
@@ -46,7 +46,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Logo for mobile */}
           <div className="lg:hidden flex justify-center mb-8">
-            <GPLogo width={150} height={75} />
+            <RedesignedLogo width={150} height={75} />
           </div>
           
           <div className="bg-white rounded-lg shadow-xl p-8">

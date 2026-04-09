@@ -63,6 +63,7 @@ export type QualifiedTeam = {
   groupStageId: string;
   matchesWon: number;
   gamesDiff: number;
+  matchOrder?: number; // For knockout stages: which match number (1,2,3,4)
 };
 
 export type KnockoutTriggerResponse = {

@@ -418,10 +418,22 @@ class GroupDTO {
 ### Advancement Rules
 
 - Top 2 teams from each group advance to knockout
-- Pairing: 1st place from Group A vs 2nd place from Group B, and vice versa
-- If groups are [A, B, C, D]:
-  - A1 vs B2, B1 vs A2
-  - C1 vs D2, D1 vs C2
+- **Quarter-finals (8 teams = 4 matches)**:
+  ```
+  Match 1: Grupo A 1st  vs  Grupo D 2nd
+  Match 2: Grupo B 1st  vs  Grupo C 2nd
+  Match 3: Grupo C 1st  vs  Grupo B 2nd
+  Match 4: Grupo D 1st  vs  Grupo A 2nd
+  ```
+- **Semi-finals (4 teams = 2 matches)**:
+  ```
+  Match 5: Winner Match 1  vs  Winner Match 2
+  Match 6: Winner Match 3  vs  Winner Match 4
+  ```
+- **Final (2 teams = 1 match)**:
+  ```
+  Match 7: Winner Match 5  vs  Winner Match 6
+  ```
 
 ### Knockout Progression Flow
 

@@ -28,7 +28,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   // WARNING: synchronize: true automatically syncs schema changes - DO NOT use in production!
   // It can cause data loss and security issues. Use migrations instead for production.
-  synchronize: false,
+  synchronize: true,
   entities: [
     User,
     PersonalData,

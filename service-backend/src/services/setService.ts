@@ -53,8 +53,6 @@ export class SetService {
         );
       }
       winner = team1Wins ? "Team 1" : "Team 2";
-
-      console.log("winner", winner);
     }
 
     const setsToSave = newSets.map((set) => ({
@@ -63,7 +61,6 @@ export class SetService {
       gamesTeam2: set.gamesTeam2,
       match: match,
     }));
-    console.log("setsToSave", setsToSave);
     const setsSaved = await SetRepository.save(setsToSave);
     return { winner, setsSaved };
   }

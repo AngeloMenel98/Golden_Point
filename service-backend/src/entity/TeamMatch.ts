@@ -13,6 +13,9 @@ export class TeamMatch {
   @Column({ default: false })
   isWinner: boolean;
 
+  @Column({ type: "integer", nullable: true })
+  position: number; // 1 or 2 - position in the match (team1 or team2)
+
   @CreateDateColumn({ name: "createdAt" })
   createdAt: Date;
 

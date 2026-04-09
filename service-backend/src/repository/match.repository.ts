@@ -59,9 +59,16 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     return this.manager.transaction(async (transactionalEntityManager) => {
       const tmMatch: TeamMatch[] = [];
 
+      // Find or create GroupStage - filter by tournament to avoid cross-tournament conflicts
+      // Use LEFT JOIN to handle new knockout stages that don't have matches yet
       let savedGroupStage = await transactionalEntityManager
         .getRepository(GroupStage)
-        .findOne({ where: { groupStage: groupStage } });
+        .createQueryBuilder("gs")
+        .leftJoin("gs.matches", "m")
+        .leftJoin("m.tournament", "t")
+        .where("gs.groupStage = :groupStage", { groupStage })
+        .andWhere("t.id = :tournamentId OR t.id IS NULL", { tournamentId: tournament.id })
+        .getOne();
 
       if (!savedGroupStage) {
         savedGroupStage = transactionalEntityManager
@@ -76,10 +83,11 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         .getRepository(Match)
         .save({ ...match, court, tournament, groupStage: savedGroupStage });
 
-      teams.forEach((team) => {
+      teams.forEach((team, index) => {
         const teamMatch = new TeamMatch();
         teamMatch.team = team;
         teamMatch.match = savedMatch;
+        teamMatch.position = index + 1; // 1 or 2
 
         teamMatch.isWinner = false;
         tmMatch.push(teamMatch);
@@ -173,12 +181,13 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     categoryId: string,
   ): Promise<Match[]> {
     return this.createQueryBuilder("m")
-      .innerJoin("m.tournament", "t")
-      .innerJoin("t.categories", "c")
-      .innerJoin("m.groupStage", "gs")
+      .innerJoinAndSelect("m.groupStage", "gs")
       .leftJoinAndSelect("m.teamMatches", "tm")
-      .leftJoinAndSelect("tm.team", "team")
-      .where("t.id = :tournamentId", { tournamentId })
+      .leftJoinAndSelect("tm.team", "t")
+      .leftJoinAndSelect("m.sets", "s")
+      .innerJoin("m.tournament", "trn")
+      .innerJoin("trn.categories", "c")
+      .where("trn.id = :tournamentId", { tournamentId })
       .andWhere("c.id = :categoryId", { categoryId })
       .andWhere("gs.groupStage NOT IN (:...knockoutStages)", {
         knockoutStages: [
@@ -207,6 +216,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .where("t.id = :tournamentId", { tournamentId })
       .andWhere("c.id = :categoryId", { categoryId })
       .andWhere("gs.groupStage = :stageName", { stageName })
+      .orderBy("m.id", "ASC")
       .getMany();
   },
 
