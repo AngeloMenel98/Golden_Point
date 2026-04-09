@@ -1,4 +1,4 @@
-import { CategoryService, ClubService, MatchService, TourService } from ".";
+import { CategoryService, MatchService, TourService } from ".";
 import time from "../constants/time";
 import { Category, Match, Tournament } from "../entity";
 import { GroupDTO } from "../entity/dtos/GroupsDTO";
@@ -10,19 +10,15 @@ import {
   KNOCKOUT_STAGES,
 } from "../repository";
 import { ClubData, CourtData, TeamData, TourData } from "../utils/interfaces";
-import {
-  shuffleArray,
-  sortTeamsPerCategoryByPoints,
-} from "../utils/functionHelpers";
-import { Stats } from "fs";
+import { sortTeamsPerCategoryByPoints } from "../utils/functionHelpers";
 import { Status } from "../entity/Tournament";
 import { notFound, conflict, validationError } from "../types/error/app-error";
-import { TeamRankingData } from "../types/dto/team.dto";
 import {
   KnockoutResult,
   StageCompletion,
   QualifiedTeam,
 } from "../types/dto/tournament.dto";
+import { quarterFinalKnockOut, semiFinalKnockOut } from "../helpers/knock-out";
 
 export class TournamentService {
   private _tourService?: TourService;
@@ -407,7 +403,10 @@ export class TournamentService {
         const loserTM = match.teamMatches?.find((tm) => tm.isWinner === false);
 
         if (winnerTM && loserTM) {
-          teamWins.set(winnerTM.teamId, (teamWins.get(winnerTM.teamId) || 0) + 1);
+          teamWins.set(
+            winnerTM.teamId,
+            (teamWins.get(winnerTM.teamId) || 0) + 1,
+          );
 
           // Calculate games from sets using position
           const sets = match.sets || [];
@@ -483,9 +482,11 @@ export class TournamentService {
       const topTwo = teamData.slice(0, 2);
 
       topTwo.forEach((td) => {
+        const groupStageName = matches[0]?.groupStage?.groupStage ?? "";
         qualifiedTeams.push({
           teamId: td.teamId,
           groupStageId: groupId,
+          groupStage: groupStageName,
           matchesWon: td.wins,
           gamesDiff: td.gamesDiff,
         });
@@ -539,6 +540,7 @@ export class TournamentService {
         winners.push({
           teamId: winnerTM.teamId,
           groupStageId: match.groupStage.id,
+          groupStage: match.groupStage.groupStage ?? "",
           matchesWon: 1, // Single match in knockout
           gamesDiff: 0,
           matchOrder: index + 1, // 1-based match order
@@ -765,52 +767,23 @@ export class TournamentService {
       });
     }
 
-    // Create matchups based on round:
-    // - QUARTER-FINALS (8 teams = 4 matches): 4 groups (A, B, C, D sorted alphabetically)
-    //   New pairing (from padel-logic.md):
-    //   - Match 1: A1 vs D2 (groups[0] vs groups[3])
-    //   - Match 2: B1 vs C2 (groups[1] vs groups[2])
-    //   - Match 3: C1 vs B2 (groups[2] vs groups[1])
-    //   - Match 4: D1 vs A2 (groups[3] vs groups[0])
-    // - SEMI-FINALS (4 teams = 2 matches):
-    //   - Match 5: Winner QF1 vs Winner QF2 (sequential)
-    //   - Match 6: Winner QF3 vs Winner QF4 (sequential)
-    // - FINAL: Simple sequential pairing (2 teams = 1 match)
+    let matchups: [QualifiedTeam, QualifiedTeam][] = [];
 
-    const matchups: [QualifiedTeam, QualifiedTeam][] = [];
-    const groups = Object.keys(teamsByGroup).sort(); // Sort for deterministic pairing
+    const extractGroupNumber = (name: string): number => {
+      const match = name.match(/(\d+)$/);
+      return match ? parseInt(match[1], 10) : 0;
+    };
+
+    const groups = Object.keys(teamsByGroup).sort((a, b) => {
+      const nameA = teamsByGroup[a][0]?.groupStage ?? "";
+      const nameB = teamsByGroup[b][0]?.groupStage ?? "";
+      return extractGroupNumber(nameA) - extractGroupNumber(nameB);
+    });
 
     if (roundName === KNOCKOUT_STAGES.CUARTOS) {
-      // Quarter-finals: A1 vs D2, D1 vs A2, B1 vs C2, C1 vs B2
-      if (teamsByGroup[groups[0]] && teamsByGroup[groups[3]]) {
-        matchups.push([
-          teamsByGroup[groups[0]][0], // A1
-          teamsByGroup[groups[3]][1], // D2
-        ]);
-        matchups.push([
-          teamsByGroup[groups[3]][0], // D1
-          teamsByGroup[groups[0]][1], // A2
-        ]);
-      }
-
-      if (teamsByGroup[groups[1]] && teamsByGroup[groups[2]]) {
-        matchups.push([
-          teamsByGroup[groups[1]][0], // B1
-          teamsByGroup[groups[2]][1], // C2
-        ]);
-        matchups.push([
-          teamsByGroup[groups[2]][0], // C1
-          teamsByGroup[groups[1]][1], // B2
-        ]);
-      }
+      matchups = quarterFinalKnockOut(teamsByGroup, groups);
     } else if (roundName === KNOCKOUT_STAGES.SEMIFINAL) {
-      // Semi-finals: Winner QF1 vs Winner QF2, Winner QF3 vs Winner QF4
-      // Teams are passed in order of quarter-final matches (matchOrder 1,2,3,4)
-      const sortedTeams = [...teams].sort((a, b) => (a.matchOrder || 0) - (b.matchOrder || 0));
-      if (sortedTeams.length === 4) {
-        matchups.push([sortedTeams[0], sortedTeams[1]]); // M1 vs M2
-        matchups.push([sortedTeams[2], sortedTeams[3]]); // M3 vs M4
-      }
+      matchups = semiFinalKnockOut(teams);
     } else {
       // Final or other: simple sequential pairing
       for (let i = 0; i < teams.length; i += 2) {
