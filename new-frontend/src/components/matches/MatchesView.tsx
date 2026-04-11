@@ -4,6 +4,7 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import MatchCard from "./MatchCard";
 import MatchCardSkeleton from "./MatchCardSkeleton";
 import EditMatchModal from "./EditMatchModal";
+import EditMatchDateModal from "./EditMatchDateModal";
 import type { Match } from "@/types/match";
 import { useTournament } from "@/context/TournamentContext";
 import { useUser } from "@/context/UserContext";
@@ -56,6 +57,7 @@ export default function MatchesView({
   }, [tournamentName]);
 
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
+  const [editingDateMatch, setEditingDateMatch] = useState<Match | null>(null);
 
   function handleFilterChange(key: "category" | "groupStage", value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -93,6 +95,7 @@ export default function MatchesView({
               key={m.id}
               match={m}
               onEdit={isAdmin ? () => setEditingMatch(m) : undefined}
+              onEditDate={() => setEditingDateMatch(m)}
             />
           ))
         )}
@@ -112,6 +115,17 @@ export default function MatchesView({
           onClose={() => setEditingMatch(null)}
           onSaved={() => {
             setEditingMatch(null);
+            router.refresh();
+          }}
+        />
+      )}
+
+      {editingDateMatch && (
+        <EditMatchDateModal
+          match={editingDateMatch}
+          onClose={() => setEditingDateMatch(null)}
+          onSaved={() => {
+            setEditingDateMatch(null);
             router.refresh();
           }}
         />

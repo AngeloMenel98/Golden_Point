@@ -11,7 +11,7 @@ export class MatchService {
   constructor(
     teamService?: TeamService,
     courtService?: CourtService,
-    tournamentService?: TournamentService
+    tournamentService?: TournamentService,
   ) {
     this._teamService = teamService;
     this._courtService = courtService;
@@ -44,10 +44,10 @@ export class MatchService {
     teamIds: string[],
     tournament: Tournament,
     courtId: string,
-    groupStage: string
+    groupStage: string,
   ) {
     const teams: Team[] = await Promise.all(
-      teamIds.map((teamId) => this.teamService.findById(teamId))
+      teamIds.map((teamId) => this.teamService.findById(teamId)),
     );
 
     const court = await this.courtService.findById(courtId);
@@ -61,7 +61,7 @@ export class MatchService {
       teams,
       tournament,
       court,
-      groupStage
+      groupStage,
     );
   }
 
@@ -81,7 +81,7 @@ export class MatchService {
     const matches: unknown[] = await MatchRepository.getMatches(
       tournamentId,
       category,
-      groupStage
+      groupStage,
     );
 
     if (matches.length == 0) {
@@ -98,7 +98,7 @@ export class MatchService {
     matchId: string,
     matchDate: string,
     courtNumber: string,
-    clubId: string
+    clubId: string,
   ) {
     const court = await CourtRepository.getCourtByClubId(clubId, courtNumber);
 
@@ -121,12 +121,15 @@ export class MatchService {
    */
   async checkKnockoutTrigger(
     tournamentId: string,
-    categoryId: string
-  ): Promise<{ triggered: boolean; result?: { stage: string; matchesCreated: number } }> {
+    categoryId: string,
+  ): Promise<{
+    triggered: boolean;
+    result?: { stage: string; matchesCreated: number };
+  }> {
     try {
       const result = await this.tournamentService.processKnockoutProgression(
         tournamentId,
-        categoryId
+        categoryId,
       );
 
       if (result) {

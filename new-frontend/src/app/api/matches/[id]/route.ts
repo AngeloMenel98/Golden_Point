@@ -34,7 +34,34 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Parse request body
     const body = await request.json();
-    const { games } = body;
+    const { games, matchdate, clubId, courtNumber } = body;
+
+    // Handle date update
+    if (matchdate) {
+      const dateResponse = await fetch(`${API_URL}/api/matches/update`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          matchId,
+          matchDate: matchdate,
+          clubId,
+          courtNumber,
+        }),
+      });
+
+      const dateData = await dateResponse.json();
+      if (!dateResponse.ok) {
+        return NextResponse.json(
+          { success: false, error: dateData.error?.message || dateData.message || 'Error al actualizar fecha' },
+          { status: dateResponse.status }
+        );
+      }
+      return NextResponse.json({ success: true, data: dateData.data });
+    }
 
     if (!games) {
       return NextResponse.json({ success: false, error: 'Los resultados (games) son requeridos' }, { status: 400 });

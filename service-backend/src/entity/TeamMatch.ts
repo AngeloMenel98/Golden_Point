@@ -1,8 +1,10 @@
-import { Entity, ManyToOne, PrimaryColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, ManyToOne, PrimaryColumn, Column, CreateDateColumn, Index } from "typeorm";
 import { Team } from "./Team";
 import { Match } from "./Match";
 
 @Entity()
+@Index("IDX_TEAM_MATCH_TEAM", ["team"])
+@Index("IDX_TEAM_MATCH_MATCH", ["match"])
 export class TeamMatch {
   @PrimaryColumn()
   teamId: string;
