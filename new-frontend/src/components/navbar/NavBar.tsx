@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useUser } from '@/context/UserContext';
 import RedesignedLogo from '@/components/icons/RedesignedLogo';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, Coins } from 'lucide-react';
 
 export default function NavBar() {
   const { user, logout } = useUser();
@@ -21,6 +21,12 @@ export default function NavBar() {
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5 text-gp-pastel" />
                 <span className="hidden sm:inline-block font-medium">{user.username}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Coins className="w-4 h-4 text-amber-400" />
+                <span className="text-sm font-medium text-amber-300">
+                  {user.tourCoins ?? 0}
+                </span>
               </div>
               <button
                 onClick={logout}

@@ -518,7 +518,6 @@ export class TournamentService {
       categoryId,
       stageName,
     );
-
     if (matches.length === 0) {
       return { complete: false };
     }
@@ -559,10 +558,8 @@ export class TournamentService {
     tournamentId: string,
     categoryId: string,
   ): Promise<Date[]> {
-    // Get club data for the tournament
-    const clubData = await this.getDataForStartingTournament(
-      await this.findById(tournamentId),
-    );
+    const tournament = await this.findById(tournamentId);
+    const clubData = await this.getDataForStartingTournament(tournament);
 
     // Calculate all available hours for clubs
     await this.getHoursOfMatches(clubData.clubData);
@@ -662,7 +659,6 @@ export class TournamentService {
         categoryId,
         KNOCKOUT_STAGES.SEMIFINAL,
       );
-
       if (!hasSemis) {
         const remainingHours = await this.getRemainingHours(
           tournamentId,
@@ -780,6 +776,8 @@ export class TournamentService {
       return extractGroupNumber(nameA) - extractGroupNumber(nameB);
     });
 
+    console.log("groups", groups);
+
     if (roundName === KNOCKOUT_STAGES.CUARTOS) {
       matchups = quarterFinalKnockOut(teamsByGroup, groups);
     } else if (roundName === KNOCKOUT_STAGES.SEMIFINAL) {
@@ -819,8 +817,31 @@ export class TournamentService {
       }
 
       const match = new Match();
-      match.amountTourCoins = 70;
-      match.amountTourPoints = 75;
+      const masterScore = tournament.master || 500;
+
+      // Calculate points based on round
+      // Group stage: 7%, Cuartos: 14%, Semifinal: 20%, Final: 50%, Winner: 100%
+      let amountTourPoints: number;
+      if (roundName.startsWith("Grupo")) {
+        amountTourPoints = Math.round(masterScore * 0.07);
+      } else {
+        switch (roundName) {
+          case KNOCKOUT_STAGES.CUARTOS:
+            amountTourPoints = Math.round(masterScore * 0.14);
+            break;
+          case KNOCKOUT_STAGES.SEMIFINAL:
+            amountTourPoints = Math.round(masterScore * 0.20);
+            break;
+          case KNOCKOUT_STAGES.FINAL:
+            amountTourPoints = Math.round(masterScore * 0.50);
+            break;
+          default:
+            amountTourPoints = masterScore; // Full points for winner
+        }
+      }
+
+      match.amountTourCoins = Math.round(masterScore * 0.07); // 7% of master for coins
+      match.amountTourPoints = amountTourPoints;
       match.matchDate = remainingHours[hourIndex].toISOString();
 
       const courtId = allCourtIds[courtIndex % allCourtIds.length];

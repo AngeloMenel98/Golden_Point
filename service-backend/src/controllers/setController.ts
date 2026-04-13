@@ -68,19 +68,12 @@ export class SetController {
         return;
       }
 
-      const {
-        userId,
-        setsTeam1,
-        setsTeam2,
-        matchId,
-        teamsId,
-        tournamentId,
-        categoryId,
-      } = req.body;
+      const { userId, setsTeam1, setsTeam2, matchId, teamsId, tournamentId } =
+        req.body;
 
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
-      const tournament = await this.tournamentService.findById(tournamentId);
+      await this.tournamentService.findById(tournamentId);
 
       const setsArray: Set[] = setsTeam1.map(
         (setTeam1: number, index: number) => {
@@ -97,20 +90,16 @@ export class SetController {
         matchId,
       );
 
-      const teamId = winner === "Team 1" ? teamsId[0] : teamsId[1];
+      const teamId = winner === 1 ? teamsId[0] : teamsId[1];
 
       await this.teamMatchService.addWinner(teamId, matchId);
 
-      // Trigger knockout progression after winner is set
-      // This is non-blocking - knockout progression happens asynchronously
-      if (categoryId) {
-        this.matchService
-          .checkKnockoutTrigger(tournamentId, categoryId)
-          .catch((err) => console.error("Knockout trigger failed:", err));
-      }
+      this.matchService
+        .checkKnockoutTrigger(matchId)
+        .catch((err) => console.error("Knockout trigger failed:", err));
 
       const response: ApiResponse<{
-        winner: string;
+        winner: number;
         sets: {
           id: string;
           gTeams1: number;

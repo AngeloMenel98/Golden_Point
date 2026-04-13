@@ -151,7 +151,10 @@ export default function BreadcrumbNav() {
   }
 
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm">
+    <nav 
+      aria-label="Breadcrumb" 
+      className="flex items-center gap-2 text-sm"
+    >
       {/* Home link */}
       <Link
         href="/"

@@ -3,6 +3,7 @@ import * as jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 
 import { PersonalData, TourCoin, User } from "../entity";
+import { UserRepository } from "../repository";
 import { UserService, ServiceRegistry } from "../services";
 import { UserRole } from "../entity/User";
 import { ApiResponse, success, failure } from "../types/response/api-response";
@@ -59,6 +60,7 @@ export class UserController {
         role: user.user.role,
         firstName: user.personalData?.firstName,
         lastName: user.personalData?.lastName,
+        tourCoins: user.tourCoins,
       };
 
       const secretKey = process.env.JWT_SECRET_KEY;
@@ -66,10 +68,6 @@ export class UserController {
         throw new Error("JWT_SECRET_KEY environment variable is required");
       }
       const token = jwt.sign(userResponse, secretKey);
-
-      // Note: Setting cookie for cross-origin (different ports) is tricky.
-      // The frontend will set its own cookie after receiving the token.
-      // See UserContext.tsx for cookie setting.
 
       const loginResponse: UserLoginResponse = { token, user: userResponse };
       const response: ApiResponse<UserLoginResponse> = success(loginResponse);
@@ -433,6 +431,11 @@ export class UserController {
         lastName?: string;
       };
 
+      // Fetch fresh user data including tourCoins from database
+      const userWithTourCoin = await UserRepository.findUserWithPerData(
+        decoded.id,
+      );
+
       const userResponse: UserResponse = {
         id: decoded.id,
         username: decoded.username,
@@ -441,6 +444,7 @@ export class UserController {
         role: decoded.role as UserRole,
         firstName: decoded.firstName,
         lastName: decoded.lastName,
+        tourCoins: userWithTourCoin?.tourCoin?.coins ?? 0,
       };
 
       const response: ApiResponse<UserResponse> = success(userResponse);

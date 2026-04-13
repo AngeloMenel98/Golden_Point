@@ -16,6 +16,8 @@ const GROUP_STAGES = [
   "Grupo 3",
   "Grupo 4",
   "Cuartos de Final",
+  "Semifinales",
+  "Final",
 ];
 
 interface Props {
@@ -66,7 +68,7 @@ export default function MatchesView({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 border-b border-gray-200 shadow-sm">
       {/* ── Filters ── */}
       <div className="mb-8 flex flex-wrap gap-4 items-end">
         <FilterSelect

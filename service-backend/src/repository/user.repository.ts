@@ -54,7 +54,9 @@ export const UserRepository = AppDataSource.getRepository(User).extend({
     return this.createQueryBuilder("u")
       .select("u")
       .addSelect("pd")
+      .addSelect("tc")
       .innerJoin("u.personalData", "pd")
+      .leftJoin("u.tourCoin", "tc")
       .where("u.id = :userId", { userId })
       .getOne();
   },

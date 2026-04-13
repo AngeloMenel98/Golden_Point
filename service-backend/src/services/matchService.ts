@@ -118,17 +118,26 @@ export class MatchService {
   /**
    * Check and trigger knockout progression if match completion warrants it
    * This is called after a winner is set for a match
+   * Derives tournamentId and categoryId from the match itself
    */
-  async checkKnockoutTrigger(
-    tournamentId: string,
-    categoryId: string,
-  ): Promise<{
+  async checkKnockoutTrigger(matchId: string): Promise<{
     triggered: boolean;
     result?: { stage: string; matchesCreated: number };
   }> {
     try {
+      // Derive tournamentId and categoryId from the match
+      const match = await MatchRepository.findMatchWithTeams(matchId);
+      if (!match) {
+        return { triggered: false };
+      }
+
+      const categoryId = match.tournament.categories[0].id;
+      if (!categoryId) {
+        return { triggered: false };
+      }
+
       const result = await this.tournamentService.processKnockoutProgression(
-        tournamentId,
+        match.tournament.id,
         categoryId,
       );
 

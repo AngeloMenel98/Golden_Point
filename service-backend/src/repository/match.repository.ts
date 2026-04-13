@@ -132,7 +132,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .andWhere("c.id = :categoryId", { categoryId })
       .andWhere("gs.groupStage = :stageName", { stageName })
       .getCount();
-
+    console.log("count matches", count);
     return count > 0;
   },
 
@@ -213,7 +213,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     return this.createQueryBuilder("m")
       .innerJoin("m.tournament", "t")
       .innerJoin("t.categories", "c")
-      .innerJoin("m.groupStage", "gs")
+      .innerJoinAndSelect("m.groupStage", "gs")
       .leftJoinAndSelect("m.teamMatches", "tm")
       .leftJoinAndSelect("tm.team", "team")
       .where("t.id = :tournamentId", { tournamentId })
@@ -391,5 +391,16 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .set({ matchDate, court })
       .where("id = :matchId", { matchId })
       .execute();
+  },
+
+  async findMatchWithTeams(matchId: string) {
+    return this.createQueryBuilder("m")
+      .innerJoinAndSelect("m.tournament", "t")
+      .innerJoinAndSelect("t.categories", "category")
+      .innerJoin("m.groupStage", "gs")
+      .leftJoinAndSelect("m.teamMatches", "tm")
+      .leftJoinAndSelect("tm.team", "team")
+      .where("m.id = :matchId", { matchId })
+      .getOne();
   },
 });

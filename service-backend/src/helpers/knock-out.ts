@@ -26,7 +26,6 @@ export const quarterFinalKnockOut = (
       teamsByGroup[groups[1]][1], // B2
     ]);
   }
-  console.log("matchups", matchups);
 
   return matchups;
 };

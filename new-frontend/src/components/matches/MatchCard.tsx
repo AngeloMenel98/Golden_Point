@@ -10,13 +10,20 @@ interface InfoRowProps {
   text: string;
   onClick?: () => void;
   href?: string;
+  variant?: "link" | "plain";
 }
 
-function InfoRow({ icon, text, onClick, href }: InfoRowProps) {
+function InfoRow({ icon, text, onClick, href, variant = "link" }: InfoRowProps) {
+  const isInteractive = variant === "link" || !!onClick || !!href;
+  
+  const textClasses = isInteractive
+    ? "text-emerald-600 font-semibold hover:underline truncate"
+    : "text-gray-500 truncate";
+
   const content = (
     <>
       <span className="text-gray-400">{icon}</span>
-      <span className="truncate hover:text-blue-600 hover:underline transition-colors">
+      <span className={textClasses}>
         {text}
       </span>
     </>
@@ -114,15 +121,18 @@ export default function MatchCard({
             icon={<Calendar size={12} />}
             text={formatMatchDate(match.matchDate)}
             onClick={onEditDate}
+            variant="link"
           />
           <InfoRow
             icon={<MapPin size={12} />}
             text={match.clubName}
             href={`/clubs/${match.clubId}`}
+            variant="link"
           />
           <InfoRow
             icon={<Trophy size={12} />}
             text={`Cancha ${match.courtNumber}`}
+            variant="plain"
           />
           {!hasResult && (
             <span className="mt-1 inline-flex items-center gap-1 text-amber-500 font-medium">
