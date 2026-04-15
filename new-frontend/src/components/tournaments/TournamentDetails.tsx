@@ -40,6 +40,7 @@ export function TournamentDetails({
   const isAdmin = isAdminProp ?? user?.role === "admin";
 
   const isTournamentLocked = currentTournament?.status === TournamentStatus.IN_PROGRESS;
+  const isTournamentPending = currentTournament?.status === TournamentStatus.PENDING;
 
   const uniqueCategories = currentTournament?.teams 
     ? [...new Set(currentTournament.teams.map((t) => t.category).filter(Boolean))]
@@ -162,16 +163,11 @@ export function TournamentDetails({
               />
             </svg>
           </Link>
-          {isAdmin && (
+          {isAdmin && isTournamentPending && (
             <button
               onClick={() => setIsAddTeamModalOpen(true)}
-              disabled={isTournamentLocked}
-              className={`px-4 py-2 rounded-md font-medium transition-colors text-sm
-                ${isTournamentLocked
-                  ? "bg-gray-200 text-gray-400 cursor-not-allowed opacity-60"
-                  : "bg-gp-pastel text-gp-dark hover:bg-gp-pastel/80"
-                }`}
-              title={isTournamentLocked ? "Torneo activo - no se pueden agregar equipos" : "Agregar Equipo"}
+              className="px-4 py-2 rounded-md font-medium transition-colors text-sm bg-gp-pastel text-gp-dark hover:bg-gp-pastel/80"
+              title="Agregar Equipo"
             >
               + Agregar Equipo
             </button>

@@ -1,15 +1,17 @@
 import { SetRepository } from "../repository";
 import { Set } from "../entity";
-import { MatchService, TourCoinService } from ".";
+import { MatchService, TourCoinService, TournamentService } from ".";
 import { validationError } from "../types/error/app-error";
 
 export class SetService {
   private _matchService?: MatchService;
   private _tourCoinService?: TourCoinService;
+  private _tournamentService?: TournamentService;
 
-  constructor(matchService?: MatchService, tourCoinService?: TourCoinService) {
+  constructor(matchService?: MatchService, tourCoinService?: TourCoinService, tournamentService?: TournamentService) {
     this._matchService = matchService;
     this._tourCoinService = tourCoinService;
+    this._tournamentService = tournamentService;
   }
 
   private get matchService(): MatchService {
@@ -24,6 +26,13 @@ export class SetService {
       this._tourCoinService = new TourCoinService();
     }
     return this._tourCoinService;
+  }
+
+  private get tournamentService(): TournamentService {
+    if (!this._tournamentService) {
+      this._tournamentService = new TournamentService();
+    }
+    return this._tournamentService;
   }
 
   async create(newSets: Set[], matchId: string) {
@@ -78,6 +87,9 @@ export class SetService {
         winner,
         match.amountTourCoins,
       );
+
+      // Check if tournament should be marked as finished (all finals complete)
+      await this.tournamentService.checkAndSetTournamentFinished(match.tournament.id);
     }
 
     return { winner, setsSaved };

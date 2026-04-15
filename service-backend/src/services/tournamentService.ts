@@ -868,4 +868,53 @@ export class TournamentService {
 
     return matches;
   }
+
+  /**
+   * Check if all finals across all categories have winners, and if so,
+   * update the tournament status to FINISHED
+   */
+  async checkAndSetTournamentFinished(tournamentId: string): Promise<boolean> {
+    const tournament = await this.findById(tournamentId);
+    
+    if (tournament.status === Status.FINISH) {
+      // Already finished
+      return true;
+    }
+
+    const categories = tournament.categories;
+    
+    for (const category of categories) {
+      // Check if there's a final match for this category
+      const hasFinal = await MatchRepository.hasKnockoutMatches(
+        tournamentId,
+        category.id,
+        KNOCKOUT_STAGES.FINAL,
+      );
+
+      if (!hasFinal) {
+        // No final created yet for this category
+        return false;
+      }
+
+      // Check if the final has a winner
+      const finalMatches = await MatchRepository.getKnockoutMatches(
+        tournamentId,
+        category.id,
+        KNOCKOUT_STAGES.FINAL,
+      );
+
+      const finalHasWinner = finalMatches.some((match) =>
+        match.teamMatches?.some((tm) => tm.isWinner === true),
+      );
+
+      if (!finalHasWinner) {
+        // Final exists but no winner yet
+        return false;
+      }
+    }
+
+    // All finals have winners - update tournament status to FINISHED
+    await TournamentRepository.updateStatus(tournamentId, Status.FINISH);
+    return true;
+  }
 }
