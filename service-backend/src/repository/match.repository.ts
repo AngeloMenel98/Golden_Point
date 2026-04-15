@@ -16,6 +16,7 @@ export interface MatchTeamResponse {
   teamName: string;
   players: { firstName: string; lastName: string }[];
   isWinner: boolean;
+  position: number;
 }
 
 export interface MatchSetResponse {
@@ -59,9 +60,18 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     return this.manager.transaction(async (transactionalEntityManager) => {
       const tmMatch: TeamMatch[] = [];
 
+      // Find or create GroupStage - filter by tournament to avoid cross-tournament conflicts
+      // Use LEFT JOIN to handle new knockout stages that don't have matches yet
       let savedGroupStage = await transactionalEntityManager
         .getRepository(GroupStage)
-        .findOne({ where: { groupStage: groupStage } });
+        .createQueryBuilder("gs")
+        .leftJoin("gs.matches", "m")
+        .leftJoin("m.tournament", "t")
+        .where("gs.groupStage = :groupStage", { groupStage })
+        .andWhere("t.id = :tournamentId OR t.id IS NULL", {
+          tournamentId: tournament.id,
+        })
+        .getOne();
 
       if (!savedGroupStage) {
         savedGroupStage = transactionalEntityManager
@@ -76,10 +86,11 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         .getRepository(Match)
         .save({ ...match, court, tournament, groupStage: savedGroupStage });
 
-      teams.forEach((team) => {
+      teams.forEach((team, index) => {
         const teamMatch = new TeamMatch();
         teamMatch.team = team;
         teamMatch.match = savedMatch;
+        teamMatch.position = index + 1; // 1 or 2
 
         teamMatch.isWinner = false;
         tmMatch.push(teamMatch);
@@ -121,7 +132,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .andWhere("c.id = :categoryId", { categoryId })
       .andWhere("gs.groupStage = :stageName", { stageName })
       .getCount();
-
+    console.log("count matches", count);
     return count > 0;
   },
 
@@ -173,12 +184,13 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     categoryId: string,
   ): Promise<Match[]> {
     return this.createQueryBuilder("m")
-      .innerJoin("m.tournament", "t")
-      .innerJoin("t.categories", "c")
-      .innerJoin("m.groupStage", "gs")
+      .innerJoinAndSelect("m.groupStage", "gs")
       .leftJoinAndSelect("m.teamMatches", "tm")
-      .leftJoinAndSelect("tm.team", "team")
-      .where("t.id = :tournamentId", { tournamentId })
+      .leftJoinAndSelect("tm.team", "t")
+      .leftJoinAndSelect("m.sets", "s")
+      .innerJoin("m.tournament", "trn")
+      .innerJoin("trn.categories", "c")
+      .where("trn.id = :tournamentId", { tournamentId })
       .andWhere("c.id = :categoryId", { categoryId })
       .andWhere("gs.groupStage NOT IN (:...knockoutStages)", {
         knockoutStages: [
@@ -201,12 +213,13 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     return this.createQueryBuilder("m")
       .innerJoin("m.tournament", "t")
       .innerJoin("t.categories", "c")
-      .innerJoin("m.groupStage", "gs")
+      .innerJoinAndSelect("m.groupStage", "gs")
       .leftJoinAndSelect("m.teamMatches", "tm")
       .leftJoinAndSelect("tm.team", "team")
       .where("t.id = :tournamentId", { tournamentId })
       .andWhere("c.id = :categoryId", { categoryId })
       .andWhere("gs.groupStage = :stageName", { stageName })
+      .orderBy("m.id", "ASC")
       .getMany();
   },
 
@@ -233,6 +246,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
     category: string,
     groupStage: string,
   ): Promise<MatchResponse[]> {
+    // Use raw SQL joins for predictable query behavior
     const matches = await this.createQueryBuilder("m")
       .select([
         "m.id AS id",
@@ -245,11 +259,16 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         "cl.id AS clubId",
         'cl."clubName" AS clubName',
       ])
-      .innerJoin("tournament", "t", "t.id = m.tournamentId")
-      .innerJoin("t.categories", "cat")
-      .innerJoin("group_stage", "gs", "gs.id = m.groupStageId")
-      .innerJoin("court", "court", "court.id = m.courtId")
-      .innerJoin("club", "cl", "cl.id = court.clubId")
+      .innerJoin("tournament", "t", 't.id = m."tournamentId"')
+      .innerJoin(
+        "tournament_categories_category",
+        "tcc",
+        't.id = tcc."tournamentId"',
+      )
+      .innerJoin("category", "cat", 'cat.id = tcc."categoryId"')
+      .innerJoin("group_stage", "gs", 'gs.id = m."groupStageId"')
+      .innerJoin("court", "court", 'court.id = m."courtId"')
+      .innerJoin("club", "cl", 'cl.id = court."clubId"')
       .where("t.id = :tournamentId", { tournamentId })
       .andWhere("CONCAT(cat.gender, '-', cat.category) = :category", {
         category,
@@ -258,29 +277,30 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .orderBy("m.matchDate")
       .getRawMany();
 
-    const matchIds = matches.map((m) => m.id);
-
-    if (matchIds.length === 0) {
+    if (matches.length === 0) {
       return [];
     }
 
-    // Get all team matches for these matches
+    const matchIds = matches.map((m) => m.id);
+
+    // Get team matches with players using optimized query
     const teamMatches = await this.createQueryBuilder()
       .select([
-        "tm.matchId AS matchId",
-        "tm.teamId AS teamId",
-        "tm.isWinner AS isWinner",
-        "t.teamName AS teamName",
+        'tm."matchId" AS "matchId"',
+        'tm."teamId" AS "teamId"',
+        'tm."isWinner" AS "isWinner"',
+        'tm.position AS "position"',
+        't.teamName AS "teamName"',
       ])
       .distinct(true)
       .from("team_match", "tm")
       .innerJoin("team", "t", 't.id = tm."teamId"')
-      .where("tm.matchId IN (:...matchIds)", { matchIds })
-      .orderBy("tm.matchId")
-      .addOrderBy("tm.isWinner", "DESC")
+      .where('tm."matchId" IN (:...matchIds)', { matchIds })
+      .orderBy('tm."matchId"')
+      .addOrderBy("tm.position", "ASC")
       .getRawMany();
 
-    const teamIds = [...new Set(teamMatches.map((tm) => tm.teamid))];
+    const teamIds = [...new Set(teamMatches.map((tm) => tm.teamId))];
 
     let teamPlayers: { teamId: string; firstName: string; lastName: string }[] =
       [];
@@ -299,7 +319,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
           .distinct(true)
           .getRawMany();
       } catch (error) {
-        console.error("query error", error.message);
+        console.error("Team players query error", error.message);
       }
     }
 
@@ -320,26 +340,26 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
 
     const response: MatchResponse[] = matches.map((match) => {
       const matchTeamMatches = teamMatches.filter(
-        (tm) => tm.matchid === match.id,
+        (tm) => tm.matchId === match.id,
       );
 
       const teams: MatchTeamResponse[] = matchTeamMatches.map((tm) => {
         const players = teamPlayers
-          .filter((tp) => tp.teamId === tm.teamid)
+          .filter((tp) => tp.teamId === tm.teamId)
           .map((tp) => ({
             firstName: tp.firstName,
             lastName: tp.lastName,
           }));
 
         return {
-          teamId: tm.teamid,
-          teamName: tm.teamname,
+          teamId: tm.teamId,
+          teamName: tm.teamName,
           players,
-          isWinner: tm.iswinner,
+          position: tm.position,
+          isWinner: tm.isWinner,
         };
       });
 
-      // Get sets for this match
       const matchSets = sets.filter((s) => s.matchid === match.id);
 
       const formattedSets: MatchSetResponse[] = matchSets.map((s) => ({
@@ -347,7 +367,6 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         gamesTeam1: parseInt(s.gamesteam1, 10),
         gamesTeam2: parseInt(s.gamesteam2, 10),
       }));
-
       return {
         id: match.id,
         matchDate: match.matchdate,
@@ -356,7 +375,7 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
         groupStage: match.groupstage,
         category: match.category,
         courtNumber: parseInt(match.courtnumber, 10),
-        clubId: match.clubId,
+        clubId: match.clubid,
         clubName: match.clubname,
         teams,
         sets: formattedSets,
@@ -372,5 +391,16 @@ export const MatchRepository = AppDataSource.getRepository(Match).extend({
       .set({ matchDate, court })
       .where("id = :matchId", { matchId })
       .execute();
+  },
+
+  async findMatchWithTeams(matchId: string) {
+    return this.createQueryBuilder("m")
+      .innerJoinAndSelect("m.tournament", "t")
+      .innerJoinAndSelect("t.categories", "category")
+      .innerJoin("m.groupStage", "gs")
+      .leftJoinAndSelect("m.teamMatches", "tm")
+      .leftJoinAndSelect("tm.team", "team")
+      .where("m.id = :matchId", { matchId })
+      .getOne();
   },
 });

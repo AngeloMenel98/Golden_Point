@@ -1,74 +1,103 @@
+import Link from "next/link";
 import { Pencil, MapPin, Calendar, Trophy } from "lucide-react";
 import { parseTeams, parseSets, formatMatchDate } from "@/types/match";
 import type { Match } from "@/types/match";
 
 const MAX_SETS = 3;
 
-// Helper function to determine winner from sets
-function getMatchWinner(sets: { t1: number; t2: number }[]): 0 | 1 | null {
-  if (!sets.length) return null;
-  const t1wins = sets.filter((s) => s.t1 > s.t2).length;
-  const t2wins = sets.filter((s) => s.t2 > s.t1).length;
-  if (t1wins > t2wins) return 0;
-  if (t2wins > t1wins) return 1;
-  return null;
+interface InfoRowProps {
+  icon: React.ReactNode;
+  text: string;
+  onClick?: () => void;
+  href?: string;
+  variant?: "link" | "plain";
+}
+
+function InfoRow({ icon, text, onClick, href, variant = "link" }: InfoRowProps) {
+  const isInteractive = variant === "link" || !!onClick || !!href;
+  
+  const textClasses = isInteractive
+    ? "text-emerald-600 font-semibold hover:underline truncate"
+    : "text-gray-500 truncate";
+
+  const content = (
+    <>
+      <span className="text-gray-400">{icon}</span>
+      <span className={textClasses}>
+        {text}
+      </span>
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link
+        href={href}
+        className="flex items-center gap-1.5 cursor-pointer"
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  if (onClick) {
+    return (
+      <button
+        onClick={onClick}
+        className="flex items-center gap-1.5 cursor-pointer"
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return <div className="flex items-center gap-1.5">{content}</div>;
 }
 
 export default function MatchCard({
   match,
   onEdit,
+  onEditDate,
 }: {
   match: Match;
   onEdit?: () => void;
+  onEditDate?: () => void;
 }) {
-  // Use new teams format if available, otherwise fall back to legacy
-  const useNewTeamsFormat = match.teams && match.teams.length > 0;
+  const sortedTeams = match.teams.sort((a, b) => a.position - b.position);
 
-  const team1Players = useNewTeamsFormat
-    ? match.teams![0].players.map((p) => `${p.firstName} ${p.lastName}`)
+  const team1Players = sortedTeams
+    ? sortedTeams[0].players.map((p) => `${p.firstName} ${p.lastName}`)
     : parseTeams(match.teamsName)[0];
 
-  const team2Players = useNewTeamsFormat
-    ? match.teams![1].players.map((p) => `${p.firstName} ${p.lastName}`)
+  const team2Players = sortedTeams
+    ? sortedTeams[1].players.map((p) => `${p.firstName} ${p.lastName}`)
     : parseTeams(match.teamsName)[1];
 
-  // Use new sets format if available, otherwise fall back to legacy
+  // ── Sets: gamesTeam1 always maps to the position-1 team (top row)
   const useNewSetsFormat = match.sets && match.sets.length > 0;
   const sets = useNewSetsFormat
-    ? [...match.sets!].sort((a, b) => a.setNumber - b.setNumber)
+    ? [...match.sets!]
+        .sort((a, b) => a.setNumber - b.setNumber)
         .map((s) => ({ t1: s.gamesTeam1, t2: s.gamesTeam2 }))
     : parseSets(match.games);
 
   const hasResult = sets.length > 0;
 
-  // Determine winner: prefer isWinner from new teams format, fall back to sets calculation
-  let winner: 0 | 1 | null = null;
-  let team1IsWinner = false;
-  let team2IsWinner = false;
-
-  if (useNewTeamsFormat) {
-    // Use isWinner from API
-    team1IsWinner = match.teams![0].isWinner;
-    team2IsWinner = match.teams![1].isWinner;
-  } else if (hasResult) {
-    // Calculate from sets for legacy format
-    winner = getMatchWinner(sets);
-    team1IsWinner = winner === 0;
-    team2IsWinner = winner === 1;
-  }
+  // ── Winner: derive from isWinner on the position-sorted teams
+  const team1IsWinner = sortedTeams
+    ? sortedTeams[0].isWinner
+    : hasResult && getMatchWinner(sets) === 0;
+  const team2IsWinner = sortedTeams
+    ? sortedTeams[1].isWinner
+    : hasResult && getMatchWinner(sets) === 1;
 
   return (
-    <div
-      className="relative bg-white rounded-2xl border border-gray-100 shadow-sm
-                    hover:shadow-md transition-shadow duration-200 overflow-hidden"
-    >
-      {/* Top accent bar — green if result exists, gray if pending */}
+    <div className="relative bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden">
       <div
         className={`h-1 w-full ${hasResult ? "bg-emerald-400" : "bg-gray-200"}`}
       />
 
       <div className="flex items-stretch gap-0 px-5 py-4">
-        {/* ── Players ── */}
         <div className="flex-1 flex flex-col justify-center gap-3 min-w-0">
           <TeamRow
             players={team1Players}
@@ -85,19 +114,25 @@ export default function MatchCard({
           />
         </div>
 
-        {/* ── Divider ── */}
         <div className="w-px bg-gray-100 mx-5 self-stretch" />
 
-        {/* ── Venue + date info ── */}
         <div className="flex flex-col justify-center gap-1.5 text-xs text-gray-500 shrink-0 w-44">
           <InfoRow
             icon={<Calendar size={12} />}
             text={formatMatchDate(match.matchDate)}
+            onClick={onEditDate}
+            variant="link"
           />
-          <InfoRow icon={<MapPin size={12} />} text={match.clubName} />
+          <InfoRow
+            icon={<MapPin size={12} />}
+            text={match.clubName}
+            href={`/clubs/${match.clubId}`}
+            variant="link"
+          />
           <InfoRow
             icon={<Trophy size={12} />}
             text={`Cancha ${match.courtNumber}`}
+            variant="plain"
           />
           {!hasResult && (
             <span className="mt-1 inline-flex items-center gap-1 text-amber-500 font-medium">
@@ -108,7 +143,6 @@ export default function MatchCard({
         </div>
       </div>
 
-      {/* ── Edit button ── */}
       {onEdit && (
         <button
           onClick={onEdit}
@@ -124,6 +158,17 @@ export default function MatchCard({
   );
 }
 
+// ── Helpers ────────────────────────────────────────────────────────────────
+
+function getMatchWinner(sets: { t1: number; t2: number }[]): 0 | 1 | null {
+  if (!sets.length) return null;
+  const t1wins = sets.filter((s) => s.t1 > s.t2).length;
+  const t2wins = sets.filter((s) => s.t2 > s.t1).length;
+  if (t1wins > t2wins) return 0;
+  if (t2wins > t1wins) return 1;
+  return null;
+}
+
 function TeamRow({
   players,
   sets,
@@ -137,18 +182,18 @@ function TeamRow({
 }) {
   return (
     <div className="flex items-center gap-4">
-      {/* Names */}
       <div className="flex-1 min-w-0">
         {players.map((p, i) => (
           <p
             key={i}
-            className={`text-sm font-medium truncate leading-snug ${isWinner ? "text-emerald-600 font-semibold" : "text-gray-800"}`}
+            className={`text-sm font-medium truncate leading-snug ${
+              isWinner ? "text-emerald-600 font-semibold" : "text-gray-800"
+            }`}
           >
             {p.trim()}
           </p>
         ))}
       </div>
-      {/* Set scores */}
       <div className="flex gap-2 shrink-0">
         {Array.from({ length: MAX_SETS }).map((_, si) => {
           const score = sets[si];
@@ -161,14 +206,13 @@ function TeamRow({
           return (
             <span
               key={si}
-              className={`w-7 h-7 flex items-center justify-center rounded-lg text-sm font-semibold
-                ${
-                  val === null
-                    ? "text-gray-300 bg-gray-50"
-                    : won
-                      ? "text-emerald-700 bg-emerald-50"
-                      : "text-gray-500 bg-gray-50"
-                }`}
+              className={`w-7 h-7 flex items-center justify-center rounded-lg text-sm font-semibold ${
+                val === null
+                  ? "text-gray-300 bg-gray-50"
+                  : won
+                    ? "text-emerald-700 bg-emerald-50"
+                    : "text-gray-500 bg-gray-50"
+              }`}
             >
               {val === null ? "—" : val}
             </span>
@@ -179,11 +223,4 @@ function TeamRow({
   );
 }
 
-function InfoRow({ icon, text }: { icon: React.ReactNode; text: string }) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-gray-400">{icon}</span>
-      <span className="truncate">{text}</span>
-    </div>
-  );
-}
+

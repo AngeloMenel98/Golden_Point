@@ -25,12 +25,15 @@ export class UserService {
       throw conflict("Contraseña incorrecta", "Contraseña");
     }
 
-    // Fetch personalData for JWT payload
     const userWithPerData = await UserRepository.findUserWithPerData(
       existingUser.id,
     );
 
-    return { user: existingUser, personalData: userWithPerData?.personalData };
+    return {
+      user: existingUser,
+      personalData: userWithPerData?.personalData,
+      tourCoins: userWithPerData?.tourCoin?.coins ?? 0,
+    };
   }
 
   async create(user: User, perData: PersonalData, tourCoin: TourCoin) {
@@ -106,12 +109,13 @@ export class UserService {
     return { user: user, perData: userData.personalData };
   }
 
-  async getAll(tourId: string): Promise<UserListResult[]> {
+  async getAll(tourId: string) {
     const users: UserListResult[] = await UserRepository.getAll(tourId);
 
     if (users.length == 0) {
       throw conflict("No se encontro ningún Usuario.", "Usuarios");
     }
+
     return users;
   }
 

@@ -8,7 +8,7 @@ const router = Router();
 
 router.get(
   "/matches/:tournamentId/:category/:groupStage",
-  matchController.getMatches.bind(matchController)
+  matchController.getMatches.bind(matchController),
 );
 
 // Update match sets (new format)
@@ -33,10 +33,9 @@ router.put(
       .isArray({ min: 2, max: 2 })
       .withMessage(validationMsg.VALUE_IS_REQUIRED("teamsId")),
   ],
-  setController.create.bind(setController)
+  setController.create.bind(setController),
 );
 
-// Legacy update endpoint
 router.post(
   "/matches/update",
   [
@@ -58,7 +57,7 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("Fecha")),
   ],
-  matchController.updateMatch.bind(matchController)
+  matchController.updateMatch.bind(matchController),
 );
 
 export default router;

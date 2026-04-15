@@ -1,7 +1,8 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn, Index } from 'typeorm';
 import { Match } from './Match';
 
 @Entity()
+@Index("IDX_SET_MATCH", ["match"])
 export class Set {
     @PrimaryGeneratedColumn('uuid')
     id: string;

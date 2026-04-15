@@ -293,14 +293,10 @@ export class TournamentController {
       const categoryId = req.params.categoryId;
       const { userId } = req.body;
 
-      // Verify admin access
       const existingUser = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(existingUser);
 
-      // Verify tournament exists
       await this.tournService.findById(tournamentId);
-
-      // Process knockout progression
       const result = await this.tournService.processKnockoutProgression(
         tournamentId,
         categoryId,

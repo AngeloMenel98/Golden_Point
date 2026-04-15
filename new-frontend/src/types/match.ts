@@ -8,6 +8,7 @@ export interface MatchTeam {
   teamName: string;
   players: MatchPlayer[];
   isWinner: boolean;
+  position: number;
 }
 
 export interface MatchSet {
@@ -20,15 +21,15 @@ export interface Match {
   id: string;
   matchDate: string;
   groupStage: string;
-  teamsName: string; // "TeamA1 N.-TeamA2 N., TeamB1 N.-TeamB2 N."
+  teamsName: string;
   category: string;
   courtNumber: number;
+  clubId: string;
   clubName: string;
-  games: string; // "6-2, 6-2" | "" (no results yet)
+  games: string;
   amountTourPoints: number;
   amountTourCoins: number;
-  // NEW: structured data from API
-  teams?: MatchTeam[];
+  teams: MatchTeam[];
   sets?: MatchSet[];
 }
 

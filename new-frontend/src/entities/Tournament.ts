@@ -19,7 +19,7 @@ export interface Tournament {
   status: TournamentStatus;
   teamsCount?: number;
   categories: Category[];
-  teams?: { id: string; name: string }[];
+  teams?: { id: string; name: string; category?: string }[];
   createdAt?: string;
   startedAt?: string;
   finishedAt?: string;

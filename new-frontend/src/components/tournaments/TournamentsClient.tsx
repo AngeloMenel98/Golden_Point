@@ -100,7 +100,7 @@ export function TournamentsClient({
     [router],
   );
 
-  const existingNames = tournaments.map((t) => t.name.toLowerCase());
+  const existingNames = tournaments.map((t) => t.title.toLowerCase());
 
   // Filter tournaments by tourId if provided
   const filteredTournaments = tourId
@@ -247,7 +247,6 @@ export function TournamentsClient({
         variant="danger"
       />
 
-      {/* My Stats Drawer - for non-admin users viewing their own stats */}
       {user && !isAdmin && (
         <UserStatsDrawer
           isOpen={showMyStats}

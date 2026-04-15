@@ -41,6 +41,9 @@
         "test": "jest",
         "test:watch": "jest --watch",
         "test:coverage": "jest --coverage",
-        "test:knockout": "jest --testPathPattern=knockout|tournamentService|matchService"
+        "test:knockout": "jest --testPathPattern=knockout|tournamentService|matchService",
+        "migration:generate": "typeorm-ts-node-commonjs migration:generate",
+        "migration:run": "typeorm-ts-node-commonjs migration:run -d src/data-source.ts",
+        "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/data-source.ts"
     }
 }

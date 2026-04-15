@@ -31,12 +31,14 @@ export class CreateMockHelper {
   createTeamMatch(
     teamId: string,
     team: Team,
-    isWinner: boolean
+    isWinner: boolean,
+    position?: number
   ): TeamMatch {
     return {
       teamId,
       matchId: "",
       isWinner,
+      position: position || 1,
       team,
       match: {} as Match,
       createdAt: new Date(),

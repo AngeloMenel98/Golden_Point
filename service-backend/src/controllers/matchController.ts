@@ -39,12 +39,13 @@ export class MatchController {
       const response = await this.matchService.getMatches(
         tournamentId,
         category,
-        groupStage
+        groupStage,
       );
 
       const apiResponse: ApiResponse<typeof response> = success(response);
       res.status(200).json(apiResponse);
     } catch (e) {
+      console.error("getMatches error:", e);
       const errorResponse: ApiResponse<never> = failure(this.handleError(e));
       res.status(this.getErrorStatus(e)).json(errorResponse);
     }
@@ -68,7 +69,7 @@ export class MatchController {
         matchId,
         matchDate,
         courtNumber,
-        clubId
+        clubId,
       );
 
       const apiResponse: ApiResponse<typeof response> = success(response);

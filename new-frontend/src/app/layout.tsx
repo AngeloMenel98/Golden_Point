@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Playfair_Display, DM_Sans } from "next/font/google";
 import { UserProvider } from "@/context/UserContext";
 import { TourProvider } from "@/context/TourContext";
 import { TournamentProvider } from "@/context/TournamentContext";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Golden Point",
@@ -19,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} min-h-full flex flex-col antialiased`}>
+      <body className={`${playfair.variable} ${dmSans.variable} font-sans min-h-full flex flex-col antialiased`}>
         <UserProvider>
           <TourProvider>
             <TournamentProvider>

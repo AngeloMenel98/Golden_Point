@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   CreateDateColumn,
+  Index,
 } from "typeorm";
 import { Tournament } from "./Tournament";
 import { Team } from "./Team";
@@ -14,6 +15,9 @@ import { TeamMatch } from "./TeamMatch";
 import { GroupStage } from "./GroupStage";
 
 @Entity()
+@Index("IDX_MATCH_TOURNAMENT", ["tournament"])
+@Index("IDX_MATCH_COURT", ["court"])
+@Index("IDX_MATCH_GROUP_STAGE", ["groupStage"])
 export class Match {
   @PrimaryGeneratedColumn("uuid")
   id: string;

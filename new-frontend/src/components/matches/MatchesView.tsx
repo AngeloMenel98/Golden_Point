@@ -4,12 +4,21 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import MatchCard from "./MatchCard";
 import MatchCardSkeleton from "./MatchCardSkeleton";
 import EditMatchModal from "./EditMatchModal";
+import EditMatchDateModal from "./EditMatchDateModal";
 import type { Match } from "@/types/match";
 import { useTournament } from "@/context/TournamentContext";
 import { useUser } from "@/context/UserContext";
 
 const CATEGORIES = ["Masculino-Septima", "Masculino-Sexta", "Femenino-Quinta"];
-const GROUP_STAGES = ["Grupo 1", "Grupo 2", "Grupo 3", "Grupo 4"];
+const GROUP_STAGES = [
+  "Grupo 1",
+  "Grupo 2",
+  "Grupo 3",
+  "Grupo 4",
+  "Cuartos de Final",
+  "Semifinales",
+  "Final",
+];
 
 interface Props {
   initialMatches: Match[];
@@ -50,6 +59,7 @@ export default function MatchesView({
   }, [tournamentName]);
 
   const [editingMatch, setEditingMatch] = useState<Match | null>(null);
+  const [editingDateMatch, setEditingDateMatch] = useState<Match | null>(null);
 
   function handleFilterChange(key: "category" | "groupStage", value: string) {
     const params = new URLSearchParams(searchParams.toString());
@@ -58,7 +68,7 @@ export default function MatchesView({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen bg-gray-50 px-4 py-8 border-b border-gray-200 shadow-sm">
       {/* ── Filters ── */}
       <div className="mb-8 flex flex-wrap gap-4 items-end">
         <FilterSelect
@@ -83,10 +93,11 @@ export default function MatchesView({
           <EmptyState />
         ) : (
           initialMatches.map((m) => (
-            <MatchCard 
-              key={m.id} 
-              match={m} 
-              onEdit={isAdmin ? () => setEditingMatch(m) : undefined} 
+            <MatchCard
+              key={m.id}
+              match={m}
+              onEdit={isAdmin ? () => setEditingMatch(m) : undefined}
+              onEditDate={() => setEditingDateMatch(m)}
             />
           ))
         )}
@@ -106,6 +117,17 @@ export default function MatchesView({
           onClose={() => setEditingMatch(null)}
           onSaved={() => {
             setEditingMatch(null);
+            router.refresh();
+          }}
+        />
+      )}
+
+      {editingDateMatch && (
+        <EditMatchDateModal
+          match={editingDateMatch}
+          onClose={() => setEditingDateMatch(null)}
+          onSaved={() => {
+            setEditingDateMatch(null);
             router.refresh();
           }}
         />

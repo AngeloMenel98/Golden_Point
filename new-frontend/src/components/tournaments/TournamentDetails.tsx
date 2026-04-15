@@ -33,8 +33,18 @@ export function TournamentDetails({
     teamName: "",
   });
 
+  // Category filter state
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
   // Use prop if provided (from server), otherwise check user context
   const isAdmin = isAdminProp ?? user?.role === "admin";
+
+  const isTournamentLocked = currentTournament?.status === TournamentStatus.IN_PROGRESS;
+  const isTournamentPending = currentTournament?.status === TournamentStatus.PENDING;
+
+  const uniqueCategories = currentTournament?.teams 
+    ? [...new Set(currentTournament.teams.map((t) => t.category).filter(Boolean))]
+    : [];
 
   useEffect(() => {
     const loadTournament = async () => {
@@ -106,7 +116,7 @@ export function TournamentDetails({
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gp-dark">
-            {currentTournament.name}
+            {currentTournament.title}
           </h1>
           <p className="text-sm text-gp-gray mt-1">
             Tour ID: {currentTournament.tour?.id}
@@ -153,10 +163,11 @@ export function TournamentDetails({
               />
             </svg>
           </Link>
-          {isAdmin && (
+          {isAdmin && isTournamentPending && (
             <button
               onClick={() => setIsAddTeamModalOpen(true)}
-              className="px-4 py-2 bg-gp-pastel text-gp-dark rounded-md font-medium hover:bg-gp-pastel/80 transition-colors text-sm"
+              className="px-4 py-2 rounded-md font-medium transition-colors text-sm bg-gp-pastel text-gp-dark hover:bg-gp-pastel/80"
+              title="Agregar Equipo"
             >
               + Agregar Equipo
             </button>
@@ -173,7 +184,7 @@ export function TournamentDetails({
         <div className="bg-gp-light/50 rounded-lg p-4">
           <p className="text-sm text-gp-gray">Master Score</p>
           <p className="text-xl font-bold text-gp-dark">
-            {currentTournament.masterScore}
+            {currentTournament.master}
           </p>
         </div>
         <div className="bg-gp-light/50 rounded-lg p-4">
@@ -200,40 +211,66 @@ export function TournamentDetails({
         </div>
       </div>
 
-      {currentTournament.categories &&
-        currentTournament.categories.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold text-gp-dark mb-3">
-              Categorías
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {currentTournament.categories.map((cat, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1.5 bg-gp-pastel/30 text-gp-dark rounded-full text-sm"
-                >
-                  {cat.category}-{cat.gender}
-                </span>
-              ))}
-            </div>
+      {uniqueCategories.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gp-dark mb-3">
+            Filtrar por Categoría
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+                ${selectedCategory === null
+                  ? "bg-emerald-100 text-emerald-700 border border-emerald-300"
+                  : "bg-gp-light/50 text-gp-dark hover:bg-gp-light"
+                }`}
+            >
+              Todos
+            </button>
+            {uniqueCategories.map((cat, index) => (
+              <button
+                key={index}
+                onClick={() => setSelectedCategory(cat as string)}
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors
+                  ${selectedCategory === cat
+                    ? "bg-emerald-100 text-emerald-700 border border-emerald-300"
+                    : "bg-gp-light/50 text-gp-dark hover:bg-gp-light"
+                  }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
+      )}
 
       {currentTournament.teams && currentTournament.teams.length > 0 && (
         <div>
           <h2 className="text-lg font-semibold text-gp-dark mb-3">
             Equipos Participantes
+            {selectedCategory && (
+              <span className="text-sm font-normal text-gp-gray ml-2">
+                ({selectedCategory})
+              </span>
+            )}
           </h2>
           <div className="space-y-2">
-            {currentTournament.teams.map(
-              (team: { id: string; name: string }, index: number) => (
+            {currentTournament.teams
+              .filter((team: { category?: string }) => 
+                !selectedCategory || team.category === selectedCategory
+              )
+              .map((team: { id: string; name: string; category?: string }, index: number) => (
                 <div
                   key={index}
                   className="flex items-center justify-between p-3 bg-gp-light/30 rounded-lg"
                 >
-                  <span className="font-medium text-gp-dark">{team.name}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm text-gp-gray">#{team.id}</span>
+                    {isAdmin && (
+                      <span className="text-sm text-gp-gray">#{team.id}</span>
+                    )}
+                    <span className="font-medium text-gp-dark">{team.name}</span>
+                  </div>
+                  <div className="flex items-center gap-3">
                     {isAdmin && (
                       <button
                         onClick={() =>
@@ -243,8 +280,13 @@ export function TournamentDetails({
                             teamName: team.name,
                           })
                         }
-                        className="p-1.5 text-gp-gray hover:text-gp-red hover:bg-gp-red/10 rounded transition-colors"
-                        title="Eliminar equipo"
+                        disabled={isTournamentLocked}
+                        className={`p-1.5 rounded transition-colors
+                          ${isTournamentLocked
+                            ? "text-gray-300 cursor-not-allowed"
+                            : "text-gp-gray hover:text-gp-red hover:bg-gp-red/10"
+                          }`}
+                        title={isTournamentLocked ? "Torneo activo - no se pueden eliminar equipos" : "Eliminar equipo"}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

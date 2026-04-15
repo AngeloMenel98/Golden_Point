@@ -43,8 +43,8 @@ async function fetchTournament(
     return {
       id: String(t.id || t.tournamentid),
       tour: t.tour,
-      name: String(t.tournamentName || t.name || t.title || "Unnamed"),
-      masterScore: parseInt(String(t.master || t.masterScore || 0), 10),
+      title: String(t.title || "Unnamed"),
+      master: parseInt(String(t.master || 0), 10),
       status: (t.status as TournamentStatus) || TournamentStatus.PENDING,
       teamsCount: parseInt(String(t.teamsCount || 0), 10),
       categories: Array.isArray(t.categories) ? t.categories : [],
@@ -86,7 +86,7 @@ async function fetchTournamentUsers(
     const users = data.data || [];
     return users.map((user: Record<string, unknown>) => ({
       id: String(user.id || user.userId || ""),
-      username: String(user.username || ""),
+      username: String(user.username || user.userName || ""),
       firstName: user.firstName ? String(user.firstName) : undefined,
       lastName: user.lastName ? String(user.lastName) : undefined,
       fullName:
@@ -202,7 +202,7 @@ export default async function TournamentUsersPage({
         </h1>
         <p className="text-gp-gray mt-1">
           {users.length} {users.length === 1 ? "participante" : "participantes"}{" "}
-          en {tournament.name}
+          en {tournament.title}
         </p>
       </div>
 
@@ -210,7 +210,8 @@ export default async function TournamentUsersPage({
       <UsersList
         users={users}
         tournamentId={id}
-        tournamentName={tournament.name}
+        tournamentName={tournament.title}
+        tourId={tournament.tour.id}
         participationMap={participationMap}
       />
     </div>

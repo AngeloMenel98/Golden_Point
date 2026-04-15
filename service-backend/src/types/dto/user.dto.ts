@@ -9,6 +9,7 @@ export type UserResponse = {
   role: UserRole;
   firstName?: string;
   lastName?: string;
+  tourCoins?: number;
 };
 
 export type UserDetailResponse = UserResponse & {

@@ -50,9 +50,13 @@ export function UserCard({
             {isParticipating !== undefined && (
               <span
                 className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${
-                  isParticipating ? 'bg-[#22c55e]' : 'bg-[#ef4444]'
+                  isParticipating ? "bg-[#22c55e]" : "bg-[#ef4444]"
                 }`}
-                title={isParticipating ? 'Inscrito en el torneo' : 'No inscrito en el torneo'}
+                title={
+                  isParticipating
+                    ? "Inscrito en el torneo"
+                    : "No inscrito en el torneo"
+                }
               />
             )}
           </div>

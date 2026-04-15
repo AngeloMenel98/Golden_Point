@@ -16,6 +16,7 @@ export interface User {
   firstName?: string;
   lastName?: string;
   role?: "admin" | "user";
+  tourCoins?: number;
 }
 
 interface UserContextType {
@@ -68,6 +69,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
         firstName: user.firstName,
         lastName: user.lastName,
         role: user.role,
+        tourCoins: user.tourCoins ?? 0,
       });
 
       return { success: true };
@@ -105,6 +107,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
               firstName: data.data.user.firstName,
               lastName: data.data.user.lastName,
               role: data.data.user.role,
+              tourCoins: data.data.user.tourCoins ?? 0,
             });
           }
         } else {

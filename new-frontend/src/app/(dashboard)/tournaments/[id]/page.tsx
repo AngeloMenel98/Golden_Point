@@ -48,8 +48,8 @@ async function fetchTournament(
     return {
       id: String(t.id || t.tournamentid),
       tour: t.tour,
-      name: String(t.tournamentName || t.name || t.title || "Unnamed"),
-      masterScore: parseInt(String(t.master || t.masterScore || 0), 10),
+      title: String(t.title || "Unnamed"),
+      master: parseInt(String(t.master || 0), 10),
       status: (t.status || "pending") as TournamentStatus,
       teamsCount: parseInt(String(t.teamsCount || 0), 10),
       categories: Array.isArray(t.categories)

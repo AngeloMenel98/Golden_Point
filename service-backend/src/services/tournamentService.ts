@@ -1,4 +1,4 @@
-import { CategoryService, ClubService, MatchService, TourService } from ".";
+import { CategoryService, MatchService, TourService } from ".";
 import time from "../constants/time";
 import { Category, Match, Tournament } from "../entity";
 import { GroupDTO } from "../entity/dtos/GroupsDTO";
@@ -10,19 +10,15 @@ import {
   KNOCKOUT_STAGES,
 } from "../repository";
 import { ClubData, CourtData, TeamData, TourData } from "../utils/interfaces";
-import {
-  shuffleArray,
-  sortTeamsPerCategoryByPoints,
-} from "../utils/functionHelpers";
-import { Stats } from "fs";
+import { sortTeamsPerCategoryByPoints } from "../utils/functionHelpers";
 import { Status } from "../entity/Tournament";
 import { notFound, conflict, validationError } from "../types/error/app-error";
-import { TeamRankingData } from "../types/dto/team.dto";
 import {
   KnockoutResult,
   StageCompletion,
   QualifiedTeam,
 } from "../types/dto/tournament.dto";
+import { quarterFinalKnockOut, semiFinalKnockOut } from "../helpers/knock-out";
 
 export class TournamentService {
   private _tourService?: TourService;
@@ -340,7 +336,6 @@ export class TournamentService {
     tournamentId: string,
     categoryId: string,
   ): Promise<StageCompletion> {
-    // Get all group stage matches (non-knockout)
     const groupMatches = await MatchRepository.getGroupStageMatches(
       tournamentId,
       categoryId,
@@ -398,56 +393,115 @@ export class TournamentService {
 
     // For each group, determine 1st and 2nd place
     for (const [groupId, matches] of matchesByGroup) {
-      // Count wins for each team in this group
+      // Count wins and calculate games difference for each team in this group
       const teamWins = new Map<string, number>();
-      const teamGamesDiff = new Map<string, number>();
+      const teamGamesFor = new Map<string, number>(); // Games won
+      const teamGamesAgainst = new Map<string, number>(); // Games lost
 
       matches.forEach((match) => {
-        const winner = match.teamMatches?.find((tm) => tm.isWinner === true);
-        const loser = match.teamMatches?.find((tm) => tm.isWinner === false);
+        const winnerTM = match.teamMatches?.find((tm) => tm.isWinner === true);
+        const loserTM = match.teamMatches?.find((tm) => tm.isWinner === false);
 
-        if (winner && loser) {
-          teamWins.set(winner.teamId, (teamWins.get(winner.teamId) || 0) + 1);
+        if (winnerTM && loserTM) {
+          teamWins.set(
+            winnerTM.teamId,
+            (teamWins.get(winnerTM.teamId) || 0) + 1,
+          );
+
+          // Calculate games from sets using position
+          const sets = match.sets || [];
+          let winnerGames = 0;
+          let loserGames = 0;
+          sets.forEach((set: any) => {
+            if (winnerTM.position === 1) {
+              winnerGames += set.gamesTeam1 || 0;
+              loserGames += set.gamesTeam2 || 0;
+            } else {
+              winnerGames += set.gamesTeam2 || 0;
+              loserGames += set.gamesTeam1 || 0;
+            }
+          });
+
+          // For winner: gamesFor = winnerGames, gamesAgainst = loserGames
+          teamGamesFor.set(
+            winnerTM.teamId,
+            (teamGamesFor.get(winnerTM.teamId) || 0) + winnerGames,
+          );
+          teamGamesAgainst.set(
+            winnerTM.teamId,
+            (teamGamesAgainst.get(winnerTM.teamId) || 0) + loserGames,
+          );
+
+          // For loser: gamesFor = loserGames, gamesAgainst = winnerGames
+          teamGamesFor.set(
+            loserTM.teamId,
+            (teamGamesFor.get(loserTM.teamId) || 0) + loserGames,
+          );
+          teamGamesAgainst.set(
+            loserTM.teamId,
+            (teamGamesAgainst.get(loserTM.teamId) || 0) + winnerGames,
+          );
         }
       });
 
       // Sort teams by wins and then by games difference
-      const teamsInGroup = [
-        ...new Set(
-          matches.flatMap((m) =>
-            m.teamMatches?.map((tm) => ({ teamId: tm.teamId, team: tm.team })),
-          ),
-        ),
-      ];
+      // Use Map to deduplicate by teamId instead of Set (Set doesn't work with object references)
+      const teamsMap = new Map<string, { teamId: string; team: any }>();
+      matches.forEach((m) => {
+        m.teamMatches?.forEach((tm) => {
+          if (!teamsMap.has(tm.teamId)) {
+            teamsMap.set(tm.teamId, { teamId: tm.teamId, team: tm.team });
+          }
+        });
+      });
+      const teamsInGroup = Array.from(teamsMap.values());
 
       const teamData = teamsInGroup.map(({ teamId }) => {
         const teamMatch = matches
           .flatMap((m) => m.teamMatches || [])
           .find((tm) => tm.teamId === teamId);
 
+        const gamesFor = teamGamesFor.get(teamId) || 0;
+        const gamesAgainst = teamGamesAgainst.get(teamId) || 0;
+
         return {
           teamId,
           team: teamMatch?.team,
           wins: teamWins.get(teamId) || 0,
+          gamesDiff: gamesFor - gamesAgainst,
         };
       });
 
-      // Sort by wins descending
-      teamData.sort((a, b) => b.wins - a.wins);
+      // Sort by wins descending, then by games difference descending
+      teamData.sort((a, b) => {
+        if (b.wins !== a.wins) return b.wins - a.wins;
+        return b.gamesDiff - a.gamesDiff;
+      });
 
       // Get 1st and 2nd place
       const topTwo = teamData.slice(0, 2);
+
       topTwo.forEach((td) => {
+        const groupStageName = matches[0]?.groupStage?.groupStage ?? "";
         qualifiedTeams.push({
           teamId: td.teamId,
           groupStageId: groupId,
+          groupStage: groupStageName,
           matchesWon: td.wins,
-          gamesDiff: 0, // TODO: Calculate games diff properly if needed
+          gamesDiff: td.gamesDiff,
         });
       });
     }
 
-    return qualifiedTeams;
+    // Deduplicate teams by teamId to prevent duplicates
+    const uniqueTeamsMap = new Map<string, QualifiedTeam>();
+    qualifiedTeams.forEach((team) => {
+      if (!uniqueTeamsMap.has(team.teamId)) {
+        uniqueTeamsMap.set(team.teamId, team);
+      }
+    });
+
+    return Array.from(uniqueTeamsMap.values());
   }
 
   /**
@@ -464,7 +518,6 @@ export class TournamentService {
       categoryId,
       stageName,
     );
-
     if (matches.length === 0) {
       return { complete: false };
     }
@@ -478,19 +531,21 @@ export class TournamentService {
       return { complete: false };
     }
 
-    // Extract winners
-    const winners: QualifiedTeam[] = matches
-      .flatMap((match) => {
-        const winnerTM = match.teamMatches?.find((tm) => tm.isWinner === true);
-        if (!winnerTM) return [];
-        return {
+    // Extract winners preserving match order (matches are ordered by m.id ASC)
+    const winners: QualifiedTeam[] = [];
+    matches.forEach((match, index) => {
+      const winnerTM = match.teamMatches?.find((tm) => tm.isWinner === true);
+      if (winnerTM) {
+        winners.push({
           teamId: winnerTM.teamId,
           groupStageId: match.groupStage.id,
+          groupStage: match.groupStage.groupStage ?? "",
           matchesWon: 1, // Single match in knockout
           gamesDiff: 0,
-        };
-      })
-      .filter((w) => w !== null) as QualifiedTeam[];
+          matchOrder: index + 1, // 1-based match order
+        });
+      }
+    });
 
     return { complete: true, winners };
   }
@@ -503,10 +558,8 @@ export class TournamentService {
     tournamentId: string,
     categoryId: string,
   ): Promise<Date[]> {
-    // Get club data for the tournament
-    const clubData = await this.getDataForStartingTournament(
-      await this.findById(tournamentId),
-    );
+    const tournament = await this.findById(tournamentId);
+    const clubData = await this.getDataForStartingTournament(tournament);
 
     // Calculate all available hours for clubs
     await this.getHoursOfMatches(clubData.clubData);
@@ -549,7 +602,7 @@ export class TournamentService {
 
     // Step 1: Check if group stage is complete and create quarterfinals
     const groupStageStatus = await this.checkCategoryGroupStageComplete(
-      tournamentId,
+      tournament.id,
       categoryId,
     );
 
@@ -606,7 +659,6 @@ export class TournamentService {
         categoryId,
         KNOCKOUT_STAGES.SEMIFINAL,
       );
-
       if (!hasSemis) {
         const remainingHours = await this.getRemainingHours(
           tournamentId,
@@ -711,21 +763,42 @@ export class TournamentService {
       });
     }
 
-    // Create matchups: 1st vs 2nd from cross groups
-    const matchups: [QualifiedTeam, QualifiedTeam][] = [];
-    const groups = Object.keys(teamsByGroup);
+    let matchups: [QualifiedTeam, QualifiedTeam][] = [];
 
-    for (let i = 0; i < groups.length; i += 2) {
-      if (teamsByGroup[groups[i]] && teamsByGroup[groups[i + 1]]) {
-        matchups.push([
-          teamsByGroup[groups[i]][0], // 1st from group i
-          teamsByGroup[groups[i + 1]][1], // 2nd from group i+1
-        ]);
-        matchups.push([
-          teamsByGroup[groups[i + 1]][0], // 1st from group i+1
-          teamsByGroup[groups[i]][1], // 2nd from group i
-        ]);
+    const extractGroupNumber = (name: string): number => {
+      const match = name.match(/(\d+)$/);
+      return match ? parseInt(match[1], 10) : 0;
+    };
+
+    const groups = Object.keys(teamsByGroup).sort((a, b) => {
+      const nameA = teamsByGroup[a][0]?.groupStage ?? "";
+      const nameB = teamsByGroup[b][0]?.groupStage ?? "";
+      return extractGroupNumber(nameA) - extractGroupNumber(nameB);
+    });
+
+    console.log("groups", groups);
+
+    if (roundName === KNOCKOUT_STAGES.CUARTOS) {
+      matchups = quarterFinalKnockOut(teamsByGroup, groups);
+    } else if (roundName === KNOCKOUT_STAGES.SEMIFINAL) {
+      matchups = semiFinalKnockOut(teams);
+    } else {
+      // Final or other: simple sequential pairing
+      for (let i = 0; i < teams.length; i += 2) {
+        if (teams[i] && teams[i + 1]) {
+          matchups.push([teams[i], teams[i + 1]]);
+        }
       }
+    }
+
+    // Validate that each team appears in only one matchup (safety check)
+    const allTeamIds = matchups.flatMap((pair) => [
+      pair[0].teamId,
+      pair[1].teamId,
+    ]);
+    const uniqueTeamIds = new Set(allTeamIds);
+    if (uniqueTeamIds.size !== allTeamIds.length) {
+      throw validationError("Duplicate teams detected in knockout matchups");
     }
 
     // Create matches using remaining hours and a court
@@ -744,8 +817,31 @@ export class TournamentService {
       }
 
       const match = new Match();
-      match.amountTourCoins = 70;
-      match.amountTourPoints = 75;
+      const masterScore = tournament.master || 500;
+
+      // Calculate points based on round
+      // Group stage: 7%, Cuartos: 14%, Semifinal: 20%, Final: 50%, Winner: 100%
+      let amountTourPoints: number;
+      if (roundName.startsWith("Grupo")) {
+        amountTourPoints = Math.round(masterScore * 0.07);
+      } else {
+        switch (roundName) {
+          case KNOCKOUT_STAGES.CUARTOS:
+            amountTourPoints = Math.round(masterScore * 0.14);
+            break;
+          case KNOCKOUT_STAGES.SEMIFINAL:
+            amountTourPoints = Math.round(masterScore * 0.20);
+            break;
+          case KNOCKOUT_STAGES.FINAL:
+            amountTourPoints = Math.round(masterScore * 0.50);
+            break;
+          default:
+            amountTourPoints = masterScore; // Full points for winner
+        }
+      }
+
+      match.amountTourCoins = Math.round(masterScore * 0.07); // 7% of master for coins
+      match.amountTourPoints = amountTourPoints;
       match.matchDate = remainingHours[hourIndex].toISOString();
 
       const courtId = allCourtIds[courtIndex % allCourtIds.length];
@@ -771,5 +867,54 @@ export class TournamentService {
     }
 
     return matches;
+  }
+
+  /**
+   * Check if all finals across all categories have winners, and if so,
+   * update the tournament status to FINISHED
+   */
+  async checkAndSetTournamentFinished(tournamentId: string): Promise<boolean> {
+    const tournament = await this.findById(tournamentId);
+    
+    if (tournament.status === Status.FINISH) {
+      // Already finished
+      return true;
+    }
+
+    const categories = tournament.categories;
+    
+    for (const category of categories) {
+      // Check if there's a final match for this category
+      const hasFinal = await MatchRepository.hasKnockoutMatches(
+        tournamentId,
+        category.id,
+        KNOCKOUT_STAGES.FINAL,
+      );
+
+      if (!hasFinal) {
+        // No final created yet for this category
+        return false;
+      }
+
+      // Check if the final has a winner
+      const finalMatches = await MatchRepository.getKnockoutMatches(
+        tournamentId,
+        category.id,
+        KNOCKOUT_STAGES.FINAL,
+      );
+
+      const finalHasWinner = finalMatches.some((match) =>
+        match.teamMatches?.some((tm) => tm.isWinner === true),
+      );
+
+      if (!finalHasWinner) {
+        // Final exists but no winner yet
+        return false;
+      }
+    }
+
+    // All finals have winners - update tournament status to FINISHED
+    await TournamentRepository.updateStatus(tournamentId, Status.FINISH);
+    return true;
   }
 }
