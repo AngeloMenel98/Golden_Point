@@ -95,6 +95,12 @@ const TournamentUser: React.FC = () => {
               onClick={openRankings}
             />
           </HeaderButtons>
+          <HeaderButtons>
+            <SecondaryButton
+              text="Mis Torneos"
+              onClick={() => navigate("/my-tournaments")}
+            />
+          </HeaderButtons>
         </SpaceContainer>
         <SpaceContainer>
           <InputContainer>

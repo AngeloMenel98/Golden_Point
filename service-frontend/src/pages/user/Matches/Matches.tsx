@@ -28,6 +28,7 @@ const MatchesUser: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const tournamentId = params.get("tournamentId") || "";
+  const tournamentStatus = params.get("tournamentStatus") as "pending" | "inProgress" | "finish" | null;
 
   const cats = useGetCatsByTournId(tournamentId);
   const stages = [
@@ -111,6 +112,9 @@ const MatchesUser: React.FC = () => {
               error={errors?.notFound}
               matches={filteredMatches}
               teams={allTeams}
+              tournamentId={tournamentId}
+              tournamentStatus={tournamentStatus || undefined}
+              onRefetch={refetch}
             />
           </SpaceContainer>
         )}

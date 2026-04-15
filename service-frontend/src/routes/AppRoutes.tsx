@@ -12,6 +12,7 @@ import MatchesUser from "../pages/user/Matches/Matches";
 import TournamentUser from "../pages/user/Tournament/Tournament";
 import Rankings from "../pages/admin/Ranking/Ranking";
 import RankingsUser from "../pages/user/Ranking/Ranking";
+import MyTournaments from "../pages/user/MyTournaments/MyTournaments";
 
 import useSetUser from "../hooks/reduxHooks/useSetUser";
 import Clubs from "../pages/admin/Clubs/Clubs";
@@ -39,6 +40,10 @@ const AppRoutes: React.FC = () => {
         <Route
           path="/ranking"
           element={isAdmin ? <Rankings /> : <RankingsUser />}
+        />
+        <Route
+          path="/my-tournaments"
+          element={!isAdmin && user ? <MyTournaments /> : <ToursUser />}
         />
         <Route path="/calendarClubs" element={<Clubs />} />
       </Routes>

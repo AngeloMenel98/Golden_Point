@@ -12,3 +12,11 @@ export const CardContainer = styled.div`
 export const MatchContainer = styled.div`
   padding: 0.5rem;
 `;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: 1rem;
+  margin-bottom: 0.5rem;
+`;

@@ -23,8 +23,8 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
   ({ tournData }, ref) => {
     const navigate = useNavigate();
 
-    const handleSelectTournament = (tournamentId: string) => {
-      navigate(`/matches?tournamentId=${tournamentId}`);
+    const handleSelectTournament = (tournamentId: string, tournamentStatus: string) => {
+      navigate(`/matches?tournamentId=${tournamentId}&tournamentStatus=${tournamentStatus}`);
     };
 
     return (
@@ -32,8 +32,7 @@ const TournamentRow = forwardRef<HTMLDivElement, TournamentRowProps>(
         <LeftContainer>
           <MemberContainer>
             <TourName
-              onClick={() => handleSelectTournament(tournData.Id)}
-              disabled={tournData.Status == "pending"}
+              onClick={() => handleSelectTournament(tournData.Id, tournData.Status)}
             >
               {tournData.Title}
             </TourName>
