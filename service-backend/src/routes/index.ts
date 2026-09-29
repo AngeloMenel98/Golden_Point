@@ -5,9 +5,11 @@ import teamRouter from './team';
 import clubRouter from './club';
 import matchRouter from './match';
 import setRouter from './set';
+import healthRouter from './health';
 import { Express } from 'express';
 
 export default (app: Express) => {
+    app.use(healthRouter);
     app.use('/api', userRouter);
     app.use('/api', tourRouter);
     app.use('/api', tournRouter);

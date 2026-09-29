@@ -1,5 +1,4 @@
 import GeneralAPI from "./GeneralApi";
-import { isAxiosError } from "../errors/AxiosError";
 
 export interface SetAtts {
   userId: string | undefined;
@@ -11,13 +10,8 @@ export interface SetAtts {
 }
 
 class SetAPI extends GeneralAPI {
-  async addSets(setAtts: SetAtts) {
-    try {
-      const res = await this.api.post(`/set/create`, setAtts);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async addSets(_setAtts: SetAtts): Promise<void> {
+    await this.api.post(`/set/create`, _setAtts);
   }
 }
 

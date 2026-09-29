@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../../../reduxSlices/store";
 import BouncingCircles from "../../../../../components/spinner/spinner";
 import { Note } from "../../../Tour/Cards/TourCardStyle";
+import { ApiError } from "../../../../../services/GeneralApi";
 
 interface TournamentCardProps {
   tournaments: TournamentDTO[];
@@ -91,13 +92,14 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
       tournamentId: tournSelected.Id,
       userId: user?.id,
     };
-    const res = await tournamentAPI.startTournament(start);
-
-    if (!res.fieldErrors) {
+    try {
+      await tournamentAPI.startTournament(start);
       tournSelected.Status = "inProgress";
       setShFooter(true);
-    } else {
-      alert("Error al iniciar torneo");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        alert("Error al iniciar torneo");
+      }
     }
 
     handleCloseModal();
@@ -108,13 +110,14 @@ const TournamentCard: React.FC<TournamentCardProps> = ({
       tournamentId: tourn.Id,
       userId: user?.id,
     };
-    const res = await tournamentAPI.deleteTournament(deleteTourn);
-
-    if (!res.fieldErrors) {
+    try {
+      await tournamentAPI.deleteTournament(deleteTourn);
       setTourns((prevTourns) => prevTourns.filter((t) => t.Id !== tourn.Id));
       refetch();
-    } else {
-      alert("Error al eliminar torneo");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        alert("Error al eliminar torneo");
+      }
     }
   };
 

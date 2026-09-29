@@ -1,5 +1,5 @@
 import { AppDataSource } from "../data-source";
-import { CalendarClub, Club, Court, Tour } from "../entity";
+import { CalendarClub, Club, Court, Tour, User } from "../entity";
 
 export const ClubRepository = AppDataSource.getRepository(Club).extend({
   async create(club: Club, calClub: CalendarClub, court: Court[]) {
@@ -20,6 +20,53 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
 
       return savedClub;
     });
+  },
+
+  async getAll(userId: string) {
+    return this.createQueryBuilder("c")
+      .select([
+        "c.id AS id",
+        'c."clubName"',
+        'c."location" AS address',
+        'COUNT(distinct co."courtNumber") AS courtCount',
+        'cc."availableFrom"',
+        'cc."availableTo"',
+      ])
+      .innerJoin("calendar_club", "cc", 'cc.id = c."calendarClubId"')
+      .innerJoin("court", "co", 'co."clubId" = c.id')
+      .innerJoin("tour_clubs_club", "tcc", 'tcc."clubId" = c.id')
+      .innerJoin("tour", "t", 'tcc."tourId" = t.id')
+      .innerJoin("tour_users_user", "tuu", 'tuu."tourId" = t.id')
+      .innerJoin("user", "u", 'u.id = tuu."userId"')
+      .where("u.id = :userId", {
+        userId,
+      })
+      .groupBy(
+        'c.id, c."clubName", c."location", cc."availableFrom", cc."availableTo"'
+      )
+      .getRawMany();
+  },
+
+  async getAllAvailable(userId: string) {
+    return this.createQueryBuilder("c")
+      .select([
+        "c.id AS id",
+        'c."clubName"',
+        'c."location" AS address',
+        'COUNT(distinct co."courtNumber") AS courtCount',
+        'cc."availableFrom"',
+        'cc."availableTo"',
+      ])
+      .innerJoin("calendar_club", "cc", 'cc.id = c."calendarClubId"')
+      .innerJoin("court", "co", 'co."clubId" = c.id')
+      .innerJoin("user", "u", 'u.id = c."createdById"')
+      .where("u.id = :userId", {
+        userId,
+      })
+      .groupBy(
+        'c.id, c."clubName", c."location", cc."availableFrom", cc."availableTo"'
+      )
+      .getRawMany();
   },
 
   async getClubs(tournamentId: string) {
@@ -45,31 +92,6 @@ export const ClubRepository = AppDataSource.getRepository(Club).extend({
       .innerJoin("category", "c", 'c.id = tcc."categoryId"')
       .where("trn.id = :tournamentId", { tournamentId })
       .groupBy('cl."clubName",trn."master"')
-      .getRawMany();
-  },
-
-  async getAll(userId: string) {
-    return this.createQueryBuilder("c")
-      .select([
-        "c.id AS id",
-        'c."clubName"',
-        'c."location" AS address',
-        'COUNT(distinct co."courtNumber") AS courtCount',
-        'cc."availableFrom"',
-        'cc."availableTo"',
-      ])
-      .innerJoin("calendar_club", "cc", 'cc.id = c."calendarClubId"')
-      .innerJoin("court", "co", 'co."clubId" = c.id')
-      .innerJoin("tour_clubs_club", "tcc", 'tcc."clubId" = c.id')
-      .innerJoin("tour", "t", 'tcc."tourId" = t.id')
-      .innerJoin("tour_users_user", "tuu", 'tuu."tourId" = t.id')
-      .innerJoin("user", "u", 'u.id = tuu."userId"')
-      .where("u.id = :userId", {
-        userId,
-      })
-      .groupBy(
-        'c.id, c."clubName", c."location", cc."availableFrom", cc."availableTo"'
-      )
       .getRawMany();
   },
 

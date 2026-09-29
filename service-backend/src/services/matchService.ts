@@ -1,16 +1,42 @@
 import { CourtRepository, MatchRepository } from "../repository";
 import { Court, Match, Team, Tournament } from "../entity";
-import { TeamService, CourtService } from ".";
-import { ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
+import { TeamService, CourtService, TournamentService } from ".";
+import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class MatchService {
-  private teamService: TeamService;
-  private courtService: CourtService;
+  private _teamService?: TeamService;
+  private _courtService?: CourtService;
+  private _tournamentService?: TournamentService;
 
-  constructor() {
-    this.teamService = new TeamService();
-    this.courtService = new CourtService();
+  constructor(
+    teamService?: TeamService,
+    courtService?: CourtService,
+    tournamentService?: TournamentService,
+  ) {
+    this._teamService = teamService;
+    this._courtService = courtService;
+    this._tournamentService = tournamentService;
+  }
+
+  private get teamService(): TeamService {
+    if (!this._teamService) {
+      this._teamService = new TeamService();
+    }
+    return this._teamService;
+  }
+
+  private get courtService(): CourtService {
+    if (!this._courtService) {
+      this._courtService = new CourtService();
+    }
+    return this._courtService;
+  }
+
+  private get tournamentService(): TournamentService {
+    if (!this._tournamentService) {
+      this._tournamentService = new TournamentService();
+    }
+    return this._tournamentService;
   }
 
   async create(
@@ -18,16 +44,16 @@ export class MatchService {
     teamIds: string[],
     tournament: Tournament,
     courtId: string,
-    groupStage: string
+    groupStage: string,
   ) {
     const teams: Team[] = await Promise.all(
-      teamIds.map((teamId) => this.teamService.findById(teamId))
+      teamIds.map((teamId) => this.teamService.findById(teamId)),
     );
 
     const court = await this.courtService.findById(courtId);
 
     if (teams.length != 2) {
-      throw new ServiceCodeError(codeErrors.MATCH_1);
+      throw validationError("Cantidad de equipos incorrectos");
     }
 
     return MatchRepository.create(
@@ -35,7 +61,7 @@ export class MatchService {
       teams,
       tournament,
       court,
-      groupStage
+      groupStage,
     );
   }
 
@@ -45,7 +71,7 @@ export class MatchService {
     });
 
     if (!existingMatch) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Match"));
+      throw notFound("Match", matchId);
     }
 
     return existingMatch;
@@ -55,14 +81,14 @@ export class MatchService {
     const matches: unknown[] = await MatchRepository.getMatches(
       tournamentId,
       category,
-      groupStage
+      groupStage,
     );
 
     if (matches.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Partido"));
+      throw conflict("No se encontro ningún Partido", "Partido");
     }
     if (!matches) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Torneo"));
+      throw notFound("Torneo", tournamentId);
     }
 
     return matches;
@@ -72,20 +98,64 @@ export class MatchService {
     matchId: string,
     matchDate: string,
     courtNumber: string,
-    clubId: string
+    clubId: string,
   ) {
     const court = await CourtRepository.getCourtByClubId(clubId, courtNumber);
 
     if (!court) {
-      throw new ServiceCodeError(codeErrors.COURT_1);
+      throw validationError("Número de cancha no existe");
     }
 
     const match = await MatchRepository.updateMatch(matchId, matchDate, court);
 
     if (!match) {
-      throw new ServiceCodeError(codeErrors.MATCH_2);
+      throw validationError("El partido no se pudo actualizar");
     }
 
     return match;
+  }
+
+  /**
+   * Check and trigger knockout progression if match completion warrants it
+   * This is called after a winner is set for a match
+   * Derives tournamentId and categoryId from the match itself
+   */
+  async checkKnockoutTrigger(matchId: string): Promise<{
+    triggered: boolean;
+    result?: { stage: string; matchesCreated: number };
+  }> {
+    try {
+      // Derive tournamentId and categoryId from the match
+      const match = await MatchRepository.findMatchWithTeams(matchId);
+      if (!match) {
+        return { triggered: false };
+      }
+
+      const categoryId = match.tournament.categories[0].id;
+      if (!categoryId) {
+        return { triggered: false };
+      }
+
+      const result = await this.tournamentService.processKnockoutProgression(
+        match.tournament.id,
+        categoryId,
+      );
+
+      if (result) {
+        return {
+          triggered: true,
+          result: {
+            stage: result.stage,
+            matchesCreated: result.matchesCreated,
+          },
+        };
+      }
+
+      return { triggered: false };
+    } catch (error) {
+      console.error("Error in knockout trigger:", error);
+      // Don't throw - knockout progression failure shouldn't break set creation
+      return { triggered: false };
+    }
   }
 }

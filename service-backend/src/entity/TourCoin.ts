@@ -4,6 +4,7 @@ import {
     PrimaryGeneratedColumn,
     OneToOne,
     JoinColumn,
+    CreateDateColumn,
 } from 'typeorm';
 import { User } from './User';
 
@@ -14,6 +15,9 @@ export class TourCoin {
 
     @Column('integer')
     coins: number;
+
+    @CreateDateColumn({ name: "createdAt" })
+    createdAt: Date;
 
     @OneToOne(() => User, (user) => user.tourCoin)
     @JoinColumn()

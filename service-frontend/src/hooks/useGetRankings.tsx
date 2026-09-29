@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import UserAPI from "../services/UserApi";
 import { Errors } from "../errors/Errors";
+import { ApiError } from "../services/GeneralApi";
 
 interface UserRanking {
   id: string;
@@ -26,26 +27,24 @@ export default function useGetRankings(
     setFieldErrors({});
 
     try {
-      const res = await userAPI.getRanking(tourId, category);
-
-      if (res.fieldErrors) {
+      const data = await userAPI.getRanking(tourId, category);
+      setUsers(data as UserRanking[]);
+      setHasFetched(true);
+    } catch (err: unknown) {
+      const apiErr = err as ApiError;
+      if (apiErr instanceof ApiError && apiErr.payload.fieldErrors) {
         setFieldErrors((prevErrors) => ({
           ...prevErrors,
-          ...res.fieldErrors,
+          ...apiErr.payload.fieldErrors,
         }));
-
         setHasFetched(false);
-        return;
       } else {
-        setUsers(res);
+        setFieldErrors({
+          general: "An unexpected error occurred while fetching rankings.",
+        });
       }
-
-      setHasFetched(true);
+    } finally {
       setIsLoading(false);
-    } catch (error) {
-      setFieldErrors({
-        general: "An unexpected error occurred while fetching rankings.",
-      });
     }
   }, [tourId, category]);
 

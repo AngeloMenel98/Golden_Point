@@ -1,84 +1,101 @@
 import { Club, Tour } from "../entity";
-import { ClubService, TourService, UserService } from "../services";
-import { generateCode } from "../helpers/generateTourCode.helper";
+import {
+  ClubService,
+  TourService,
+  UserService,
+  ServiceRegistry,
+} from "../services";
+import { generateTourCode } from "../helpers/generateTourCode.helper";
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { isServiceCodeError, isUserServiceError } from "../errors/errors";
+import { ApiResponse, success, failure } from "../types/response/api-response";
+import {
+  isNotFoundError,
+  isValidationError,
+  isConflictError,
+  isInternalError,
+  isUnauthorizedError,
+} from "../types/error/error-guards";
+import { ErrorType } from "../types/error/error-type";
 import { Manager } from "../helpers/manager";
 
 export class TourController {
-  private tourService: TourService;
-  private clubService: ClubService;
+  private _tourService?: TourService;
+  private _clubService?: ClubService;
   private manager: Manager;
 
-  constructor() {
-    this.tourService = new TourService();
-    this.clubService = new ClubService();
+  constructor(tourService?: TourService, clubService?: ClubService) {
+    this._tourService = tourService;
+    this._clubService = clubService;
     this.manager = Manager.getInstance();
   }
 
-  async create(req: Request, res: Response) {
+  private get tourService(): TourService {
+    return this._tourService ?? ServiceRegistry.tourService;
+  }
+
+  private get clubService(): ClubService {
+    return this._clubService ?? ServiceRegistry.clubService;
+  }
+
+  async create(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { title, userId, clubsId } = req.body;
 
       const newTour = new Tour();
       newTour.title = title;
-      newTour.tourCode = generateCode(6);
+      newTour.tourCode = await generateTourCode();
 
       const user = await this.manager.checkUserExists(userId);
       await this.manager.checkIfADMIN(user);
 
-      const clubs: Club[] = [];
-      for (let clubId of clubsId) {
-        const club = await this.clubService.findById(clubId);
-        clubs.push(club);
-      }
+      const clubs = await this.clubService.findByIds(clubsId);
 
       const tour = await this.tourService.create(newTour, user, clubs);
 
-      const response = {
+      const response: ApiResponse<{
+        id: string;
+        title: string;
+        tourCode: string;
+        isDeleted: boolean;
+        usersId: string[];
+        clubsId: string[];
+      }> = success({
         id: tour.id,
         title: tour.title,
         tourCode: tour.tourCode,
         isDeleted: tour.isDeleted,
         usersId: tour.users.map((u) => u.id),
         clubsId: tour.clubs.map((c) => c.id),
-      };
+      });
 
       res.status(201).json(response);
     } catch (e) {
-      console.error(e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
-      }
-
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ errors: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async delete(req: Request, res: Response) {
+  async delete(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            message: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { tourId, userId } = req.body;
@@ -89,38 +106,35 @@ export class TourController {
 
       const tour = await this.tourService.delete(existingTour);
 
-      const response = {
+      const response: ApiResponse<{
+        id: string;
+        title: string;
+        tourCode: string;
+        isDeleted: boolean;
+      }> = success({
         id: tour.id,
         title: tour.title,
         tourCode: tour.tourCode,
         isDeleted: tour.isDeleted,
-      };
+      });
 
-      res.status(201).json(response);
+      res.status(200).json(response);
     } catch (e) {
-      console.error(e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async joinUser(req: Request, res: Response) {
+  async joinUser(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const { userId, tourCode } = req.body;
@@ -129,80 +143,87 @@ export class TourController {
 
       const tour = await this.tourService.joinUserToTour(user, tourCode);
 
-      const response = {
+      const response: ApiResponse<{
+        id: string;
+        title: string;
+        tourCode: string;
+        usersId: string[];
+      }> = success({
         id: tour.id,
         title: tour.title,
         tourCode: tour.tourCode,
         usersId: tour.users.map((u) => u.id),
-      };
+      });
 
-      res.status(201).json(response);
+      res.status(200).json(response);
     } catch (e) {
-      console.error(e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      if (isUserServiceError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async getAll(req: Request, res: Response) {
+  async getAll(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const userId = req.params.userId;
 
       const tours = await this.tourService.getAll(userId);
 
-      res.status(201).json(tours);
+      const response: ApiResponse<typeof tours> = success(tours);
+      res.status(200).json(response);
     } catch (e) {
-      console.error(e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
   }
 
-  async getTourById(req: Request, res: Response) {
+  async getTourById(req: Request, res: Response): Promise<void> {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          error: errors.array().map((error) => ({
-            msg: error.msg,
-          })),
+        const errorResponse: ApiResponse<never> = failure({
+          type: "VALIDATION",
+          message: "Validation failed",
         });
+        res.status(400).json(errorResponse);
+        return;
       }
 
       const tourId = req.params.tourId;
       const existingTour = await this.tourService.findById(tourId);
 
-      res.status(201).json(existingTour);
+      const response: ApiResponse<typeof existingTour> = success(existingTour);
+      res.status(200).json(response);
     } catch (e) {
-      console.error(e);
-
-      if (isServiceCodeError(e)) {
-        return res.status(400).json({ error: [{ msg: e.message }] });
-      }
-
-      res.status(500).json({ error: [{ msg: "Internal Server Error" }] });
+      const errorResponse: ApiResponse<never> = failure(this.handleError(e));
+      res.status(this.getErrorStatus(e)).json(errorResponse);
     }
+  }
+
+  private handleError(e: unknown): ErrorType {
+    if (isNotFoundError(e)) return e;
+    if (isValidationError(e)) return e;
+    if (isConflictError(e)) return e;
+    if (isUnauthorizedError(e)) return e;
+    if (isInternalError(e)) return e;
+    return { type: "INTERNAL", message: "Internal server error" };
+  }
+
+  private getErrorStatus(e: unknown): number {
+    if (isNotFoundError(e)) return 404;
+    if (isValidationError(e)) return 400;
+    if (isConflictError(e)) return 409;
+    if (isUnauthorizedError(e)) return 401;
+    return 500;
   }
 }
 

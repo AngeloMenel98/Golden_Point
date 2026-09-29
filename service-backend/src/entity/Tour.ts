@@ -5,6 +5,8 @@ import {
   ManyToMany,
   OneToMany,
   JoinTable,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { User } from "./User";
 import { Tournament } from "./Tournament";
@@ -18,11 +20,17 @@ export class Tour {
   @Column()
   title: string;
 
-  @Column()
+  @Column({ unique: true })
   tourCode: string;
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updatedAt" })
+  updatedAt: Date;
 
   @ManyToMany(() => User, (user) => user.tours)
   @JoinTable()

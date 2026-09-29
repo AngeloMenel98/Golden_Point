@@ -8,6 +8,7 @@ import { CardContainer, Note } from "./TourCardStyle";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../reduxSlices/store";
 import BouncingCircles from "../../../../components/spinner/spinner";
+import { ApiError } from "../../../../services/GeneralApi";
 
 interface TourCardProps {
   tours: TourDTO[];
@@ -39,15 +40,16 @@ const TourCard: React.FC<TourCardProps> = ({
       userId: user?.id,
     };
 
-    const tourRes = await tourApi.deleteTour(deleteTour);
-    if (tourRes != null) {
+    try {
+      const deleted = await tourApi.deleteTour(deleteTour);
       setTours((prevTours) =>
-        prevTours.filter((tour) => tour.Id !== tourRes.id)
+        prevTours.filter((tour) => tour.Id !== deleted.id)
       );
-
       refetch();
-    } else {
-      alert("Error al eliminar Tour");
+    } catch (err) {
+      if (err instanceof ApiError) {
+        alert("Error al eliminar Tour");
+      }
     }
   };
 

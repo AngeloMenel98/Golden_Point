@@ -1,5 +1,4 @@
 import GeneralAPI from "./GeneralApi";
-import { isAxiosError } from "../errors/AxiosError";
 
 export interface MatchAtts {
   tournId: string;
@@ -15,24 +14,14 @@ export interface MatchCred {
 }
 
 class MatchAPI extends GeneralAPI {
-  async getMatches(matchAtts: MatchAtts) {
-    try {
-      const res = await this.api.get(
-        `/matches/${matchAtts.tournId}/${matchAtts.category}/${matchAtts.grpStage}`
-      );
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getMatches(matchAtts: MatchAtts): Promise<unknown> {
+    return this.api.get(
+      `/matches/${matchAtts.tournId}/${matchAtts.category}/${matchAtts.grpStage}`
+    );
   }
 
-  async updateMatch(updateMatch: MatchCred) {
-    try {
-      const res = await this.api.post("/matches/update", updateMatch);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async updateMatch(_updateMatch: MatchCred): Promise<void> {
+    await this.api.post("/matches/update", _updateMatch);
   }
 }
 

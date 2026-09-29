@@ -5,6 +5,7 @@ import {
   OneToOne,
   ManyToMany,
   OneToMany,
+  CreateDateColumn,
 } from "typeorm";
 import {
   PersonalData,
@@ -13,6 +14,7 @@ import {
   TourCoin,
   Notification,
   Reward,
+  Club,
 } from "./index";
 import { compareHash, hashValue } from "../helpers/bCrypt.helper";
 import { IsEnum } from "class-validator";
@@ -66,6 +68,12 @@ export class User {
 
   @ManyToMany(() => Reward, (reward) => reward.users)
   rewards: Reward[];
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
+
+  @OneToMany(() => Club, (club) => club.createdBy)
+  createdClubs: Club[];
 
   async hashPassword(password: string): Promise<string> {
     return (this.password = hashValue(password));

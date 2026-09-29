@@ -58,9 +58,9 @@ const DeleteTeam: React.FC<DeleteTeamProps> = ({ tournament, onClose }) => {
       deletedTeams.userId = user?.id;
     });
 
-    const res = await teamApi.deleteTournament(deletedTeams);
+    const count = await teamApi.deleteTournament(deletedTeams);
 
-    if (res >= 1) {
+    if (count >= 1) {
       tournament.TeamsCount -= 1;
       onClose();
     } else {

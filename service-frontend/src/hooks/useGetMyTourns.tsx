@@ -3,6 +3,7 @@ import { Errors } from "../errors/Errors";
 import TournamentAPI from "../services/TournamentApi";
 import { MyTournDTO } from "../entities/dtos/MyTournDTO";
 import { formatDateTime } from "../utils/transformDate";
+import { ApiError } from "../services/GeneralApi";
 
 const tournAPI = new TournamentAPI();
 
@@ -17,9 +18,9 @@ export default function useGetMyTourns(userId: string | undefined) {
     setFetchTourns(false);
     if (userId) {
       try {
-        const response = await tournAPI.getMyTournaments(userId);
+        const data = await tournAPI.getMyTournaments(userId);
 
-        const tournamentData: MyTournDTO[] = response.map((tourn: any) => {
+        const tournamentData: MyTournDTO[] = data.map((tourn: any) => {
           const tournament = new MyTournDTO();
           tournament.Id = tourn.tournamentid;
           tournament.TournTitle = tourn.tournamentname;
@@ -35,7 +36,11 @@ export default function useGetMyTourns(userId: string | undefined) {
         setLoading(false);
         setFetchTourns(true);
       } catch (err) {
-        setError(err);
+        if (err instanceof ApiError && err.payload.fieldErrors) {
+          setError(err.payload.fieldErrors);
+        } else {
+          setError(err);
+        }
         setLoading(false);
       }
     }

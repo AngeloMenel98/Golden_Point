@@ -1,0 +1,1 @@
+export const TOUR_COIN_REWARD_AMOUNT = 10;

@@ -3,6 +3,7 @@ import { Category, TournamentDTO } from "../entities/dtos/TournamentDTO";
 import TournamentAPI from "../services/TournamentApi";
 import { Errors } from "../errors/Errors";
 import { TourData } from "../utils/interfaces";
+import { ApiError } from "../services/GeneralApi";
 
 const tournAPI = new TournamentAPI();
 
@@ -31,38 +32,35 @@ export default function useGetTournaments(tour: TourData | null) {
 
     try {
       const tournArray: TournamentDTO[] = [];
-      const tournRes = await tournAPI.getTournaments(tour.id);
-      let tournData: TournamentResponse = {};
+      const tournData: TournamentResponse = await tournAPI.getTournaments(tour.id);
 
-      if (!tournRes.fieldErrors?.notFound) {
-        tournData = tournRes;
+      for (const [tournamentId, tournamentInfo] of Object.entries(
+        tournData
+      )) {
+        const newTourn = new TournamentDTO();
 
-        for (const [tournamentId, tournamentData] of Object.entries(
-          tournData
-        )) {
-          const newTourn = new TournamentDTO();
+        newTourn.Id = tournamentId;
+        newTourn.Title = tournamentInfo.tournamentName;
+        newTourn.TeamsCount = parseInt(tournamentInfo.teamsCount, 10);
+        newTourn.Master = tournamentInfo.master;
+        newTourn.Categories = tournamentInfo.categories;
+        newTourn.Status = tournamentInfo.status;
 
-          newTourn.Id = tournamentId;
-          newTourn.Title = tournamentData.tournamentName;
-          newTourn.TeamsCount = parseInt(tournamentData.teamsCount, 10);
-          newTourn.Master = tournamentData.master;
-          newTourn.Categories = tournamentData.categories;
-          newTourn.Status = tournamentData.status;
-
-          tournArray.push(newTourn);
-        }
-
-        setTournaments(tournArray);
-      } else {
-        setErrors(tournRes.fieldErrors);
+        tournArray.push(newTourn);
       }
 
-      setIsLoading(false);
+      setTournaments(tournArray);
       setHasFetched(true);
-    } catch (error) {
-      setErrors({
-        general: "An unexpected error occurred while fetching tournaments.",
-      });
+    } catch (err) {
+      if (err instanceof ApiError && err.payload.fieldErrors) {
+        setErrors(err.payload.fieldErrors);
+      } else {
+        setErrors({
+          general: "An unexpected error occurred while fetching tournaments.",
+        });
+      }
+    } finally {
+      setIsLoading(false);
     }
   }, [tour]);
 

@@ -1,26 +1,33 @@
+import { In } from "typeorm";
 import { ClubRepository } from "../repository";
 import { CalendarClub, Club, Court } from "../entity";
 import { TourService } from ".";
-import { ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
+import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class ClubService {
-  private tourService: TourService;
+  private _tourService?: TourService;
 
-  constructor() {
-    this.tourService = new TourService();
+  constructor(tourService?: TourService) {
+    this._tourService = tourService;
+  }
+
+  private get tourService(): TourService {
+    if (!this._tourService) {
+      this._tourService = new TourService();
+    }
+    return this._tourService;
   }
 
   async create(newClub: Club, newCalClub: CalendarClub, courtsNumber: number) {
     const avFrom = new Date(newCalClub.availableFrom);
     const avTo = new Date(newCalClub.availableTo);
     if (courtsNumber <= 0) {
-      throw new ServiceCodeError(codeErrors.CLUB_1);
+      throw validationError("Debe haber al menos una cancha disponible");
     }
 
     if (avFrom >= avTo) {
-      throw new ServiceCodeError(
-        codeErrors.CLUB_2("fecha de inicio", "anterior", "fecha final")
+      throw validationError(
+        "La fecha de inicio debe ser anterior a la fecha final",
       );
     }
 
@@ -39,7 +46,17 @@ export class ClubService {
     const existingClubs: unknown[] = await ClubRepository.getAll(userId);
 
     if (existingClubs.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+      throw conflict("No se encontro ningún Club", "Club");
+    }
+
+    return existingClubs;
+  }
+
+  async getAllAvailable(userId: string) {
+    const existingClubs: unknown[] = await ClubRepository.getAllAvailable(userId);
+
+    if (existingClubs.length == 0) {
+      throw conflict("No se encontro ningún Club", "Club");
     }
 
     return existingClubs;
@@ -50,19 +67,33 @@ export class ClubService {
       id: clubId,
     });
     if (!existingClub) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Club"));
+      throw notFound("Club", clubId);
     }
     return existingClub;
+  }
+
+  async findByIds(clubIds: string[]) {
+    const existingClubs = await ClubRepository.find({
+      where: {
+        id: In(clubIds),
+      },
+    });
+    if (existingClubs.length !== clubIds.length) {
+      const foundIds = new Set(existingClubs.map((c) => c.id));
+      const missingIds = clubIds.filter((id) => !foundIds.has(id));
+      throw notFound("Club", missingIds[0]);
+    }
+    return existingClubs;
   }
 
   async getClubsPerTour(userId: string, tourId: string) {
     const existingClubs: unknown[] = await ClubRepository.getClubsPerTour(
       userId,
-      tourId
+      tourId,
     );
 
     if (existingClubs.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+      throw conflict("No se encontro ningún Club", "Club");
     }
 
     return existingClubs;
@@ -73,18 +104,18 @@ export class ClubService {
     clubName: string,
     location: string,
     avFrom: string,
-    avTo: string
+    avTo: string,
   ) {
     const club = await ClubRepository.updateClub(
       clubId,
       clubName,
       location,
       avFrom,
-      avTo
+      avTo,
     );
 
     if (!club) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Club"));
+      throw conflict("No se encontro ningún Club", "Club");
     }
 
     return club;

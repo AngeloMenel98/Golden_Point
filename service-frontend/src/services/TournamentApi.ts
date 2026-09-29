@@ -1,5 +1,4 @@
 import { Category } from "../entities/dtos/TournamentDTO";
-import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface DeletedTournament {
@@ -15,59 +14,41 @@ export interface TournCredentials {
   categories: Category[];
 }
 
+interface TournamentData {
+  [tournamentId: string]: {
+    tournamentName: string;
+    teamsCount: string;
+    master: number;
+    categories: Category[];
+    status: string;
+  };
+}
+
 class TournamentAPI extends GeneralAPI {
-  async addTournament(newTournament: TournCredentials) {
-    try {
-      const res = await this.api.post("/tournament/create", newTournament);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async addTournament(_newTournament: TournCredentials): Promise<void> {
+    await this.api.post("/tournament/create", _newTournament);
   }
 
-  async getTournaments(tourId: string) {
-    try {
-      const res = await this.api.get(`/tournament/tourns/${tourId}`);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getTournaments(tourId: string): Promise<TournamentData> {
+    const res = await this.api.get(`/tournament/tourns/${tourId}`);
+    return res as unknown as TournamentData;
   }
 
-  async deleteTournament(deletedTournament: DeletedTournament) {
-    try {
-      const res = await this.api.post("/tournament/delete", deletedTournament);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async deleteTournament(_deletedTournament: DeletedTournament): Promise<void> {
+    await this.api.post("/tournament/delete", _deletedTournament);
   }
 
-  async startTournament(startTournament: DeletedTournament) {
-    try {
-      const res = await this.api.post("/tournament/start", startTournament);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async startTournament(_startTournament: DeletedTournament): Promise<void> {
+    await this.api.post("/tournament/start", _startTournament);
   }
 
-  async getCatsByTournId(tournId: string) {
-    try {
-      const res = await this.api.get(`/tournament/cats/${tournId}`);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getCatsByTournId(tournId: string): Promise<unknown> {
+    return this.api.get(`/tournament/cats/${tournId}`);
   }
 
-  async getMyTournaments(userId: string) {
-    try {
-      const res = await this.api.get(`/tournament/${userId}`);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getMyTournaments(userId: string): Promise<unknown[]> {
+    const res = await this.api.get(`/tournament/${userId}`);
+    return res as unknown as unknown[];
   }
 }
 

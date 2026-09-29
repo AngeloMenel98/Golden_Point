@@ -6,7 +6,7 @@ import { tourController } from "../controllers";
 const router = Router();
 
 router.post(
-  "/tour/create",
+  "/tours",
   [
     check("title")
       .not()
@@ -21,11 +21,11 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("clubsId")),
   ],
-  tourController.create.bind(tourController)
+  tourController.create.bind(tourController),
 );
 
 router.post(
-  "/tour/join",
+  "/tours/join",
   [
     check("tourCode")
       .not()
@@ -36,11 +36,11 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
   ],
-  tourController.joinUser.bind(tourController)
+  tourController.joinUser.bind(tourController),
 );
 
 router.post(
-  "/tour/delete",
+  "/tours/delete",
   [
     check("tourId")
       .not()
@@ -51,10 +51,10 @@ router.post(
       .isEmpty()
       .withMessage(validationMsg.VALUE_IS_REQUIRED("userId")),
   ],
-  tourController.delete.bind(tourController)
+  tourController.delete.bind(tourController),
 );
 
-router.get("/tour/tours/:userId", tourController.getAll.bind(tourController));
-router.get("/tour/:tourId", tourController.getTourById.bind(tourController));
+router.get("/tours/:userId", tourController.getAll.bind(tourController));
+router.get("/tours/:tourId", tourController.getTourById.bind(tourController));
 
 export default router;

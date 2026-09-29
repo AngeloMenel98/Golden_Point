@@ -6,6 +6,8 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  CreateDateColumn,
+  Index,
 } from "typeorm";
 import { Tour } from "./Tour";
 import { Category } from "./Category";
@@ -20,6 +22,7 @@ export enum Status {
 }
 
 @Entity()
+@Index("IDX_TOURNAMENT_STATUS_DELETED", ["status", "isDeleted"])
 export class Tournament {
   @PrimaryGeneratedColumn("uuid")
   id: string;
@@ -32,6 +35,9 @@ export class Tournament {
 
   @Column()
   isDeleted: boolean;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
 
   @Column({
     type: "enum",

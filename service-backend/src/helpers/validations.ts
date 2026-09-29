@@ -1,10 +1,9 @@
-import codeErrors from "../constants/codeErrors";
 import { User } from "../entity";
 import { UserRole } from "../entity/User";
-import { ServiceCodeError } from "../errors/errorsClass";
+import { validationError } from "../types/error/app-error";
 
 export const isNotUserAdmin = (user: User) => {
   if (user.role != UserRole.ADMIN) {
-    throw new ServiceCodeError(codeErrors.USER_1);
+    throw validationError("El usuario no es ADMIN");
   }
 };

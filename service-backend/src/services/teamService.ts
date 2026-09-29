@@ -1,8 +1,7 @@
 import { TeamRepository, UserRepository } from "../repository";
 import { Team, Tournament } from "../entity";
-import { ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
 import { Manager } from "../helpers/manager";
+import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class TeamService {
   constructor() {}
@@ -18,7 +17,7 @@ export class TeamService {
     );
 
     if (users.length > 2) {
-      throw new ServiceCodeError(codeErrors.TEAM_1);
+      throw validationError("La cantidad de jugadores por equipo son 2");
     }
 
     let teamName = "";
@@ -41,7 +40,7 @@ export class TeamService {
     const team = await TeamRepository.findOneBy({ id: teamId });
 
     if (!team) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Team"));
+      throw notFound("Team", teamId);
     }
 
     const usersByTeam = await UserRepository.getUsersByTeamId(teamId);
@@ -55,7 +54,7 @@ export class TeamService {
     });
 
     if (!existingTeam) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Team"));
+      throw notFound("Team", teamId);
     }
 
     return existingTeam;
@@ -65,7 +64,7 @@ export class TeamService {
     const teams = await TeamRepository.getTeams(tournamentId);
 
     if (!teams) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Teams"));
+      throw notFound("Teams", tournamentId);
     }
 
     return teams;

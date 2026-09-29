@@ -1,4 +1,3 @@
-import { isAxiosError } from "../errors/AxiosError";
 import GeneralAPI from "./GeneralApi";
 
 export interface DeletedTeam {
@@ -14,31 +13,17 @@ export interface TeamCredentials {
 }
 
 class TeamAPI extends GeneralAPI {
-  async addTeam(newTeam: TeamCredentials) {
-    try {
-      const res = await this.api.post("/team/create", newTeam);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async addTeam(_newTeam: TeamCredentials): Promise<unknown> {
+    return this.api.post("/team/create", _newTeam);
   }
 
-  async getTeams(tournamentId: string) {
-    try {
-      const res = await this.api.get(`/teams/${tournamentId}`);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async getTeams(tournamentId: string): Promise<unknown> {
+    return this.api.get(`/teams/${tournamentId}`);
   }
 
-  async deleteTournament(deletedTeams: DeletedTeam) {
-    try {
-      const res = await this.api.post("/team/delete", deletedTeams);
-      return res.data;
-    } catch (e) {
-      return isAxiosError(e);
-    }
+  async deleteTournament(_deletedTeams: DeletedTeam): Promise<number> {
+    const res = await this.api.post("/team/delete", _deletedTeams);
+    return (res as unknown as number) ?? 0;
   }
 }
 

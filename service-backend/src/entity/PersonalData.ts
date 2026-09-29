@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
 } from "typeorm";
 import { IsMobilePhone } from "class-validator";
 import { User } from "./User";
@@ -24,6 +25,9 @@ export class PersonalData {
 
   @Column({ length: 50 })
   location: string;
+
+  @CreateDateColumn({ name: "createdAt" })
+  createdAt: Date;
 
   @OneToOne(() => User, (user) => user.personalData)
   @JoinColumn()

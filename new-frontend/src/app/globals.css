@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+@theme {
+  /* Golden Point Green Palette */
+  --color-gp-dark: #40573C;
+  --color-gp-pastel: #96a259;
+  --color-gp-light: #dbead5;
+  --color-gp-mint: #98fb98;
+  --color-gp-text: #000000;
+  --color-gp-text-dark: #40573C;
+  --color-gp-gray: #767676;
+  --color-gp-gray-light: #DBDBDB;
+  --color-gp-red: #7f0000;
+  --color-gp-red-light: #ce6161;
+  --color-gp-yellow: #FAFA33;
+  --color-gp-disable: #ebebe4;
+  --color-gp-cream: #878672;
+  
+  /* Gold Palette for Landing Page */
+  --color-gold: #D4AF37;
+  --color-gold-light: #E5C76B;
+  --color-gold-dark: #B8960F;
+  --color-gold-muted: #C9A227;
+  
+  /* Neutral Palette - Dark Surfaces */
+  --color-surface: #0A0A0A;
+  --color-surface-elevated: #141414;
+  --color-surface-hover: #1A1A1E;
+  
+  /* Text Colors */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: rgba(255, 255, 255, 0.7);
+  --color-text-muted: rgba(255, 255, 255, 0.5);
+  
+  /* Custom Screens */
+  --breakpoint-mobile: 480px;
+  --breakpoint-tablet: 768px;
+  --breakpoint-desktop: 1024px;
+  
+  /* Typography */
+  --font-display: var(--font-playfair), serif;
+  --font-body: var(--font-dm-sans), sans-serif;
+  --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+}
+
+/* Base styles */
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html,
+  body {
+    @apply antialiased max-w-full overflow-x-hidden;
+  }
+}
+
+/* Component classes */
+@layer components {
+  .btn-base {
+    @apply py-2 px-5 font-semibold rounded-md transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply bg-gp-pastel text-white hover:bg-gp-dark;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-gp-pastel text-gp-dark hover:bg-gp-pastel hover:text-white;
+  }
+
+  .btn-hover-scale {
+    @apply transition-transform duration-150 hover:scale-[1.02];
+  }
+
+  .input-field {
+    @apply w-full px-3 py-2 border-2 border-gp-gray-light rounded-md 
+           focus:outline-none focus:border-gp-pastel text-base bg-white
+           transition-all duration-150;
+  }
+
+  .input-field:focus {
+    @apply shadow-md;
+  }
+  
+  .input-error {
+    @apply border-gp-red focus:border-gp-red;
+  }
+
+  .card {
+    @apply bg-white p-6 rounded-lg shadow-md;
+  }
+
+  .nav-bg {
+    @apply bg-gp-dark;
+  }
+  
+  .nav-text {
+    @apply text-white;
+  }
+
+  @keyframes modalEntrance {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes modalExit {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+
+  .modal-animate-in {
+    animation: modalEntrance 250ms ease-out forwards;
+  }
+
+  .modal-animate-out {
+    animation: modalExit 200ms ease-in forwards;
+  }
+
+  .loading-opacity {
+    @apply opacity-70;
+  }
+
+  /* Animation Keyframes */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  /* Animation Utilities */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.7s ease-out forwards;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.5s ease-out forwards;
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out forwards;
+  }
+
+  /* Scroll animation states */
+  .scroll-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+  }
+
+  .scroll-animate.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Staggered animation delays */
+  .delay-100 { animation-delay: 100ms; }
+  .delay-200 { animation-delay: 200ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-400 { animation-delay: 400ms; }
+  .delay-500 { animation-delay: 500ms; }
+  .delay-600 { animation-delay: 600ms; }
+  .delay-700 { animation-delay: 700ms; }
+}

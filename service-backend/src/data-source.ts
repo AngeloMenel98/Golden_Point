@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "dotenv/config";
 import { DataSource } from "typeorm";
 import {
   User,
@@ -26,8 +27,11 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
+  // WARNING: synchronize: true automatically syncs schema changes - DO NOT use in production!
+  // It can cause data loss and security issues. Use migrations instead for production.
   synchronize: true,
-  logging: false,
+  migrationsRun: true,
+  migrations: ["dist/migrations/*{.ts,.js}"],
   entities: [
     User,
     PersonalData,
@@ -47,6 +51,5 @@ export const AppDataSource = new DataSource({
 
     GroupStage,
   ],
-  migrations: [],
   subscribers: [],
 });

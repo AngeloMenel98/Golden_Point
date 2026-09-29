@@ -1,8 +1,7 @@
 import { TourRepository, UserRepository } from "../repository";
 import { Club, Tour } from "../entity";
 import { User } from "../entity/User";
-import { ServiceCodeError } from "../errors/errorsClass";
-import codeErrors from "../constants/codeErrors";
+import { notFound, conflict, validationError } from "../types/error/app-error";
 
 export class TourService {
   constructor() {}
@@ -22,13 +21,13 @@ export class TourService {
     });
 
     if (!existingTour) {
-      throw new ServiceCodeError(codeErrors.TOUR_1);
+      throw notFound("Tour", tourCode);
     }
 
     const userInTour = await UserRepository.findUserInTour(user.id, tourCode);
 
     if (userInTour) {
-      throw new ServiceCodeError(codeErrors.TOUR_2(user.username));
+      throw conflict(`${user.username} ya esta unido al Tour`, "Tour");
     }
 
     return TourRepository.joinUser(user, existingTour);
@@ -39,7 +38,7 @@ export class TourService {
       id: tourId,
     });
     if (!existingTour) {
-      throw new ServiceCodeError(codeErrors.GEN_1("Tour"));
+      throw notFound("Tour", tourId);
     }
     return existingTour;
   }
@@ -48,7 +47,7 @@ export class TourService {
     const tours: unknown[] = await TourRepository.getAll(userId);
 
     if (tours.length == 0) {
-      throw new ServiceCodeError(codeErrors.GEN_2("Tour"));
+      throw conflict("No se encontro ningún Tour", "Tour");
     }
     return tours;
   }
