@@ -1,12 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import {
+  getTokenFromCookie,
+} from '@/lib/auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
-async function getTokenFromCookie(): Promise<string | null> {
-  const cookieStore = await cookies();
-  return cookieStore.get('token')?.value || null;
-}
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -14,15 +11,6 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     
     if (!token) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Extract userId from token payload (JWT)
-    let userId: string;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      userId = payload.id || payload.sub;
-    } catch {
-      return NextResponse.json({ success: false, error: 'Token inválido' }, { status: 401 });
     }
 
     // Get match ID from params
@@ -34,62 +22,37 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Parse request body
     const body = await request.json();
-    const { games, matchdate, clubId, courtNumber } = body;
+    const { matchdate, clubId, courtNumber } = body;
 
-    // Handle date update
-    if (matchdate) {
-      const dateResponse = await fetch(`${API_URL}/api/matches/update`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          matchId,
-          matchDate: matchdate,
-          clubId,
-          courtNumber,
-        }),
-      });
-
-      const dateData = await dateResponse.json();
-      if (!dateResponse.ok) {
-        return NextResponse.json(
-          { success: false, error: dateData.error?.message || dateData.message || 'Error al actualizar fecha' },
-          { status: dateResponse.status }
-        );
-      }
-      return NextResponse.json({ success: true, data: dateData.data });
+    // Only date updates are supported (sole consumer: EditMatchDateModal).
+    // Scores are saved live via POST /api/set/create.
+    if (!matchdate) {
+      return NextResponse.json({ success: false, error: 'El campo matchdate es requerido' }, { status: 400 });
     }
 
-    if (!games) {
-      return NextResponse.json({ success: false, error: 'Los resultados (games) son requeridos' }, { status: 400 });
-    }
-
-    // Call backend to update match scores
-    const response = await fetch(`${API_URL}/api/match/update`, {
-      method: 'PUT',
+    const dateResponse = await fetch(`${API_URL}/api/matches/update`, {
+      method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({ 
-        userId,
+      body: JSON.stringify({
         matchId,
-        games,
+        matchDate: matchdate,
+        clubId,
+        courtNumber,
       }),
     });
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      const errorMessage = data.error?.message || data.message || 'Error al actualizar el partido';
-      return NextResponse.json({ success: false, error: errorMessage }, { status: response.status });
+    const dateData = await dateResponse.json();
+    if (!dateResponse.ok) {
+      return NextResponse.json(
+        { success: false, error: dateData.error?.message || dateData.message || 'Error al actualizar fecha' },
+        { status: dateResponse.status }
+      );
     }
-
-    return NextResponse.json({ success: true, data: data.data });
+    return NextResponse.json({ success: true, data: dateData.data });
   } catch (error) {
     console.error('Error updating match:', error);
     return NextResponse.json({ success: false, error: 'Error de conexión. Intenta de nuevo.' }, { status: 500 });

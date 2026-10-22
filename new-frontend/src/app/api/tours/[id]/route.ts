@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import {
+  getTokenFromCookie,
+  getUserIdFromToken,
+} from '@/lib/auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
-async function getTokenFromCookie(): Promise<string | null> {
-  const cookieStore = await cookies();
-  return cookieStore.get('token')?.value || null;
-}
 
 export async function DELETE(
   _request: NextRequest,
@@ -19,20 +17,26 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
+    const userId = getUserIdFromToken(token);
+
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'Token inválido' }, { status: 401 });
+    }
+
     const { id } = await params;
 
     if (!id) {
       return NextResponse.json({ success: false, error: 'Tour ID is required' }, { status: 400 });
     }
 
-    const response = await fetch(`${API_URL}/tour/delete`, {
+    const response = await fetch(`${API_URL}/api/tours/delete`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({ tourId: id }),
+      body: JSON.stringify({ tourId: id, userId }),
     });
 
     const data = await response.json();

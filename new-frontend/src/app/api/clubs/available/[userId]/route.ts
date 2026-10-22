@@ -25,7 +25,7 @@ export async function GET(
       );
     }
 
-    const response = await fetch(`${API_URL}/clubs/available/${userId}`, {
+    const response = await fetch(`${API_URL}/api/clubs/available/${userId}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

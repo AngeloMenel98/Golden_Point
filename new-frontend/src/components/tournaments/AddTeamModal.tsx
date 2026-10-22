@@ -24,7 +24,7 @@ interface AddTeamModalProps {
 }
 
 export function AddTeamModal({ isOpen, onClose, tournamentId, categories }: AddTeamModalProps) {
-  const { addTeam, fetchTeams, isLoading } = useTournament();
+  const { addTeam, fetchTeams, isLoading, currentTournament } = useTournament();
   
   const [teamName, setTeamName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -41,27 +41,78 @@ export function AddTeamModal({ isOpen, onClose, tournamentId, categories }: AddT
     label: `${cat.gender} - ${cat.category}`
   }));
 
-  // Fetch users when modal opens
+  // Fetch tour users when modal opens. Backend needs the TOUR id, not the
+  // tournament id: context tour?.id → detail fallback → empty state (D3).
   useEffect(() => {
-    if (isOpen) {
-      setIsLoadingUsers(true);
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-      fetch(`${apiUrl}/api/users/users/${tournamentId}`, {
-        credentials: 'include',
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          const usersList = data.data?.users || data.users || [];
-          setUsers(usersList);
-        })
-        .catch(() => {
-          setUsers([]);
-        })
-        .finally(() => {
-          setIsLoadingUsers(false);
+    if (!isOpen) return;
+
+    let cancelled = false;
+
+    const loadUsers = async (tourId: string) => {
+      try {
+        const res = await fetch(`/api/users/${tourId}`, {
+          credentials: 'include',
         });
+        const data = await res.json();
+        if (cancelled) return;
+
+        const usersList = Array.isArray(data?.data)
+          ? data.data
+          : Array.isArray(data)
+            ? data
+            : [];
+        // Normalize backend rows {userId, userName, firstName, lastName}
+        setUsers(
+          usersList.map((u: Record<string, unknown>) => ({
+            id: String(u.userId ?? u.id ?? ''),
+            username: String(u.userName ?? u.username ?? ''),
+            firstName: u.firstName ? String(u.firstName) : undefined,
+            lastName: u.lastName ? String(u.lastName) : undefined,
+          })),
+        );
+      } catch {
+        if (!cancelled) setUsers([]);
+      } finally {
+        if (!cancelled) setIsLoadingUsers(false);
+      }
+    };
+
+    setIsLoadingUsers(true);
+    const contextTourId = currentTournament?.tour?.id;
+
+    if (contextTourId) {
+      loadUsers(contextTourId);
+      return () => {
+        cancelled = true;
+      };
     }
-  }, [isOpen, tournamentId]);
+
+    // Fallback: resolve tour id from the tournament detail proxy
+    fetch(`/api/tournaments/${tournamentId}`, {
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        const tourId = data?.data?.tour?.id;
+        if (tourId) {
+          loadUsers(String(tourId));
+        } else {
+          setUsers([]);
+          setIsLoadingUsers(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUsers([]);
+          setIsLoadingUsers(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, tournamentId, currentTournament?.tour?.id]);
 
   // Reset form when modal closes
   useEffect(() => {

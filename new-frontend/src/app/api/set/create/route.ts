@@ -19,11 +19,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Extract userId from token payload (JWT)
-    let userId: string;
+    // Validate token payload (JWT)
     try {
       const payload = JSON.parse(atob(token.split(".")[1]));
-      userId = payload.id || payload.sub;
+      if (!payload.id && !payload.sub) {
+        return NextResponse.json(
+          { success: false, error: "Token inválido" },
+          { status: 401 },
+        );
+      }
     } catch {
       return NextResponse.json(
         { success: false, error: "Token inválido" },

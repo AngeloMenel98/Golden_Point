@@ -105,7 +105,7 @@ export function TournamentCard({
     }
   };
 
-  const currentTeamsCount = tournament.teams?.length || 0;
+  const currentTeamsCount = tournament.teamsCount ?? tournament.teams?.length ?? 0;
   const categoriesCount = tournament.categories?.length || 0;
   const teamsNeeded = getTeamsNeeded(categoriesCount, currentTeamsCount);
   const isPending = tournament.status === TournamentStatus.PENDING;

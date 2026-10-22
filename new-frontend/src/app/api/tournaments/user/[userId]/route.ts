@@ -49,15 +49,18 @@ export async function GET(
 
     const data = await response.json();
 
-    // Normalize tournament data
+    // Normalize tournament data. Repository returns raw rows whose alias
+    // casing may be camelCase or folded to lowercase — read case-tolerantly (D5).
     const tournaments = Array.isArray(data.data)
       ? data.data.map((t: Record<string, unknown>) => ({
-          id: t.tournamentid || t.id,
-          name: t.tournamentname || t.title || t.name,
+          id: t.tournamentId || t.tournamentid || t.id,
+          name: t.tournamentName || t.tournamentname || t.title || t.name,
           status: t.status || "unknown",
-          category: t.teamcategory || t.category,
-          matchDate: t.matchdate || t.matchDate,
-          teamName: t.teamname || t.teamName,
+          category: t.teamCategory || t.teamcategory || t.category,
+          matchDate: t.matchDate || t.matchdate,
+          teamName: t.teamName || t.teamname,
+          oppTeamName: t.oppTeamName || t.oppteamname,
+          groupStage: t.groupStage || t.groupstage,
         }))
       : [];
 

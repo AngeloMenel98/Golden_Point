@@ -1,12 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
+import {
+  getTokenFromCookie,
+  getUserIdFromToken,
+} from '@/lib/auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
-
-async function getTokenFromCookie(): Promise<string | null> {
-  const cookieStore = await cookies();
-  return cookieStore.get('token')?.value || null;
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,6 +14,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
+    const userId = getUserIdFromToken(token);
+
+    if (!userId) {
+      return NextResponse.json({ success: false, error: 'Token inválido' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { code } = body;
 
@@ -23,7 +27,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'El código es requerido' }, { status: 400 });
     }
 
-    const normalizedCode = code.trim().toUpperCase();
+    // Backend tourCode is case-sensitive and generated with mixed case — do NOT uppercase.
+    const normalizedCode = code.trim();
     
     if (normalizedCode.length !== 8) {
       return NextResponse.json({ success: false, error: 'El código debe tener 8 caracteres' }, { status: 400 });
@@ -34,14 +39,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: 'Código de tour inválido' }, { status: 400 });
     }
 
-    const response = await fetch(`${API_URL}/tour/join`, {
+    const response = await fetch(`${API_URL}/api/tours/join`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: JSON.stringify({ code: normalizedCode }),
+      body: JSON.stringify({ tourCode: normalizedCode, userId }),
     });
 
     const data = await response.json();

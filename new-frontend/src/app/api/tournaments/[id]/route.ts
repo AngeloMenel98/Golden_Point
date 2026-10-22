@@ -54,14 +54,14 @@ export async function GET(
 
     const data = await response.json();
 
-    // Normalize tournament data with camelCase
+    // Normalize tournament data (backend entity: title, master, tour relation,
+    // categories, teams[].teamName)
     const t = data.data || data;
     const tournament = {
       id: t.id || t.tournamentid,
-      tourId: t.tourid || t.tourId,
-      name: t.name || t.tournamentname || t.title,
-      masterScore: parseInt(
-        String(t.masterscore || t.master_score || t.masterScore || 0),
+      title: t.title || t.name || t.tournamentname,
+      master: parseInt(
+        String(t.master ?? t.masterscore ?? t.master_score ?? 0),
         10,
       ),
       status: t.status || t.state || "pending",
@@ -70,7 +70,21 @@ export async function GET(
         : t.category
           ? [t.category]
           : [],
-      teams: Array.isArray(t.teams) ? t.teams : [],
+      // Keep the nested tour relation (UI reads tour?.id); never flatten to tourId
+      tour: t.tour
+        ? { id: t.tour.id }
+        : t.tourid || t.tourId
+          ? { id: t.tourid || t.tourId }
+          : undefined,
+      // Backend team entity uses teamName — map to name for the UI
+      teams: Array.isArray(t.teams)
+        ? t.teams.map((team: Record<string, unknown>) => ({
+            id: team.id,
+            name: team.teamName || team.name,
+            category: team.category,
+            usersId: team.usersId,
+          }))
+        : [],
       createdAt: t.creationdate || t.createdat || t.createdAt,
       startedAt: t.startedat || t.startedAt,
       finishedAt: t.finishedat || t.finishedAt,

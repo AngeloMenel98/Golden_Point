@@ -59,8 +59,8 @@ export function TournamentsClient({
     async (data: {
       name: string;
       tourId: string;
-      masterScore: number;
-      categories: string[];
+      master: number;
+      categories: { gender: string; category: string }[];
     }) => {
       return await createTournament(data);
     },

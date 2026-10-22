@@ -7,29 +7,37 @@ import { Button } from '@/components/ui/Button';
 interface TournamentFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { name: string; tourId: string; masterScore: number; categories: string[] }) => Promise<{ success: boolean; error?: string }>;
+  onSubmit: (data: {
+    name: string;
+    tourId: string;
+    master: number;
+    categories: { gender: string; category: string }[];
+  }) => Promise<{ success: boolean; error?: string }>;
   tourId: string;
   existingTournamentNames: string[];
 }
 
+const GENDERS = ['Masculino', 'Femenino'];
+
+// Mirrors old-frontend pool (TournamentModal maleCat/femaleCat)
 const AVAILABLE_CATEGORIES = [
-  'Primera Division',
-  'Segunda Division',
-  'Tercera Division',
-  'Cuarta Division',
-  'Quinta Division',
-  'Sub-18',
-  'Sub-16',
-  'Sub-14',
-  'Femenino',
-  'Masculino',
-  'Mixto',
+  'Cuarta',
+  'Quinta',
+  'Sexta',
+  'Septima',
+  'Octava',
+  'Suma 7',
 ];
+
+interface SelectedCategory {
+  gender: string;
+  category: string;
+}
 
 export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTournamentNames }: TournamentFormProps) {
   const [name, setName] = useState('');
-  const [masterScore, setMasterScore] = useState(0);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [master, setMaster] = useState(0);
+  const [selectedCategories, setSelectedCategories] = useState<SelectedCategory[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categorySearch, setCategorySearch] = useState('');
@@ -38,7 +46,7 @@ export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTour
   useEffect(() => {
     if (!isOpen) {
       setName('');
-      setMasterScore(0);
+      setMaster(0);
       setSelectedCategories([]);
       setError(null);
       setIsSubmitting(false);
@@ -50,6 +58,20 @@ export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTour
   const filteredCategories = AVAILABLE_CATEGORIES.filter((category) =>
     category.toLowerCase().includes(categorySearch.toLowerCase())
   );
+
+  const isSelected = (gender: string, category: string) =>
+    selectedCategories.some((c) => c.gender === gender && c.category === category);
+
+  const toggleCategory = (gender: string, category: string) => {
+    setSelectedCategories((prev) => {
+      const exists = prev.some(
+        (c) => c.gender === gender && c.category === category,
+      );
+      return exists
+        ? prev.filter((c) => !(c.gender === gender && c.category === category))
+        : [...prev, { gender, category }];
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,16 +89,28 @@ export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTour
       return;
     }
 
+    // Master is required (min 1)
+    if (!master || master < 1) {
+      setError('El master debe ser al menos 1');
+      return;
+    }
+
+    // At least one category must be selected
+    if (selectedCategories.length === 0) {
+      setError('Selecciona al menos una categoría');
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const result = await onSubmit({
         name: name.trim(),
         tourId,
-        masterScore,
+        master,
         categories: selectedCategories,
       });
-      
+
       if (result.success) {
         onClose();
       } else {
@@ -87,14 +121,6 @@ export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTour
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category)
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
-    );
   };
 
   if (!isOpen) return null;
@@ -142,16 +168,20 @@ export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTour
 
           <div className="space-y-2">
             <label className="block text-sm font-medium text-gp-gray">
-              Master Score (Opcional)
+              Master
             </label>
             <input
               type="number"
-              min="0"
-              value={masterScore}
-              onChange={(e) => setMasterScore(parseInt(e.target.value) || 0)}
+              min="1"
+              value={master}
+              onChange={(e) => setMaster(parseInt(e.target.value) || 0)}
               className="w-full p-2 border border-gp-gray-light rounded-md text-sm focus:outline-none focus:border-gp-pastel"
               disabled={isSubmitting}
+              required
             />
+            {master < 1 && (
+              <p className="text-gp-red text-xs">El master debe ser al menos 1</p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -170,29 +200,41 @@ export function TournamentForm({ isOpen, onClose, onSubmit, tourId, existingTour
                   onChange={(e) => setCategorySearch(e.target.value)}
                   className="w-full p-2 border border-gp-gray-light rounded-md text-sm focus:outline-none focus:border-gp-pastel"
                 />
-                <div className="space-y-2 max-h-48 overflow-y-auto border border-gp-gray-light rounded-md p-2">
+                <div className="space-y-3 max-h-64 overflow-y-auto border border-gp-gray-light rounded-md p-3">
                   {filteredCategories.length === 0 ? (
                     <p className="text-sm text-gp-gray text-center py-2">
                       No se encontraron categorías
                     </p>
                   ) : (
-                    filteredCategories.map((category) => (
-                      <label
-                        key={category}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-gp-light/30 p-2 rounded"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(category)}
-                          onChange={() => toggleCategory(category)}
-                          className="w-4 h-4 text-gp-pastel border-gp-gray-light rounded focus:ring-gp-pastel"
-                          disabled={isSubmitting}
-                        />
-                        <span className="text-gp-dark">{category}</span>
-                      </label>
+                    GENDERS.map((gender) => (
+                      <div key={gender} className="space-y-1">
+                        <p className="text-xs font-semibold text-gp-gray uppercase">
+                          {gender}
+                        </p>
+                        {filteredCategories.map((category) => (
+                          <label
+                            key={`${gender}-${category}`}
+                            className="flex items-center gap-2 cursor-pointer hover:bg-gp-light/30 p-2 rounded"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected(gender, category)}
+                              onChange={() => toggleCategory(gender, category)}
+                              className="w-4 h-4 text-gp-pastel border-gp-gray-light rounded focus:ring-gp-pastel"
+                              disabled={isSubmitting}
+                            />
+                            <span className="text-gp-dark">{category}</span>
+                          </label>
+                        ))}
+                      </div>
                     ))
                   )}
                 </div>
+                {selectedCategories.length === 0 && (
+                  <p className="text-gp-red text-xs">
+                    Selecciona al menos una categoría
+                  </p>
+                )}
               </>
             )}
           </div>

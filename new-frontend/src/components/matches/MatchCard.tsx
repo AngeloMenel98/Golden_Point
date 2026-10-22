@@ -63,7 +63,11 @@ export default function MatchCard({
   onEdit?: () => void;
   onEditDate?: () => void;
 }) {
-  const sortedTeams = match.teams.sort((a, b) => a.position - b.position);
+  // Guard against matches without a teams array (old backend shape / missing team_match rows).
+  const sortedTeams =
+    Array.isArray(match.teams) && match.teams.length > 0
+      ? [...match.teams].sort((a, b) => a.position - b.position)
+      : undefined;
 
   const team1Players = sortedTeams
     ? sortedTeams[0].players.map((p) => `${p.firstName} ${p.lastName}`)

@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import {
+  getTokenFromCookie,
+  getUserIdFromToken,
+} from "@/lib/auth";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-async function getTokenFromCookie(): Promise<string | null> {
-  const cookieStore = await cookies();
-  return cookieStore.get("token")?.value || null;
+interface CategoryPayload {
+  category: string;
+  gender: string;
 }
 
 export async function GET(request: NextRequest) {
@@ -58,11 +61,12 @@ export async function GET(request: NextRequest) {
     const tournaments: Array<{
       id: string;
       tourId: string;
-      name: string;
-      masterScore: number;
+      title: string;
       status: string;
       teamsCount: number;
-      categories: Array<{ category: string; gender: string }>;
+      master: number;
+      categories: CategoryPayload[];
+      tour: { id: string };
     }> = [];
 
     // Extract the tournaments object (it's in data.data or directly in data)
@@ -78,22 +82,24 @@ export async function GET(request: NextRequest) {
         tournaments.push({
           id: id,
           tourId: tourId,
-          name: String(
-            tournament.tournamentName || tournament.name || "Unnamed",
-          ),
-          masterScore: parseInt(
-            String(tournament.master || tournament.masterScore || 0),
-            10,
+          title: String(
+            tournament.tournamentName ||
+              tournament.title ||
+              tournament.name ||
+              "Unnamed",
           ),
           status: String(tournament.status || "pending"),
           teamsCount: parseInt(String(tournament.teamsCount || 0), 10),
+          master: parseInt(
+            String(tournament.master || tournament.masterScore || 0),
+            10,
+          ),
           // Categories come as [{ category, gender }] objects
           categories: Array.isArray(tournament.categories)
-            ? (tournament.categories as Array<{
-                category: string;
-                gender: string;
-              }>)
+            ? (tournament.categories as CategoryPayload[])
             : [],
+          // Load-bearing: TournamentsClient filters t.tour.id === tourId
+          tour: { id: tourId },
         });
       });
     }
@@ -119,12 +125,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Extract userId from token payload (JWT)
-    let userId: string;
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      userId = payload.id || payload.sub;
-    } catch {
+    const userId = getUserIdFromToken(token);
+
+    if (!userId) {
       return NextResponse.json(
         { success: false, error: "Token inválido" },
         { status: 401 },
@@ -132,7 +135,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, tourId, masterScore, categories } = body;
+    const { name, tourId, master, categories } = body;
 
     if (!name || typeof name !== "string" || name.trim() === "") {
       return NextResponse.json(
@@ -148,6 +151,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (master === undefined || master === null || Number(master) < 1) {
+      return NextResponse.json(
+        { success: false, error: "Master obligatorio" },
+        { status: 400 },
+      );
+    }
+
+    const validCategories =
+      Array.isArray(categories) &&
+      categories.length > 0 &&
+      categories.every(
+        (c: unknown) =>
+          c !== null &&
+          typeof c === "object" &&
+          typeof (c as CategoryPayload).gender === "string" &&
+          (c as CategoryPayload).gender !== "" &&
+          typeof (c as CategoryPayload).category === "string" &&
+          (c as CategoryPayload).category !== "",
+      );
+
+    if (!validCategories) {
+      return NextResponse.json(
+        { success: false, error: "Categorias" },
+        { status: 400 },
+      );
+    }
+
     const response = await fetch(`${API_URL}/api/tournament/create`, {
       method: "POST",
       headers: {
@@ -159,8 +189,8 @@ export async function POST(request: NextRequest) {
         title: name.trim(),
         tourId,
         userId,
-        master: masterScore || 0,
-        categories: categories || [],
+        master,
+        categories,
       }),
     });
 

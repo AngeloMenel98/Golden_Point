@@ -38,9 +38,12 @@ export interface Match {
  *  → team1: ["Gerrr S.", "Gg I."]
  *    team2: ["Silva I.", "Espindola L."]
  */
-export function parseTeams(teamsname: string): [string[], string[]] {
-  const [t1raw, t2raw] = teamsname.split(", ");
-  return [t1raw.split("-"), t2raw.split("-")];
+export function parseTeams(teamsname?: string): [string[], string[]] {
+  const [t1raw = "", t2raw = ""] = (teamsname || "").split(", ");
+  return [
+    t1raw ? t1raw.split("-") : [],
+    t2raw ? t2raw.split("-") : [],
+  ];
 }
 
 /**

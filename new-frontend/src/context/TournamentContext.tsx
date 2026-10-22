@@ -24,8 +24,8 @@ interface TournamentContextType {
   createTournament: (data: {
     name: string;
     tourId: string;
-    masterScore: number;
-    categories: string[];
+    master: number;
+    categories: { gender: string; category: string }[];
   }) => Promise<{ success: boolean; error?: string }>;
   deleteTournament: (
     id: string,
@@ -106,8 +106,8 @@ export function TournamentProvider({
     async (data: {
       name: string;
       tourId: string;
-      masterScore: number;
-      categories: string[];
+      master: number;
+      categories: { gender: string; category: string }[];
     }): Promise<{ success: boolean; error?: string }> => {
       setIsLoading(true);
       setError(null);
